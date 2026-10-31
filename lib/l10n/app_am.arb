@@ -158,5 +158,17 @@
   "noVerifiedMentorsBody": "የአማካሪዎች መገለጫና የመገናኛ አማራጮች የሚታዩት የማንነትና የደህንነት ማረጋገጫ ሂደት ከተዘጋጀ በኋላ ነው።",
   "mentorSafetyTitle": "የእኩዮች ድጋፍ ዝርዝር",
   "mentorSafetyBody": "የማረጋገጫ ሂደት እስኪኖር ድረስ ሰዎችን ወይም የመገኛ መረጃን አናሳይም።",
-  "learningProgressTitle": "የትምህርት እንቅስቃሴዎ"
+  "learningProgressTitle": "የትምህርት እንቅስቃሴዎ",
+  "selfAssessmentTitle": "ራስን መገምገም",
+  "selfAssessmentDesc": "የጤና ሁኔታዎን ይገምግሙና ተገቢውን መመሪያ ያግኙ።",
+  "learnDesc": "ስለ ስነ-ተዋልዶ እና አጠቃላይ የጤና ትምህርት በዝርዝር ይማሩ።",
+  "findFacilitiesTitle": "የጤና ተቋማት",
+  "findFacilitiesDesc": "በአቅራቢያዎ የሚገኙ አስተማማኝ የጤና ተቋማትን ያግኙ።",
+  "peerMentorTitle": "የአቻ አማካሪ",
+  "peerMentorDesc": "ከአስተማማኝ አማካሪዎች ጋር ለምክርና ድጋፍ ይገናኙ።",
+  "welcomeHeroTitle": "እንኳን ወደ የእኛ ጤና በደህና መጡ",
+  "welcomeHeroSubtitle": "ወጣቶች ራሳቸውን እንዲገመግሙ፣ ስለ ስነ-ተዋልዶ ጤና እንዲማሩ እና ከተረጋገጡ የጤና ባለሙያዎች ጋር እንዲገናኙ የሚያግዝ መተግበሪያ።",
+  "confidentialPill": "100% ሚስጥራዊ",
+  "reviewedPill": "የተረጋገጠ ይዘት",
+  "guestReadyPill": "ያለ ክፍያ ክፍት"
 }

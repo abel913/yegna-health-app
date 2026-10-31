@@ -16,3 +16,6 @@ android/local.properties
 ios/Pods/
 ios/.symlinks/
 macos/Flutter/ephemeral/
+
+.flutter-plugins
+.flutter-plugins-dependencies

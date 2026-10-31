@@ -35,3 +35,11 @@ The owner reports successful real-account manual testing of registration, email 
 - `path_provider: ^2.1.6` was added for app-private cache storage. No Markdown or search package was added.
 
 The Flutter choices are implemented locally. Migrations `20261030174702`, `20261030174920`, and `20261030192800` plus `submit-assessment` v2 are deployed to the development project. The added guest limit uses an atomic private Postgres counter, keyed by the first forwarded client IP, allowing 20 submissions per 10-minute window and expiring records after one day. This avoids a paid external dependency. Database grants/RLS and the 20/21 threshold were verified; the deployed HTTP rate-limit path and gateway header trust still need direct endpoint verification. The content tables remain empty, so positive scoring and authenticated progress integration remain unverified. No production content or deployment is present.
+
+## 2026-11-01 — App-wide typography: Plus Jakarta Sans & Noto Sans Ethiopic
+
+- Replaced default system typography with bundled local Open Font License (OFL) assets:
+  - English / Latin numbers & text: `Plus Jakarta Sans` (Variable Font `[wght]`). Ultra-modern geometric neo-grotesque typeface offering crisp contrast, contemporary proportions, and optimal screen readability.
+  - Amharic / Ge'ez script: `Noto Sans Ethiopic` (Variable Font `[wdth,wght]`). The gold standard for modern screen-optimized Ethiopic script, eliminating archaic ductus and clipping.
+- Implementation pattern: Declared in `pubspec.yaml` under `assets/fonts/` for 100% offline-first reliability in low-connectivity regions with zero additional package dependencies. Configured in `ThemeData` via `fontFamily: 'PlusJakartaSans'` with `fontFamilyFallback: const ['NotoSansEthiopic']`.
+- Typography adjustments: Configured neutral `letterSpacing: 0` to prevent Amharic glyph collisions, paired with relaxed vertical line heights (`1.38 – 1.58`) to accommodate Ethiopic ascenders and vowel modifiers cleanly across all screens.

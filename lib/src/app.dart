@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 
 import '../l10n/app_localizations.dart';
@@ -33,6 +34,7 @@ class AppShell extends StatefulWidget {
 
 class _AppShellState extends State<AppShell> {
   int _selectedIndex = 0;
+  int _previousIndex = 0;
   bool _accountRouteOpen = false;
   bool _recoveryRouteOpen = false;
 
@@ -48,6 +50,23 @@ class _AppShellState extends State<AppShell> {
     widget.authController.removeListener(_handleAuthChange);
     super.dispose();
   }
+
+  void _onDestinationSelected(int index) {
+    if (index != _selectedIndex) {
+      setState(() {
+        _previousIndex = _selectedIndex;
+        _selectedIndex = index;
+      });
+    }
+  }
+
+  IconData _selectedIcon(int index) => switch (index) {
+        0 => Icons.home_rounded,
+        1 => Icons.local_hospital_rounded,
+        2 => Icons.people_alt_rounded,
+        3 => Icons.menu_book_rounded,
+        _ => Icons.person_rounded,
+      };
 
   void _handleAuthChange() {
     if (!mounted ||
@@ -106,9 +125,9 @@ class _AppShellState extends State<AppShell> {
       HomePage(
         educationRepository: widget.educationRepository,
         locale: Localizations.localeOf(context),
-        onOpenLearning: () => setState(() => _selectedIndex = 3),
-        onOpenMentors: () => setState(() => _selectedIndex = 2),
-        onOpenFacilities: () => setState(() => _selectedIndex = 1),
+        onOpenLearning: () => _onDestinationSelected(3),
+        onOpenMentors: () => _onDestinationSelected(2),
+        onOpenFacilities: () => _onDestinationSelected(1),
         onOpenAccount: _openAccount,
         onOpenArticle: _openArticle,
       ),
@@ -125,12 +144,32 @@ class _AppShellState extends State<AppShell> {
         authController: widget.authController,
         progressController: widget.progressController,
         onOpenAccount: _openAccount,
-        onOpenLearning: () => setState(() => _selectedIndex = 3),
+        onOpenLearning: () => _onDestinationSelected(3),
       ),
     ];
     return Scaffold(
+      backgroundColor: const Color(0xFFEAF5FD),
       appBar: AppBar(
         titleSpacing: 20,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        flexibleSpace: ClipRect(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.55),
+                border: Border(
+                  bottom: BorderSide(
+                    color: Colors.white.withValues(alpha: 0.85),
+                    width: 1.2,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.center,
@@ -138,98 +177,477 @@ class _AppShellState extends State<AppShell> {
             Text(l10n.appTitle,
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
                       color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 0.7,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 0.8,
                     )),
             Text(_title(l10n),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w800,
+                      color: const Color(0xFF092542),
                     )),
           ],
         ),
         actions: [
-          _LanguageSegment(localeController: widget.localeController),
+          _LanguageDropdown(localeController: widget.localeController),
           IconButton(
             tooltip: l10n.accountTitle,
             onPressed: _openAccount,
-            icon: const Icon(Icons.account_circle_outlined),
+            icon: const Icon(Icons.account_circle_outlined,
+                color: Color(0xFF0284C7)),
           ),
           const SizedBox(width: 8),
         ],
       ),
       body: SafeArea(
-        child: IndexedStack(
-          index: _selectedIndex,
-          children: [
-            for (var index = 0; index < pages.length; index++)
-              TickerMode(enabled: index == _selectedIndex, child: pages[index]),
-          ],
+        child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 260),
+          switchInCurve: Curves.easeOutCubic,
+          switchOutCurve: Curves.easeInCubic,
+          transitionBuilder: (Widget child, Animation<double> animation) {
+            final isForward = _selectedIndex >= _previousIndex;
+            final beginOffset =
+                isForward ? const Offset(0.06, 0) : const Offset(-0.06, 0);
+            return FadeTransition(
+              opacity: animation,
+              child: SlideTransition(
+                position: Tween<Offset>(
+                  begin: beginOffset,
+                  end: Offset.zero,
+                ).animate(animation),
+                child: child,
+              ),
+            );
+          },
+          layoutBuilder: (Widget? currentChild, List<Widget> previousChildren) {
+            return Stack(
+              alignment: Alignment.topLeft,
+              children: <Widget>[
+                ...previousChildren,
+                if (currentChild != null) currentChild,
+              ],
+            );
+          },
+          child: KeyedSubtree(
+            key: ValueKey<int>(_selectedIndex),
+            child: pages[_selectedIndex],
+          ),
         ),
       ),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _selectedIndex,
-        onDestinationSelected: (index) =>
-            setState(() => _selectedIndex = index),
-        destinations: [
-          NavigationDestination(
-            icon: const Icon(Icons.home_outlined),
-            selectedIcon: const Icon(Icons.home_rounded),
-            label: l10n.homeTab,
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.local_hospital_outlined),
-            selectedIcon: const Icon(Icons.local_hospital_rounded),
-            label: l10n.facilitiesTab,
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.people_alt_outlined),
-            selectedIcon: const Icon(Icons.people_alt_rounded),
-            label: l10n.mentorsTab,
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.menu_book_outlined),
-            selectedIcon: const Icon(Icons.menu_book_rounded),
-            label: l10n.learnTab,
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.person_outline_rounded),
-            selectedIcon: const Icon(Icons.person_rounded),
-            label: l10n.accountTab,
-          ),
-        ],
+      bottomNavigationBar: SafeArea(
+        top: false,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final totalWidth = constraints.maxWidth;
+            final tabWidth = totalWidth / 5;
+            const circleSize = 52.0;
+            final leftOffset =
+                (_selectedIndex + 0.5) * tabWidth - (circleSize / 2);
+
+            return Stack(
+              clipBehavior: Clip.none,
+              alignment: Alignment.bottomCenter,
+              children: [
+                // Frosted glass background + NavigationBar
+                ClipRect(
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.75),
+                        border: Border(
+                          top: BorderSide(
+                            color: Colors.white.withValues(alpha: 0.88),
+                            width: 1.2,
+                          ),
+                        ),
+                      ),
+                      child: Theme(
+                        data: Theme.of(context).copyWith(
+                          navigationBarTheme: NavigationBarThemeData(
+                            indicatorColor: Colors.transparent,
+                            labelTextStyle:
+                                WidgetStateProperty.resolveWith((states) {
+                              if (states.contains(WidgetState.selected)) {
+                                return const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w800,
+                                  color: Color(0xFF0284C7),
+                                );
+                              }
+                              return const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF64748B),
+                              );
+                            }),
+                            iconTheme:
+                                WidgetStateProperty.resolveWith((states) {
+                              if (states.contains(WidgetState.selected)) {
+                                return const IconThemeData(
+                                  color: Colors.transparent,
+                                  size: 26,
+                                );
+                              }
+                              return const IconThemeData(
+                                color: Color(0xFF64748B),
+                                size: 24,
+                              );
+                            }),
+                          ),
+                        ),
+                        child: NavigationBar(
+                          backgroundColor: Colors.transparent,
+                          elevation: 0,
+                          height: 68,
+                          selectedIndex: _selectedIndex,
+                          onDestinationSelected: _onDestinationSelected,
+                          labelBehavior:
+                              NavigationDestinationLabelBehavior.alwaysShow,
+                          destinations: [
+                            NavigationDestination(
+                              icon: const Icon(Icons.home_outlined),
+                              selectedIcon:
+                                  const SizedBox(width: 26, height: 26),
+                              label: l10n.homeTab,
+                            ),
+                            NavigationDestination(
+                              icon: const Icon(Icons.local_hospital_outlined),
+                              selectedIcon:
+                                  const SizedBox(width: 26, height: 26),
+                              label: l10n.facilitiesTab,
+                            ),
+                            NavigationDestination(
+                              icon: const Icon(Icons.people_alt_outlined),
+                              selectedIcon:
+                                  const SizedBox(width: 26, height: 26),
+                              label: l10n.mentorsTab,
+                            ),
+                            NavigationDestination(
+                              icon: const Icon(Icons.menu_book_outlined),
+                              selectedIcon:
+                                  const SizedBox(width: 26, height: 26),
+                              label: l10n.learnTab,
+                            ),
+                            NavigationDestination(
+                              icon: const Icon(Icons.person_outline_rounded),
+                              selectedIcon:
+                                  const SizedBox(width: 26, height: 26),
+                              label: l10n.accountTab,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+
+                // Animated Floating Blue Indicator Circle that slides smoothly!
+                AnimatedPositioned(
+                  duration: const Duration(milliseconds: 280),
+                  curve: Curves.easeOutCubic,
+                  left: leftOffset,
+                  top: -12,
+                  child: IgnorePointer(
+                    child: Container(
+                      width: circleSize,
+                      height: circleSize,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: const LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            Color(0xFF0284C7),
+                            Color(0xFF0369A1),
+                          ],
+                        ),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.85),
+                          width: 2.2,
+                        ),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Color(0x550284C7),
+                            blurRadius: 18,
+                            spreadRadius: 2,
+                            offset: Offset(0, 5),
+                          ),
+                        ],
+                      ),
+                      child: Center(
+                        child: Icon(
+                          _selectedIcon(_selectedIndex),
+                          color: Colors.white,
+                          size: 26,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
 }
 
-class _LanguageSegment extends StatelessWidget {
-  const _LanguageSegment({required this.localeController});
+class _LanguageDropdown extends StatelessWidget {
+  const _LanguageDropdown({required this.localeController});
   final LocaleController localeController;
 
   @override
   Widget build(BuildContext context) {
     final selected = localeController.locale.languageCode;
     return Center(
-      child: SegmentedButton<String>(
-        showSelectedIcon: false,
-        style: ButtonStyle(
-          visualDensity: VisualDensity.compact,
-          textStyle: WidgetStatePropertyAll(
-            Theme.of(context).textTheme.labelSmall,
+      child: PopupMenuButton<String>(
+        key: const Key('language_dropdown_button'),
+        tooltip: 'Change language',
+        position: PopupMenuPosition.under,
+        offset: const Offset(0, 8),
+        elevation: 12,
+        shadowColor: const Color(0x350284C7),
+        color: Colors.white,
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: const BorderSide(
+            color: Color(0xFFBAE6FD),
+            width: 1.4,
           ),
         ),
-        segments: const [
-          ButtonSegment(value: 'am', label: Text('አማ')),
-          ButtonSegment(value: 'en', label: Text('EN')),
-        ],
-        selected: {selected},
-        onSelectionChanged: (selection) {
-          if (selection.isNotEmpty) {
-            localeController.setLanguage(selection.first);
+        onSelected: (value) {
+          if (value != selected) {
+            localeController.setLanguage(value);
           }
         },
+        itemBuilder: (context) => [
+          PopupMenuItem<String>(
+            value: 'en',
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            child: Row(
+              children: [
+                Container(
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    color: selected == 'en'
+                        ? const Color(0xFFE0F2FE)
+                        : const Color(0xFFF8FAFC),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: selected == 'en'
+                          ? const Color(0xFFBAE6FD)
+                          : const Color(0xFFE2E8F0),
+                    ),
+                  ),
+                  alignment: Alignment.center,
+                  child: const Text('🇺🇸', style: TextStyle(fontSize: 16)),
+                ),
+                const SizedBox(width: 10),
+                const Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'English',
+                        style: TextStyle(
+                          fontSize: 13.5,
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xFF0F172A),
+                        ),
+                      ),
+                      Text(
+                        'English (US)',
+                        style: TextStyle(
+                          fontSize: 10.5,
+                          color: Color(0xFF64748B),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
+                  decoration: BoxDecoration(
+                    color: selected == 'en'
+                        ? const Color(0xFF0284C7)
+                        : const Color(0xFFF1F5F9),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(
+                    'EN',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w800,
+                      color: selected == 'en'
+                          ? Colors.white
+                          : const Color(0xFF475569),
+                    ),
+                  ),
+                ),
+                if (selected == 'en') ...[
+                  const SizedBox(width: 6),
+                  const Icon(
+                    Icons.check_circle_rounded,
+                    size: 16,
+                    color: Color(0xFF0284C7),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          const PopupMenuDivider(height: 1),
+          PopupMenuItem<String>(
+            value: 'am',
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            child: Row(
+              children: [
+                Container(
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    color: selected == 'am'
+                        ? const Color(0xFFE0F2FE)
+                        : const Color(0xFFF8FAFC),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: selected == 'am'
+                          ? const Color(0xFFBAE6FD)
+                          : const Color(0xFFE2E8F0),
+                    ),
+                  ),
+                  alignment: Alignment.center,
+                  child: const Text('🇪🇹', style: TextStyle(fontSize: 16)),
+                ),
+                const SizedBox(width: 10),
+                const Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'አማርኛ',
+                        style: TextStyle(
+                          fontSize: 13.5,
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xFF0F172A),
+                        ),
+                      ),
+                      Text(
+                        'Amharic',
+                        style: TextStyle(
+                          fontSize: 10.5,
+                          color: Color(0xFF64748B),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
+                  decoration: BoxDecoration(
+                    color: selected == 'am'
+                        ? const Color(0xFF0284C7)
+                        : const Color(0xFFF1F5F9),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(
+                    'አማ',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w800,
+                      color: selected == 'am'
+                          ? Colors.white
+                          : const Color(0xFF475569),
+                    ),
+                  ),
+                ),
+                if (selected == 'am') ...[
+                  const SizedBox(width: 6),
+                  const Icon(
+                    Icons.check_circle_rounded,
+                    size: 16,
+                    color: Color(0xFF0284C7),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+            child: Container(
+              height: 38,
+              padding: const EdgeInsets.symmetric(horizontal: 11),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.75),
+                gradient: LinearGradient(
+                  colors: [
+                    Colors.white.withValues(alpha: 0.90),
+                    const Color(0xFFEDF8FE).withValues(alpha: 0.55),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: Colors.white.withValues(alpha: 0.95),
+                  width: 1.3,
+                ),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Color(0x180284C7),
+                    blurRadius: 10,
+                    offset: Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 22,
+                    height: 22,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFFE0F2FE),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.translate_rounded,
+                      size: 13,
+                      color: Color(0xFF0284C7),
+                    ),
+                  ),
+                  const SizedBox(width: 7),
+                  Text(
+                    selected == 'am' ? '🇪🇹 አማ' : '🇺🇸 EN',
+                    style: const TextStyle(
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w800,
+                      color: Color(0xFF0369A1),
+                      letterSpacing: 0.3,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  const Icon(
+                    Icons.keyboard_arrow_down_rounded,
+                    size: 18,
+                    color: Color(0xFF0284C7),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

@@ -492,4 +492,41 @@ class AppLocalizationsAm extends AppLocalizations {
 
   @override
   String get learningProgressTitle => 'የትምህርት እንቅስቃሴዎ';
+
+  @override
+  String get selfAssessmentTitle => 'ራስን መገምገም';
+
+  @override
+  String get selfAssessmentDesc => 'የጤና ሁኔታዎን ይገምግሙና ተገቢውን መመሪያ ያግኙ።';
+
+  @override
+  String get learnDesc => 'ስለ ስነ-ተዋልዶ እና አጠቃላይ የጤና ትምህርት በዝርዝር ይማሩ።';
+
+  @override
+  String get findFacilitiesTitle => 'የጤና ተቋማት';
+
+  @override
+  String get findFacilitiesDesc => 'በአቅራቢያዎ የሚገኙ አስተማማኝ የጤና ተቋማትን ያግኙ።';
+
+  @override
+  String get peerMentorTitle => 'የአቻ አማካሪ';
+
+  @override
+  String get peerMentorDesc => 'ከአስተማማኝ አማካሪዎች ጋር ለምክርና ድጋፍ ይገናኙ።';
+
+  @override
+  String get welcomeHeroTitle => 'እንኳን ወደ የእኛ ጤና በደህና መጡ';
+
+  @override
+  String get welcomeHeroSubtitle =>
+      'ወጣቶች ራሳቸውን እንዲገመግሙ፣ ስለ ስነ-ተዋልዶ ጤና እንዲማሩ እና ከተረጋገጡ የጤና ባለሙያዎች ጋር እንዲገናኙ የሚያግዝ መተግበሪያ።';
+
+  @override
+  String get confidentialPill => '100% ሚስጥራዊ';
+
+  @override
+  String get reviewedPill => 'የተረጋገጠ ይዘት';
+
+  @override
+  String get guestReadyPill => 'ያለ ክፍያ ክፍት';
 }

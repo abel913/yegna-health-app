@@ -158,5 +158,17 @@
   "noVerifiedMentorsBody": "Mentor profiles and contact options will appear here after identity and safety checks are in place.",
   "mentorSafetyTitle": "Peer support directory",
   "mentorSafetyBody": "No people or contact information are displayed until a verification process is available.",
-  "learningProgressTitle": "Your learning activity"
+  "learningProgressTitle": "Your learning activity",
+  "selfAssessmentTitle": "Self-Assessment",
+  "selfAssessmentDesc": "Assess your health status and get guided recommendations.",
+  "learnDesc": "Explore sexual and reproductive health education.",
+  "findFacilitiesTitle": "Find Health Facilities",
+  "findFacilitiesDesc": "Locate verified youth-friendly health facilities.",
+  "peerMentorTitle": "Peer Mentor",
+  "peerMentorDesc": "Connect with compassionate mentors for guidance.",
+  "welcomeHeroTitle": "Welcome to Yegna Health",
+  "welcomeHeroSubtitle": "Empowering youth to conduct self-assessments, explore health education, and connect with compassionate professionals.",
+  "confidentialPill": "100% Confidential",
+  "reviewedPill": "Reviewed Sources",
+  "guestReadyPill": "Open & Free"
 }

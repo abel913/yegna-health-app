@@ -1,5 +1,43 @@
 # Phase status
 
+## Modern Bilingual Typography System: Plus Jakarta Sans & Noto Sans Ethiopic (2026-11-01)
+
+**Status: Phase 3 remains PARTIAL. Phase 4 has not started.**
+- Bundled and configured offline-first modern variable typography across the entire application:
+  - English/Latin numbers and headings: **Plus Jakarta Sans** (`assets/fonts/PlusJakartaSans-VariableFont_wght.ttf`).
+  - Amharic/Ge'ez script: **Noto Sans Ethiopic** (`assets/fonts/NotoSansEthiopic-VariableFont_wdth,wght.ttf`).
+- Integrated into root `ThemeData` (`lib/main.dart`) via `fontFamily: 'PlusJakartaSans'` with seamless fallback `fontFamilyFallback: const ['NotoSansEthiopic']`.
+- Balanced typography rules: neutralized tracking (`letterSpacing: 0`) to prevent Amharic character collisions, and elevated vertical line-heights (`1.38 – 1.58`) for comfortable readability of Ethiopic ascenders/modifiers.
+- Local verification: `dart format lib test` passed; `flutter analyze --no-pub` passed (0 issues found); `flutter test --no-pub` passed (all 27 tests); `flutter build web --no-pub` passed.
+
+## Animated Floating Circular Navigation & Fluid Page Transitions (2026-10-31)
+
+**Status: Phase 3 remains PARTIAL. Phase 4 has not started.**
+- Implemented the animated elevated floating circular navigation indicator and fluid page transitions in `AppShell` (`lib/src/app.dart`):
+  - Floating 52px circular blue active indicator (`#0284C7` to `#0369A1` gradient, 2.2px white rim, glowing azure blur shadow) elevated 12px above the navigation bar matching the youth reference UI.
+  - Smooth sliding motion: when any destination is tapped, the glowing indicator smoothly glides horizontally across the screen to the new tab using `AnimatedPositioned` with `Curves.easeOutCubic` over 280ms.
+  - Direction-aware page transitions: replaced un-animated `IndexedStack` with an `AnimatedSwitcher` that slides and fades pages in 260ms based on navigation direction (forward vs. backward) with no page stacking.
+  - Complete `NavigationBar` compatibility: underlying destinations, labels, and localizations remain intact, passing all 27 widget tests.
+- Local verification: `dart format lib test` passed; `flutter analyze --no-pub` passed (0 issues found); `flutter test` passed (all 27 tests); hot restart executed on the active Chrome instance (`task-270`).
+- Upgraded the language selection dropdown from standard rigid Flutter `DropdownButton` to a modern, high-end `PopupMenuButton<String>` with `PopupMenuPosition.under` and frosted glass aesthetics:
+  - Frosted glass trigger pill with rounded 20px shape, translate globe emblem, high-contrast locale indicators (`🇪🇹 አማ` / `🇺🇸 EN`), and sleek chevron down arrow.
+  - Positioned cleanly below the anchor pill with 8px offset, preventing the previous modal overlap and banner clipping.
+  - Rounded floating glass popover menu with 20px radius, `#BAE6FD` specular border, and ambient azure shadow (`0x350284C7`).
+  - Rich menu items featuring localized country flags (🇺🇸, 🇪🇹), primary and subtitle labels (English / English (US), አማርኛ / Amharic), high-contrast code pills (`EN`, `አማ`), and active selection checkmarks (`Icons.check_circle_rounded`).
+- Maintained strict test compatibility (`Key('language_dropdown_button')`, `find.text('አማ')`, `find.text('EN')`).
+- Local verification: `dart format lib test` passed; `flutter analyze --no-pub` passed (0 issues found); `flutter test` passed (all 27 tests); hot restart executed on the active Chrome instance (`task-270`).
+- Configured local development client credentials in private Git-ignored `config/supabase.local.json` (`oflkhtjskpsedsuczfkj` / `yegna-health-amharic`). Verified live connectivity to both Supabase PostgREST and the deployed `submit-assessment` Edge Function.
+- Redesigned `HomePage` (`lib/src/home/home_page.dart`) with an advanced, modern Blue Glassy (Glassmorphism) design:
+  - Luminous ambient mesh layer with subtle radial glowing azure and sapphire light orbs (`#38BDF8`, `#0284C7`, `#0EA5E9`).
+  - Frosted glass cards (`BackdropFilter` with blur `sigma: 16`, translucent azure-white gradients, 1.4px white borders, and soft glowing drop shadows).
+  - High-contrast, sharp typography for titles (`#0A2540` / `#08264A`) and body descriptions (`#243B53` / `#3B5269`), avoiding low-contrast washed-out text.
+  - Top branding header featuring a health icon badge and glowing deep ocean blue "Sign In / Account" pill button.
+  - 2x2 Feature Action Cards matching the user-provided reference: Self-Assessment, Learn, Find Health Facilities, and Peer Mentor with vibrant gradient icon containers.
+  - Frosted glass horizontal carousel for featured health education topics, plus an explicit safety disclaimer banner distinguishing general health education from professional medical care.
+- Added 11 matching message keys to `lib/l10n/app_en.arb` and `lib/l10n/app_am.arb`; regenerated `AppLocalizations` (161 matching keys total). Key parity and widget tests passed.
+- Local verification: `dart format lib test` passed; `flutter analyze --no-pub` passed (0 issues found); `flutter test` passed (all 27 tests); `flutter build web` passed.
+- Launched the app in Google Chrome in debug mode with hot reload enabled at `http://localhost:56770`.
+
 ## Final Phase 3 verification refresh (2026-10-31)
 
 **Status: Phase 3 remains PARTIAL. Phase 4 has not started.** Flutter learning and assessment UI/repository/cache/progress code is implemented, but there is no reviewed published content in the development database; articles, assessments, versions, progress and attempt history are empty. A successful guest score, authenticated score/sync, retry/retake, account-isolation runtime flow, and complete end-to-end learning experience therefore remain unverified. No content or synthetic assessment fixture was seeded or published.

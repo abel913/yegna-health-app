@@ -514,4 +514,44 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get learningProgressTitle => 'Your learning activity';
+
+  @override
+  String get selfAssessmentTitle => 'Self-Assessment';
+
+  @override
+  String get selfAssessmentDesc =>
+      'Assess your health status and get guided recommendations.';
+
+  @override
+  String get learnDesc => 'Explore sexual and reproductive health education.';
+
+  @override
+  String get findFacilitiesTitle => 'Find Health Facilities';
+
+  @override
+  String get findFacilitiesDesc =>
+      'Locate verified youth-friendly health facilities.';
+
+  @override
+  String get peerMentorTitle => 'Peer Mentor';
+
+  @override
+  String get peerMentorDesc =>
+      'Connect with compassionate mentors for guidance.';
+
+  @override
+  String get welcomeHeroTitle => 'Welcome to Yegna Health';
+
+  @override
+  String get welcomeHeroSubtitle =>
+      'Empowering youth to conduct self-assessments, explore health education, and connect with compassionate professionals.';
+
+  @override
+  String get confidentialPill => '100% Confidential';
+
+  @override
+  String get reviewedPill => 'Reviewed Sources';
+
+  @override
+  String get guestReadyPill => 'Open & Free';
 }

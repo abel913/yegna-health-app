@@ -92,7 +92,9 @@ void main() {
 
     await tester.tap(find.text(en.accountTab).last);
     await tester.pumpAndSettle();
-    await tester.tap(find.text('አማ'));
+    await tester.tap(find.byKey(const Key('language_dropdown_button')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('አማ').last);
     await tester.pumpAndSettle();
     final am = await AppLocalizations.delegate.load(const Locale('am'));
     expect(

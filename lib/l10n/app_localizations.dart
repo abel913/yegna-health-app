@@ -997,6 +997,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your learning activity'**
   String get learningProgressTitle;
+
+  /// No description provided for @selfAssessmentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Self-Assessment'**
+  String get selfAssessmentTitle;
+
+  /// No description provided for @selfAssessmentDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Assess your health status and get guided recommendations.'**
+  String get selfAssessmentDesc;
+
+  /// No description provided for @learnDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore sexual and reproductive health education.'**
+  String get learnDesc;
+
+  /// No description provided for @findFacilitiesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Find Health Facilities'**
+  String get findFacilitiesTitle;
+
+  /// No description provided for @findFacilitiesDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Locate verified youth-friendly health facilities.'**
+  String get findFacilitiesDesc;
+
+  /// No description provided for @peerMentorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Peer Mentor'**
+  String get peerMentorTitle;
+
+  /// No description provided for @peerMentorDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect with compassionate mentors for guidance.'**
+  String get peerMentorDesc;
+
+  /// No description provided for @welcomeHeroTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to Yegna Health'**
+  String get welcomeHeroTitle;
+
+  /// No description provided for @welcomeHeroSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Empowering youth to conduct self-assessments, explore health education, and connect with compassionate professionals.'**
+  String get welcomeHeroSubtitle;
+
+  /// No description provided for @confidentialPill.
+  ///
+  /// In en, this message translates to:
+  /// **'100% Confidential'**
+  String get confidentialPill;
+
+  /// No description provided for @reviewedPill.
+  ///
+  /// In en, this message translates to:
+  /// **'Reviewed Sources'**
+  String get reviewedPill;
+
+  /// No description provided for @guestReadyPill.
+  ///
+  /// In en, this message translates to:
+  /// **'Open & Free'**
+  String get guestReadyPill;
 }
 
 class _AppLocalizationsDelegate

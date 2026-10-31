@@ -128,6 +128,8 @@ class _YegnaHealthAppState extends State<YegnaHealthApp> {
             GlobalCupertinoLocalizations.delegate,
           ],
           theme: ThemeData(
+            fontFamily: 'PlusJakartaSans',
+            fontFamilyFallback: const ['NotoSansEthiopic'],
             colorScheme: ColorScheme.fromSeed(
               seedColor: const Color(0xFF005A71),
               surface: const Color(0xFFFAF8FF),
@@ -211,13 +213,13 @@ class _YegnaHealthAppState extends State<YegnaHealthApp> {
                 fontSize: 32,
                 height: 1.28,
                 fontWeight: FontWeight.w700,
-                letterSpacing: -0.3,
+                letterSpacing: 0,
               ),
               headlineMedium: TextStyle(
                 fontSize: 26,
                 height: 1.3,
                 fontWeight: FontWeight.w700,
-                letterSpacing: -0.2,
+                letterSpacing: 0,
               ),
               headlineSmall: TextStyle(
                 fontSize: 23,
