@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'dart:ui';
 import 'package:flutter/material.dart';
 
@@ -241,29 +242,37 @@ class _AppShellState extends State<AppShell> {
           builder: (context, constraints) {
             final totalWidth = constraints.maxWidth;
             final tabWidth = totalWidth / 5;
-            const circleSize = 52.0;
-            final leftOffset =
-                (_selectedIndex + 0.5) * tabWidth - (circleSize / 2);
+            final targetNotchX = (_selectedIndex + 0.5) * tabWidth;
+            const circleSize = 50.0;
 
-            return Stack(
-              clipBehavior: Clip.none,
-              alignment: Alignment.bottomCenter,
-              children: [
-                // Frosted glass background + NavigationBar
-                ClipRect(
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.75),
-                        border: Border(
-                          top: BorderSide(
+            return TweenAnimationBuilder<double>(
+              tween: Tween<double>(
+                begin: targetNotchX,
+                end: targetNotchX,
+              ),
+              duration: const Duration(milliseconds: 280),
+              curve: Curves.easeOutCubic,
+              builder: (context, notchX, child) {
+                return SizedBox(
+                  height: 72,
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      // 1. Scooped Notched Bar Background
+                      Positioned.fill(
+                        child: CustomPaint(
+                          painter: _ScoopedNotchBarPainter(
+                            notchX: notchX,
                             color: Colors.white.withValues(alpha: 0.88),
-                            width: 1.2,
+                            borderColor: Colors.white.withValues(alpha: 0.95),
+                            cradleBorderColor: const Color(0xFFBAE6FD),
+                            shadowColor: const Color(0x180284C7),
                           ),
                         ),
                       ),
-                      child: Theme(
+
+                      // 2. NavigationBar for Taps, Semantics & Descendants
+                      Theme(
                         data: Theme.of(context).copyWith(
                           navigationBarTheme: NavigationBarThemeData(
                             indicatorColor: Colors.transparent,
@@ -271,13 +280,13 @@ class _AppShellState extends State<AppShell> {
                                 WidgetStateProperty.resolveWith((states) {
                               if (states.contains(WidgetState.selected)) {
                                 return const TextStyle(
-                                  fontSize: 12,
+                                  fontSize: 11.5,
                                   fontWeight: FontWeight.w800,
                                   color: Color(0xFF0284C7),
                                 );
                               }
                               return const TextStyle(
-                                fontSize: 12,
+                                fontSize: 11.5,
                                 fontWeight: FontWeight.w600,
                                 color: Color(0xFF64748B),
                               );
@@ -300,7 +309,7 @@ class _AppShellState extends State<AppShell> {
                         child: NavigationBar(
                           backgroundColor: Colors.transparent,
                           elevation: 0,
-                          height: 68,
+                          height: 72,
                           selectedIndex: _selectedIndex,
                           onDestinationSelected: _onDestinationSelected,
                           labelBehavior:
@@ -339,59 +348,176 @@ class _AppShellState extends State<AppShell> {
                           ],
                         ),
                       ),
-                    ),
-                  ),
-                ),
 
-                // Animated Floating Blue Indicator Circle that slides smoothly!
-                AnimatedPositioned(
-                  duration: const Duration(milliseconds: 280),
-                  curve: Curves.easeOutCubic,
-                  left: leftOffset,
-                  top: -12,
-                  child: IgnorePointer(
-                    child: Container(
-                      width: circleSize,
-                      height: circleSize,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        gradient: const LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [
-                            Color(0xFF0284C7),
-                            Color(0xFF0369A1),
-                          ],
-                        ),
-                        border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.85),
-                          width: 2.2,
-                        ),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Color(0x550284C7),
-                            blurRadius: 18,
-                            spreadRadius: 2,
-                            offset: Offset(0, 5),
+                      // 3. Floating 3D Circular Button Nested in the Scoop
+                      Positioned(
+                        left: notchX - (circleSize / 2),
+                        top: -10,
+                        child: IgnorePointer(
+                          child: Container(
+                            width: circleSize,
+                            height: circleSize,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              gradient: const LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  Color(0xFF0284C7),
+                                  Color(0xFF0369A1),
+                                ],
+                              ),
+                              border: Border.all(
+                                color: Colors.white,
+                                width: 2.2,
+                              ),
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Color(0x450284C7),
+                                  blurRadius: 14,
+                                  spreadRadius: 1,
+                                  offset: Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: Center(
+                              child: Icon(
+                                _selectedIcon(_selectedIndex),
+                                color: Colors.white,
+                                size: 24,
+                              ),
+                            ),
                           ),
-                        ],
-                      ),
-                      child: Center(
-                        child: Icon(
-                          _selectedIcon(_selectedIndex),
-                          color: Colors.white,
-                          size: 26,
                         ),
                       ),
-                    ),
+                    ],
                   ),
-                ),
-              ],
+                );
+              },
             );
           },
         ),
       ),
     );
+  }
+}
+
+class _ScoopedNotchBarPainter extends CustomPainter {
+  const _ScoopedNotchBarPainter({
+    required this.notchX,
+    required this.color,
+    required this.borderColor,
+    required this.cradleBorderColor,
+    required this.shadowColor,
+  });
+
+  final double notchX;
+  final Color color;
+  final Color borderColor;
+  final Color cradleBorderColor;
+  final Color shadowColor;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+
+    const r = 30.0;
+    const depth = 22.0;
+    const s = 12.0;
+
+    final leftLip = math.max(0.0, notchX - r - s);
+    final rightLip = math.min(w, notchX + r + s);
+
+    final path = Path()
+      ..moveTo(0, 0)
+      ..lineTo(leftLip, 0)
+      ..cubicTo(
+        notchX - r,
+        0,
+        notchX - r + 3,
+        depth,
+        notchX,
+        depth,
+      )
+      ..cubicTo(
+        notchX + r - 3,
+        depth,
+        notchX + r,
+        0,
+        rightLip,
+        0,
+      )
+      ..lineTo(w, 0)
+      ..lineTo(w, h)
+      ..lineTo(0, h)
+      ..close();
+
+    // 1. Ambient drop shadow
+    final shadowPaint = Paint()
+      ..color = shadowColor
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10);
+    canvas.drawPath(path, shadowPaint);
+
+    // 2. Bar background fill
+    final fillPaint = Paint()
+      ..color = color
+      ..style = PaintingStyle.fill;
+    canvas.drawPath(path, fillPaint);
+
+    // 3. Top edge continuous border
+    final borderPath = Path()
+      ..moveTo(0, 0)
+      ..lineTo(leftLip, 0)
+      ..cubicTo(
+        notchX - r,
+        0,
+        notchX - r + 3,
+        depth,
+        notchX,
+        depth,
+      )
+      ..cubicTo(
+        notchX + r - 3,
+        depth,
+        notchX + r,
+        0,
+        rightLip,
+        0,
+      )
+      ..lineTo(w, 0);
+
+    final borderPaint = Paint()
+      ..color = borderColor
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.4;
+    canvas.drawPath(borderPath, borderPaint);
+
+    // 4. Half-circle cradle accent contour between icon and text (matching reference)
+    final cradleContour = Path()
+      ..moveTo(notchX - r + 2, 2)
+      ..cubicTo(
+        notchX - r + 5,
+        depth,
+        notchX + r - 5,
+        depth,
+        notchX + r - 2,
+        2,
+      );
+
+    final cradlePaint = Paint()
+      ..color = cradleBorderColor
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.4;
+    canvas.drawPath(cradleContour, cradlePaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant _ScoopedNotchBarPainter oldDelegate) {
+    return oldDelegate.notchX != notchX ||
+        oldDelegate.color != color ||
+        oldDelegate.borderColor != borderColor ||
+        oldDelegate.cradleBorderColor != cradleBorderColor;
   }
 }
 

@@ -1,5 +1,15 @@
 # Phase status
 
+## Scooped Half-Circle Notch Navigation Bar Micro-Interaction (2026-11-01)
+
+**Status: Phase 3 remains PARTIAL. Phase 4 has not started.**
+- Implemented the curved half-circle scooped notch navigation bar micro-interaction in `AppShell` (`lib/src/app.dart`):
+  - Custom `_ScoopedNotchBarPainter` draws a fluid cubic bezier concave cradle notch dipping into the bar's top edge at the active tab.
+  - Draws an accent half-circle cradle contour between the circular button and the text label below it, exactly matching the reference micro-interaction design.
+  - Animated with `TweenAnimationBuilder<double>` (`duration: 280ms`, `Curves.easeOutCubic`) so that both the scooped cradle notch and the floating circular button smoothly slide across the bar when switching tabs.
+  - Full `NavigationBar` compatibility maintained, passing all 27 unit/widget tests.
+- Local verification: `dart format lib test` passed; `flutter analyze --no-pub` passed (0 issues found); `flutter test` passed (all 27 tests); hot restart executed on the active Chrome instance (`task-642`).
+
 ## Modern Bilingual Typography System: Plus Jakarta Sans & Noto Sans Ethiopic (2026-11-01)
 
 **Status: Phase 3 remains PARTIAL. Phase 4 has not started.**
