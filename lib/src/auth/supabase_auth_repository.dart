@@ -1,12 +1,14 @@
 import 'dart:async';
-import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' hide AuthUser;
 
 import 'auth_models.dart';
 import 'auth_repository.dart';
 
 const authCallbackUri = 'com.yegnahealth.amharic://auth-callback';
+
+String get _authRedirectUri => kIsWeb ? Uri.base.origin : authCallbackUri;
 
 class SupabaseAuthRepository implements AuthRepository {
   SupabaseAuthRepository(this._client) {
@@ -43,7 +45,7 @@ class SupabaseAuthRepository implements AuthRepository {
       final response = await _client.auth.signUp(
         email: email.trim(),
         password: password,
-        emailRedirectTo: authCallbackUri,
+        emailRedirectTo: _authRedirectUri,
         data: {'display_name': displayName.trim()},
       );
       final user = response.user;
@@ -58,8 +60,6 @@ class SupabaseAuthRepository implements AuthRepository {
       throw const AuthFailure(AuthIssue.networkUnavailable);
     } on AuthException catch (error) {
       throw AuthFailure(_mapAuthException(error));
-    } on SocketException catch (_) {
-      throw const AuthFailure(AuthIssue.networkUnavailable);
     } on TimeoutException catch (_) {
       throw const AuthFailure(AuthIssue.networkUnavailable);
     } catch (_) {
@@ -88,8 +88,6 @@ class SupabaseAuthRepository implements AuthRepository {
       throw const AuthFailure(AuthIssue.networkUnavailable);
     } on AuthException catch (error) {
       throw AuthFailure(_mapAuthException(error));
-    } on SocketException catch (_) {
-      throw const AuthFailure(AuthIssue.networkUnavailable);
     } on TimeoutException catch (_) {
       throw const AuthFailure(AuthIssue.networkUnavailable);
     } catch (_) {
@@ -102,12 +100,10 @@ class SupabaseAuthRepository implements AuthRepository {
     try {
       await _client.auth.resetPasswordForEmail(
         email.trim(),
-        redirectTo: authCallbackUri,
+        redirectTo: _authRedirectUri,
       );
     } on AuthException catch (error) {
       throw AuthFailure(_mapAuthException(error));
-    } on SocketException catch (_) {
-      throw const AuthFailure(AuthIssue.networkUnavailable);
     } on TimeoutException catch (_) {
       throw const AuthFailure(AuthIssue.networkUnavailable);
     } catch (_) {
@@ -122,8 +118,6 @@ class SupabaseAuthRepository implements AuthRepository {
       await _client.auth.updateUser(UserAttributes(password: password));
     } on AuthException catch (error) {
       throw AuthFailure(_mapAuthException(error));
-    } on SocketException catch (_) {
-      throw const AuthFailure(AuthIssue.networkUnavailable);
     } on TimeoutException catch (_) {
       throw const AuthFailure(AuthIssue.networkUnavailable);
     } catch (_) {
@@ -140,8 +134,6 @@ class SupabaseAuthRepository implements AuthRepository {
       );
     } on AuthException catch (error) {
       throw AuthFailure(_mapAuthException(error));
-    } on SocketException catch (_) {
-      throw const AuthFailure(AuthIssue.networkUnavailable);
     } on TimeoutException catch (_) {
       throw const AuthFailure(AuthIssue.networkUnavailable);
     } catch (_) {
@@ -155,8 +147,6 @@ class SupabaseAuthRepository implements AuthRepository {
       await _client.auth.signOut();
     } on AuthException catch (error) {
       throw AuthFailure(_mapAuthException(error));
-    } on SocketException catch (_) {
-      throw const AuthFailure(AuthIssue.networkUnavailable);
     } on TimeoutException catch (_) {
       throw const AuthFailure(AuthIssue.networkUnavailable);
     } catch (_) {

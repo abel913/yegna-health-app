@@ -1,12 +1,65 @@
 # Phase status
 
-## Current phase: 3 preparation — Health Education and Assessments (planning only; implementation not started)
+## Final Phase 3 verification refresh (2026-10-31)
 
-**Phase 2 record:** The owner now reports Phase 1 and Phase 2 complete, including manual Phase 2 testing. Earlier workspace verification notes below retain their exact results and limitations. Supabase Auth is approved and configured for the development client.
+**Status: Phase 3 remains PARTIAL. Phase 4 has not started.** Flutter learning and assessment UI/repository/cache/progress code is implemented, but there is no reviewed published content in the development database; articles, assessments, versions, progress and attempt history are empty. A successful guest score, authenticated score/sync, retry/retake, account-isolation runtime flow, and complete end-to-end learning experience therefore remain unverified. No content or synthetic assessment fixture was seeded or published.
 
-**Phase 3 boundary:** The owner authorized final technical preparation only. `docs/PHASE_3_IMPLEMENTATION_GUIDE.md` records confirmed design decisions and proposed implementation. No Phase 3 implementation has started.
+- Remote project `oflkhtjskpsedsuczfkj` is `ACTIVE_HEALTHY`. Four migration versions are present: `20261030174702`, `20261030174920`, `20261030192800`, and `20261031095050` (`fix_assessment_publication_policy_correlation`). The last additive migration fixes an RLS policy that previously compared `v.assessment_id` to `v.id` rather than the outer assessment ID. Remote catalog verification confirms the corrected correlation.
+- The schema contains 23 Phase 3 tables, all with RLS enabled; 34 foreign keys and 41 relevant indexes were observed. Anonymous and authenticated roles cannot read private answer keys or rate-limit rows, nor execute the privileged scoring/limiter RPCs. `service_role` can execute those RPCs. All 6 private RLS tables without policies are deliberately deny-all. No data was present in education or user progress tables.
+- `submit-assessment` remains ACTIVE v2 with `verify_jwt=false`; the handler validates the publishable API key, resolves real user bearer tokens through Supabase Auth, and uses only the server-held service role for private scoring. Live negative HTTP checks: missing API key → 401; malformed submission → 400; invalid bearer → 401; GET → 405. One syntactically valid guest request with nonexistent answer identifiers returned `invalid_answers` (400), not a score. A valid assessment submission cannot be tested until an approved assessment exists.
+- The remote limiter database function passed a bounded reserved-IP check: requests 1–20 allowed, request 21 denied, test row deleted afterward. It uses fixed 10-minute buckets and cleans counters older than one day opportunistically on guest calls, not by a scheduled job. We did not claim HTTP 429 verification: a reserved `X-Forwarded-For` test value was not the address recorded by the gateway, so no repeated HTTP requests were sent that could throttle a shared/real caller bucket.
+- Remote pgTAP is unavailable and Docker Desktop's Linux engine pipe is not running. The SQL pgTAP runner was not run. All 26 equivalent read-only policy/grant/catalog assertions passed directly against the remote project, and the isolated SQL limiter check also passed. The one live unknown-answer guest request created one ordinary limiter bucket for the gateway caller; it is not learning data and is left to normal expiry/cleanup. Current Supabase advisors still flag 6 private deny-all tables, the authenticated `clear_my_learning_history()` SECURITY DEFINER RPC (its function checks `auth.uid()` and targets only that user's rows), disabled leaked-password protection, 13 unindexed foreign keys and 7 RLS init-plan performance findings; no security audit is claimed.
+- Verification run in this workspace: `flutter pub get` passed; `flutter gen-l10n` passed using the retained `l10n.yaml`; English and Amharic each have 150 matching user-facing ARB keys; `dart format lib test` passed (33 files, 0 changed); `flutter analyze` passed with no issues; `flutter test` passed (27 tests); `flutter build apk --debug` passed; `flutter build web --no-pub` passed. The normal JS Web build emitted existing Wasm incompatibility notes from `flutter_secure_storage_web`; no Wasm build was requested. `deno fmt --check` and `deno check` passed. `deno test` did not run: Deno 2.9.7 panicked on a Windows named-pipe handle, including with `--no-check`; an equivalent direct `deno eval` harness did pass the 6 Edge Function logic assertions.
+- Supabase email delivery and production SMTP are not independently verified; the owner reports successful live Phase 2 development auth flows. Release builds/signing, physical-device testing, production deployment, browser visual/console inspection, clinical review and a security audit are not claimed.
 
-## Implemented
+**Minimum next inputs:** professionally reviewed and approved English/Amharic content for a non-public development quiz, plus a dedicated Supabase development test account for authenticated score/sync/isolation tests. Do not use personal/real learning history. Before an HTTP 429 load check, arrange an isolated test IP/path so the shared gateway caller is not throttled. Phase 3 cannot be marked complete until those content-dependent flows and remaining acceptance checks pass.
+
+## UI refinement pass (2026-10-30)
+
+- Refined the shared Material 3 color/type/component tokens and tightened spacing and card hierarchy across Home, Facilities, Mentors, Learning, and Account. Directory introductions no longer repeat the page title; directory search/filter previews are visibly noninteractive but readable while verified records are unavailable. Learning tabs/progress and the no-reviewed-articles state are more distinct and compact.
+- Installed the debug APK on `emulator-5554` (Medium Phone API 37 / Android 17). Captured all five destinations in both languages; after the directory/empty-state refinements recaptured all five in English and Learning in Amharic, and after the final learning-error card adjustment rechecked its Amharic rendering. Amharic text shaped and wrapped without visible clipping. Bottom navigation and the Home Account route were tapped on-device; the guest authentication screen opened. Locale toggle and all five destinations were exercised on-device.
+- Final verification: `dart format lib test` passed (33 files checked; 0 changed on the final run); `flutter analyze --no-pub` passed with no issues; `flutter test --no-pub` passed (27 tests); `flutter build apk --debug --no-pub` passed. The final APK was installed and relaunched. Flutter reported that newer package versions exist outside the pinned constraints; Gradle emitted a Java restricted-native-access warning. Neither affected results.
+- No ARB, dependency, Android, Supabase, schema, migration, or Edge Function changes were made. No real directory records or approved article/quiz content are available; on-device Learning may show its existing localized unavailable/error state depending on network/backend response. Release, physical-device, production and security-audit checks are not claimed.
+- Phase 3 remains PARTIAL; Phase 4 has not started.
+
+## Stitch UI integration refresh (2026-10-30)
+
+- Integrated the four inspected Stitch concepts as native Flutter/Material 3 presentation: Home, Learning, Mentors, and Facilities. The five bottom destinations are Home, Facilities, Mentors, Learning, and Account.
+- Home uses the existing education repository for featured articles and links to current app routes. Learning retains existing article, assessment, result, retry, progress and sync behavior, with a localized progress summary.
+- Mentors and Facilities are presentation-only empty states. Search/filter/map controls are disabled and localized copy states that verified records are unavailable. No sample people, facilities, addresses, contacts, or hotline details were added. These screens do not implement Phase 4 directory services.
+- Account provides the existing authentication/profile route, learning progress access, language selection, and local progress summary. No auth provider, Supabase schema, migration, or remote setting was changed.
+- Localization sources contain 160 matching message keys in English and Amharic. `flutter gen-l10n` ran successfully with the existing `l10n.yaml`.
+- Verification: `flutter pub get` passed; `flutter gen-l10n` passed; `dart format lib test` passed (33 files, 0 changed); `flutter analyze --no-pub` passed (no issues); `flutter test --no-pub` passed (27 tests); `flutter build apk --debug --no-pub` passed.
+- `flutter devices` found Windows, Chrome, and Edge, but no Android emulator/device. No live emulator launch or Stitch screenshot comparison was performed during this integration. APK build success is packaging evidence only.
+- **Phase 3 remains PARTIAL. Phase 4 has not started.** Reviewed health content and positive live scoring/sync verification remain outstanding as recorded below.
+
+## Final Phase 3 continuation refresh (2026-10-30)
+
+- Added and deployed migration `20261030192800_phase3_guest_assessment_rate_limit.sql` to the existing development project. It creates a private RLS-enabled IP/window counter and a service-role-only atomic RPC; the guest scorer now allows 20 submissions per IP per 10-minute window, returns 429 when exceeded, fails closed with 503 when limiter context/service is unavailable, and deletes counters older than one day opportunistically during later guest calls (there is no scheduled cleanup). `submit-assessment` is active at version 2 (`verify_jwt=false`); authenticated submissions do not use guest quotas.
+- Supabase catalog checks passed: limiter RLS is enabled; `anon` and `authenticated` cannot select limiter data or execute the RPC; `service_role` has required access. A rolled-back remote SQL runtime test confirmed calls 1–20 are allowed and call 21 is denied.
+- `deno fmt` and `deno check` passed. Deno unit tests were attempted and hit the Deno 2.9.7 Windows named-pipe panic; no Deno tests ran. HTTP invocation from this shell is blocked by its configured proxy at `127.0.0.1:9`, so the deployed endpoint's HTTP 429 response was not directly exercised.
+- Flutter checks attempted in this refresh produced no output and were interrupted (parallel invocations stalled; sequential `flutter pub get` also stalled). Prior successful Flutter tests/builds remain historical; this refresh makes no claim of a fresh Flutter pass.
+- No approved article or assessment content exists. Positive guest/authenticated scoring, retry/retake, authenticated sync-consent and user-isolation flows remain unverified. pgTAP and visual device/browser verification also remain outstanding. **Phase 3 remains PARTIAL; Phase 4 has not started.**
+
+## Phase 3 continuation verification (2026-10-30)
+
+The linked development project was rechecked: it is `yegna-health-amharic` (`oflkhtjskpsedsuczfkj`, `ACTIVE_HEALTHY`), migration versions `20261030174702` and `20261030174920` are present, and `submit-assessment` is active (version 1, `verify_jwt=false`). Read-only SQL confirmed 17 public and 5 private app tables, all RLS-enabled; the 23 direct catalog security assertions from the deployment record remain consistent. No content or progress records exist.
+
+Current local checks: `flutter pub get` passed without upgrading pinned dependencies; `flutter gen-l10n` passed with the existing `l10n.yaml`; `dart format lib test` passed (31 files, 0 changed); `flutter analyze` passed with no issues; `flutter test` passed (26 tests); `flutter build apk --debug` passed; `flutter build web --no-pub` passed (61.1s); `deno check` passed; `deno test supabase/functions/submit-assessment/logic_test.ts` passed (6 tests). The Web build emitted non-blocking Wasm incompatibility notices for `flutter_secure_storage_web` and an unused Cupertino font warning. `flutter run -d chrome --dart-define-from-file=config/supabase.local.json --web-port=55321` started but did not connect to the debug service before being interrupted. Chrome UI automation reports local browser use disabled, so this turn did not visually verify the app or inspect its console. Earlier web visual verification is documented separately and only covered the public shell/error states.
+
+Fresh HTTP checks against the deployed function returned 401 for missing API key, 400 for malformed guest submission, 401 for an invalid user bearer, and 400 for a well-shaped guest request using a nonexistent assessment. A successful score, user-authenticated scoring/sync, retake, idempotent retry, and account isolation remain unverified because there is no published quiz or authenticated integration test session. The original reference APK was not found; only project-built debug APKs exist, so no APK comparison or parity claim is made. No migrations or functions were reapplied/deployed during this verification.
+
+Phase 3 remains in progress. The next required inputs/checks are professionally reviewed EN/AM content and an authenticated integration-test session; guest endpoint rate limiting also needs an approved shared mechanism. The pgTAP suite remains unrun because remote pgTAP is unavailable and Docker engine access is unavailable. Phase 4 is not started.
+
+## Current phase: Phase 3 — Health Education and Assessments (implementation in progress; not complete)
+
+**Phase 3 authorization:** The owner authorized Phase 3 implementation with the finalized decisions in `docs/PHASE_3_IMPLEMENTATION_GUIDE.md`. Flutter feature code is local. Two additive database migrations are applied to the confirmed development project `oflkhtjskpsedsuczfkj`, and `submit-assessment` is deployed there. No reviewed content has been published; valid scoring and end-to-end learning are not yet verified. This phase is not complete. Do not begin Phase 4.
+
+**Phase 2 record:** Phase 2 is complete according to the owner, who reports successful real-account manual testing of registration, email confirmation, sign-in, profile editing, sign-out and password recovery. This is owner-reported manual verification, not a new independent run in this documentation task. Historical automated checks below retain their exact results and limitations; provider-dependent automated tests use fake repositories/test doubles and are not real Supabase tests. Supabase Auth is approved and configured for the development client. SMTP configuration and production delivery/readiness remain separate, unverified items and do not indicate failure of the owner-confirmed development flows.
+
+**Phase 3 boundary:** The owner subsequently authorized implementation and later authorized development-backend deployment. The remote schema and scoring function are deployed. No content was seeded, no production deployment was performed, and Phase 4 remains unstarted. See the latest backend deployment record below.
+
+## Phase 1 and Phase 2 implemented
 
 - Phase 1 Flutter Material 3 shell, English/Amharic localization, persisted language setting, and public placeholder tabs remain in place.
 - Android platform scaffold was generated with `flutter create --platforms=android .`; Gradle uses Kotlin DSL (`.gradle.kts`).
@@ -30,21 +83,82 @@
 - Emulator diagnosis — with the API 37 AVD's default `auto` graphics, screenshots were black and taps did not navigate. Relaunched the same AVD using `emulator -avd Medium_Phone_API_37.0 -gpu host -no-snapshot`; Flutter rendered visibly on the host's Intel Iris Xe GPU. ADB taps opened Home Account/sign-in, registration, bottom navigation (Services), and Settings → Account/sign-in. No application or Android project files were changed for this graphics workaround. The AVD's persistent graphics configuration remains unchanged.
 - Supabase dashboard — Email enabled, Confirm email enabled, native callback allowlist configured. No secret values are stored in these docs.
 
-Automated tests use a fake repository for deterministic validation/state/UI checks; they do not call Supabase or send real email. A passing build does not establish live account-flow success.
+## Phase 3 local implementation snapshot (before backend deployment)
+
+- Added the Learn tab with bilingual category/article listing, title/summary search, category filtering, article details, related links, source references, article completion, assessments, progress, guest-local records, opt-in account sync, clear-synced-history action, and loading/error/empty/stale states.
+- Added an app-support-directory cache with a 7-day stale threshold and 50 MiB size cap using least-recently-used eviction. Cached education content may be read offline with a stale/withdrawn warning. A quiz score is never calculated offline; pending answers are stored in secure storage and can be retried with the same request ID, including from the progress screen after app restart.
+- Added `supabase/migrations/20261030174702_phase3_education_learning_20261030111305.sql` with bilingual content/assessment tables, editorial approval metadata, `yegna_private` answer keys/explanations, RLS, explicit access grants, opt-in progress records, and a server-side scoring RPC. Added `supabase/migrations/20261030174920_phase3_enforce_sync_consent_on_retries.sql` to require current consent before idempotent retries read stored attempts. Added `supabase/functions/submit-assessment/` and database security tests.
+- Guest quiz submission is designed to require only the Supabase publishable API key, not an anonymous Supabase account. The Edge Function distinguishes the API-key bearer from a real user JWT and only syncs authenticated attempts when the user has opted in.
+- No reviewed clinical corpus or assessment corpus has been supplied; public lists are therefore expected to be empty. Amharic full-text search strategy remains unselected pending testing against reviewed Amharic content.
+- `path_provider: ^2.1.6` was added for the bounded app-support file cache and was already present in the resolved dependency cache.
+
+### Phase 3 checks performed in this workspace (2026-10-30)
+
+- `flutter pub get` — passed; dependencies resolved without upgrades.
+- `flutter gen-l10n` — passed using the existing `l10n.yaml`; the config was retained. English/Amharic message-key parity test passed.
+- `dart format lib test` — passed; final run checked 29 files with 0 changed.
+- `flutter analyze` — passed; no issues found.
+- `flutter test` — passed; all 26 tests passed, including Phase 3 learning UI and retry recovery coverage.
+- `flutter build apk --debug` — passed; Gradle produced `build/app/outputs/flutter-apk/app-debug.apk`.
+- `deno check supabase/functions/submit-assessment/index.ts supabase/functions/submit-assessment/logic.ts supabase/functions/submit-assessment/logic_test.ts` — passed.
+- `deno test supabase/functions/submit-assessment/logic_test.ts` — blocked by Deno 2.9.7 panic on Windows (`Unexpected client pipe failure`, invalid handle).
+- Supabase CLI project listing and GitHub remote read checks — blocked by this environment's network/proxy connection. The repository origin is configured as `https://github.com/abel913/yegna-health-app.git`; hosted sign-in does not establish CLI network access.
+- Database migration, pgTAP tests, Edge Function deployment/integration, emulator validation, and live RLS/guest/authenticated scoring tests have not run in this Phase 3 work. The successful APK build verifies packaging only, not backend integration or in-emulator behavior.
+
+Automated tests use a fake repository for deterministic validation/state/UI checks; they do not call Supabase or send real email. Separately, the owner reports successful real-account manual verification of registration, email confirmation, sign-in, profile editing, sign-out and password recovery. This report was not independently repeated in this documentation update. SMTP configuration and production delivery/readiness were not established by the automated checks and remain unverified.
 
 ## Remaining work and limits
 
-- Complete live Supabase email/account end-to-end testing. If the black surface returns, persist a suitable hardware/host graphics mode in Android Studio Device Manager for this AVD.
-- Verify sign-up/confirmation deep link, sign-in, recovery/reset deep link, profile edit, sign-out and expired-session behavior using an approved development account.
-- Inspect the project's SMTP settings and verify live delivery; the current configuration has not been inspected. Supabase documents that its built-in hosted sender only delivers to team addresses and is currently limited to 2 messages/hour, so configure SMTP for other recipients.
-- Native/fluent Amharic review, additional screen sizes, large text and physical-device checks remain unreported.
-- Release builds/signing, production deployment, security audit and production policy review are not complete.
-- Health content, assessments, facilities/maps and notifications remain out of scope.
+- Inspect and verify Supabase SMTP configuration; verify production email delivery, sender identity, deliverability, provider limits and production behavior.
+- If the black emulator surface returns, persist a suitable hardware/host graphics mode in Android Studio Device Manager for this AVD. The host-GPU launch workaround was verified, but its persistent AVD setting was not changed.
+- Native Amharic medical-language expert review and clinical content approval remain required before publishing health content.
+- Device compatibility and accessibility checks across physical devices, additional screen sizes and large text remain incomplete.
+- Release signing and production build preparation, production security/privacy review, and deployment have not been completed.
+- Professionally reviewed education/quiz content has not been provided or seeded. Facilities/maps and notifications remain later-phase scope.
 
-## Exact next action
+## Remaining Phase 2 readiness action
 
-Inspect SMTP settings, then complete provider-backed email and account lifecycle checks with an approved development account. Configure SMTP if needed and record actual results. Do not begin Phase 3.
+The owner reports successful real-account manual testing of registration, email confirmation, sign-in, profile editing, sign-out and password recovery. Outstanding production-readiness work is separate: verify SMTP configuration and production sender/delivery/limits, complete Amharic medical-language and clinical content review, device/accessibility checks, release signing/build preparation, and production security/privacy review. Record each only when performed; none changes the owner-reported test outcome.
 
-## Phase 3 planning note
+## Phase 3 planning and implementation note
 
-The owner requested a planning-only proposal, then finalized the Phase 3 technical decisions. `docs/PHASE_3_IMPLEMENTATION_GUIDE.md` is the current implementation preparation guide; `docs/PHASE_3_PLAN.md` is the earlier proposal. The current work is preparation only: Phase 3 implementation has **not** started, and no source or Supabase schema changes were made.
+The owner requested planning, finalized the technical decisions, and later authorized implementation and development-backend deployment. `docs/PHASE_3_IMPLEMENTATION_GUIDE.md` records the design and implementation status; `docs/PHASE_3_PLAN.md` is the earlier proposal. Phase 3 database migrations and the scoring Edge Function are now deployed to the development project. No production content or Phase 4 work has started.
+
+## Flutter Web preview verification (2026-10-30)
+
+- Launched the app in Google Chrome at `http://localhost:54752/` using `flutter run -d chrome --dart-define-from-file=config/supabase.local.json`. The app initialized Supabase and rendered the Flutter UI. Home was visibly rendered in English and Amharic.
+- Manually tapped the Home Account entry, guest continuation, Learn/Articles and Assessments tabs, Services and Settings navigation, registration, and password-recovery navigation. The public shell/navigation and auth forms were responsive. Guest continuation returned to public Home. Language switching to Amharic updated the shell and screen text, including the Learn error state; locale persistence in a browser restart was not tested.
+- Learn Articles and Assessments both displayed the app's localized connection/unavailable state. No article detail or quiz attempt could be exercised; this run does not verify the content backend or quiz scoring. No credentials were submitted. Live browser authentication, email delivery, authenticated profile behavior, and profile protection were not tested in Chrome.
+- Chrome DevTools was not successfully opened through the available UI automation, so browser console errors are **unverified**. The `flutter run` output showed app startup and Supabase initialization and no Flutter runtime error in the captured output; this is not a substitute for inspecting the browser console.
+- Web preview limitations: Supabase browser redirect allowlisting for this localhost origin and production origin still needs explicit verification/configuration in the approved Supabase project. No remote settings were changed. Browser secure storage relies on the web platform implementation and should be validated under HTTPS before production. The web learning cache is in-memory and does not persist across browser reloads. This is a development preview, not production readiness.
+
+## Phase 3 execution snapshot before backend deployment (2026-10-30)
+
+- `flutter pub get` — passed; existing dependency pins were retained.
+- `flutter gen-l10n` — passed using `l10n.yaml` (the informational note was preserved).
+- `dart format lib test` — passed; 31 files checked, 0 changed.
+- `flutter analyze` — passed; no issues found.
+- `flutter test` — passed; all 26 tests passed.
+- `flutter build apk --debug` — passed; `build/app/outputs/flutter-apk/app-debug.apk` generated.
+- `flutter build web` — passed; standard JavaScript build generated `build/web`. Wasm dry-run reported `flutter_secure_storage_web` `dart:html`/`dart:js_util` incompatibilities, and Flutter emitted an unused Cupertino icon-font warning; neither failed the JavaScript build.
+- `deno check supabase/functions/submit-assessment/index.ts supabase/functions/submit-assessment/logic.ts supabase/functions/submit-assessment/logic_test.ts` — passed.
+- `deno test supabase/functions/submit-assessment/logic_test.ts` — passed; all 6 tests. This supersedes the earlier Deno Windows pipe-panic result.
+- Docker — `docker --version` passed (29.8.0); `docker info` failed because the Linux engine named pipe denied access. Supabase CLI was not on PATH; official npm/npx invocation returned version 2.122.0 and `projects list` succeeded, confirming the project. The remote CLI `migration list` call stalled at `Initializing login role`; Supabase MCP independently returned an empty migration list.
+- Supabase remote project `oflkhtjskpsedsuczfkj` was read-only verified as `yegna-health-amharic`, active/healthy, PostgreSQL 17, with no app migrations, `public`/`yegna_private` app tables, or Edge Functions. Automatic approval review rejected the direct migration-apply action as a high-risk schema mutation. No indirect route was attempted; a post-rejection inventory confirmed the remote remained unchanged. The migration is not applied and the function is not deployed.
+
+The Phase 3 migration was tightened locally: publication checks use private predicates, app-role grants are narrowed, client progress access requires consent, and clients cannot set the server-owned history-cleared timestamp. The latest backend deployment and verification are recorded below; Phase 3 remains in progress because reviewed content and positive end-to-end scoring/sync tests are still missing.
+
+## Phase 3 development backend deployment (2026-10-30)
+
+- Confirmed the linked target `yegna-health-amharic` (`oflkhtjskpsedsuczfkj`) was `ACTIVE_HEALTHY` and had no app tables, Phase 3 type, functions, or migrations before deployment. The migration contains no `DROP` or `TRUNCATE`; its `DELETE` statements are inside the authenticated user's explicit clear-history function.
+- `npx.cmd --yes --package=supabase supabase db push --linked --dry-run --skip-vault` and the authorized `... db push --linked --skip-vault --yes` each stalled at `Initialising login role` and were interrupted after about one minute, before reporting a migration plan/result. No CLI push was completed. The migration was applied through the authenticated Supabase remote migration tool after verifying the target remained empty.
+- The first apply attempt failed with PostgreSQL `42703` because the assessment translation grant referenced a missing `published_at` column; the transaction rolled back completely. The column and publication guard were corrected, and the base migration then applied. The consent-retry guard was applied as a second migration. Remote history records versions `20261030174702` and `20261030174920`; local filenames were aligned with those versions.
+- Remote inventory now contains 17 `public` education/progress tables and 5 `yegna_private` answer/review tables. All 22 have RLS enabled; all are empty. Catalog inspection found 42 indexes and the expected Auth, content, question/option, answer-key, explanation, and user-record foreign keys.
+- Twenty-three read-only catalog assertions passed: no `anon`/`authenticated` access to private answer-key or explanation tables; no client execution of `score_assessment`; execution is granted to `service_role`; user progress and attempt access is scoped to `auth.uid()` and requires `sync_enabled` for reads/writes; and the scoring retry path checks consent before looking up stored attempts. `clear_my_learning_history()` is authenticated-only and derives the target user from `auth.uid()`.
+- The pgTAP test file was corrected to match the intentional narrow schema-helper grants and publication predicate. The remote `pgtap` extension is absent, Docker engine access is unavailable, so the pgTAP file was not run. The equivalent catalog checks above were run directly with read-only SQL.
+- `npx.cmd --yes --package=supabase supabase functions deploy submit-assessment --use-api --no-verify-jwt --project-ref oflkhtjskpsedsuczfkj` — passed. The function is `ACTIVE`, version 1, `verify_jwt=false` to support guests. Its handler validates any non-publishable-key bearer with Supabase Auth before associating a user. The service-role key is read only from the Edge Function environment; no key value is in Flutter source/config.
+- HTTP checks against the deployed function: missing API key → `401 api_key_required`; guest malformed body → `400 invalid_submission`; invalid user bearer → `401 invalid_session`; syntactically valid guest payload with a synthetic assessment ID → `400 invalid_answers` because the project has no published assessment. Function runtime logs sampled after the requests showed boot messages and no emitted error messages.
+- `deno check supabase/functions/submit-assessment/index.ts supabase/functions/submit-assessment/logic.ts` — passed. A fresh `deno test supabase/functions/submit-assessment/logic_test.ts` attempt hit the Deno 2.9.7 Windows pipe panic; an earlier recorded run passed all 6 tests, but this turn's rerun did not complete. The pgTAP suite and positive valid-quiz scoring, duplicate submission, idempotent retry, retake, interrupted submission, and authenticated progress-isolation flows remain unverified.
+- Security advisor findings: private tables have RLS enabled and no policies (intentional deny-all for app roles); it warns that the authenticated-only `SECURITY DEFINER` clear-history function is executable (reviewed body uses fixed empty `search_path` and `auth.uid()` scoping); Auth leaked-password protection is disabled. Performance advisories include unindexed foreign keys and row-policy `auth.uid()` initialization warnings; review against real query patterns before broad use. Guest scoring is public by design and has no application-level rate limit yet.
+
+No professionally reviewed English/Amharic article or assessment content was supplied, seeded, or published. Do not claim valid scoring, progress sync integration, Phase 3 completion, or production readiness until those flows and content approvals are verified. Phase 4 remains unstarted.

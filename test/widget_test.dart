@@ -8,6 +8,7 @@ import 'package:yegna_health_app/src/auth/auth_repository.dart';
 import 'package:yegna_health_app/src/locale_controller.dart';
 
 import 'support/fake_auth_repository.dart';
+import 'support/fake_learning.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -24,11 +25,15 @@ void main() {
     await tester.pumpWidget(YegnaHealthApp(
       localeController: localeController,
       authController: authController,
+      progressStore: FakeLearningProgressStore(),
     ));
     await tester.pumpAndSettle();
-    await tester.tap(find.text(amharic.settingsTab));
+    await tester.tap(find.descendant(
+      of: find.byType(NavigationBar),
+      matching: find.text(amharic.accountTab),
+    ));
     await tester.pumpAndSettle();
-    await tester.tap(find.text(amharic.accountTitle));
+    await tester.tap(find.widgetWithText(ListTile, amharic.accountTitle));
     await tester.pumpAndSettle();
 
     expect(find.text(amharic.emailLabel), findsOneWidget);
@@ -47,11 +52,57 @@ void main() {
       YegnaHealthApp(
         localeController: localeController,
         authController: authController,
+        progressStore: FakeLearningProgressStore(),
       ),
     );
     await tester.pumpAndSettle();
 
     expect(find.byType(YegnaHealthApp), findsOneWidget);
+    authController.dispose();
+  });
+
+  testWidgets('five main destinations navigate and locale toggle updates UI',
+      (WidgetTester tester) async {
+    SharedPreferences.setMockInitialValues({});
+    final preferences = await SharedPreferences.getInstance();
+    final localeController = LocaleController(preferences);
+    await localeController.load();
+    final authController = AuthController(const UnconfiguredAuthRepository());
+
+    await tester.pumpWidget(YegnaHealthApp(
+      localeController: localeController,
+      authController: authController,
+      progressStore: FakeLearningProgressStore(),
+    ));
+    await tester.pumpAndSettle();
+    final en = await AppLocalizations.delegate.load(const Locale('en'));
+
+    await tester.tap(find.text(en.facilitiesTab).last);
+    await tester.pumpAndSettle();
+    expect(find.text(en.noVerifiedFacilitiesTitle), findsOneWidget);
+
+    await tester.tap(find.text(en.mentorsTab).last);
+    await tester.pumpAndSettle();
+    expect(find.text(en.noVerifiedMentorsTitle), findsOneWidget);
+
+    await tester.tap(find.text(en.learnTab).last);
+    await tester.pumpAndSettle();
+    expect(find.text(en.articlesHeading), findsOneWidget);
+    expect(find.text(en.assessmentsHeading), findsOneWidget);
+
+    await tester.tap(find.text(en.accountTab).last);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('አማ'));
+    await tester.pumpAndSettle();
+    final am = await AppLocalizations.delegate.load(const Locale('am'));
+    expect(
+      find.descendant(
+        of: find.byType(NavigationBar),
+        matching: find.text(am.accountTab),
+      ),
+      findsOneWidget,
+    );
+    expect(find.text(am.languageTitle), findsOneWidget);
     authController.dispose();
   });
 
@@ -66,6 +117,7 @@ void main() {
     await tester.pumpWidget(YegnaHealthApp(
       localeController: localeController,
       authController: authController,
+      progressStore: FakeLearningProgressStore(),
     ));
     await tester.pumpAndSettle();
     final l10n =
@@ -79,14 +131,23 @@ void main() {
     await tester.pumpAndSettle();
 
     // Public destinations remain reachable for guest users.
-    await tester.tap(find.text(l10n.servicesTab));
+    await tester.tap(find.descendant(
+      of: find.byType(NavigationBar),
+      matching: find.text(l10n.facilitiesTab),
+    ));
     await tester.pumpAndSettle();
-    expect(find.text(l10n.servicesPlaceholder), findsOneWidget);
+    expect(find.text(l10n.noVerifiedFacilitiesTitle), findsOneWidget);
+    await tester.tap(find.text(l10n.mentorsTab).last);
+    await tester.pumpAndSettle();
+    expect(find.text(l10n.noVerifiedMentorsTitle), findsOneWidget);
     expect(authController.isAuthenticated, isFalse);
 
-    await tester.tap(find.text(l10n.settingsTab));
+    await tester.tap(find.descendant(
+      of: find.byType(NavigationBar),
+      matching: find.text(l10n.accountTab),
+    ));
     await tester.pumpAndSettle();
-    await tester.tap(find.text(l10n.accountTitle));
+    await tester.tap(find.widgetWithText(ListTile, l10n.accountTitle));
     await tester.pumpAndSettle();
     expect(find.text(l10n.emailLabel), findsOneWidget);
     expect(find.text(l10n.continueAsGuest), findsOneWidget);
@@ -105,6 +166,7 @@ void main() {
     await tester.pumpWidget(YegnaHealthApp(
       localeController: localeController,
       authController: authController,
+      progressStore: FakeLearningProgressStore(),
     ));
     await tester.pumpAndSettle();
     final l10n =
@@ -140,6 +202,7 @@ void main() {
     await tester.pumpWidget(YegnaHealthApp(
       localeController: localeController,
       authController: authController,
+      progressStore: FakeLearningProgressStore(),
     ));
     await tester.pumpAndSettle();
     final l10n =
@@ -154,7 +217,12 @@ void main() {
     await tester.pumpAndSettle();
     expect(authController.isAuthenticated, isTrue);
 
-    await tester.tap(find.text(l10n.manageAccount));
+    await tester.tap(find.descendant(
+      of: find.byType(NavigationBar),
+      matching: find.text(l10n.accountTab),
+    ));
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(ListTile, l10n.profile));
     await tester.pumpAndSettle();
     expect(find.text(l10n.saveProfile), findsOneWidget);
     await tester.enterText(find.byType(TextFormField), 'Updated Name');
@@ -184,13 +252,17 @@ void main() {
     await tester.pumpWidget(YegnaHealthApp(
       localeController: localeController,
       authController: authController,
+      progressStore: FakeLearningProgressStore(),
     ));
     await tester.pumpAndSettle();
     final l10n =
         AppLocalizations.of(tester.element(find.byType(NavigationBar)));
-    await tester.tap(find.text(l10n.settingsTab));
+    await tester.tap(find.descendant(
+      of: find.byType(NavigationBar),
+      matching: find.text(l10n.accountTab),
+    ));
     await tester.pumpAndSettle();
-    await tester.tap(find.text(l10n.accountTitle));
+    await tester.tap(find.widgetWithText(ListTile, l10n.accountTitle));
     await tester.pumpAndSettle();
     await tester.tap(find.text(l10n.noAccount));
     await tester.pumpAndSettle();

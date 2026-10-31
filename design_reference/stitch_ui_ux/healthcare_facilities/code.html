@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;min-height:100%;margin:0;padding:0;}body{overscroll-behavior-y:none;-webkit-tap-highlight-color:transparent;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "surface-container": "#eaedff", "primary-container": "#0e7490", "on-primary": "#ffffff", "surface-container-highest": "#dae2fd", "inverse-on-surface": "#eef0ff", "tertiary-fixed": "#6ffbbe", "tertiary": "#005f40", "primary": "#005a71", "tertiary-container": "#007a53", "on-primary-fixed": "#001f29", "on-surface": "#131b2e", "on-primary-fixed-variant": "#004d62", "surface-container-low": "#f2f3ff", "primary-fixed": "#b9eaff", "on-secondary": "#ffffff", "secondary-fixed-dim": "#93ccff", "surface-container-high": "#e2e7ff", "tertiary-fixed-dim": "#4edea3", "on-tertiary": "#ffffff", "surface-tint": "#006781", "surface-variant": "#dae2fd", "primary-fixed-dim": "#81d1f0", "surface-bright": "#faf8ff", "on-error-container": "#93000a", "on-error": "#ffffff", "surface-container-lowest": "#ffffff", "background": "#faf8ff", "error-container": "#ffdad6", "on-surface-variant": "#3f484c", "on-secondary-container": "#00476e", "on-tertiary-container": "#a3ffd0", "inverse-surface": "#283044", "outline": "#6f787d", "on-secondary-fixed": "#001d31", "on-tertiary-fixed-variant": "#005236", "error": "#ba1a1a", "on-primary-container": "#d3f1ff", "secondary": "#006398", "secondary-container": "#5bb8fe", "inverse-primary": "#81d1f0", "secondary-fixed": "#cce5ff", "outline-variant": "#bec8cd", "surface-dim": "#d2d9f4", "surface": "#faf8ff", "on-secondary-fixed-variant": "#004b73", "on-background": "#131b2e", "on-tertiary-fixed": "#002113" }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, spacing: { "space-md": "0.75rem", "space-xl": "1.75rem", "margin": "1.25rem", "gutter": "1rem", "space-sm": "0.5rem", "space-xs": "0.25rem", "space-lg": "1.25rem" }, fontFamily: { "headline-md": ["Inter"], "headline-lg": ["Inter"], "body-sm": ["Inter"], "headline-xl": ["Inter"], "label-sm": ["Inter"], "label-md": ["Inter"], "body-lg": ["Inter"], "body-md": ["Inter"] }, fontSize: { "headline-md": ["18px", {"lineHeight": "24px", "fontWeight": "600"}], "headline-lg": ["22px", {"lineHeight": "28px", "letterSpacing": "-0.015em", "fontWeight": "700"}], "body-sm": ["12px", {"lineHeight": "17px", "fontWeight": "400"}], "headline-xl": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}], "label-sm": ["11px", {"lineHeight": "16px", "letterSpacing": "0.04em", "fontWeight": "600"}], "label-md": ["13px", {"lineHeight": "18px", "fontWeight": "600"}], "body-lg": ["15px", {"lineHeight": "22px", "fontWeight": "400"}], "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}] } } } };</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface text-on-surface font-body-md text-body-md flex flex-col min-h-full antialiased"><header class="fixed top-0 w-full z-50 pt-safe bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 px-margin flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm min-w-0 flex-1"><div class="flex flex-col min-w-0"><span class="font-label-sm text-label-sm text-primary font-bold tracking-wider uppercase truncate">Wise Youth · ጥበበኛ</span><h1 class="font-headline-md text-headline-md text-on-surface tracking-tight truncate">Facilities</h1></div></div><div class="flex items-center gap-space-xs shrink-0"><div class="inline-flex items-center p-0.5 bg-surface-container rounded-full"><button aria-label="ቋንቋ ወደ አማርኛ ቀይር" class="px-2 py-1 rounded-full text-label-sm font-label-sm bg-primary text-on-primary shadow-sm transition-colors" type="button">አማ</button><button aria-label="Switch language to English" class="px-2 py-1 rounded-full text-label-sm font-label-sm text-on-surface-variant hover:text-on-surface transition-colors" type="button">EN</button></div><button aria-label="ማሳወቂያዎች / Notifications" class="relative w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:text-on-surface transition-colors active:scale-95" type="button"><span class="material-symbols-outlined text-[22px]">notifications</span><span class="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-error ring-2 ring-surface"></span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0 shadow-sm"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex flex-col relative w-full pt-16 pb-24 bg-surface min-h-screen"><div class="flex flex-col w-full pb-8">
+<!-- Subtle Top Gradient & Welcome Prompt -->
+<div class="px-margin pt-4 pb-2">
+<div class="relative overflow-hidden rounded-xl bg-surface-container-low p-space-lg shadow-sm">
+<div class="absolute -right-6 -bottom-6 w-24 h-24 rounded-full bg-secondary-fixed opacity-40 blur-2xl pointer-events-none"></div>
+<div class="flex items-start justify-between gap-space-sm relative z-10">
+<div>
+<div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed-variant mb-2">
+<span class="material-symbols-outlined text-[14px]">verified</span>
+<span class="font-label-sm text-label-sm font-semibold">100% ሚስጥራዊ · Confidential &amp; Youth-Safe</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-surface">Find Youth-Friendly Care</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">በአቅራቢያዎ ያሉ ከፍርድ ነጻ የሆኑ የጤና ተቋማትን በቀላሉ ያግኙ።</p>
+</div>
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center shrink-0 text-primary">
+<span class="material-symbols-outlined text-[22px]">health_and_safety</span>
+</div>
+</div>
+<!-- Quick Action Buttons: Location & Campus -->
+<div class="grid grid-cols-2 gap-space-sm mt-4 relative z-10">
+<button class="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-full bg-primary text-on-primary font-label-md text-label-md shadow-sm active:scale-95 transition-all" id="btn-use-location" type="button">
+<span class="material-symbols-outlined text-[18px]">my_location</span>
+<span class="truncate">Use Location · በአቅራቢያዬ</span>
+</button>
+<div class="relative">
+<button class="w-full flex items-center justify-between gap-1 py-2.5 px-3 rounded-full bg-surface-container text-on-surface font-label-md text-label-md active:scale-95 transition-all shadow-sm" id="btn-campus-dropdown" type="button">
+<span class="material-symbols-outlined text-[18px] text-primary">school</span>
+<span class="truncate" id="campus-label">UoG · ጎንደር ዩኒ</span>
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">expand_more</span>
+</button>
+<!-- Campus Selector Popover / Dropdown Menu -->
+<div class="hidden absolute top-12 left-0 right-0 z-30 bg-surface-container-lowest rounded-xl shadow-xl p-1.5 transition-all" id="campus-menu">
+<button class="campus-item w-full text-left px-3 py-2 rounded-lg font-label-md text-label-md text-on-surface hover:bg-surface-container active:bg-surface-container-high transition-colors" data-campus="UoG · ጎንደር ዩኒ" type="button">
+              University of Gondar (UoG)
+            </button>
+<button class="campus-item w-full text-left px-3 py-2 rounded-lg font-label-md text-label-md text-on-surface hover:bg-surface-container active:bg-surface-container-high transition-colors" data-campus="AAU · አዲስ አበባ ዩኒ" type="button">
+              Addis Ababa University (AAU)
+            </button>
+<button class="campus-item w-full text-left px-3 py-2 rounded-lg font-label-md text-label-md text-on-surface hover:bg-surface-container active:bg-surface-container-high transition-colors" data-campus="Kotebe · ኮተቤ ዩኒ" type="button">
+              Kotebe Education University
+            </button>
+<button class="campus-item w-full text-left px-3 py-2 rounded-lg font-label-md text-label-md text-on-surface hover:bg-surface-container active:bg-surface-container-high transition-colors" data-campus="BDU · ባህር ዳር ዩኒ" type="button">
+              Bahir Dar University (BDU)
+            </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Search Header Input Field -->
+<div class="px-margin mt-3">
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3.5 text-on-surface-variant text-[20px] pointer-events-none">search</span>
+<input class="w-full pl-10 pr-10 py-3 rounded-full bg-surface-container-lowest font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/70 shadow-sm focus:outline-none focus:ring-0" id="facility-search-input" placeholder="Search clinic, hospital, campus post... / ተቋም ይፈልጉ" type="text"/>
+<button class="hidden absolute right-3 text-on-surface-variant hover:text-on-surface active:scale-95" id="clear-search" type="button">
+<span class="material-symbols-outlined text-[18px]">cancel</span>
+</button>
+</div>
+</div>
+<!-- Filter Pills Bar -->
+<div class="px-margin mt-3 flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
+<button class="filter-pill flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-primary text-on-primary font-label-md text-label-md shrink-0 shadow-sm transition-colors" data-filter="all" type="button">
+<span class="material-symbols-outlined text-[16px]">tune</span>
+<span>All · ሁሉም (4)</span>
+</button>
+<button class="filter-pill flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-surface-container text-on-surface font-label-md text-label-md shrink-0 hover:bg-surface-container-high transition-colors" data-filter="nearest" type="button">
+<span class="material-symbols-outlined text-[16px] text-primary">near_me</span>
+<span>Nearest · በአቅራቢያ</span>
+</button>
+<button class="filter-pill flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-surface-container text-on-surface font-label-md text-label-md shrink-0 hover:bg-surface-container-high transition-colors" data-filter="campus" type="button">
+<span class="material-symbols-outlined text-[16px] text-secondary">school</span>
+<span>Campus Clinics · የግቢ</span>
+</button>
+<button class="filter-pill flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-surface-container text-on-surface font-label-md text-label-md shrink-0 hover:bg-surface-container-high transition-colors" data-filter="free" type="button">
+<span class="material-symbols-outlined text-[16px] text-tertiary">savings</span>
+<span>Free Services · ነጻ</span>
+</button>
+</div>
+<!-- Results Count & Active Location Status -->
+<div class="px-margin mt-3 flex items-center justify-between">
+<span class="font-label-md text-label-md text-on-surface font-bold" id="results-count-text">4 health facilities nearby · 4 የጤና ተቋማት</span>
+<button class="inline-flex items-center gap-1 text-primary font-label-sm text-label-sm" type="button">
+<span class="material-symbols-outlined text-[14px]">sort</span>
+<span>Distance · ርቀት</span>
+</button>
+</div>
+<!-- Facility Directory Cards Stack -->
+<div class="px-margin flex flex-col gap-3.5 mt-2.5" id="facilities-list">
+<!-- Facility 1: University of Gondar Comprehensive Specialized Hospital -->
+<div class="facility-card bg-surface-container-lowest rounded-xl p-space-md shadow-sm transition-all flex flex-col gap-3" data-name="university of gondar comprehensive specialized hospital uog" data-type="campus nearest free">
+<div class="flex items-start justify-between gap-2">
+<div class="flex items-start gap-2.5 min-w-0">
+<div class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center shrink-0 text-primary">
+<span class="material-symbols-outlined text-[20px]">local_hospital</span>
+</div>
+<div class="min-w-0">
+<div class="flex items-center gap-1.5 flex-wrap">
+<span class="font-headline-md text-headline-md text-on-surface truncate">University of Gondar Hospital</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary animate-pulse"></span>
+                Open 24/7 · ክፍት ነው
+              </span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1 mt-0.5">
+<span class="material-symbols-outlined text-[15px] shrink-0 text-outline">location_on</span>
+<span class="truncate">Lideta Sub-City, Chechela Street, Gondar</span>
+</p>
+</div>
+</div>
+<div class="shrink-0 bg-surface-container px-2.5 py-1 rounded-full text-secondary font-label-md text-label-md font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">navigation</span>
+<span>3.1 km</span>
+</div>
+</div>
+<!-- Feature Tags -->
+<div class="flex flex-wrap gap-1.5">
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-primary font-label-sm text-label-sm">Youth-Friendly Unit</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-tertiary font-label-sm text-label-sm">Free VCT &amp; ART</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm">Female Counselor Onsite</span>
+</div>
+<!-- Action Row -->
+<div class="pt-2 flex items-center gap-2">
+<button class="btn-action flex-1 py-2 px-3 rounded-full bg-primary text-on-primary font-label-md text-label-md flex items-center justify-center gap-1 shadow-sm active:scale-95 transition-all" type="button">
+<span class="material-symbols-outlined text-[16px]">calendar_month</span>
+<span>Book Visit · ቀጠሮ</span>
+</button>
+<button aria-label="Call clinic hotline" class="btn-action px-3 py-2 rounded-full bg-surface-container text-on-surface font-label-md text-label-md flex items-center justify-center gap-1 hover:bg-surface-container-high active:scale-95 transition-all" type="button">
+<span class="material-symbols-outlined text-[16px] text-primary">call</span>
+<span>Call · ደውል</span>
+</button>
+<button aria-label="Open map directions" class="btn-action px-3 py-2 rounded-full bg-surface-container text-on-surface font-label-md text-label-md flex items-center justify-center gap-1 hover:bg-surface-container-high active:scale-95 transition-all" type="button">
+<span class="material-symbols-outlined text-[16px] text-secondary">directions</span>
+<span>Map</span>
+</button>
+</div>
+</div>
+<!-- Facility 2: Azezo Health Center -->
+<div class="facility-card bg-surface-container-lowest rounded-xl p-space-md shadow-sm transition-all flex flex-col gap-3" data-name="azezo health center gondar blajige" data-type="nearest free">
+<div class="flex items-start justify-between gap-2">
+<div class="flex items-start gap-2.5 min-w-0">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center shrink-0 text-secondary">
+<span class="material-symbols-outlined text-[20px]">medical_services</span>
+</div>
+<div class="min-w-0">
+<div class="flex items-center gap-1.5 flex-wrap">
+<span class="font-headline-md text-headline-md text-on-surface truncate">Azezo Health Center</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm font-semibold">
+                ክፍት · Until 6:00 PM
+              </span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1 mt-0.5">
+<span class="material-symbols-outlined text-[15px] shrink-0 text-outline">location_on</span>
+<span class="truncate">Gondar Town Admin, Blajige Square</span>
+</p>
+</div>
+</div>
+<div class="shrink-0 bg-surface-container px-2.5 py-1 rounded-full text-secondary font-label-md text-label-md font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">navigation</span>
+<span>3.8 km</span>
+</div>
+</div>
+<!-- Feature Tags -->
+<div class="flex flex-wrap gap-1.5">
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-primary font-label-sm text-label-sm">Confidential Youth Corner</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-tertiary font-label-sm text-label-sm">Condoms &amp; PrEP Access</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm">Peer Counselors</span>
+</div>
+<!-- Action Row -->
+<div class="pt-2 flex items-center gap-2">
+<button class="btn-action flex-1 py-2 px-3 rounded-full bg-primary text-on-primary font-label-md text-label-md flex items-center justify-center gap-1 shadow-sm active:scale-95 transition-all" type="button">
+<span class="material-symbols-outlined text-[16px]">calendar_month</span>
+<span>Book Visit · ቀጠሮ</span>
+</button>
+<button aria-label="Call Azezo Center" class="btn-action px-3 py-2 rounded-full bg-surface-container text-on-surface font-label-md text-label-md flex items-center justify-center gap-1 hover:bg-surface-container-high active:scale-95 transition-all" type="button">
+<span class="material-symbols-outlined text-[16px] text-primary">call</span>
+<span>Call · ደውል</span>
+</button>
+<button aria-label="Get directions to Azezo Center" class="btn-action px-3 py-2 rounded-full bg-surface-container text-on-surface font-label-md text-label-md flex items-center justify-center gap-1 hover:bg-surface-container-high active:scale-95 transition-all" type="button">
+<span class="material-symbols-outlined text-[16px] text-secondary">directions</span>
+<span>Map</span>
+</button>
+</div>
+</div>
+<!-- Facility 3: Debark General Hospital -->
+<div class="facility-card bg-surface-container-lowest rounded-xl p-space-md shadow-sm transition-all flex flex-col gap-3" data-name="debark general hospital north gondar" data-type="all">
+<div class="flex items-start justify-between gap-2">
+<div class="flex items-start gap-2.5 min-w-0">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center shrink-0 text-primary">
+<span class="material-symbols-outlined text-[20px]">healing</span>
+</div>
+<div class="min-w-0">
+<div class="flex items-center gap-1.5 flex-wrap">
+<span class="font-headline-md text-headline-md text-on-surface truncate">Debark General Hospital</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm font-semibold">
+                Emergency Only · ድንገተኛ
+              </span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1 mt-0.5">
+<span class="material-symbols-outlined text-[15px] shrink-0 text-outline">location_on</span>
+<span class="truncate">North Gondar Zone, Debark Main Rd</span>
+</p>
+</div>
+</div>
+<div class="shrink-0 bg-surface-container-low px-2.5 py-1 rounded-full text-on-surface-variant font-label-md text-label-md font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">navigation</span>
+<span>79.9 km</span>
+</div>
+</div>
+<!-- Feature Tags -->
+<div class="flex flex-wrap gap-1.5">
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm">Youth SRH Ward</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-tertiary font-label-sm text-label-sm">Emergency Contraception</span>
+</div>
+<!-- Action Row -->
+<div class="pt-2 flex items-center gap-2">
+<button class="btn-action flex-1 py-2 px-3 rounded-full bg-secondary text-on-secondary font-label-md text-label-md flex items-center justify-center gap-1 shadow-sm active:scale-95 transition-all" type="button">
+<span class="material-symbols-outlined text-[16px]">phone_in_talk</span>
+<span>Direct Hotline · ደውል</span>
+</button>
+<button aria-label="View Map" class="btn-action px-3 py-2 rounded-full bg-surface-container text-on-surface font-label-md text-label-md flex items-center justify-center gap-1 hover:bg-surface-container-high active:scale-95 transition-all" type="button">
+<span class="material-symbols-outlined text-[16px] text-secondary">directions</span>
+<span>Map</span>
+</button>
+</div>
+</div>
+<!-- Facility 4: Debre Tabor Specialized Clinic -->
+<div class="facility-card bg-surface-container-lowest rounded-xl p-space-md shadow-sm transition-all flex flex-col gap-3" data-name="debre tabor specialized youth clinic" data-type="all free">
+<div class="flex items-start justify-between gap-2">
+<div class="flex items-start gap-2.5 min-w-0">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center shrink-0 text-primary">
+<span class="material-symbols-outlined text-[20px]">vaccines</span>
+</div>
+<div class="min-w-0">
+<div class="flex items-center gap-1.5 flex-wrap">
+<span class="font-headline-md text-headline-md text-on-surface truncate">Debre Tabor Youth Center</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm font-semibold">
+                ክፍት · Open
+              </span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1 mt-0.5">
+<span class="material-symbols-outlined text-[15px] shrink-0 text-outline">location_on</span>
+<span class="truncate">South Gondar, Central Kebele 02</span>
+</p>
+</div>
+</div>
+<div class="shrink-0 bg-surface-container-low px-2.5 py-1 rounded-full text-on-surface-variant font-label-md text-label-md font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">navigation</span>
+<span>103 km</span>
+</div>
+</div>
+<!-- Feature Tags -->
+<div class="flex flex-wrap gap-1.5">
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-primary font-label-sm text-label-sm">Free HIV Self-Test</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm">SRH Peer Guidance</span>
+</div>
+<!-- Action Row -->
+<div class="pt-2 flex items-center gap-2">
+<button class="btn-action flex-1 py-2 px-3 rounded-full bg-primary text-on-primary font-label-md text-label-md flex items-center justify-center gap-1 shadow-sm active:scale-95 transition-all" type="button">
+<span class="material-symbols-outlined text-[16px]">calendar_month</span>
+<span>Book Visit · ቀጠሮ</span>
+</button>
+<button class="btn-action px-3 py-2 rounded-full bg-surface-container text-on-surface font-label-md text-label-md flex items-center justify-center gap-1 hover:bg-surface-container-high active:scale-95 transition-all" type="button">
+<span class="material-symbols-outlined text-[16px] text-primary">call</span>
+<span>Call</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Interactive Map Preview Anchor -->
+<div class="px-margin mt-5">
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm overflow-hidden">
+<div class="flex items-center justify-between mb-2.5">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">map</span>
+<span class="font-headline-md text-headline-md text-on-surface">Campus Map View</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Gondar &amp; Surrounding</span>
+</div>
+<div class="w-full h-36 bg-cover bg-center rounded-lg relative overflow-hidden" data-location="University of Gondar, Chechela, Gondar, Ethiopia" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCqM6UY_RCZbVvT1B-cWq7LlUeCibjXbFHRLfOLU3lS0qMokXAbEumCC9Nn5Rh5y928SIRzvJVLGufM3hf5bYosoCBQ5vaSWhZDdmh9jxVGQWaxhxiExhGw1g2rBEekCzIAQWdA4nxgkxa0XTc84p-36m9zOoBmY_kBVUFFMagJsCLhOwSoa5o9q3JgHnC4-8h-tSz2vezfiURRqlCJDMzLIppDPs5tz4WeXclEzW0')">
+<div class="absolute inset-0 bg-gradient-to-t from-inverse-surface/60 via-transparent to-transparent flex items-end p-3">
+<div class="flex items-center justify-between w-full">
+<span class="text-inverse-on-surface font-label-sm text-label-sm bg-inverse-surface/80 px-2 py-1 rounded-full backdrop-blur-md">
+              Tap to expand full map / ካርታውን አሳይ
+            </span>
+<div class="w-7 h-7 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-md">
+<span class="material-symbols-outlined text-[16px]">open_in_full</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Free Confidential Hotline Callout Banner -->
+<div class="px-margin mt-4">
+<div class="rounded-xl bg-surface-container-high p-space-md flex items-center justify-between gap-3 shadow-sm">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-10 h-10 rounded-full bg-tertiary-fixed flex items-center justify-center text-on-tertiary-fixed shrink-0">
+<span class="material-symbols-outlined text-[20px]">headset_mic</span>
+</div>
+<div class="min-w-0">
+<p class="font-label-md text-label-md text-on-surface font-bold truncate">Confidential Peer Helpline · 952</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate">ነጻ የስልክ መስመር (Toll-free 24/7)</p>
+</div>
+</div>
+<a class="px-3.5 py-2 rounded-full bg-tertiary text-on-tertiary font-label-md text-label-md font-semibold shrink-0 shadow-sm active:scale-95 transition-all" href="tel:952">
+        Call 952
+      </a>
+</div>
+</div>
+<!-- Empty State (Shown via JS when search returns 0) -->
+<div class="hidden px-margin py-10 flex flex-col items-center justify-center text-center" id="no-results-state">
+<div class="w-16 h-16 rounded-full bg-surface-container flex items-center justify-center text-primary-container mb-3">
+<span class="material-symbols-outlined text-[32px]">search_off</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface">ምንም አልተገኘም · No Facilities Found</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant max-w-xs mt-1">
+      የተለየ ስም ወይም የተጠጉ ካምፓስ ይሞክሩ። ወይም ወደ 952 ነጻ መስመር ይደውሉ።
+    </p>
+<button class="mt-4 px-4 py-2 rounded-full bg-primary text-on-primary font-label-md text-label-md" id="btn-reset-filters" type="button">
+      Reset Filters · እንደገና ፈልግ
+    </button>
+</div>
+</div>
+<script>
+  // Filter and Search Micro-interactions
+  (function() {
+    const searchInput = document.getElementById('facility-search-input');
+    const clearBtn = document.getElementById('clear-search');
+    const cards = document.querySelectorAll('.facility-card');
+    const filterPills = document.querySelectorAll('.filter-pill');
+    const noResults = document.getElementById('no-results-state');
+    const resultsCountText = document.getElementById('results-count-text');
+    const campusDropdownBtn = document.getElementById('btn-campus-dropdown');
+    const campusMenu = document.getElementById('campus-menu');
+    const campusLabel = document.getElementById('campus-label');
+    const campusItems = document.querySelectorAll('.campus-item');
+    const btnUseLocation = document.getElementById('btn-use-location');
+    const resetFiltersBtn = document.getElementById('btn-reset-filters');
+
+    let activeFilter = 'all';
+
+    function applyFilters() {
+      const query = (searchInput.value || '').trim().toLowerCase();
+      let visibleCount = 0;
+
+      cards.forEach(card => {
+        const name = card.dataset.name || '';
+        const types = (card.dataset.type || '').split(' ');
+        
+        const matchesQuery = !query || name.includes(query);
+        const matchesType = activeFilter === 'all' || types.includes(activeFilter);
+
+        if (matchesQuery && matchesType) {
+          card.classList.remove('hidden');
+          visibleCount++;
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+
+      if (resultsCountText) {
+        resultsCountText.textContent = `${visibleCount} health facilities nearby · ${visibleCount} የጤና ተቋማት`;
+      }
+
+      if (noResults) {
+        if (visibleCount === 0) {
+          noResults.classList.remove('hidden');
+        } else {
+          noResults.classList.add('hidden');
+        }
+      }
+
+      if (clearBtn) {
+        if (query.length > 0) {
+          clearBtn.classList.remove('hidden');
+        } else {
+          clearBtn.classList.add('hidden');
+        }
+      }
+    }
+
+    if (searchInput) {
+      searchInput.addEventListener('input', applyFilters);
+    }
+
+    if (clearBtn) {
+      clearBtn.addEventListener('click', () => {
+        searchInput.value = '';
+        applyFilters();
+        searchInput.focus();
+      });
+    }
+
+    filterPills.forEach(pill => {
+      pill.addEventListener('click', () => {
+        filterPills.forEach(p => {
+          p.classList.remove('bg-primary', 'text-on-primary');
+          p.classList.add('bg-surface-container', 'text-on-surface');
+        });
+        pill.classList.remove('bg-surface-container', 'text-on-surface');
+        pill.classList.add('bg-primary', 'text-on-primary');
+        
+        activeFilter = pill.dataset.filter || 'all';
+        applyFilters();
+      });
+    });
+
+    if (campusDropdownBtn && campusMenu) {
+      campusDropdownBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        campusMenu.classList.toggle('hidden');
+      });
+
+      campusItems.forEach(item => {
+        item.addEventListener('click', () => {
+          const val = item.dataset.campus;
+          if (campusLabel) campusLabel.textContent = val;
+          campusMenu.classList.add('hidden');
+          // Switch to campus filter pill for visual delight
+          const campusPill = document.querySelector('[data-filter="campus"]');
+          if (campusPill) campusPill.click();
+        });
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!campusMenu.contains(e.target) && !campusDropdownBtn.contains(e.target)) {
+          campusMenu.classList.add('hidden');
+        }
+      });
+    }
+
+    if (btnUseLocation) {
+      btnUseLocation.addEventListener('click', () => {
+        const nearestPill = document.querySelector('[data-filter="nearest"]');
+        if (nearestPill) nearestPill.click();
+      });
+    }
+
+    if (resetFiltersBtn) {
+      resetFiltersBtn.addEventListener('click', () => {
+        if (searchInput) searchInput.value = '';
+        const allPill = document.querySelector('[data-filter="all"]');
+        if (allPill) allPill.click();
+      });
+    }
+  })();
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/85 backdrop-blur-xl shadow-[0_-4px_16px_rgba(14,116,144,0.08)]" data-active-classes="text-primary font-semibold"><div class="flex justify-around items-center h-16 px-space-xs max-w-md mx-auto"><a class="flex flex-col items-center justify-center min-w-[56px] h-12 gap-0.5 text-on-surface-variant hover:text-on-surface transition-all" data-path="home" href="#"><span class="material-symbols-outlined text-[24px]">home</span><span class="font-label-sm text-label-sm truncate">ዋና ገጽ</span></a><a aria-current="page" class="flex flex-col items-center justify-center min-w-[56px] h-12 gap-0.5 transition-all text-primary font-semibold" data-path="facilities" href="#"><span class="material-symbols-outlined text-[24px]">local_hospital</span><span class="font-label-sm text-label-sm truncate">ክሊኒኮች</span></a><a class="flex flex-col items-center justify-center min-w-[56px] h-12 gap-0.5 text-on-surface-variant hover:text-on-surface transition-all" data-path="mentors" href="#"><span class="material-symbols-outlined text-[24px]">support_agent</span><span class="font-label-sm text-label-sm truncate">አማካሪዎች</span></a><a class="flex flex-col items-center justify-center min-w-[56px] h-12 gap-0.5 text-on-surface-variant hover:text-on-surface transition-all" data-path="learn" href="#"><span class="material-symbols-outlined text-[24px]">school</span><span class="font-label-sm text-label-sm truncate">ትምህርት</span></a><a class="flex flex-col items-center justify-center min-w-[56px] h-12 gap-0.5 text-on-surface-variant hover:text-on-surface transition-all" data-path="profile" href="#"><span class="material-symbols-outlined text-[24px]">account_circle</span><span class="font-label-sm text-label-sm truncate">መገለጫ</span></a></div></nav></body></html>

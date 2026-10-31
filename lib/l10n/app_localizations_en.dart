@@ -230,4 +230,288 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get passwordRecoveryTitle => 'Reset your password';
+
+  @override
+  String get learningHeading => 'Health education';
+
+  @override
+  String get learningIntroduction =>
+      'Browse educational resources reviewed for publication. This app does not replace professional care.';
+
+  @override
+  String get articlesHeading => 'Articles';
+
+  @override
+  String get assessmentsHeading => 'Assessments';
+
+  @override
+  String get progressHeading => 'My learning';
+
+  @override
+  String get searchArticles => 'Search articles';
+
+  @override
+  String get allCategories => 'All categories';
+
+  @override
+  String get noReviewedArticles => 'No reviewed articles are available yet.';
+
+  @override
+  String get noReviewedAssessments =>
+      'No reviewed assessments are available yet.';
+
+  @override
+  String get noSearchResults => 'No articles match your search.';
+
+  @override
+  String get learningLoadError =>
+      'We couldn’t load learning content. Check your connection and try again.';
+
+  @override
+  String get educationUnavailable =>
+      'Learning content is not available in this build.';
+
+  @override
+  String get retryAction => 'Try again';
+
+  @override
+  String staleSavedContentWarning(String date) {
+    return 'This saved copy was last checked on $date. It may be out of date or withdrawn. Reconnect before relying on it.';
+  }
+
+  @override
+  String get sourceReferences => 'Sources';
+
+  @override
+  String articleReviewInfo(String date) {
+    return 'Reviewed on $date. Educational information does not replace professional care.';
+  }
+
+  @override
+  String get relatedLearning => 'Related learning';
+
+  @override
+  String get markArticleComplete => 'Mark as read';
+
+  @override
+  String get articleMarkedComplete =>
+      'Reading saved to your learning progress.';
+
+  @override
+  String get startAssessment => 'Start assessment';
+
+  @override
+  String questionProgress(int current, int total) {
+    return 'Question $current of $total';
+  }
+
+  @override
+  String get nextQuestion => 'Next question';
+
+  @override
+  String get submitAnswers => 'Submit answers';
+
+  @override
+  String get retakeAssessment => 'Retake assessment';
+
+  @override
+  String assessmentResult(int score, int total, int percent) {
+    return '$score of $total correct ($percent%)';
+  }
+
+  @override
+  String get answerExplanation => 'Explanation';
+
+  @override
+  String get correctAnswer => 'Correct answer';
+
+  @override
+  String get pendingScore =>
+      'Your answers are saved on this device. Connect to the internet to receive a verified score.';
+
+  @override
+  String get assessmentSubmitError =>
+      'We couldn’t submit your answers. Your score is not available yet.';
+
+  @override
+  String get selectAnAnswer => 'Select an answer to continue.';
+
+  @override
+  String get progressSyncTitle => 'Learning progress sync';
+
+  @override
+  String get progressSyncDescription =>
+      'Choose whether to sync completed articles and assessment history to your signed-in account. Local progress stays available when sync is off.';
+
+  @override
+  String get progressSyncEnable => 'Turn on sync';
+
+  @override
+  String get progressSyncDisable => 'Turn off sync';
+
+  @override
+  String get progressSyncEnabled => 'Progress sync is on.';
+
+  @override
+  String get progressSyncDisabled =>
+      'Progress sync is off. Local progress is still available.';
+
+  @override
+  String get progressSyncSignInRequired => 'Sign in to sync learning progress.';
+
+  @override
+  String get progressSyncError =>
+      'We couldn’t update sync settings. Your local progress is still available.';
+
+  @override
+  String get clearSyncedHistory => 'Clear synced history';
+
+  @override
+  String get clearSyncedHistoryTitle => 'Clear synced learning history?';
+
+  @override
+  String get clearSyncedHistoryBody =>
+      'This removes article completions and assessment attempts from your account. Progress stored on this device will remain.';
+
+  @override
+  String get clearHistoryAction => 'Clear history';
+
+  @override
+  String get cancelAction => 'Cancel';
+
+  @override
+  String get syncedHistoryCleared => 'Synced learning history was cleared.';
+
+  @override
+  String get clearHistoryError =>
+      'We couldn’t clear synced history. Try again.';
+
+  @override
+  String completedArticlesCount(int count) {
+    return 'Completed articles: $count';
+  }
+
+  @override
+  String assessmentAttemptsCount(int count) {
+    return 'Assessment attempts: $count';
+  }
+
+  @override
+  String get noLearningProgress => 'Your learning progress will appear here.';
+
+  @override
+  String get localProgressLabel => 'Saved on this device';
+
+  @override
+  String get scoreHistoryLabel => 'Verified score history';
+
+  @override
+  String assessmentScorePercent(int score) {
+    return '$score%';
+  }
+
+  @override
+  String get facilitiesTab => 'Facilities';
+
+  @override
+  String get mentorsTab => 'Mentors';
+
+  @override
+  String get accountTab => 'Account';
+
+  @override
+  String get healthEducationBoundary =>
+      'Educational information only. This app does not replace professional care.';
+
+  @override
+  String get quickLinksHeading => 'Explore';
+
+  @override
+  String get quickLinksDescription => 'Choose a section to continue.';
+
+  @override
+  String get featuredArticlesHeading => 'Health education';
+
+  @override
+  String get viewAllAction => 'View all';
+
+  @override
+  String get noFeaturedArticlesTitle => 'No reviewed articles yet';
+
+  @override
+  String get noFeaturedArticlesBody =>
+      'Published learning resources will appear here when they are ready.';
+
+  @override
+  String get homeFaqHeading => 'Frequently asked questions';
+
+  @override
+  String get noReviewedFaqsTitle => 'No reviewed questions yet';
+
+  @override
+  String get noReviewedFaqsBody =>
+      'Answers will appear here after they are reviewed and approved.';
+
+  @override
+  String get findVerifiedCare => 'Looking for care?';
+
+  @override
+  String get facilitiesIntroduction =>
+      'Explore youth-friendly health facilities and services.';
+
+  @override
+  String get searchFacilities => 'Search facilities';
+
+  @override
+  String get allFacilities => 'All facilities';
+
+  @override
+  String get nearbyFilter => 'Nearby';
+
+  @override
+  String get campusFilter => 'Campus';
+
+  @override
+  String get noVerifiedFacilitiesTitle => 'No verified facilities listed yet';
+
+  @override
+  String get facilitiesNotAvailableBody =>
+      'Facility information is not available yet. No providers or contact details are listed until they can be verified.';
+
+  @override
+  String get mapPreviewTitle => 'Map';
+
+  @override
+  String get mapNotAvailableBody =>
+      'A map will be available when a verified facility directory is ready.';
+
+  @override
+  String get mentorsIntroduction =>
+      'Find peer support when verified profiles become available.';
+
+  @override
+  String get searchMentors => 'Search mentors';
+
+  @override
+  String get allMentors => 'All mentors';
+
+  @override
+  String get languageFilter => 'Language';
+
+  @override
+  String get noVerifiedMentorsTitle => 'No verified mentor profiles yet';
+
+  @override
+  String get noVerifiedMentorsBody =>
+      'Mentor profiles and contact options will appear here after identity and safety checks are in place.';
+
+  @override
+  String get mentorSafetyTitle => 'Peer support directory';
+
+  @override
+  String get mentorSafetyBody =>
+      'No people or contact information are displayed until a verification process is available.';
+
+  @override
+  String get learningProgressTitle => 'Your learning activity';
 }

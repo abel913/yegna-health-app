@@ -499,6 +499,504 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Reset your password'**
   String get passwordRecoveryTitle;
+
+  /// No description provided for @learningHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Health education'**
+  String get learningHeading;
+
+  /// No description provided for @learningIntroduction.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse educational resources reviewed for publication. This app does not replace professional care.'**
+  String get learningIntroduction;
+
+  /// No description provided for @articlesHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Articles'**
+  String get articlesHeading;
+
+  /// No description provided for @assessmentsHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Assessments'**
+  String get assessmentsHeading;
+
+  /// No description provided for @progressHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'My learning'**
+  String get progressHeading;
+
+  /// No description provided for @searchArticles.
+  ///
+  /// In en, this message translates to:
+  /// **'Search articles'**
+  String get searchArticles;
+
+  /// No description provided for @allCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'All categories'**
+  String get allCategories;
+
+  /// No description provided for @noReviewedArticles.
+  ///
+  /// In en, this message translates to:
+  /// **'No reviewed articles are available yet.'**
+  String get noReviewedArticles;
+
+  /// No description provided for @noReviewedAssessments.
+  ///
+  /// In en, this message translates to:
+  /// **'No reviewed assessments are available yet.'**
+  String get noReviewedAssessments;
+
+  /// No description provided for @noSearchResults.
+  ///
+  /// In en, this message translates to:
+  /// **'No articles match your search.'**
+  String get noSearchResults;
+
+  /// No description provided for @learningLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn’t load learning content. Check your connection and try again.'**
+  String get learningLoadError;
+
+  /// No description provided for @educationUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Learning content is not available in this build.'**
+  String get educationUnavailable;
+
+  /// No description provided for @retryAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get retryAction;
+
+  /// No description provided for @staleSavedContentWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'This saved copy was last checked on {date}. It may be out of date or withdrawn. Reconnect before relying on it.'**
+  String staleSavedContentWarning(String date);
+
+  /// No description provided for @sourceReferences.
+  ///
+  /// In en, this message translates to:
+  /// **'Sources'**
+  String get sourceReferences;
+
+  /// No description provided for @articleReviewInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Reviewed on {date}. Educational information does not replace professional care.'**
+  String articleReviewInfo(String date);
+
+  /// No description provided for @relatedLearning.
+  ///
+  /// In en, this message translates to:
+  /// **'Related learning'**
+  String get relatedLearning;
+
+  /// No description provided for @markArticleComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as read'**
+  String get markArticleComplete;
+
+  /// No description provided for @articleMarkedComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading saved to your learning progress.'**
+  String get articleMarkedComplete;
+
+  /// No description provided for @startAssessment.
+  ///
+  /// In en, this message translates to:
+  /// **'Start assessment'**
+  String get startAssessment;
+
+  /// No description provided for @questionProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Question {current} of {total}'**
+  String questionProgress(int current, int total);
+
+  /// No description provided for @nextQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Next question'**
+  String get nextQuestion;
+
+  /// No description provided for @submitAnswers.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit answers'**
+  String get submitAnswers;
+
+  /// No description provided for @retakeAssessment.
+  ///
+  /// In en, this message translates to:
+  /// **'Retake assessment'**
+  String get retakeAssessment;
+
+  /// No description provided for @assessmentResult.
+  ///
+  /// In en, this message translates to:
+  /// **'{score} of {total} correct ({percent}%)'**
+  String assessmentResult(int score, int total, int percent);
+
+  /// No description provided for @answerExplanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Explanation'**
+  String get answerExplanation;
+
+  /// No description provided for @correctAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'Correct answer'**
+  String get correctAnswer;
+
+  /// No description provided for @pendingScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Your answers are saved on this device. Connect to the internet to receive a verified score.'**
+  String get pendingScore;
+
+  /// No description provided for @assessmentSubmitError.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn’t submit your answers. Your score is not available yet.'**
+  String get assessmentSubmitError;
+
+  /// No description provided for @selectAnAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'Select an answer to continue.'**
+  String get selectAnAnswer;
+
+  /// No description provided for @progressSyncTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Learning progress sync'**
+  String get progressSyncTitle;
+
+  /// No description provided for @progressSyncDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose whether to sync completed articles and assessment history to your signed-in account. Local progress stays available when sync is off.'**
+  String get progressSyncDescription;
+
+  /// No description provided for @progressSyncEnable.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on sync'**
+  String get progressSyncEnable;
+
+  /// No description provided for @progressSyncDisable.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn off sync'**
+  String get progressSyncDisable;
+
+  /// No description provided for @progressSyncEnabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Progress sync is on.'**
+  String get progressSyncEnabled;
+
+  /// No description provided for @progressSyncDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Progress sync is off. Local progress is still available.'**
+  String get progressSyncDisabled;
+
+  /// No description provided for @progressSyncSignInRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to sync learning progress.'**
+  String get progressSyncSignInRequired;
+
+  /// No description provided for @progressSyncError.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn’t update sync settings. Your local progress is still available.'**
+  String get progressSyncError;
+
+  /// No description provided for @clearSyncedHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear synced history'**
+  String get clearSyncedHistory;
+
+  /// No description provided for @clearSyncedHistoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear synced learning history?'**
+  String get clearSyncedHistoryTitle;
+
+  /// No description provided for @clearSyncedHistoryBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This removes article completions and assessment attempts from your account. Progress stored on this device will remain.'**
+  String get clearSyncedHistoryBody;
+
+  /// No description provided for @clearHistoryAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear history'**
+  String get clearHistoryAction;
+
+  /// No description provided for @cancelAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancelAction;
+
+  /// No description provided for @syncedHistoryCleared.
+  ///
+  /// In en, this message translates to:
+  /// **'Synced learning history was cleared.'**
+  String get syncedHistoryCleared;
+
+  /// No description provided for @clearHistoryError.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn’t clear synced history. Try again.'**
+  String get clearHistoryError;
+
+  /// No description provided for @completedArticlesCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed articles: {count}'**
+  String completedArticlesCount(int count);
+
+  /// No description provided for @assessmentAttemptsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Assessment attempts: {count}'**
+  String assessmentAttemptsCount(int count);
+
+  /// No description provided for @noLearningProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Your learning progress will appear here.'**
+  String get noLearningProgress;
+
+  /// No description provided for @localProgressLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved on this device'**
+  String get localProgressLabel;
+
+  /// No description provided for @scoreHistoryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Verified score history'**
+  String get scoreHistoryLabel;
+
+  /// No description provided for @assessmentScorePercent.
+  ///
+  /// In en, this message translates to:
+  /// **'{score}%'**
+  String assessmentScorePercent(int score);
+
+  /// No description provided for @facilitiesTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Facilities'**
+  String get facilitiesTab;
+
+  /// No description provided for @mentorsTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Mentors'**
+  String get mentorsTab;
+
+  /// No description provided for @accountTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get accountTab;
+
+  /// No description provided for @healthEducationBoundary.
+  ///
+  /// In en, this message translates to:
+  /// **'Educational information only. This app does not replace professional care.'**
+  String get healthEducationBoundary;
+
+  /// No description provided for @quickLinksHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore'**
+  String get quickLinksHeading;
+
+  /// No description provided for @quickLinksDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a section to continue.'**
+  String get quickLinksDescription;
+
+  /// No description provided for @featuredArticlesHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Health education'**
+  String get featuredArticlesHeading;
+
+  /// No description provided for @viewAllAction.
+  ///
+  /// In en, this message translates to:
+  /// **'View all'**
+  String get viewAllAction;
+
+  /// No description provided for @noFeaturedArticlesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No reviewed articles yet'**
+  String get noFeaturedArticlesTitle;
+
+  /// No description provided for @noFeaturedArticlesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Published learning resources will appear here when they are ready.'**
+  String get noFeaturedArticlesBody;
+
+  /// No description provided for @homeFaqHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Frequently asked questions'**
+  String get homeFaqHeading;
+
+  /// No description provided for @noReviewedFaqsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No reviewed questions yet'**
+  String get noReviewedFaqsTitle;
+
+  /// No description provided for @noReviewedFaqsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Answers will appear here after they are reviewed and approved.'**
+  String get noReviewedFaqsBody;
+
+  /// No description provided for @findVerifiedCare.
+  ///
+  /// In en, this message translates to:
+  /// **'Looking for care?'**
+  String get findVerifiedCare;
+
+  /// No description provided for @facilitiesIntroduction.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore youth-friendly health facilities and services.'**
+  String get facilitiesIntroduction;
+
+  /// No description provided for @searchFacilities.
+  ///
+  /// In en, this message translates to:
+  /// **'Search facilities'**
+  String get searchFacilities;
+
+  /// No description provided for @allFacilities.
+  ///
+  /// In en, this message translates to:
+  /// **'All facilities'**
+  String get allFacilities;
+
+  /// No description provided for @nearbyFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'Nearby'**
+  String get nearbyFilter;
+
+  /// No description provided for @campusFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'Campus'**
+  String get campusFilter;
+
+  /// No description provided for @noVerifiedFacilitiesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No verified facilities listed yet'**
+  String get noVerifiedFacilitiesTitle;
+
+  /// No description provided for @facilitiesNotAvailableBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Facility information is not available yet. No providers or contact details are listed until they can be verified.'**
+  String get facilitiesNotAvailableBody;
+
+  /// No description provided for @mapPreviewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Map'**
+  String get mapPreviewTitle;
+
+  /// No description provided for @mapNotAvailableBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A map will be available when a verified facility directory is ready.'**
+  String get mapNotAvailableBody;
+
+  /// No description provided for @mentorsIntroduction.
+  ///
+  /// In en, this message translates to:
+  /// **'Find peer support when verified profiles become available.'**
+  String get mentorsIntroduction;
+
+  /// No description provided for @searchMentors.
+  ///
+  /// In en, this message translates to:
+  /// **'Search mentors'**
+  String get searchMentors;
+
+  /// No description provided for @allMentors.
+  ///
+  /// In en, this message translates to:
+  /// **'All mentors'**
+  String get allMentors;
+
+  /// No description provided for @languageFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get languageFilter;
+
+  /// No description provided for @noVerifiedMentorsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No verified mentor profiles yet'**
+  String get noVerifiedMentorsTitle;
+
+  /// No description provided for @noVerifiedMentorsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Mentor profiles and contact options will appear here after identity and safety checks are in place.'**
+  String get noVerifiedMentorsBody;
+
+  /// No description provided for @mentorSafetyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Peer support directory'**
+  String get mentorSafetyTitle;
+
+  /// No description provided for @mentorSafetyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'No people or contact information are displayed until a verification process is available.'**
+  String get mentorSafetyBody;
+
+  /// No description provided for @learningProgressTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your learning activity'**
+  String get learningProgressTitle;
 }
 
 class _AppLocalizationsDelegate

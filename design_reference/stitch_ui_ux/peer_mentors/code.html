@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;min-height:100%;margin:0;padding:0;}body{overscroll-behavior-y:none;-webkit-tap-highlight-color:transparent;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "surface-container": "#eaedff", "primary-container": "#0e7490", "on-primary": "#ffffff", "surface-container-highest": "#dae2fd", "inverse-on-surface": "#eef0ff", "tertiary-fixed": "#6ffbbe", "tertiary": "#005f40", "primary": "#005a71", "tertiary-container": "#007a53", "on-primary-fixed": "#001f29", "on-surface": "#131b2e", "on-primary-fixed-variant": "#004d62", "surface-container-low": "#f2f3ff", "primary-fixed": "#b9eaff", "on-secondary": "#ffffff", "secondary-fixed-dim": "#93ccff", "surface-container-high": "#e2e7ff", "tertiary-fixed-dim": "#4edea3", "on-tertiary": "#ffffff", "surface-tint": "#006781", "surface-variant": "#dae2fd", "primary-fixed-dim": "#81d1f0", "surface-bright": "#faf8ff", "on-error-container": "#93000a", "on-error": "#ffffff", "surface-container-lowest": "#ffffff", "background": "#faf8ff", "error-container": "#ffdad6", "on-surface-variant": "#3f484c", "on-secondary-container": "#00476e", "on-tertiary-container": "#a3ffd0", "inverse-surface": "#283044", "outline": "#6f787d", "on-secondary-fixed": "#001d31", "on-tertiary-fixed-variant": "#005236", "error": "#ba1a1a", "on-primary-container": "#d3f1ff", "secondary": "#006398", "secondary-container": "#5bb8fe", "inverse-primary": "#81d1f0", "secondary-fixed": "#cce5ff", "outline-variant": "#bec8cd", "surface-dim": "#d2d9f4", "surface": "#faf8ff", "on-secondary-fixed-variant": "#004b73", "on-background": "#131b2e", "on-tertiary-fixed": "#002113" }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, spacing: { "space-md": "0.75rem", "space-xl": "1.75rem", "margin": "1.25rem", "gutter": "1rem", "space-sm": "0.5rem", "space-xs": "0.25rem", "space-lg": "1.25rem" }, fontFamily: { "headline-md": ["Inter"], "headline-lg": ["Inter"], "body-sm": ["Inter"], "headline-xl": ["Inter"], "label-sm": ["Inter"], "label-md": ["Inter"], "body-lg": ["Inter"], "body-md": ["Inter"] }, fontSize: { "headline-md": ["18px", {"lineHeight": "24px", "fontWeight": "600"}], "headline-lg": ["22px", {"lineHeight": "28px", "letterSpacing": "-0.015em", "fontWeight": "700"}], "body-sm": ["12px", {"lineHeight": "17px", "fontWeight": "400"}], "headline-xl": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}], "label-sm": ["11px", {"lineHeight": "16px", "letterSpacing": "0.04em", "fontWeight": "600"}], "label-md": ["13px", {"lineHeight": "18px", "fontWeight": "600"}], "body-lg": ["15px", {"lineHeight": "22px", "fontWeight": "400"}], "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}] } } } };</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface text-on-surface font-body-md text-body-md flex flex-col min-h-full antialiased"><header class="fixed top-0 w-full z-50 pt-safe bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 px-margin flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm min-w-0 flex-1"><div class="flex flex-col min-w-0"><span class="font-label-sm text-label-sm text-primary font-bold tracking-wider uppercase truncate">Wise Youth · ጥበበኛ</span><h1 class="font-headline-md text-headline-md text-on-surface tracking-tight truncate">Mentors</h1></div></div><div class="flex items-center gap-space-xs shrink-0"><div class="inline-flex items-center p-0.5 bg-surface-container rounded-full"><button aria-label="ቋንቋ ወደ አማርኛ ቀይር" class="px-2 py-1 rounded-full text-label-sm font-label-sm bg-primary text-on-primary shadow-sm transition-colors" type="button">አማ</button><button aria-label="Switch language to English" class="px-2 py-1 rounded-full text-label-sm font-label-sm text-on-surface-variant hover:text-on-surface transition-colors" type="button">EN</button></div><button aria-label="ማሳወቂያዎች / Notifications" class="relative w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:text-on-surface transition-colors active:scale-95" type="button"><span class="material-symbols-outlined text-[22px]">notifications</span><span class="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-error ring-2 ring-surface"></span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0 shadow-sm"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex flex-col relative w-full pt-16 pb-24 bg-surface min-h-screen"><div class="flex flex-col w-full">
+<!-- Confidentiality Banner / Warm Reassurance Hub -->
+<section class="px-margin pt-space-md pb-space-sm">
+<div class="relative overflow-hidden rounded-xl bg-surface-container-low p-space-md shadow-sm">
+<div class="flex items-start gap-space-sm">
+<div class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center shrink-0 shadow-sm text-primary">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+</div>
+<div class="flex flex-col min-w-0 pr-2">
+<div class="flex items-center gap-1.5 flex-wrap">
+<span class="font-label-sm text-label-sm text-primary uppercase font-bold tracking-wider">100% ነፃ እና ምስጢራዊ</span>
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Confidential Peer Space</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface mt-0.5">
+            የተረጋገጡ የዩኒቨርሲቲ አቻ አማካሪዎች ያለምንም ፍርድ ሊያዳምጡዎት እና ድጋፍ ሊሰጡዎት ዝግጁ ናቸው።
+          </p>
+</div>
+</div>
+</div>
+</section>
+<!-- Search & Live Counter Bar -->
+<section class="px-margin py-space-sm flex flex-col gap-space-sm">
+<div class="relative w-full">
+<div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-outline">
+<span class="material-symbols-outlined text-[20px]">search</span>
+</div>
+<input class="w-full pl-10 pr-10 py-3 bg-surface-container-lowest rounded-full font-body-md text-body-md text-on-surface placeholder:text-outline shadow-sm focus:outline-none focus:ring-0" id="mentor-search-input" placeholder="በስም፣ ዩኒቨርሲቲ ወይም መስክ ይፈልጉ... (Search mentors)" type="search"/>
+<button aria-label="ፍለጋ አጽዳ" class="hidden absolute inset-y-0 right-0 pr-3.5 flex items-center text-outline hover:text-on-surface" id="clear-search-btn" type="button">
+<span class="material-symbols-outlined text-[18px]">cancel</span>
+</button>
+</div>
+<!-- Active Mentors Count & Availability Toggle -->
+<div class="flex items-center justify-between px-1">
+<div class="flex items-center gap-1.5">
+<span class="w-2.5 h-2.5 rounded-full bg-tertiary animate-pulse"></span>
+<span class="font-label-md text-label-md text-on-surface font-semibold" id="results-count-text">34 የተረጋገጡ አማካሪዎች</span>
+<span class="font-label-sm text-label-sm text-outline">(Active Peer Support)</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="font-label-sm text-label-sm text-primary font-medium">የሰለጠኑ / Certified</span>
+</div>
+</div>
+</section>
+<!-- Campus & Specialty Horizontal Filter Pills -->
+<section class="py-space-xs">
+<div class="flex gap-2 overflow-x-auto px-margin scrollbar-none pb-1" id="filter-pills-container">
+<button class="filter-pill shrink-0 px-3.5 py-1.5 rounded-full font-label-md text-label-md font-semibold bg-primary text-on-primary shadow-sm transition-all active:scale-95" data-filter="all" type="button">
+        ሁሉም (All)
+      </button>
+<button class="filter-pill shrink-0 px-3.5 py-1.5 rounded-full font-label-md text-label-md font-medium bg-surface-container-low text-on-surface-variant hover:text-on-surface shadow-sm transition-all active:scale-95" data-filter="kotebe" type="button">
+        Kotebe University
+      </button>
+<button class="filter-pill shrink-0 px-3.5 py-1.5 rounded-full font-label-md text-label-md font-medium bg-surface-container-low text-on-surface-variant hover:text-on-surface shadow-sm transition-all active:scale-95" data-filter="aau" type="button">
+        Addis Ababa Univ (AAU)
+      </button>
+<button class="filter-pill shrink-0 px-3.5 py-1.5 rounded-full font-label-md text-label-md font-medium bg-surface-container-low text-on-surface-variant hover:text-on-surface shadow-sm transition-all active:scale-95" data-filter="srh" type="button">
+        የስነ-ተዋልዶ ጤና (SRH)
+      </button>
+<button class="filter-pill shrink-0 px-3.5 py-1.5 rounded-full font-label-md text-label-md font-medium bg-surface-container-low text-on-surface-variant hover:text-on-surface shadow-sm transition-all active:scale-95" data-filter="mental" type="button">
+        ስነ-ልቦና ድጋፍ (Psychology)
+      </button>
+<button class="filter-pill shrink-0 px-3.5 py-1.5 rounded-full font-label-md text-label-md font-medium bg-surface-container-low text-on-surface-variant hover:text-on-surface shadow-sm transition-all active:scale-95" data-filter="admas" type="button">
+        Admas University
+      </button>
+<button class="filter-pill shrink-0 px-3.5 py-1.5 rounded-full font-label-md text-label-md font-medium bg-surface-container-low text-on-surface-variant hover:text-on-surface shadow-sm transition-all active:scale-95" data-filter="jinka" type="button">
+        Jinka University
+      </button>
+</div>
+</section>
+<!-- Mentors Directory Cards Stack -->
+<section class="px-margin py-space-md flex flex-col gap-space-md" id="mentors-list">
+<!-- Mentor 1: Yeelshaday Solomon -->
+<article class="mentor-card bg-surface-container-lowest rounded-xl p-space-md shadow-sm transition-transform active:scale-[0.99]" data-tags="all kotebe srh online">
+<div class="flex items-start justify-between gap-space-sm">
+<!-- Avatar & Identity -->
+<div class="flex items-start gap-space-sm min-w-0 flex-1">
+<div class="relative shrink-0">
+<div class="w-13 h-13 w-12 h-12 rounded-full bg-primary-fixed text-primary font-headline-md text-headline-md flex items-center justify-center shadow-sm">
+              YS
+            </div>
+<span class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-tertiary ring-2 ring-surface-container-lowest" title="አሁን ክፍት ነው (Online)"></span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<h2 class="font-headline-md text-headline-md text-on-surface truncate">Yeelshaday Solomon</h2>
+<span class="material-symbols-outlined text-primary text-[17px] shrink-0" style="font-variation-settings: 'FILL' 1;" title="የተረጋገጠ አቻ አማካሪ">verified</span>
+</div>
+<p class="font-body-sm text-body-sm text-primary font-medium mt-0.5">የስነ-ተዋልዶ ጤና እና የምርመራ ዝግጅት</p>
+<div class="flex items-center gap-1 text-on-surface-variant mt-1">
+<span class="material-symbols-outlined text-[15px] shrink-0">account_balance</span>
+<span class="font-label-sm text-label-sm truncate">Kotebe University of Education</span>
+</div>
+</div>
+</div>
+<!-- Online Status Tag -->
+<span class="shrink-0 px-2.5 py-1 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm font-semibold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+          ክፍት ነው
+        </span>
+</div>
+<!-- Detail Badges: Languages & Safe tag -->
+<div class="mt-3 pt-3 flex flex-wrap items-center justify-between gap-2 bg-surface-container-low/50 rounded-lg p-2.5">
+<div class="flex items-center gap-1.5 text-on-surface-variant flex-wrap">
+<span class="font-label-sm text-label-sm text-outline">ቋንቋዎች:</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container font-label-sm text-label-sm text-on-surface">አማርኛ</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container font-label-sm text-label-sm text-on-surface">English</span>
+</div>
+<div class="flex items-center gap-1 text-primary">
+<span class="material-symbols-outlined text-[15px]">call</span>
+<span class="font-label-sm text-label-sm font-semibold tracking-wide">0987864344</span>
+</div>
+</div>
+<!-- Dual Action Triggers -->
+<div class="mt-space-md grid grid-cols-2 gap-2">
+<a aria-label="ደውል ወደ Yeelshaday Solomon" class="flex items-center justify-center gap-2 py-2.5 px-3 rounded-full bg-primary-container text-on-primary font-label-md text-label-md font-semibold shadow-sm active:scale-95 transition-transform" href="tel:0987864344">
+<span class="material-symbols-outlined text-[18px]">call</span>
+<span>በነፃ ደውል</span>
+</a>
+<button aria-label="በምስጢር ተወያይ" class="flex items-center justify-center gap-2 py-2.5 px-3 rounded-full bg-surface-container-high text-on-surface font-label-md text-label-md font-semibold hover:bg-surface-container-highest active:scale-95 transition-all" onclick="openChatModal('Yeelshaday Solomon', 'Kotebe University')" type="button">
+<span class="material-symbols-outlined text-[18px] text-primary">chat_bubble</span>
+<span>በምስጢር ተወያይ</span>
+</button>
+</div>
+</article>
+<!-- Mentor 2: Mekoya Fekade -->
+<article class="mentor-card bg-surface-container-lowest rounded-xl p-space-md shadow-sm transition-transform active:scale-[0.99]" data-tags="all aau srh mental">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-start gap-space-sm min-w-0 flex-1">
+<div class="relative shrink-0">
+<div class="w-12 h-12 rounded-full bg-secondary-fixed text-on-secondary-fixed-variant font-headline-md text-headline-md flex items-center justify-center shadow-sm">
+              MF
+            </div>
+<span class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-tertiary ring-2 ring-surface-container-lowest" title="አሁን ክፍት ነው"></span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<h2 class="font-headline-md text-headline-md text-on-surface truncate">Mekoya Fekade</h2>
+<span class="material-symbols-outlined text-primary text-[17px] shrink-0" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+<p class="font-body-sm text-body-sm text-primary font-medium mt-0.5">የስነ-ተዋልዶ ጤና እና ወጣቶች ድምፅ</p>
+<div class="flex items-center gap-1 text-on-surface-variant mt-1">
+<span class="material-symbols-outlined text-[15px] shrink-0">account_balance</span>
+<span class="font-label-sm text-label-sm truncate">Addis Ababa University (AAU)</span>
+</div>
+</div>
+</div>
+<span class="shrink-0 px-2.5 py-1 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm font-semibold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+          ክፍት ነው
+        </span>
+</div>
+<div class="mt-3 pt-3 flex flex-wrap items-center justify-between gap-2 bg-surface-container-low/50 rounded-lg p-2.5">
+<div class="flex items-center gap-1.5 text-on-surface-variant flex-wrap">
+<span class="font-label-sm text-label-sm text-outline">ቋንቋዎች:</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container font-label-sm text-label-sm text-on-surface">አማርኛ</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container font-label-sm text-label-sm text-on-surface">Afaan Oromoo</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container font-label-sm text-label-sm text-on-surface">English</span>
+</div>
+<div class="flex items-center gap-1 text-primary">
+<span class="material-symbols-outlined text-[15px]">call</span>
+<span class="font-label-sm text-label-sm font-semibold tracking-wide">0990337348</span>
+</div>
+</div>
+<div class="mt-space-md grid grid-cols-2 gap-2">
+<a aria-label="ደውል ወደ Mekoya Fekade" class="flex items-center justify-center gap-2 py-2.5 px-3 rounded-full bg-primary-container text-on-primary font-label-md text-label-md font-semibold shadow-sm active:scale-95 transition-transform" href="tel:0990337348">
+<span class="material-symbols-outlined text-[18px]">call</span>
+<span>በነፃ ደውል</span>
+</a>
+<button aria-label="በምስጢር ተወያይ" class="flex items-center justify-center gap-2 py-2.5 px-3 rounded-full bg-surface-container-high text-on-surface font-label-md text-label-md font-semibold hover:bg-surface-container-highest active:scale-95 transition-all" onclick="openChatModal('Mekoya Fekade', 'Addis Ababa University')" type="button">
+<span class="material-symbols-outlined text-[18px] text-primary">chat_bubble</span>
+<span>በምስጢር ተወያይ</span>
+</button>
+</div>
+</article>
+<!-- Mentor 3: Tiemmar Dori -->
+<article class="mentor-card bg-surface-container-lowest rounded-xl p-space-md shadow-sm transition-transform active:scale-[0.99]" data-tags="all admas mental">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-start gap-space-sm min-w-0 flex-1">
+<div class="relative shrink-0">
+<div class="w-12 h-12 rounded-full bg-surface-container-highest text-on-surface font-headline-md text-headline-md flex items-center justify-center shadow-sm">
+              TD
+            </div>
+<span class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-tertiary-fixed-dim ring-2 ring-surface-container-lowest" title="በጥሪ ላይ (Busy)"></span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<h2 class="font-headline-md text-headline-md text-on-surface truncate">Tiemmar Dori</h2>
+<span class="material-symbols-outlined text-primary text-[17px] shrink-0" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+<p class="font-body-sm text-body-sm text-primary font-medium mt-0.5">የስነ-ልቦና ፅናት እና አቻ ውይይት</p>
+<div class="flex items-center gap-1 text-on-surface-variant mt-1">
+<span class="material-symbols-outlined text-[15px] shrink-0">account_balance</span>
+<span class="font-label-sm text-label-sm truncate">Admas University</span>
+</div>
+</div>
+</div>
+<span class="shrink-0 px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm font-semibold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+          ጥሪ ይቀበላል
+        </span>
+</div>
+<div class="mt-3 pt-3 flex flex-wrap items-center justify-between gap-2 bg-surface-container-low/50 rounded-lg p-2.5">
+<div class="flex items-center gap-1.5 text-on-surface-variant flex-wrap">
+<span class="font-label-sm text-label-sm text-outline">ቋንቋዎች:</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container font-label-sm text-label-sm text-on-surface">አማርኛ</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container font-label-sm text-label-sm text-on-surface">English</span>
+</div>
+<div class="flex items-center gap-1 text-primary">
+<span class="material-symbols-outlined text-[15px]">call</span>
+<span class="font-label-sm text-label-sm font-semibold tracking-wide">0968102513</span>
+</div>
+</div>
+<div class="mt-space-md grid grid-cols-2 gap-2">
+<a aria-label="ደውል ወደ Tiemmar Dori" class="flex items-center justify-center gap-2 py-2.5 px-3 rounded-full bg-primary-container text-on-primary font-label-md text-label-md font-semibold shadow-sm active:scale-95 transition-transform" href="tel:0968102513">
+<span class="material-symbols-outlined text-[18px]">call</span>
+<span>በነፃ ደውል</span>
+</a>
+<button aria-label="በምስጢር ተወያይ" class="flex items-center justify-center gap-2 py-2.5 px-3 rounded-full bg-surface-container-high text-on-surface font-label-md text-label-md font-semibold hover:bg-surface-container-highest active:scale-95 transition-all" onclick="openChatModal('Tiemmar Dori', 'Admas University')" type="button">
+<span class="material-symbols-outlined text-[18px] text-primary">chat_bubble</span>
+<span>በምስጢር ተወያይ</span>
+</button>
+</div>
+</article>
+<!-- Mentor 4: Sofia Ibrahim -->
+<article class="mentor-card bg-surface-container-lowest rounded-xl p-space-md shadow-sm transition-transform active:scale-[0.99]" data-tags="all jinka srh">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-start gap-space-sm min-w-0 flex-1">
+<div class="relative shrink-0">
+<div class="w-12 h-12 rounded-full bg-primary-fixed-dim text-on-primary-fixed-variant font-headline-md text-headline-md flex items-center justify-center shadow-sm">
+              SI
+            </div>
+<span class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-tertiary ring-2 ring-surface-container-lowest" title="አሁን ክፍት ነው"></span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<h2 class="font-headline-md text-headline-md text-on-surface truncate">Sofia Ibrahim</h2>
+<span class="material-symbols-outlined text-primary text-[17px] shrink-0" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+<p class="font-body-sm text-body-sm text-primary font-medium mt-0.5">የስነ-ተዋልዶ ትምህርት እና ምክር</p>
+<div class="flex items-center gap-1 text-on-surface-variant mt-1">
+<span class="material-symbols-outlined text-[15px] shrink-0">account_balance</span>
+<span class="font-label-sm text-label-sm truncate">Jinka University</span>
+</div>
+</div>
+</div>
+<span class="shrink-0 px-2.5 py-1 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm font-semibold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+          ክፍት ነው
+        </span>
+</div>
+<div class="mt-3 pt-3 flex flex-wrap items-center justify-between gap-2 bg-surface-container-low/50 rounded-lg p-2.5">
+<div class="flex items-center gap-1.5 text-on-surface-variant flex-wrap">
+<span class="font-label-sm text-label-sm text-outline">ቋንቋዎች:</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container font-label-sm text-label-sm text-on-surface">አማርኛ</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container font-label-sm text-label-sm text-on-surface">Somali</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container font-label-sm text-label-sm text-on-surface">English</span>
+</div>
+<div class="flex items-center gap-1 text-primary">
+<span class="material-symbols-outlined text-[15px]">call</span>
+<span class="font-label-sm text-label-sm font-semibold tracking-wide">0904831376</span>
+</div>
+</div>
+<div class="mt-space-md grid grid-cols-2 gap-2">
+<a aria-label="ደውል ወደ Sofia Ibrahim" class="flex items-center justify-center gap-2 py-2.5 px-3 rounded-full bg-primary-container text-on-primary font-label-md text-label-md font-semibold shadow-sm active:scale-95 transition-transform" href="tel:0904831376">
+<span class="material-symbols-outlined text-[18px]">call</span>
+<span>በነፃ ደውል</span>
+</a>
+<button aria-label="በምስጢር ተወያይ" class="flex items-center justify-center gap-2 py-2.5 px-3 rounded-full bg-surface-container-high text-on-surface font-label-md text-label-md font-semibold hover:bg-surface-container-highest active:scale-95 transition-all" onclick="openChatModal('Sofia Ibrahim', 'Jinka University')" type="button">
+<span class="material-symbols-outlined text-[18px] text-primary">chat_bubble</span>
+<span>በምስጢር ተወያይ</span>
+</button>
+</div>
+</article>
+<!-- Empty Search State -->
+<div class="hidden flex flex-col items-center justify-center py-10 px-4 text-center bg-surface-container-lowest rounded-xl shadow-sm" id="no-mentors-found">
+<div class="w-14 h-14 rounded-full bg-surface-container flex items-center justify-center text-primary mb-3">
+<span class="material-symbols-outlined text-[28px]">sentiment_satisfied</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface">ምንም አማካሪ አልተገኘም</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant max-w-xs mt-1">
+        እባክዎ የተለየ ስም ወይም የዩኒቨርሲቲ ስም ይሞክሩ። ጥያቄ ካለዎት ድንገተኛ መስመራችን ክፍት ነው።
+      </p>
+<button class="mt-4 px-4 py-2 rounded-full bg-primary text-on-primary font-label-md text-label-md font-semibold shadow-sm active:scale-95 transition-transform" onclick="resetFilters()" type="button">
+        ሁሉንም አማካሪዎች አሳይ
+      </button>
+</div>
+</section>
+<!-- Safe Peer Advice Tip Card -->
+<section class="px-margin pt-space-xs pb-space-lg">
+<div class="rounded-xl bg-surface-container p-space-md flex items-center gap-space-sm shadow-sm">
+<div class="w-10 h-10 rounded-full bg-tertiary-container text-on-tertiary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[20px]">health_and_safety</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md text-on-surface font-semibold">የግል ጥበቃ መመሪያ</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+          ስምዎን ሳያስቀምጡ ማንኛውንም ጥያቄ በነፃነት ማቅረብ ይችላሉ። መረጃዎ ሙሉ በሙሉ የተጠበቀ ነው።
+        </p>
+</div>
+</div>
+</section>
+<!-- Interactive Modal: Zero-Judgment Anonymous Chat Preview -->
+<div class="fixed inset-0 z-50 bg-inverse-surface/40 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4 transition-opacity" id="chat-modal">
+<div class="w-full max-w-md bg-surface-container-lowest rounded-t-2xl sm:rounded-2xl p-space-lg shadow-xl flex flex-col gap-space-md">
+<div class="flex items-center justify-between pb-2">
+<div class="flex items-center gap-2 min-w-0">
+<div class="w-9 h-9 rounded-full bg-primary-fixed flex items-center justify-center text-primary font-bold shrink-0">
+<span class="material-symbols-outlined text-[18px]">lock</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-headline-md text-headline-md text-on-surface truncate" id="modal-mentor-name">Mekoya Fekade</span>
+<span class="font-label-sm text-label-sm text-tertiary font-semibold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+              ምስጢራዊ እና ደህንነቱ የተጠበቀ ውይይት
+            </span>
+</div>
+</div>
+<button class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-on-surface active:scale-95" onclick="closeChatModal()" type="button">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+<div class="bg-surface-container-low p-space-sm rounded-xl flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px] shrink-0">shield</span>
+<p class="font-body-sm text-body-sm text-on-surface">
+          እርስዎ ማንነትዎ ሳይገለጽ እንደ <span class="font-semibold text-primary">"እንግዳ #748"</span> ሆነው ይገናኛሉ።
+        </p>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-on-surface font-semibold" for="peer-initial-message">የመነሻ ጥያቄዎትን ወይም ሃሳብዎን ያካፍሉ:</label>
+<textarea class="w-full p-3 bg-surface-container-low rounded-xl font-body-md text-body-md text-on-surface placeholder:text-outline focus:outline-none resize-none" id="peer-initial-message" placeholder="ሰላም! ስለ ስነ-ተዋልዶ ጤና አንድ ነገር መጠየቅ ፈልጌ ነበር..." rows="3"></textarea>
+</div>
+<div class="flex items-center justify-end gap-2 pt-1">
+<button class="px-4 py-2.5 rounded-full font-label-md text-label-md text-on-surface-variant hover:bg-surface-container active:scale-95 transition-all" onclick="closeChatModal()" type="button">
+          ይቅር
+        </button>
+<button class="flex items-center gap-1.5 px-5 py-2.5 rounded-full bg-primary text-on-primary font-label-md text-label-md font-semibold shadow-sm active:scale-95 transition-transform" onclick="sendMockMessage()" type="button">
+<span>ውይይት ጀምር</span>
+<span class="material-symbols-outlined text-[16px]">send</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Notification Toast for Delight -->
+<div class="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 bg-inverse-surface text-inverse-on-surface px-4 py-2.5 rounded-full font-label-md text-label-md shadow-lg flex items-center gap-2 opacity-0 pointer-events-none transition-all duration-300" id="action-toast">
+<span class="material-symbols-outlined text-tertiary-fixed text-[18px]">check_circle</span>
+<span id="toast-message">መልእክትዎ በሚስጥር ደርሷል!</span>
+</div>
+</div>
+<script>
+  // Filter and Search Micro-interactions
+  const searchInput = document.getElementById('mentor-search-input');
+  const clearBtn = document.getElementById('clear-search-btn');
+  const filterPills = document.querySelectorAll('.filter-pill');
+  const mentorCards = document.querySelectorAll('.mentor-card');
+  const emptyState = document.getElementById('no-mentors-found');
+  const countDisplay = document.getElementById('results-count-text');
+
+  let activeFilterTag = 'all';
+
+  function applyFilters() {
+    const query = searchInput.value.trim().toLowerCase();
+    let visibleCount = 0;
+
+    mentorCards.forEach(card => {
+      const tags = card.getAttribute('data-tags') || '';
+      const textContent = card.innerText.toLowerCase();
+
+      const matchesTag = (activeFilterTag === 'all') || tags.includes(activeFilterTag);
+      const matchesSearch = query === '' || textContent.includes(query);
+
+      if (matchesTag && matchesSearch) {
+        card.classList.remove('hidden');
+        visibleCount++;
+      } else {
+        card.classList.add('hidden');
+      }
+    });
+
+    if (visibleCount === 0) {
+      emptyState.classList.remove('hidden');
+    } else {
+      emptyState.classList.add('hidden');
+    }
+
+    countDisplay.textContent = visibleCount + ' የተረጋገጡ አማካሪዎች';
+  }
+
+  searchInput.addEventListener('input', () => {
+    if (searchInput.value.length > 0) {
+      clearBtn.classList.remove('hidden');
+    } else {
+      clearBtn.classList.add('hidden');
+    }
+    applyFilters();
+  });
+
+  clearBtn.addEventListener('click', () => {
+    searchInput.value = '';
+    clearBtn.classList.add('hidden');
+    applyFilters();
+    searchInput.focus();
+  });
+
+  filterPills.forEach(pill => {
+    pill.addEventListener('click', () => {
+      filterPills.forEach(p => {
+        p.classList.remove('bg-primary', 'text-on-primary');
+        p.classList.add('bg-surface-container-low', 'text-on-surface-variant');
+      });
+      pill.classList.remove('bg-surface-container-low', 'text-on-surface-variant');
+      pill.classList.add('bg-primary', 'text-on-primary');
+
+      activeFilterTag = pill.getAttribute('data-filter');
+      applyFilters();
+    });
+  });
+
+  function resetFilters() {
+    searchInput.value = '';
+    clearBtn.classList.add('hidden');
+    activeFilterTag = 'all';
+    filterPills.forEach(p => {
+      if (p.getAttribute('data-filter') === 'all') {
+        p.classList.add('bg-primary', 'text-on-primary');
+        p.classList.remove('bg-surface-container-low', 'text-on-surface-variant');
+      } else {
+        p.classList.remove('bg-primary', 'text-on-primary');
+        p.classList.add('bg-surface-container-low', 'text-on-surface-variant');
+      }
+    });
+    applyFilters();
+  }
+
+  // Confidential Chat Modal triggers
+  const modal = document.getElementById('chat-modal');
+  const modalMentorName = document.getElementById('modal-mentor-name');
+  const toast = document.getElementById('action-toast');
+  const toastMessage = document.getElementById('toast-message');
+
+  function openChatModal(name, university) {
+    modalMentorName.textContent = name + ' (' + university + ')';
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeChatModal() {
+    modal.classList.add('hidden');
+    document.body.style.overflow = '';
+  }
+
+  function showToast(msg) {
+    toastMessage.textContent = msg;
+    toast.classList.remove('opacity-0', 'pointer-events-none');
+    toast.classList.add('opacity-100');
+    setTimeout(() => {
+      toast.classList.remove('opacity-100');
+      toast.classList.add('opacity-0', 'pointer-events-none');
+    }, 2800);
+  }
+
+  function sendMockMessage() {
+    const text = document.getElementById('peer-initial-message').value.trim();
+    closeChatModal();
+    document.getElementById('peer-initial-message').value = '';
+    showToast('ምስጢራዊ ውይይቱ ተጀምሯል! አማካሪው በቅርቡ ይመልሳል።');
+  }
+
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      closeChatModal();
+    }
+  });
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/85 backdrop-blur-xl shadow-[0_-4px_16px_rgba(14,116,144,0.08)]" data-active-classes="text-primary font-semibold"><div class="flex justify-around items-center h-16 px-space-xs max-w-md mx-auto"><a class="flex flex-col items-center justify-center min-w-[56px] h-12 gap-0.5 text-on-surface-variant hover:text-on-surface transition-all" data-path="home" href="#"><span class="material-symbols-outlined text-[24px]">home</span><span class="font-label-sm text-label-sm truncate">ዋና ገጽ</span></a><a class="flex flex-col items-center justify-center min-w-[56px] h-12 gap-0.5 text-on-surface-variant hover:text-on-surface transition-all" data-path="facilities" href="#"><span class="material-symbols-outlined text-[24px]">local_hospital</span><span class="font-label-sm text-label-sm truncate">ክሊኒኮች</span></a><a aria-current="page" class="flex flex-col items-center justify-center min-w-[56px] h-12 gap-0.5 transition-all text-primary font-semibold" data-path="mentors" href="#"><span class="material-symbols-outlined text-[24px]">support_agent</span><span class="font-label-sm text-label-sm truncate">አማካሪዎች</span></a><a class="flex flex-col items-center justify-center min-w-[56px] h-12 gap-0.5 text-on-surface-variant hover:text-on-surface transition-all" data-path="learn" href="#"><span class="material-symbols-outlined text-[24px]">school</span><span class="font-label-sm text-label-sm truncate">ትምህርት</span></a><a class="flex flex-col items-center justify-center min-w-[56px] h-12 gap-0.5 text-on-surface-variant hover:text-on-surface transition-all" data-path="profile" href="#"><span class="material-symbols-outlined text-[24px]">account_circle</span><span class="font-label-sm text-label-sm truncate">መገለጫ</span></a></div></nav></body></html>
