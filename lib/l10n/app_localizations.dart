@@ -1393,6 +1393,180 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Close'**
   String get closeButton;
+
+  /// No description provided for @viewProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'View Profile'**
+  String get viewProfile;
+
+  /// No description provided for @viewProfileSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Identity • Age'**
+  String get viewProfileSubtitle;
+
+  /// No description provided for @notifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notifications;
+
+  /// No description provided for @notificationsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Preferences • Alerts'**
+  String get notificationsSubtitle;
+
+  /// No description provided for @accountSettingsHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'ACCOUNT SETTINGS'**
+  String get accountSettingsHeader;
+
+  /// No description provided for @privacyAndSecurity.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy & Security'**
+  String get privacyAndSecurity;
+
+  /// No description provided for @privacySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Password • Privacy • Security'**
+  String get privacySubtitle;
+
+  /// No description provided for @appLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'App Language'**
+  String get appLanguage;
+
+  /// No description provided for @appLanguageSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose your language'**
+  String get appLanguageSubtitle;
+
+  /// No description provided for @appTheme.
+  ///
+  /// In en, this message translates to:
+  /// **'App Theme'**
+  String get appTheme;
+
+  /// No description provided for @appThemeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Light or dark'**
+  String get appThemeSubtitle;
+
+  /// No description provided for @textSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Text Size'**
+  String get textSize;
+
+  /// No description provided for @textSizeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Display • Reading • Size'**
+  String get textSizeSubtitle;
+
+  /// No description provided for @supportCenter.
+  ///
+  /// In en, this message translates to:
+  /// **'Support Center'**
+  String get supportCenter;
+
+  /// No description provided for @supportCenterSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Help • Contact • Support'**
+  String get supportCenterSubtitle;
+
+  /// No description provided for @lightTheme.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get lightTheme;
+
+  /// No description provided for @darkTheme.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get darkTheme;
+
+  /// No description provided for @defaultTextSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Default'**
+  String get defaultTextSize;
+
+  /// No description provided for @smallTextSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Small'**
+  String get smallTextSize;
+
+  /// No description provided for @largeTextSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Large'**
+  String get largeTextSize;
+
+  /// No description provided for @appVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Version 1.0.0'**
+  String get appVersion;
+
+  /// No description provided for @supportCenterTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Support & Helpline'**
+  String get supportCenterTitle;
+
+  /// No description provided for @supportCenterBody.
+  ///
+  /// In en, this message translates to:
+  /// **'If you have questions about sexual and reproductive health or need confidential peer assistance, reach out to verified youth centers and national health hotlines (such as 952 or 8335). Yegna Health provides general education and does not replace emergency medical care.'**
+  String get supportCenterBody;
+
+  /// No description provided for @notificationsModalTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification Settings'**
+  String get notificationsModalTitle;
+
+  /// No description provided for @notificationsModalBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Configure alert preferences, daily learning reminders, and health tips.'**
+  String get notificationsModalBody;
+
+  /// No description provided for @privacyModalTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy & Security Settings'**
+  String get privacyModalTitle;
+
+  /// No description provided for @privacyModalBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your health exploration and progress records are securely stored on this device with industry-standard PKCE tokens and encryption. You can change your password anytime.'**
+  String get privacyModalBody;
+
+  /// No description provided for @themeDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose App Theme'**
+  String get themeDialogTitle;
+
+  /// No description provided for @textSizeDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Text Size'**
+  String get textSizeDialogTitle;
 }
 
 class _AppLocalizationsDelegate

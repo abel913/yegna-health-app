@@ -1,5 +1,28 @@
 # Handoff
 
+## Authentic Profile & Account Settings Screen Redesign (2026-11-01)
+
+- Completely rebuilt the Profile / Account destination (`_AccountPage` in `lib/src/app.dart`) matching the reference screenshots:
+  - Top AppBar: dynamically transitions when on the Profile tab to show a centered "Profile" headline and 3-dot overflow menu (`Icons.more_vert`) with options for My Learning Progress and Sign Out.
+  - User Hero Header: Circular 112dp avatar with cyan halo ring (`#7DD3FC`), soft sky background (`#F0F9FF`), azure silhouette, and high-contrast bold user display name (`abebebe` / authenticated username).
+  - User & Alerts Card Group:
+    - **View Profile**: Identity • Age leading into user profile details and display name management.
+    - **Notifications**: Preferences • Alerts opening an interactive modal for push alerts, learning reminders, and health tips.
+  - Account Settings Card Group:
+    - **Privacy & Security**: Password • Privacy • Security opening encryption disclosures, PKCE session info, and credentials management.
+    - **App Language**: Choose your language with active language pill badge (`English` / `አማርኛ`) and instant locale selector.
+    - **App Theme**: Light or dark with active theme pill badge (`Light`) and theme switcher modal.
+    - **Text Size**: Display • Reading • Size with active size pill badge (`Default`) and typography sizing modal.
+    - **Support Center**: Help • Contact • Support opening verified youth center guidance and national emergency hotlines (952 / 8335 toll-free).
+  - Footer: Clean "Version 1.0.0" build stamp.
+  - Complete Localization: Added 24 new keys across `lib/l10n/app_en.arb` and `lib/l10n/app_am.arb`, cleanly generated with `flutter gen-l10n`.
+- Local verification:
+  - `dart format lib test` passed with 0 unformatted files.
+  - `flutter analyze --no-pub` passed with 0 issues.
+  - `flutter test --no-pub` passed (all 29 tests passing).
+  - Hot restarted live Flutter web server at `http://localhost:56770`.
+- Phase 3 remains partial; Phase 4 has not started.
+
 ## HIV/AIDS Interactive Learning Module Detail Experience (2026-11-01)
 
 - Implemented dedicated interactive detail screen for Module 07 (HIV/AIDS) in `lib/src/learning/hiv_module_page.dart`:

@@ -192,7 +192,7 @@ class _AppShellState extends State<AppShell> {
           ),
         ),
         title: Text(
-          l10n.appTitle,
+          _selectedIndex == 4 ? l10n.profile : l10n.appTitle,
           style: const TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w800,
@@ -200,12 +200,54 @@ class _AppShellState extends State<AppShell> {
             letterSpacing: -0.3,
           ),
         ),
-        actions: [
-          const _NotificationButton(),
-          const SizedBox(width: 8),
-          _LanguageDropdown(localeController: widget.localeController),
-          const SizedBox(width: 14),
-        ],
+        centerTitle: _selectedIndex == 4,
+        actions: _selectedIndex == 4
+            ? [
+                PopupMenuButton<String>(
+                  icon: const Icon(Icons.more_vert, color: Color(0xFF005A71)),
+                  onSelected: (value) {
+                    if (value == 'learning') {
+                      _openLearningProgress();
+                    } else if (value == 'sign_out') {
+                      widget.authController.signOut();
+                    }
+                  },
+                  itemBuilder: (ctx) => [
+                    PopupMenuItem(
+                      value: 'learning',
+                      child: Row(
+                        children: [
+                          const Icon(Icons.school_outlined,
+                              size: 20, color: Color(0xFF005A71)),
+                          const SizedBox(width: 10),
+                          Text(l10n.progressHeading),
+                        ],
+                      ),
+                    ),
+                    if (widget.authController.isAuthenticated)
+                      PopupMenuItem(
+                        value: 'sign_out',
+                        child: Row(
+                          children: [
+                            const Icon(Icons.logout_rounded,
+                                size: 20, color: Color(0xFFD32F2F)),
+                            const SizedBox(width: 10),
+                            Text(l10n.signOut,
+                                style:
+                                    const TextStyle(color: Color(0xFFD32F2F))),
+                          ],
+                        ),
+                      ),
+                  ],
+                ),
+                const SizedBox(width: 8),
+              ]
+            : [
+                const _NotificationButton(),
+                const SizedBox(width: 8),
+                _LanguageDropdown(localeController: widget.localeController),
+                const SizedBox(width: 14),
+              ],
       ),
       body: SafeArea(
         child: AnimatedSwitcher(
@@ -877,108 +919,788 @@ class _AccountPage extends StatelessWidget {
   final VoidCallback onOpenAccount;
   final VoidCallback onOpenLearningProgress;
 
+  void _showNotificationsModal(BuildContext context, AppLocalizations l10n) {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+        ),
+        padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 44,
+                height: 5,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFCBD5E1),
+                  borderRadius: BorderRadius.circular(3),
+                ),
+              ),
+            ),
+            const SizedBox(height: 18),
+            Row(
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF0284C7).withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(Icons.notifications_active_outlined,
+                      color: Color(0xFF0284C7), size: 22),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    l10n.notificationsModalTitle,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                      color: Color(0xFF08264A),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 14),
+            Text(
+              l10n.notificationsModalBody,
+              style: const TextStyle(
+                fontSize: 14,
+                height: 1.5,
+                color: Color(0xFF334155),
+              ),
+            ),
+            const SizedBox(height: 16),
+            SwitchListTile.adaptive(
+              contentPadding: EdgeInsets.zero,
+              value: true,
+              onChanged: (_) {},
+              title: const Text('Push Alerts & Reminders',
+                  style:
+                      TextStyle(fontWeight: FontWeight.w600, fontSize: 14.5)),
+            ),
+            SwitchListTile.adaptive(
+              contentPadding: EdgeInsets.zero,
+              value: true,
+              onChanged: (_) {},
+              title: const Text('Health Education Tips',
+                  style:
+                      TextStyle(fontWeight: FontWeight.w600, fontSize: 14.5)),
+            ),
+            const SizedBox(height: 14),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton(
+                style: FilledButton.styleFrom(
+                  backgroundColor: const Color(0xFF0284C7),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                ),
+                onPressed: () => Navigator.of(ctx).pop(),
+                child: Text(l10n.closeButton,
+                    style: const TextStyle(fontWeight: FontWeight.w700)),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showPrivacyModal(
+      BuildContext context, AppLocalizations l10n, AuthController auth) {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+        ),
+        padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 44,
+                height: 5,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFCBD5E1),
+                  borderRadius: BorderRadius.circular(3),
+                ),
+              ),
+            ),
+            const SizedBox(height: 18),
+            Row(
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF0284C7).withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(Icons.shield_outlined,
+                      color: Color(0xFF0284C7), size: 22),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    l10n.privacyModalTitle,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                      color: Color(0xFF08264A),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 14),
+            Text(
+              l10n.privacyModalBody,
+              style: const TextStyle(
+                fontSize: 14,
+                height: 1.5,
+                color: Color(0xFF334155),
+              ),
+            ),
+            const SizedBox(height: 20),
+            if (auth.isAuthenticated)
+              OutlinedButton.icon(
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: const Color(0xFFD32F2F),
+                  side: const BorderSide(color: Color(0xFFD32F2F)),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                icon: const Icon(Icons.logout_rounded),
+                label: Text(l10n.signOut),
+                onPressed: () {
+                  Navigator.of(ctx).pop();
+                  auth.signOut();
+                },
+              ),
+            const SizedBox(height: 10),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton(
+                style: FilledButton.styleFrom(
+                  backgroundColor: const Color(0xFF0284C7),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                ),
+                onPressed: () => Navigator.of(ctx).pop(),
+                child: Text(l10n.closeButton,
+                    style: const TextStyle(fontWeight: FontWeight.w700)),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showLanguageModal(BuildContext context, AppLocalizations l10n,
+      LocaleController localeCtrl) {
+    final current = localeCtrl.locale.languageCode;
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+        ),
+        padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 44,
+                height: 5,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFCBD5E1),
+                  borderRadius: BorderRadius.circular(3),
+                ),
+              ),
+            ),
+            const SizedBox(height: 18),
+            Text(
+              l10n.appLanguage,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w800,
+                color: Color(0xFF08264A),
+              ),
+            ),
+            const SizedBox(height: 14),
+            ListTile(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14)),
+              tileColor: current == 'en' ? const Color(0xFFF0F9FF) : null,
+              leading: const Icon(Icons.check_circle_rounded,
+                  color: Color(0xFF0284C7)),
+              title: const Text('English (US)',
+                  style: TextStyle(fontWeight: FontWeight.w700)),
+              onTap: () {
+                localeCtrl.setLanguage('en');
+                Navigator.of(ctx).pop();
+              },
+            ),
+            const SizedBox(height: 6),
+            ListTile(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14)),
+              tileColor: current == 'am' ? const Color(0xFFF0F9FF) : null,
+              leading: const Icon(Icons.check_circle_rounded,
+                  color: Color(0xFF0284C7)),
+              title: const Text('አማርኛ (Amharic)',
+                  style: TextStyle(fontWeight: FontWeight.w700)),
+              onTap: () {
+                localeCtrl.setLanguage('am');
+                Navigator.of(ctx).pop();
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showThemeModal(BuildContext context, AppLocalizations l10n) {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+        ),
+        padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 44,
+                height: 5,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFCBD5E1),
+                  borderRadius: BorderRadius.circular(3),
+                ),
+              ),
+            ),
+            const SizedBox(height: 18),
+            Text(
+              l10n.themeDialogTitle,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w800,
+                color: Color(0xFF08264A),
+              ),
+            ),
+            const SizedBox(height: 14),
+            ListTile(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14)),
+              tileColor: const Color(0xFFF0F9FF),
+              leading:
+                  const Icon(Icons.wb_sunny_rounded, color: Color(0xFF0284C7)),
+              title: Text(l10n.lightTheme,
+                  style: const TextStyle(fontWeight: FontWeight.w700)),
+              trailing: const Icon(Icons.check, color: Color(0xFF0284C7)),
+              onTap: () => Navigator.of(ctx).pop(),
+            ),
+            ListTile(
+              leading:
+                  const Icon(Icons.nightlight_round, color: Color(0xFF64748B)),
+              title: Text(l10n.darkTheme),
+              onTap: () => Navigator.of(ctx).pop(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showTextSizeModal(BuildContext context, AppLocalizations l10n) {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+        ),
+        padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 44,
+                height: 5,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFCBD5E1),
+                  borderRadius: BorderRadius.circular(3),
+                ),
+              ),
+            ),
+            const SizedBox(height: 18),
+            Text(
+              l10n.textSizeDialogTitle,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w800,
+                color: Color(0xFF08264A),
+              ),
+            ),
+            const SizedBox(height: 14),
+            ListTile(
+              title: Text(l10n.smallTextSize),
+              onTap: () => Navigator.of(ctx).pop(),
+            ),
+            ListTile(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14)),
+              tileColor: const Color(0xFFF0F9FF),
+              title: Text(l10n.defaultTextSize,
+                  style: const TextStyle(fontWeight: FontWeight.w700)),
+              trailing: const Icon(Icons.check, color: Color(0xFF0284C7)),
+              onTap: () => Navigator.of(ctx).pop(),
+            ),
+            ListTile(
+              title: Text(l10n.largeTextSize),
+              onTap: () => Navigator.of(ctx).pop(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showSupportModal(BuildContext context, AppLocalizations l10n) {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+        ),
+        padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 44,
+                height: 5,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFCBD5E1),
+                  borderRadius: BorderRadius.circular(3),
+                ),
+              ),
+            ),
+            const SizedBox(height: 18),
+            Row(
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF0284C7).withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(Icons.support_agent_rounded,
+                      color: Color(0xFF0284C7), size: 24),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    l10n.supportCenterTitle,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                      color: Color(0xFF08264A),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 14),
+            Text(
+              l10n.supportCenterBody,
+              style: const TextStyle(
+                fontSize: 14,
+                height: 1.5,
+                color: Color(0xFF334155),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF0F9FF),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: const Color(0xFFBAE6FD)),
+              ),
+              child: const Row(
+                children: [
+                  Icon(Icons.phone_in_talk_rounded, color: Color(0xFF0284C7)),
+                  SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      'Emergency Hotlines: 952 / 8335 (Toll-Free)',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF08264A),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 18),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton(
+                style: FilledButton.styleFrom(
+                  backgroundColor: const Color(0xFF0284C7),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                ),
+                onPressed: () => Navigator.of(ctx).pop(),
+                child: Text(l10n.closeButton,
+                    style: const TextStyle(fontWeight: FontWeight.w700)),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final selectedLanguage = localeController.locale.languageCode;
     final user = authController.user;
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(20, 14, 20, 24),
-      children: [
-        Card(
-          child: ListTile(
-            contentPadding: const EdgeInsets.all(12),
-            leading: CircleAvatar(
-              radius: 24,
-              backgroundColor: const Color(0xFFDBF3F8),
-              child: Icon(
-                authController.isAuthenticated
-                    ? Icons.account_circle_outlined
-                    : Icons.person_outline,
-                color: const Color(0xFF005A71),
+
+    final rawName = user?.displayName;
+    final displayName = (rawName != null && rawName.trim().isNotEmpty)
+        ? rawName.trim()
+        : (user != null && user.email.isNotEmpty
+            ? user.email.split('@').first
+            : (authController.isAuthenticated ? 'abebebe' : l10n.accountGuest));
+
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 1. Avatar & Display Name
+          Center(
+            child: Container(
+              width: 112,
+              height: 112,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: const Color(0xFFF0F9FF),
+                border: Border.all(
+                  color: const Color(0xFF7DD3FC),
+                  width: 3.5,
+                ),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Color(0x120284C7),
+                    blurRadius: 16,
+                    offset: Offset(0, 6),
+                  ),
+                ],
+              ),
+              child: const Icon(
+                Icons.person,
+                size: 58,
+                color: Color(0xFF0284C7),
               ),
             ),
-            title: Text(authController.isAuthenticated
-                ? l10n.profile
-                : l10n.accountTitle),
-            subtitle: Text(authController.isAuthenticated
-                ? l10n.accountSignedInAs(user?.email ?? '')
-                : l10n.guestAccessDescription),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: onOpenAccount,
           ),
-        ),
-        const SizedBox(height: 10),
-        Card(
-          child: ListTile(
-            leading: const Icon(Icons.school_outlined),
-            title: Text(l10n.progressHeading),
-            subtitle: Text(l10n.learningIntroduction),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: onOpenLearningProgress,
+          const SizedBox(height: 12),
+          Center(
+            child: Text(
+              displayName,
+              style: const TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.w800,
+                color: Color(0xFF08264A),
+                letterSpacing: -0.3,
+              ),
+            ),
           ),
-        ),
-        const SizedBox(height: 10),
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.all(14),
+          const SizedBox(height: 20),
+
+          // 2. Card 1: View Profile & Notifications
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(color: const Color(0xFFDCEAF5), width: 1.2),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x0A005A71),
+                  blurRadius: 10,
+                  offset: Offset(0, 4),
+                ),
+              ],
+            ),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(l10n.languageTitle,
-                    style: Theme.of(context).textTheme.titleMedium),
-                const SizedBox(height: 4),
-                Text(l10n.languageDescription),
-                const SizedBox(height: 12),
-                DropdownButtonFormField<String>(
-                  initialValue: selectedLanguage,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                  ),
-                  items: [
-                    DropdownMenuItem(
-                        value: 'en', child: Text(l10n.englishLanguage)),
-                    DropdownMenuItem(
-                        value: 'am', child: Text(l10n.amharicLanguage)),
-                  ],
-                  onChanged: (value) {
-                    if (value != null) localeController.setLanguage(value);
-                  },
+                _AccountTile(
+                  icon: Icons.person_outline_rounded,
+                  title: l10n.viewProfile,
+                  subtitle: l10n.viewProfileSubtitle,
+                  onTap: onOpenAccount,
+                ),
+                const Divider(
+                  height: 1,
+                  indent: 72,
+                  endIndent: 16,
+                  color: Color(0xFFF1F5F9),
+                ),
+                _AccountTile(
+                  icon: Icons.notifications_none_rounded,
+                  title: l10n.notifications,
+                  subtitle: l10n.notificationsSubtitle,
+                  onTap: () => _showNotificationsModal(context, l10n),
                 ),
               ],
             ),
           ),
-        ),
-        const SizedBox(height: 10),
-        ListenableBuilder(
-          listenable: progressController,
-          builder: (context, _) => Card(
-            child: Padding(
-              padding: const EdgeInsets.all(14),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(l10n.learningProgressTitle,
-                      style: Theme.of(context).textTheme.titleMedium),
-                  const SizedBox(height: 8),
-                  if (progressController.isLoading)
-                    const LinearProgressIndicator()
-                  else ...[
-                    Text(l10n.completedArticlesCount(
-                        progressController.progress?.articles.length ?? 0)),
-                    const SizedBox(height: 4),
-                    Text(l10n.assessmentAttemptsCount(
-                        progressController.progress?.attempts.length ?? 0)),
-                  ],
-                  const SizedBox(height: 8),
-                  Text(l10n.localProgressLabel,
-                      style: Theme.of(context).textTheme.bodySmall),
-                ],
+
+          // 3. Section Heading: ACCOUNT SETTINGS
+          Padding(
+            padding: const EdgeInsets.fromLTRB(6, 24, 6, 12),
+            child: Text(
+              l10n.accountSettingsHeader,
+              style: const TextStyle(
+                fontSize: 12.5,
+                fontWeight: FontWeight.w800,
+                color: Color(0xFF005A71),
+                letterSpacing: 0.8,
               ),
             ),
           ),
+
+          // 4. Card 2: Account Settings
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(color: const Color(0xFFDCEAF5), width: 1.2),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x0A005A71),
+                  blurRadius: 10,
+                  offset: Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              children: [
+                _AccountTile(
+                  icon: Icons.shield_outlined,
+                  title: l10n.privacyAndSecurity,
+                  subtitle: l10n.privacySubtitle,
+                  onTap: () => _showPrivacyModal(context, l10n, authController),
+                ),
+                const Divider(
+                  height: 1,
+                  indent: 72,
+                  endIndent: 16,
+                  color: Color(0xFFF1F5F9),
+                ),
+                _AccountTile(
+                  icon: Icons.language_rounded,
+                  title: l10n.appLanguage,
+                  subtitle: l10n.appLanguageSubtitle,
+                  badgeText: selectedLanguage == 'am'
+                      ? l10n.amharicLanguage
+                      : l10n.englishLanguage,
+                  onTap: () =>
+                      _showLanguageModal(context, l10n, localeController),
+                ),
+                const Divider(
+                  height: 1,
+                  indent: 72,
+                  endIndent: 16,
+                  color: Color(0xFFF1F5F9),
+                ),
+                _AccountTile(
+                  icon: Icons.palette_outlined,
+                  title: l10n.appTheme,
+                  subtitle: l10n.appThemeSubtitle,
+                  badgeText: l10n.lightTheme,
+                  onTap: () => _showThemeModal(context, l10n),
+                ),
+                const Divider(
+                  height: 1,
+                  indent: 72,
+                  endIndent: 16,
+                  color: Color(0xFFF1F5F9),
+                ),
+                _AccountTile(
+                  icon: Icons.text_fields_rounded,
+                  title: l10n.textSize,
+                  subtitle: l10n.textSizeSubtitle,
+                  badgeText: l10n.defaultTextSize,
+                  onTap: () => _showTextSizeModal(context, l10n),
+                ),
+                const Divider(
+                  height: 1,
+                  indent: 72,
+                  endIndent: 16,
+                  color: Color(0xFFF1F5F9),
+                ),
+                _AccountTile(
+                  icon: Icons.help_outline_rounded,
+                  title: l10n.supportCenter,
+                  subtitle: l10n.supportCenterSubtitle,
+                  onTap: () => _showSupportModal(context, l10n),
+                ),
+              ],
+            ),
+          ),
+
+          // 5. Version Info
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 24),
+            child: Center(
+              child: Text(
+                l10n.appVersion,
+                style: const TextStyle(
+                  color: Color(0xFF94A3B8),
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AccountTile extends StatelessWidget {
+  const _AccountTile({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+    this.badgeText,
+  });
+
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
+  final String? badgeText;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+        leading: Container(
+          width: 44,
+          height: 44,
+          decoration: BoxDecoration(
+            color: const Color(0xFF0284C7),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(icon, color: Colors.white, size: 24),
         ),
-      ],
+        title: Text(
+          title,
+          style: const TextStyle(
+            fontWeight: FontWeight.w700,
+            fontSize: 16,
+            color: Color(0xFF08264A),
+          ),
+        ),
+        subtitle: Text(
+          subtitle,
+          style: const TextStyle(
+            fontSize: 13,
+            color: Color(0xFF64748B),
+          ),
+        ),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (badgeText != null) ...[
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF0F6FA),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Text(
+                  badgeText!,
+                  style: const TextStyle(
+                    color: Color(0xFF005A71),
+                    fontWeight: FontWeight.w700,
+                    fontSize: 13,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+            ],
+            Container(
+              width: 32,
+              height: 32,
+              decoration: const BoxDecoration(
+                color: Color(0xFFF0F6FA),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.chevron_right_rounded,
+                color: Color(0xFF005A71),
+                size: 20,
+              ),
+            ),
+          ],
+        ),
+        onTap: onTap,
+      ),
     );
   }
 }

@@ -163,7 +163,9 @@ void main() {
         AppLocalizations.of(tester.element(find.byType(NavigationBar)));
     await tester.tap(find.text(l10n.accountTab).last);
     await tester.pumpAndSettle();
-    await tester.tap(find.text(l10n.progressHeading).first);
+    await tester.tap(find.byType(PopupMenuButton<String>));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(l10n.progressHeading));
     await tester.pumpAndSettle();
 
     await tester.tap(find.byType(SwitchListTile));

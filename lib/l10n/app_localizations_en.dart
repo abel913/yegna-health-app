@@ -745,4 +745,94 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get closeButton => 'Close';
+
+  @override
+  String get viewProfile => 'View Profile';
+
+  @override
+  String get viewProfileSubtitle => 'Identity • Age';
+
+  @override
+  String get notifications => 'Notifications';
+
+  @override
+  String get notificationsSubtitle => 'Preferences • Alerts';
+
+  @override
+  String get accountSettingsHeader => 'ACCOUNT SETTINGS';
+
+  @override
+  String get privacyAndSecurity => 'Privacy & Security';
+
+  @override
+  String get privacySubtitle => 'Password • Privacy • Security';
+
+  @override
+  String get appLanguage => 'App Language';
+
+  @override
+  String get appLanguageSubtitle => 'Choose your language';
+
+  @override
+  String get appTheme => 'App Theme';
+
+  @override
+  String get appThemeSubtitle => 'Light or dark';
+
+  @override
+  String get textSize => 'Text Size';
+
+  @override
+  String get textSizeSubtitle => 'Display • Reading • Size';
+
+  @override
+  String get supportCenter => 'Support Center';
+
+  @override
+  String get supportCenterSubtitle => 'Help • Contact • Support';
+
+  @override
+  String get lightTheme => 'Light';
+
+  @override
+  String get darkTheme => 'Dark';
+
+  @override
+  String get defaultTextSize => 'Default';
+
+  @override
+  String get smallTextSize => 'Small';
+
+  @override
+  String get largeTextSize => 'Large';
+
+  @override
+  String get appVersion => 'Version 1.0.0';
+
+  @override
+  String get supportCenterTitle => 'Support & Helpline';
+
+  @override
+  String get supportCenterBody =>
+      'If you have questions about sexual and reproductive health or need confidential peer assistance, reach out to verified youth centers and national health hotlines (such as 952 or 8335). Yegna Health provides general education and does not replace emergency medical care.';
+
+  @override
+  String get notificationsModalTitle => 'Notification Settings';
+
+  @override
+  String get notificationsModalBody =>
+      'Configure alert preferences, daily learning reminders, and health tips.';
+
+  @override
+  String get privacyModalTitle => 'Privacy & Security Settings';
+
+  @override
+  String get privacyModalBody =>
+      'Your health exploration and progress records are securely stored on this device with industry-standard PKCE tokens and encryption. You can change your password anytime.';
+
+  @override
+  String get themeDialogTitle => 'Choose App Theme';
+
+  @override
+  String get textSizeDialogTitle => 'Choose Text Size';
 }

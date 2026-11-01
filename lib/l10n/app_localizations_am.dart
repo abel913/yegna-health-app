@@ -714,4 +714,94 @@ class AppLocalizationsAm extends AppLocalizations {
 
   @override
   String get closeButton => 'ዝጋ';
+
+  @override
+  String get viewProfile => 'መገለጫ ይመልከቱ';
+
+  @override
+  String get viewProfileSubtitle => 'ማንነት • ዕድሜ';
+
+  @override
+  String get notifications => 'ማሳወቂያዎች';
+
+  @override
+  String get notificationsSubtitle => 'ምርጫዎች • ማሳወቂያዎች';
+
+  @override
+  String get accountSettingsHeader => 'የመለያ ቅንብሮች';
+
+  @override
+  String get privacyAndSecurity => 'ግላዊነት እና ደህንነት';
+
+  @override
+  String get privacySubtitle => 'የይለፍ ቃል • ግላዊነት • ደህንነት';
+
+  @override
+  String get appLanguage => 'የመተግበሪያ ቋንቋ';
+
+  @override
+  String get appLanguageSubtitle => 'ቋንቋዎን ይምረጡ';
+
+  @override
+  String get appTheme => 'የገጽታ ቀለም';
+
+  @override
+  String get appThemeSubtitle => 'ቀላል ወይም ጨለማ';
+
+  @override
+  String get textSize => 'የጽሑፍ መጠን';
+
+  @override
+  String get textSizeSubtitle => 'ማሳያ • ንባብ • መጠን';
+
+  @override
+  String get supportCenter => 'የድጋፍ ማዕከል';
+
+  @override
+  String get supportCenterSubtitle => 'እርዳታ • አድራሻ • ድጋፍ';
+
+  @override
+  String get lightTheme => 'ቀላል';
+
+  @override
+  String get darkTheme => 'ጨለማ';
+
+  @override
+  String get defaultTextSize => 'መደበኛ';
+
+  @override
+  String get smallTextSize => 'ትንሽ';
+
+  @override
+  String get largeTextSize => 'ትልቅ';
+
+  @override
+  String get appVersion => 'ስሪት 1.0.0';
+
+  @override
+  String get supportCenterTitle => 'የድጋፍ እና የእርዳታ መስመር';
+
+  @override
+  String get supportCenterBody =>
+      'ስለ ስነ-ተዋልዶ ጤና ጥያቄ ካለዎት ወይም ሚስጥራዊ የአቻ ድጋፍ ከፈለጉ የተረጋገጡ የወጣቶች ማዕከላትን እና ብሔራዊ የጤና መስመሮችን (ለምሳሌ 952 ወይም 8335) ያግኙ። የእኛ ጤና አጠቃላይ ትምህርት የሚሰጥ ሲሆን የአስቸኳይ የህክምና ክብካቤን አይተካም።';
+
+  @override
+  String get notificationsModalTitle => 'የማሳወቂያ ቅንብሮች';
+
+  @override
+  String get notificationsModalBody =>
+      'የማሳወቂያ ምርጫዎችን፣ የዕለት ተዕለት የትምህርት ማስታወሻዎችን እና የጤና ምክሮችን እዚህ ያዘጋጁ።';
+
+  @override
+  String get privacyModalTitle => 'የግላዊነት እና ደህንነት ቅንብሮች';
+
+  @override
+  String get privacyModalBody =>
+      'የጤና ትምህርት እና የእንቅስቃሴ መረጃዎችዎ በመሳሪያዎ ላይ በከፍተኛ ጥበቃና ምስጠራ የተጠበቁ ናቸው። የይለፍ ቃልዎን በማንኛውም ጊዜ መቀየር ይችላሉ።';
+
+  @override
+  String get themeDialogTitle => 'የመተግበሪያ ገጽታ ይምረጡ';
+
+  @override
+  String get textSizeDialogTitle => 'የጽሑፍ መጠን ይምረጡ';
 }

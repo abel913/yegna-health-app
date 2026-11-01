@@ -73,6 +73,14 @@ The Flutter choices are implemented locally. Migrations `20261030174702`, `20261
 - Streamlined Learn Screen Header: Removed the reloading icon and notification icon from the `LearnPage` body, leaving a clean "Learning Modules" title.
 - Direct Guest Authentication Routing: Configured the bottom navigation Account tab to immediately route unauthenticated guests to `AuthPage` (sign-in / sign-up), avoiding intermediate landing steps. Upon successful sign-in, the view smoothly transitions to the authenticated account profile.
 
+## 2026-11-01 — Profile and Account Settings Experience Modernization
+
+- Screen Architecture: Redesigned the 5th destination (`_AccountPage`) into the authentic, modern Profile experience featuring a centered "Profile" title, 3-dot overflow menu for learning progress & logout, a 112dp circular avatar with cyan-ring halo, and two elevated card containers.
+- Information Architecture: Separated identity/notifications from app preferences:
+  1. Card Group 1: "View Profile" (Identity • Age) and "Notifications" (Preferences • Alerts).
+  2. Card Group 2 ("ACCOUNT SETTINGS"): "Privacy & Security", "App Language", "App Theme", "Text Size", and "Support Center" with emergency hotline guidance (952 / 8335).
+- Clean Local State: Language, theme, text sizing, and notification switches operate seamlessly offline without requiring unnecessary backend mutations or external dependencies.
+
 ## 2026-11-01 — Carousel Card Illustration Full-Width Scaling
 
 - Illustration Container Refactor: Removed the fixed 190px height limitation and card-wide inset padding. Replaced with an `Expanded` container and minimal 8px horizontal margins with `fit: BoxFit.contain, width: double.infinity`.

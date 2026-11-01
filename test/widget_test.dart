@@ -223,7 +223,7 @@ void main() {
       matching: find.text(l10n.accountTab),
     ));
     await tester.pumpAndSettle();
-    await tester.tap(find.widgetWithText(ListTile, l10n.profile));
+    await tester.tap(find.widgetWithText(ListTile, l10n.viewProfile));
     await tester.pumpAndSettle();
     expect(find.text(l10n.saveProfile), findsOneWidget);
     await tester.enterText(find.byType(TextFormField), 'Updated Name');
