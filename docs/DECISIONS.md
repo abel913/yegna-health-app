@@ -58,6 +58,15 @@ The Flutter choices are implemented locally. Migrations `20261030174702`, `20261
 - Progress Indication: Added visual completion state support (`completedModuleIds` linked to `LearningProgressController`), rendering an authentic green `✔ Completed` indicator badge and progress bar on completed module cards matching the reference app layout. Pagination indicator dynamically scales across 8 dots with count display (`$page / 8`).
 - Direct Navigation: Module action buttons (`More ->` and `Take Quiz`) connect directly to article lessons and interactive assessment sessions respectively, maintaining full testability with 0 unverified mock dependencies.
 
+## 2026-11-01 — HIV/AIDS Interactive Module Detail & Accordion Curriculum Architecture
+
+- Dedicated Detail Route: Created `HivModuleDetailPage` in `lib/src/learning/hiv_module_page.dart` launched directly via the "More ->" action on Module 07 in the learning carousel.
+- Clinical Accordion Structure: Organizes HIV curriculum into three collapsible sections matching authentic youth-focused health materials:
+  1. Ways to prevent HIV (PEP protocols, 10 numbered step-by-step condom instructions with azure badges, and embedded interactive video previews with educational modal descriptions).
+  2. HIV testing modalities (PITC and VCT services with bulleted descriptions).
+  3. Treatment for HIV positive clients (ART therapy, viral suppression, early intervention, and public facility access).
+- Progress Sync & Offline Localizations: Directly triggers `LearningProgressController.markArticleComplete`, instantly refreshing local secure storage, optional cloud synchronization, and carousel completion indicators. All 34 new text keys are fully localized in English and Amharic with zero external dependencies.
+
 ## 2026-11-01 — Top Bar Notification Placement & Direct Bottom Nav Login
 
 - Top Bar Action Placement: Unified the top app header by placing the notification bell with badge counter directly beside the language dropdown in the main `AppBar`. Removed the redundant account button from the top right.

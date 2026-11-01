@@ -631,4 +631,118 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get moduleComingSoon =>
       'Full module content and interactive quizzes will be configured in the next step.';
+
+  @override
+  String get watchVideo => 'Watch video';
+
+  @override
+  String get waysToPreventHiv => 'Ways to prevent HIV';
+
+  @override
+  String get hivTesting => 'HIV testing';
+
+  @override
+  String get treatmentForHivPositive => 'Treatment for HIV positive client';
+
+  @override
+  String get pepTitle =>
+      'Post-exposure prophylaxis (PEP) -Given for people exposed to HIV.';
+
+  @override
+  String get pepDesc =>
+      'PEP stands for post-exposure prophylaxis. The word “prophylaxis” means to prevent or control the spread of an infection or disease. PEP means taking HIV medicines within 72 hours (3 days) after a possible exposure to HIV to prevent HIV.';
+
+  @override
+  String get condomStepsTitle =>
+      'How to use a condom in 10 steps- for age greater than 18';
+
+  @override
+  String get condomStepsSubtitle =>
+      'Follow the 10 steps below to avoid condom breakage or slippage. The how to put on a condom video shows these steps.';
+
+  @override
+  String get condomStep1 =>
+      'Check the expiry date. Do not use expired condoms.';
+
+  @override
+  String get condomStep2 =>
+      'Press the package between your fingers. Do not use if there is no resistance from air inside.';
+
+  @override
+  String get condomStep3 =>
+      'Tear open the condom package from the corner and remove the condom. Do not use teeth or sharp objects to open as this can damage the condom.';
+
+  @override
+  String get condomStep4 => 'Identify which way the condom unrolls.';
+
+  @override
+  String get condomStep5 =>
+      'Pinch the receptor tip of the condom to remove air.';
+
+  @override
+  String get condomStep6 =>
+      'Place the condom on the head of the penis while still pinching the condom receptor tip.';
+
+  @override
+  String get condomStep7 => 'Unroll the condom to the base of the shaft.';
+
+  @override
+  String get condomStep8 => 'Insert the penis into vagina.';
+
+  @override
+  String get condomStep9 =>
+      'Pull out while still erect, holding the base of the condom firmly.';
+
+  @override
+  String get condomStep10 => 'Remove the condom from the penis and discard.';
+
+  @override
+  String get hivTestingDesc =>
+      'HIV testing services refer to the full range of services that include HIV testing, counseling and linkage to appropriate HIV prevention, treatment and care. The following are HIV testing methods.';
+
+  @override
+  String get pitcTitle => 'Provider Initiated Testing and Counseling (PITC): ';
+
+  @override
+  String get pitcDesc =>
+      'This refers to HIV testing, and counseling recommended by a provider during a visit to a health care facility.';
+
+  @override
+  String get vctTitle => 'Voluntary Counseling and Testing (VCT): ';
+
+  @override
+  String get vctDesc =>
+      'VCT is initiated by clients seeking to know their HIV status.';
+
+  @override
+  String get artDesc1 =>
+      'People with HIV need to start taking special medicine called antiretroviral therapy, or ART, as soon as they can. This medicine helps slow down the HIV virus in their bodies. When someone takes ART, the amount of virus goes down, and their immune system gets stronger.';
+
+  @override
+  String get artDesc2 =>
+      'Everyone, including children, Adolescents and adults, who have HIV should begin this treatment right after they find out they have the virus. Starting treatment early can help people live longer, stay healthier, and reduce the chances of passing HIV to others. It also helps prevent other illnesses and makes life better for those living with HIV.';
+
+  @override
+  String get artDesc3 =>
+      'ART service is available in public health facilities like Health center and Hospital.';
+
+  @override
+  String get markCompleted => 'Mark as Completed';
+
+  @override
+  String get moduleCompletedSuccess => 'Module marked as completed!';
+
+  @override
+  String get videoDialogTitle => 'Educational Video';
+
+  @override
+  String get lubricantsVideoDesc =>
+      'Demonstration on condom safety: Petroleum jelly, baby oils, and body lotions weaken latex and cause condom failure. Only water-based or silicone lubricants are safe to use with condoms.';
+
+  @override
+  String get counsellingVideoDesc =>
+      'Demonstration and clinical counseling on proper condom usage, correct sizing, and dual protection against STIs and unintended pregnancy.';
+
+  @override
+  String get closeButton => 'Close';
 }

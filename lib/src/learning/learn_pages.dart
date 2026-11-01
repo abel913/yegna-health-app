@@ -6,6 +6,7 @@ import 'assessment_repository.dart';
 import 'education_repository.dart';
 import 'learning_models.dart';
 import 'learning_modules_carousel.dart';
+import 'hiv_module_page.dart';
 import 'learning_progress_controller.dart';
 
 class LearnPage extends StatefulWidget {
@@ -250,6 +251,17 @@ class _LearnPageState extends State<LearnPage> {
 
   Future<void> _handleOpenModule(
       BuildContext context, LearningModuleItem module) async {
+    if (module.id == 'module-07') {
+      Navigator.of(context).push<void>(MaterialPageRoute<void>(
+        builder: (_) => HivModuleDetailPage(
+          progressController: widget.progressController,
+          assessmentRepository: widget.assessmentRepository,
+          onOpenQuiz: () => _handleOpenQuiz(context, module),
+        ),
+      ));
+      return;
+    }
+
     try {
       final cachedArticles = await widget.educationRepository.articles(_locale);
       final articles = cachedArticles.value;
@@ -574,7 +586,7 @@ class _StructuredMarkdown extends StatelessWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('•  '),
+                    const Text('â€¢  '),
                     Expanded(child: Text(content)),
                   ],
                 ),

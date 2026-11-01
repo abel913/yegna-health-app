@@ -605,4 +605,113 @@ class AppLocalizationsAm extends AppLocalizations {
 
   @override
   String get moduleComingSoon => 'ሙሉ የትምህርት ክፍሎች እና ፈተናዎች ለቀጣዩ ደረጃ እየተዘጋጁ ነው።';
+
+  @override
+  String get watchVideo => 'ቪዲዮ ይመልከቱ';
+
+  @override
+  String get waysToPreventHiv => 'የኤችአይቪ መከላከያ መንገዶች';
+
+  @override
+  String get hivTesting => 'የኤችአይቪ ምርመራ';
+
+  @override
+  String get treatmentForHivPositive => 'ኤችአይቪ በደማቸው ለሚገኝባቸው የሚሰጥ ህክምና';
+
+  @override
+  String get pepTitle =>
+      'ድህረ-ተጋላጭነት መከላከያ መድሃኒት (PEP) -ለኤችአይቪ ተጋላጭ ለሆኑ ሰዎች የሚሰጥ።';
+
+  @override
+  String get pepDesc =>
+      'PEP ማለት ከኤችአይቪ ቫይረስ ጋር ንክኪ ከተፈጠረ በኋላ ቫይረሱ በሰውነት ውስጥ እንዳይሰራጭ የሚሰጥ ድንገተኛ መከላከያ ነው። PEP መውሰድ ያለበት ተጋላጭነቱ በተፈጠረ በ72 ሰዓታት (3 ቀናት) ውስጥ ነው።';
+
+  @override
+  String get condomStepsTitle =>
+      'ኮንዶምን በአስር ደረጃዎች የመጠቀም ዘዴ - ዕድሜያቸው ከ18 ዓመት በላይ ለሆኑ';
+
+  @override
+  String get condomStepsSubtitle =>
+      'ኮንዶም እንዳይቀደድ ወይም እንዳይወልቅ የሚከተሉትን 10 ደረጃዎች ይከተሉ። ቪዲዮው እነዚህን ደረጃዎች ያሳያል።';
+
+  @override
+  String get condomStep1 => 'የአገልግሎት ማብቂያ ቀኑን ያረጋግጡ። ጊዜው ያለፈበትን ኮንዶም አይጠቀሙ።';
+
+  @override
+  String get condomStep2 => 'ፓኬቱን በጣቶችዎ ይጫኑ። በውስጡ የአየር ግፊት ካልተሰማዎት አይጠቀሙበት።';
+
+  @override
+  String get condomStep3 =>
+      'የኮንዶሙን ፓኬት ከዳር በኩል በእጅዎ ይቅደዱ እና ኮንዶሙን ያውጡ። ኮንዶሙ እንዳይቀደድ በጥርሶችዎ ወይም በስለት ነገሮች አይክፈቱ።';
+
+  @override
+  String get condomStep4 => 'ኮንዶሙ ወደ የትኛው አቅጣጫ እንደሚዘረጋ ይለዩ።';
+
+  @override
+  String get condomStep5 => 'አየር ለማስወጣት የኮንዶሙን የላይኛውን ጫፍ ቆንጠጥ አድርገው ይያዙ።';
+
+  @override
+  String get condomStep6 => 'የኮንዶሙን ጫፍ እንደያዙ በብልቱ ጫፍ ላይ ያስቀምጡት።';
+
+  @override
+  String get condomStep7 => 'ኮንዶሙን እስከ ብልቱ ስር ድረስ ወደ ታች ይዘርጉት።';
+
+  @override
+  String get condomStep8 => 'ግንኙነት ያድርጉ።';
+
+  @override
+  String get condomStep9 => 'ብልቱ እንደቆመ የኮንዶሙን ስር አጥብቀው በመያዝ ያውጡ።';
+
+  @override
+  String get condomStep10 => 'ኮንዶሙን ከብልት ላይ አውልቀው በአግባቡ በቆሻሻ መጣያ ውስጥ ያስወግዱ።';
+
+  @override
+  String get hivTestingDesc =>
+      'የኤችአይቪ ምርመራ አገልግሎት የምክር፣ የምርመራ እንዲሁም ከተገቢው የኤችአይቪ መከላከያ፣ ህክምና እና ክብካቤ ጋር የማስተሳሰር ሙሉ አገልግሎትን ያጠቃልላል። የሚከተሉት የኤችአይቪ ምርመራ ዘዴዎች ናቸው።';
+
+  @override
+  String get pitcTitle => 'በጤና ባለሙያ የሚመከር ምርመራ እና ምክር (PITC)፦ ';
+
+  @override
+  String get pitcDesc =>
+      'ወደ ጤና ተቋም በሚደረግ ጉብኝት ወቅት በጤና ባለሙያ የሚመከር እና የሚሰጥ የኤችአይቪ ምርመራ እና የምክር አገልግሎት ነው።';
+
+  @override
+  String get vctTitle => 'በፈቃደኝነት ላይ የተመሰረተ የምክር እና ምርመራ አገልግሎት (VCT)፦ ';
+
+  @override
+  String get vctDesc =>
+      'ግለሰቦች የኤችአይቪ የጤና ሁኔታቸውን ለማወቅ በራሳቸው ፍላጎት የሚያደርጉት ምርመራ ነው።';
+
+  @override
+  String get artDesc1 =>
+      'ኤችአይቪ በደማቸው የሚገኝባቸው ሰዎች የፀረ-ኤችአይቪ መድሃኒት (ART) በተቻለ ፍጥነት መጀመር አለባቸው። ይህ መድሃኒት ቫይረሱ በሰውነታቸው ውስጥ እንዳይባዛ ያደርጋል። አንድ ሰው ART ሲወስድ የቫይረሱ መጠን ይቀንሳል እንዲሁም የበሽታ መከላከል አቅማቸው ይጠነክራል።';
+
+  @override
+  String get artDesc2 =>
+      'ህፃናትን፣ ወጣቶችን እና አዋቂዎችን ጨምሮ ቫይረሱ ያለባቸው ሰዎች በሙሉ ውጤቱን ባወቁ ቅጽበት ህክምናውን መጀመር አለባቸው። ህክምናውን ቀድሞ መጀመር ረጅም እድሜ እንዲኖሩ፣ ጤናማ እንዲሆኑ እና ቫይረሱ ወደ ሌሎች እንዳይተላለፍ ይረዳል። ሌሎች ተጓዳኝ በሽታዎችንም ይከላከላል።';
+
+  @override
+  String get artDesc3 =>
+      'የ ART አገልግሎት እንደ ጤና ጣቢያ እና ሆስፒታል ባሉ የመንግስት ጤና ተቋማት ውስጥ በነጻ ይሰጣል።';
+
+  @override
+  String get markCompleted => 'እንደተጠናቀቀ ምልክት አድርግ';
+
+  @override
+  String get moduleCompletedSuccess => 'የትምህርት ክፍሉ በተሳካ ሁኔታ ተጠናቋል!';
+
+  @override
+  String get videoDialogTitle => 'ትምህርታዊ ቪዲዮ';
+
+  @override
+  String get lubricantsVideoDesc =>
+      'የኮንዶም ጥንቃቄ ማሳያ፡- የፔትሮሊየም ቅባት (ቫዝሊን)፣ የህጻናት ዘይትና የሰውነት ሎሽኖች የላቴክስ ኮንዶምን ስለሚያዳክሙና ስለሚቀዱ ፈጽሞ መጠቀም የለብንም። በውሃ ወይም በሲሊኮን የተሰሩ ማለስለሻዎችን ብቻ ይጠቀሙ።';
+
+  @override
+  String get counsellingVideoDesc =>
+      'ትክክለኛ የኮንዶም አጠቃቀም፣ ተገቢውን መጠን መምረጥ እንዲሁም ከአባለዘር በሽታዎች እና ካልታቀደ እርግዝና ለመከላከል የሚያስችል የባለሙያ ማሳያ እና ምክር።';
+
+  @override
+  String get closeButton => 'ዝጋ';
 }

@@ -1201,6 +1201,198 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Full module content and interactive quizzes will be configured in the next step.'**
   String get moduleComingSoon;
+
+  /// No description provided for @watchVideo.
+  ///
+  /// In en, this message translates to:
+  /// **'Watch video'**
+  String get watchVideo;
+
+  /// No description provided for @waysToPreventHiv.
+  ///
+  /// In en, this message translates to:
+  /// **'Ways to prevent HIV'**
+  String get waysToPreventHiv;
+
+  /// No description provided for @hivTesting.
+  ///
+  /// In en, this message translates to:
+  /// **'HIV testing'**
+  String get hivTesting;
+
+  /// No description provided for @treatmentForHivPositive.
+  ///
+  /// In en, this message translates to:
+  /// **'Treatment for HIV positive client'**
+  String get treatmentForHivPositive;
+
+  /// No description provided for @pepTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Post-exposure prophylaxis (PEP) -Given for people exposed to HIV.'**
+  String get pepTitle;
+
+  /// No description provided for @pepDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'PEP stands for post-exposure prophylaxis. The word “prophylaxis” means to prevent or control the spread of an infection or disease. PEP means taking HIV medicines within 72 hours (3 days) after a possible exposure to HIV to prevent HIV.'**
+  String get pepDesc;
+
+  /// No description provided for @condomStepsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How to use a condom in 10 steps- for age greater than 18'**
+  String get condomStepsTitle;
+
+  /// No description provided for @condomStepsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow the 10 steps below to avoid condom breakage or slippage. The how to put on a condom video shows these steps.'**
+  String get condomStepsSubtitle;
+
+  /// No description provided for @condomStep1.
+  ///
+  /// In en, this message translates to:
+  /// **'Check the expiry date. Do not use expired condoms.'**
+  String get condomStep1;
+
+  /// No description provided for @condomStep2.
+  ///
+  /// In en, this message translates to:
+  /// **'Press the package between your fingers. Do not use if there is no resistance from air inside.'**
+  String get condomStep2;
+
+  /// No description provided for @condomStep3.
+  ///
+  /// In en, this message translates to:
+  /// **'Tear open the condom package from the corner and remove the condom. Do not use teeth or sharp objects to open as this can damage the condom.'**
+  String get condomStep3;
+
+  /// No description provided for @condomStep4.
+  ///
+  /// In en, this message translates to:
+  /// **'Identify which way the condom unrolls.'**
+  String get condomStep4;
+
+  /// No description provided for @condomStep5.
+  ///
+  /// In en, this message translates to:
+  /// **'Pinch the receptor tip of the condom to remove air.'**
+  String get condomStep5;
+
+  /// No description provided for @condomStep6.
+  ///
+  /// In en, this message translates to:
+  /// **'Place the condom on the head of the penis while still pinching the condom receptor tip.'**
+  String get condomStep6;
+
+  /// No description provided for @condomStep7.
+  ///
+  /// In en, this message translates to:
+  /// **'Unroll the condom to the base of the shaft.'**
+  String get condomStep7;
+
+  /// No description provided for @condomStep8.
+  ///
+  /// In en, this message translates to:
+  /// **'Insert the penis into vagina.'**
+  String get condomStep8;
+
+  /// No description provided for @condomStep9.
+  ///
+  /// In en, this message translates to:
+  /// **'Pull out while still erect, holding the base of the condom firmly.'**
+  String get condomStep9;
+
+  /// No description provided for @condomStep10.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove the condom from the penis and discard.'**
+  String get condomStep10;
+
+  /// No description provided for @hivTestingDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'HIV testing services refer to the full range of services that include HIV testing, counseling and linkage to appropriate HIV prevention, treatment and care. The following are HIV testing methods.'**
+  String get hivTestingDesc;
+
+  /// No description provided for @pitcTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Provider Initiated Testing and Counseling (PITC): '**
+  String get pitcTitle;
+
+  /// No description provided for @pitcDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'This refers to HIV testing, and counseling recommended by a provider during a visit to a health care facility.'**
+  String get pitcDesc;
+
+  /// No description provided for @vctTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Voluntary Counseling and Testing (VCT): '**
+  String get vctTitle;
+
+  /// No description provided for @vctDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'VCT is initiated by clients seeking to know their HIV status.'**
+  String get vctDesc;
+
+  /// No description provided for @artDesc1.
+  ///
+  /// In en, this message translates to:
+  /// **'People with HIV need to start taking special medicine called antiretroviral therapy, or ART, as soon as they can. This medicine helps slow down the HIV virus in their bodies. When someone takes ART, the amount of virus goes down, and their immune system gets stronger.'**
+  String get artDesc1;
+
+  /// No description provided for @artDesc2.
+  ///
+  /// In en, this message translates to:
+  /// **'Everyone, including children, Adolescents and adults, who have HIV should begin this treatment right after they find out they have the virus. Starting treatment early can help people live longer, stay healthier, and reduce the chances of passing HIV to others. It also helps prevent other illnesses and makes life better for those living with HIV.'**
+  String get artDesc2;
+
+  /// No description provided for @artDesc3.
+  ///
+  /// In en, this message translates to:
+  /// **'ART service is available in public health facilities like Health center and Hospital.'**
+  String get artDesc3;
+
+  /// No description provided for @markCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as Completed'**
+  String get markCompleted;
+
+  /// No description provided for @moduleCompletedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Module marked as completed!'**
+  String get moduleCompletedSuccess;
+
+  /// No description provided for @videoDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Educational Video'**
+  String get videoDialogTitle;
+
+  /// No description provided for @lubricantsVideoDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Demonstration on condom safety: Petroleum jelly, baby oils, and body lotions weaken latex and cause condom failure. Only water-based or silicone lubricants are safe to use with condoms.'**
+  String get lubricantsVideoDesc;
+
+  /// No description provided for @counsellingVideoDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Demonstration and clinical counseling on proper condom usage, correct sizing, and dual protection against STIs and unintended pregnancy.'**
+  String get counsellingVideoDesc;
+
+  /// No description provided for @closeButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get closeButton;
 }
 
 class _AppLocalizationsDelegate
