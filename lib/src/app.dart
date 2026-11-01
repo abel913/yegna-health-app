@@ -111,14 +111,6 @@ class _AppShellState extends State<AppShell> {
     ));
   }
 
-  String _title(AppLocalizations l10n) => switch (_selectedIndex) {
-        0 => l10n.homeTab,
-        1 => l10n.facilitiesTab,
-        2 => l10n.mentorsTab,
-        3 => l10n.learnTab,
-        _ => l10n.accountTab,
-      };
-
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -171,24 +163,14 @@ class _AppShellState extends State<AppShell> {
             ),
           ),
         ),
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(l10n.appTitle,
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 0.8,
-                    )),
-            Text(_title(l10n),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w800,
-                      color: const Color(0xFF092542),
-                    )),
-          ],
+        title: Text(
+          l10n.appTitle,
+          style: const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w800,
+            color: Color(0xFF08264A),
+            letterSpacing: -0.3,
+          ),
         ),
         actions: [
           _LanguageDropdown(localeController: widget.localeController),

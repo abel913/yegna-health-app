@@ -1,5 +1,15 @@
 # Handoff
 
+## Clean Top Header Branding: "Yegna Health" Only (2026-11-01)
+
+- Simplified the top-left corner app bar header across the main destinations (`AppShell` in `lib/src/app.dart`):
+  - Removed the secondary tab subtitle texts ("Home", "Facilities", "Mentors", "Learn", "Account") from the top-left AppBar.
+  - Retained clean, prominent "Yegna Health" branding (`l10n.appTitle`) in high-contrast deep navy (`#08264A`, `w800`, `letterSpacing: -0.3`) matching the glassmorphic aesthetics.
+  - Eliminated the redundant `_title` helper function.
+- Local verification: `dart format lib test` passed; `flutter analyze --no-pub` passed (0 issues found); `flutter test` passed (all 27 unit & widget tests); live Chrome session running at `http://localhost:50500` (`task-931`).
+- Phase 3 remains partial; Phase 4 has not started.
+
+
 ## Deep Optical Glassmorphism Login, Registration & Profile Redesign (2026-11-01)
 
 - Reimagined and redesigned `AuthPage` and `ProfilePage` (`lib/src/auth/auth_pages.dart`) with Deep Blue Optical Glassmorphism:
