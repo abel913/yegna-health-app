@@ -6,6 +6,8 @@ import '../l10n/app_localizations.dart';
 import 'auth/auth_controller.dart';
 import 'auth/auth_pages.dart';
 import 'discovery/directory_pages.dart';
+import 'discovery/facility_repository.dart';
+import 'discovery/mentor_repository.dart';
 import 'home/home_page.dart';
 import 'locale_controller.dart';
 import 'learning/assessment_repository.dart';
@@ -20,6 +22,8 @@ class AppShell extends StatefulWidget {
     required this.educationRepository,
     required this.assessmentRepository,
     required this.progressController,
+    this.facilityRepository,
+    this.mentorRepository,
     super.key,
   });
 
@@ -28,6 +32,8 @@ class AppShell extends StatefulWidget {
   final EducationRepository educationRepository;
   final AssessmentRepository assessmentRepository;
   final LearningProgressController progressController;
+  final FacilityRepository? facilityRepository;
+  final MentorRepository? mentorRepository;
 
   @override
   State<AppShell> createState() => _AppShellState();
@@ -151,8 +157,12 @@ class _AppShellState extends State<AppShell> {
         onOpenAccount: _openAccount,
         onOpenArticle: _openArticle,
       ),
-      const FacilitiesPage(),
-      const MentorsPage(),
+      FacilitiesPage(
+        facilityRepository: widget.facilityRepository,
+      ),
+      MentorsPage(
+        mentorRepository: widget.mentorRepository,
+      ),
       LearnPage(
         educationRepository: widget.educationRepository,
         assessmentRepository: widget.assessmentRepository,

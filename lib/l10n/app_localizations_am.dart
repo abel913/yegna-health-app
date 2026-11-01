@@ -804,4 +804,135 @@ class AppLocalizationsAm extends AppLocalizations {
 
   @override
   String get textSizeDialogTitle => 'የጽሑፍ መጠን ይምረጡ';
+
+  @override
+  String get srhVctFilter => 'ስነ-ተዋልዶ እና ምርመራ';
+
+  @override
+  String get mentalHealthFilter => 'የአእምሮ ጤና';
+
+  @override
+  String get listViewLabel => 'ዝርዝር';
+
+  @override
+  String get mapViewLabel => 'ካርታ';
+
+  @override
+  String get openNowStatus => 'አሁን ክፍት ነው';
+
+  @override
+  String get closedStatus => 'ዝግ ነው';
+
+  @override
+  String get verifiedYouthFriendlyBadge => 'የተረጋገጠ የወጣቶች ማዕከል';
+
+  @override
+  String get freeForYouthBadge => 'ነፃ አገልግሎት';
+
+  @override
+  String get callClinicAction => 'ደውል';
+
+  @override
+  String get directionsAction => 'አቅጣጫ';
+
+  @override
+  String get viewDetailsAction => 'ዝርዝር ይመልከቱ';
+
+  @override
+  String get confidentialityNoticeTitle => 'የወጣቶች ሚስጥራዊነት ዋስትና';
+
+  @override
+  String get landmarkLabel => 'መለያ ቦታ';
+
+  @override
+  String get operatingHoursLabel => 'የስራ ሰዓታት';
+
+  @override
+  String get servicesOfferedLabel => 'የሚሰጡ አገልግሎቶች';
+
+  @override
+  String get resetFiltersAction => 'ማጣሪያዎችን አጽዳ';
+
+  @override
+  String get copiedToClipboard => 'ስልክ ቁጥሩ ተቀድቷል';
+
+  @override
+  String get campusClinicBadge => 'የካምፓስ ክሊኒክ';
+
+  @override
+  String distanceKm(String distance) {
+    return '$distance ኪ.ሜ ርቀት';
+  }
+
+  @override
+  String closesAt(String time) {
+    return 'በ$time ይዘጋል';
+  }
+
+  @override
+  String opensAt(String time) {
+    return 'በ$time ይከፈታል';
+  }
+
+  @override
+  String get onlineNowFilter => 'መስመር ላይ';
+
+  @override
+  String get pubertyFilter => 'ጉርምስና';
+
+  @override
+  String get substanceFilter => 'ጤናማ አኗኗር';
+
+  @override
+  String get availableNowBadge => 'አሁን ይገኛሉ';
+
+  @override
+  String nextSlotBadge(String time) {
+    return 'ቀጣይ፡ $time';
+  }
+
+  @override
+  String get verifiedPeerBadge => 'የተረጋገጠ አቻ አማካሪ';
+
+  @override
+  String get chatConfidentialAction => 'በሚስጥር አውራ';
+
+  @override
+  String get viewProfileBtn => 'መገለጫ ይመልከቱ';
+
+  @override
+  String get safeguardingTitle => 'የደህንነት እና የሚስጥራዊነት ዋስትና';
+
+  @override
+  String experienceMetrics(int years, int sessions) {
+    return '$years ዓመት ልምድ • $sessions+ ውይይቶች';
+  }
+
+  @override
+  String get sessionsCountLabel => 'ውይይቶች';
+
+  @override
+  String get languagesSpokenLabel => 'የሚናገሯቸው ቋንቋዎች';
+
+  @override
+  String get specialtiesLabel => 'የልዩ ትኩረት መስኮች';
+
+  @override
+  String startChatPrompt(String name) {
+    return 'ከ$name ጋር ሚስጥራዊ ውይይት ጀምር';
+  }
+
+  @override
+  String get emergencyDisclaimer =>
+      'አቻ አማካሪዎች አጠቃላይ ድጋፍ እና ማዳመጥ ይሰጣሉ። ለከፍተኛ ጭንቀት ወይም ለህክምና ድንገተኛ አደጋ እባክዎን ወዲያውኑ ወደ 952 ወይም 8335 ነፃ የስልክ መስመሮች ይደውሉ።';
+
+  @override
+  String get sendPeerMessage => 'መልእክት ላክ';
+
+  @override
+  String get peerChatComingSoon =>
+      'የቀጥታ ስም-አልባ ውይይት ተጀምሯል። አማካሪዎ በቅርብ ደቂቃዎች ውስጥ ምላሽ ይሰጥዎታል።';
+
+  @override
+  String get languageAll => 'ሁሉም ቋንቋዎች';
 }

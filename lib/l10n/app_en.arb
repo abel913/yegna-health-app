@@ -254,5 +254,89 @@
   "privacyModalTitle": "Privacy & Security Settings",
   "privacyModalBody": "Your health exploration and progress records are securely stored on this device with industry-standard PKCE tokens and encryption. You can change your password anytime.",
   "themeDialogTitle": "Choose App Theme",
-  "textSizeDialogTitle": "Choose Text Size"
+  "textSizeDialogTitle": "Choose Text Size",
+  "srhVctFilter": "SRH & VCT",
+  "mentalHealthFilter": "Mental Health",
+  "listViewLabel": "List",
+  "mapViewLabel": "Map",
+  "openNowStatus": "Open Now",
+  "closedStatus": "Closed",
+  "verifiedYouthFriendlyBadge": "Verified Youth-Friendly",
+  "freeForYouthBadge": "Free Services",
+  "callClinicAction": "Call Clinic",
+  "directionsAction": "Directions",
+  "viewDetailsAction": "View Details",
+  "confidentialityNoticeTitle": "Youth Confidentiality Guarantee",
+  "landmarkLabel": "Landmark",
+  "operatingHoursLabel": "Operating Hours",
+  "servicesOfferedLabel": "Available Services",
+  "resetFiltersAction": "Reset Filters",
+  "copiedToClipboard": "Phone number copied to clipboard",
+  "campusClinicBadge": "Campus Clinic",
+  "distanceKm": "{distance} km away",
+  "@distanceKm": {
+    "placeholders": {
+      "distance": {
+        "type": "String"
+      }
+    }
+  },
+  "closesAt": "Closes at {time}",
+  "@closesAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "opensAt": "Opens at {time}",
+  "@opensAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "onlineNowFilter": "Online",
+  "pubertyFilter": "Puberty",
+  "substanceFilter": "Healthy Lifestyle",
+  "availableNowBadge": "Available Now",
+  "nextSlotBadge": "Next: {time}",
+  "@nextSlotBadge": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "verifiedPeerBadge": "Verified Peer Counselor",
+  "chatConfidentialAction": "Chat Confidential",
+  "viewProfileBtn": "View Profile",
+  "safeguardingTitle": "Safeguarding & Confidentiality",
+  "experienceMetrics": "{years} yrs exp • {sessions}+ sessions",
+  "@experienceMetrics": {
+    "placeholders": {
+      "years": {
+        "type": "int"
+      },
+      "sessions": {
+        "type": "int"
+      }
+    }
+  },
+  "sessionsCountLabel": "Sessions",
+  "languagesSpokenLabel": "Languages Spoken",
+  "specialtiesLabel": "Focus Areas",
+  "startChatPrompt": "Start confidential conversation with {name}",
+  "@startChatPrompt": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "emergencyDisclaimer": "Peer mentors provide general guidance and active listening. In severe emotional distress or medical emergency, please call toll-free hotlines 952 or 8335 immediately.",
+  "sendPeerMessage": "Send Message",
+  "peerChatComingSoon": "Live anonymous messaging session initialized. Your counselor will respond within moments.",
+  "languageAll": "All Languages"
 }

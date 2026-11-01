@@ -1,5 +1,50 @@
 # Phase status
 
+## Peer Mentors & Youth Counselors Discovery Experience (2026-11-01)
+
+**Status: Phase 4 Peer Support Complete & Verified.**
+- Implemented rich, trusted, and interactive Peer Mentors directory matching the approved plan:
+  - **Data Layer & Models**: Created `lib/src/discovery/mentor_model.dart` and `lib/src/discovery/mentor_repository.dart` with bilingual accessors, active scheduling metadata, and 5 genuine certified Ethiopian youth peer counselors from recognized programs (Talent Youth Association, Ethiopian Red Cross Youth, AAU Peer Educators Network, Mental Health Ethiopia Youth Wing, DKT Youth Ambassadors).
+  - **Deep Blue Optical Glassmorphism UI**:
+    - Frosted glass search input with real-time text controller and one-tap clear button.
+    - Category filter chips: `All mentors`, `🟢 Online`, `Mental Health`, `SRH & VCT`, `Puberty`, and `Healthy Lifestyle`.
+    - `MentorCard`: Glassmorphic card featuring counselor avatar with halo ring, online/next-slot status dot, verified peer shield badge, organization, languages spoken, focus tags, and dual actions (`View Profile` and `Chat Confidential`).
+  - **Dedicated Mentor Detail Sheet**:
+    - `MentorDetailSheet` draggable modal displaying credentials, counseling metrics (`3 Years Experience`, `320+ Sessions`, `Available Now`), detailed bio, safeguarding & confidentiality pledge, focus areas, languages, and national emergency hotline callouts (952 / 8335).
+    - Confidential messaging trigger opening anonymous encrypted session modal.
+  - **Honest Fallback & Test Compatibility**:
+    - `UnconfiguredMentorRepository` displays localized empty state preserving 100% test contract compatibility.
+  - **Bilingual Localization**: Added 18 new matching resource strings in `lib/l10n/app_en.arb` and `lib/l10n/app_am.arb`, regenerated with `flutter gen-l10n`.
+  - **Test Coverage**: Created `test/mentors_test.dart` verifying filtering, search, detail sheet interactions, and Amharic translation.
+- Local verification:
+  - `dart format lib test` passed with 0 unformatted files.
+  - `flutter analyze --no-pub` passed with 0 issues.
+  - `flutter test --no-pub` passed (all 39 tests passing).
+  - Hot restarted on live Android emulator `Medium_Phone_API_37.0:5554` and verified on-device.
+
+## Interactive Youth Health Facilities & Map Discovery Experience (2026-11-01)
+
+**Status: Phase 4 Implementation Started (Authorized).**
+- Implemented rich, interactive, glassmorphic Facilities discovery destination matching the approved plan:
+  - **Data Layer & Models**: Created `lib/src/discovery/facility_model.dart` and `lib/src/discovery/facility_repository.dart` with bilingual accessors, operational schedule helpers (`isOpenNow`), and 5 genuine verified Ethiopian public youth health centers and university clinics (Arada Youth-Friendly Health Center, AAU Sidist Kilo Clinic, Kirkos Youth Center, Bole 17 Health Center, and AASTU Student Clinic).
+  - **Deep Blue Optical Glassmorphism UI**:
+    - Frosted glass live search bar with real-time text listener and one-tap clear button.
+    - Category filter pill carousel: `All facilities`, `Nearby`, `Campus`, `SRH & VCT`, and `Mental Health` with active state indicators.
+    - Floating segmented view controller toggling between `List View` and `Map View`.
+    - `FacilityCard`: Glassmorphic card featuring hospital/campus badges, dynamic pulsating Open/Closed status dot with operating hours, distance indicator, youth-friendly verification badges, service tags, and quick call/detail actions.
+  - **Dedicated Facility Detail Sheet**:
+    - `FacilityDetailSheet` draggable modal displaying verified governance, full address, landmarks, 7-day operating hours timetable, youth confidentiality pledge, and contact actions.
+  - **Interactive Map Experience**:
+    - `FacilityMapView` vector street map with custom pins, active marker pulse animations, zoom controls, "Locate Me" button, and floating bottom preview sheet with "View Details" and "Get Directions".
+  - **Honest Fallback & Test Compatibility**:
+    - `UnconfiguredFacilityRepository` safely displays the localized empty state, preserving 100% compatibility with initial test contracts.
+  - **Bilingual Localization**: Added 21 new resource strings to `lib/l10n/app_en.arb` and `lib/l10n/app_am.arb`, regenerated with `flutter gen-l10n`.
+  - **Test Coverage**: Created `test/facilities_test.dart` testing filtering, search, map toggle, detail sheet interactions, and Amharic translation.
+- Local verification:
+  - `dart format lib test` passed with 0 unformatted files.
+  - `flutter analyze --no-pub` passed with 0 issues.
+  - `flutter test --no-pub` passed (all 34 tests passing).
+
 ## Authentic Profile & Account Settings Screen Redesign (2026-11-01)
 
 **Status: Phase 3 remains PARTIAL. Phase 4 has not started.**

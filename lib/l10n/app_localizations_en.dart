@@ -835,4 +835,135 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get textSizeDialogTitle => 'Choose Text Size';
+
+  @override
+  String get srhVctFilter => 'SRH & VCT';
+
+  @override
+  String get mentalHealthFilter => 'Mental Health';
+
+  @override
+  String get listViewLabel => 'List';
+
+  @override
+  String get mapViewLabel => 'Map';
+
+  @override
+  String get openNowStatus => 'Open Now';
+
+  @override
+  String get closedStatus => 'Closed';
+
+  @override
+  String get verifiedYouthFriendlyBadge => 'Verified Youth-Friendly';
+
+  @override
+  String get freeForYouthBadge => 'Free Services';
+
+  @override
+  String get callClinicAction => 'Call Clinic';
+
+  @override
+  String get directionsAction => 'Directions';
+
+  @override
+  String get viewDetailsAction => 'View Details';
+
+  @override
+  String get confidentialityNoticeTitle => 'Youth Confidentiality Guarantee';
+
+  @override
+  String get landmarkLabel => 'Landmark';
+
+  @override
+  String get operatingHoursLabel => 'Operating Hours';
+
+  @override
+  String get servicesOfferedLabel => 'Available Services';
+
+  @override
+  String get resetFiltersAction => 'Reset Filters';
+
+  @override
+  String get copiedToClipboard => 'Phone number copied to clipboard';
+
+  @override
+  String get campusClinicBadge => 'Campus Clinic';
+
+  @override
+  String distanceKm(String distance) {
+    return '$distance km away';
+  }
+
+  @override
+  String closesAt(String time) {
+    return 'Closes at $time';
+  }
+
+  @override
+  String opensAt(String time) {
+    return 'Opens at $time';
+  }
+
+  @override
+  String get onlineNowFilter => 'Online';
+
+  @override
+  String get pubertyFilter => 'Puberty';
+
+  @override
+  String get substanceFilter => 'Healthy Lifestyle';
+
+  @override
+  String get availableNowBadge => 'Available Now';
+
+  @override
+  String nextSlotBadge(String time) {
+    return 'Next: $time';
+  }
+
+  @override
+  String get verifiedPeerBadge => 'Verified Peer Counselor';
+
+  @override
+  String get chatConfidentialAction => 'Chat Confidential';
+
+  @override
+  String get viewProfileBtn => 'View Profile';
+
+  @override
+  String get safeguardingTitle => 'Safeguarding & Confidentiality';
+
+  @override
+  String experienceMetrics(int years, int sessions) {
+    return '$years yrs exp • $sessions+ sessions';
+  }
+
+  @override
+  String get sessionsCountLabel => 'Sessions';
+
+  @override
+  String get languagesSpokenLabel => 'Languages Spoken';
+
+  @override
+  String get specialtiesLabel => 'Focus Areas';
+
+  @override
+  String startChatPrompt(String name) {
+    return 'Start confidential conversation with $name';
+  }
+
+  @override
+  String get emergencyDisclaimer =>
+      'Peer mentors provide general guidance and active listening. In severe emotional distress or medical emergency, please call toll-free hotlines 952 or 8335 immediately.';
+
+  @override
+  String get sendPeerMessage => 'Send Message';
+
+  @override
+  String get peerChatComingSoon =>
+      'Live anonymous messaging session initialized. Your counselor will respond within moments.';
+
+  @override
+  String get languageAll => 'All Languages';
 }

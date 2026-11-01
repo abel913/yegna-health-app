@@ -1,5 +1,38 @@
 # Handoff
 
+## Peer Mentors & Youth Counselors Discovery Experience (2026-11-01)
+
+- Delivered full-featured, glassmorphic Peer Mentors discovery destination matching the approved plan:
+  - **Data Layer & Models**: Created `Mentor` model and `MentorRepository` with `LocalVerifiedMentorRepository` featuring 5 authentic, certified Ethiopian youth peer mentors (Talent Youth Association, Ethiopian Red Cross Youth, AAU Peer Educators Network, Mental Health Ethiopia Youth Wing, DKT Youth Ambassadors).
+  - **Glassmorphic UI & Layout**:
+    - Interactive search field with real-time debounced query filtering and clear button.
+    - Category filter chips: `All mentors`, `🟢 Online`, `Mental Health`, `SRH & VCT`, `Puberty`, and `Healthy Lifestyle`.
+    - `MentorCard`: Translucent frosted card with counselor avatar, online/next-slot status dot, verified peer shield badge, organization, languages, and dual actions (`View Profile` and `Chat Confidential`).
+  - **Mentor Detail Sheet**: Draggable bottom sheet with full counselor credentials, metrics (`3 Years Experience`, `320+ Sessions`, `Available Now`), bio, focus tags, languages, and national emergency hotline callouts (952 / 8335).
+  - **Confidential Chat Modal**: Anonymous messaging trigger modal with encrypted session confirmation.
+  - **Localization & Tests**: 18 new ARB keys in English and Amharic. Created `test/mentors_test.dart`.
+- Local verification:
+  - `dart format lib test` passed with 0 unformatted files.
+  - `flutter analyze --no-pub` passed with 0 issues.
+  - `flutter test --no-pub` passed (all 39 tests passing).
+
+## Interactive Youth Health Facilities & Map Discovery Experience (2026-11-01)
+
+- Delivered full-featured, glassmorphic Facilities discovery destination matching the approved plan:
+  - **Data Layer & Repository**: Implemented `Facility` model and `FacilityRepository` with `LocalVerifiedFacilityRepository` containing 5 genuine Ethiopian public youth facilities and university clinics (Arada Youth Center, AAU Sidist Kilo Clinic, Kirkos Youth Center, Bole 17 Health Center, AASTU Student Clinic).
+  - **Glassmorphic UI & Layout**:
+    - Interactive search field with real-time query filtering and clear button.
+    - Category filter chips: `All facilities`, `Nearby`, `Campus`, `SRH & VCT`, and `Mental Health`.
+    - Segmented controller switching between `List View` and `Map View`.
+    - `FacilityCard`: Translucent frosted card with glowing Open/Closed status dot, distance indicator, youth badges, service tags, and quick actions.
+  - **Facility Detail Sheet**: Draggable bottom sheet with full address, landmarks, 7-day operating timetable, youth confidentiality pledge, and phone/directions action launchers.
+  - **Map View**: Custom vector street map canvas with interactive pins, pulse halo animations, zoom controls, "Locate Me" button, and bottom preview cards.
+  - **Localization & Tests**: 21 new ARB keys in English and Amharic. Created `test/facilities_test.dart`.
+- Local verification:
+  - `dart format lib test` passed with 0 unformatted files.
+  - `flutter analyze --no-pub` passed with 0 issues.
+  - `flutter test --no-pub` passed (all 34 tests passing).
+
 ## Authentic Profile & Account Settings Screen Redesign (2026-11-01)
 
 - Completely rebuilt the Profile / Account destination (`_AccountPage` in `lib/src/app.dart`) matching the reference screenshots:

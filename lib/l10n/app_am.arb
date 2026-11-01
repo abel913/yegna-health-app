@@ -254,5 +254,89 @@
   "privacyModalTitle": "የግላዊነት እና ደህንነት ቅንብሮች",
   "privacyModalBody": "የጤና ትምህርት እና የእንቅስቃሴ መረጃዎችዎ በመሳሪያዎ ላይ በከፍተኛ ጥበቃና ምስጠራ የተጠበቁ ናቸው። የይለፍ ቃልዎን በማንኛውም ጊዜ መቀየር ይችላሉ።",
   "themeDialogTitle": "የመተግበሪያ ገጽታ ይምረጡ",
-  "textSizeDialogTitle": "የጽሑፍ መጠን ይምረጡ"
+  "textSizeDialogTitle": "የጽሑፍ መጠን ይምረጡ",
+  "srhVctFilter": "ስነ-ተዋልዶ እና ምርመራ",
+  "mentalHealthFilter": "የአእምሮ ጤና",
+  "listViewLabel": "ዝርዝር",
+  "mapViewLabel": "ካርታ",
+  "openNowStatus": "አሁን ክፍት ነው",
+  "closedStatus": "ዝግ ነው",
+  "verifiedYouthFriendlyBadge": "የተረጋገጠ የወጣቶች ማዕከል",
+  "freeForYouthBadge": "ነፃ አገልግሎት",
+  "callClinicAction": "ደውል",
+  "directionsAction": "አቅጣጫ",
+  "viewDetailsAction": "ዝርዝር ይመልከቱ",
+  "confidentialityNoticeTitle": "የወጣቶች ሚስጥራዊነት ዋስትና",
+  "landmarkLabel": "መለያ ቦታ",
+  "operatingHoursLabel": "የስራ ሰዓታት",
+  "servicesOfferedLabel": "የሚሰጡ አገልግሎቶች",
+  "resetFiltersAction": "ማጣሪያዎችን አጽዳ",
+  "copiedToClipboard": "ስልክ ቁጥሩ ተቀድቷል",
+  "campusClinicBadge": "የካምፓስ ክሊኒክ",
+  "distanceKm": "{distance} ኪ.ሜ ርቀት",
+  "@distanceKm": {
+    "placeholders": {
+      "distance": {
+        "type": "String"
+      }
+    }
+  },
+  "closesAt": "በ{time} ይዘጋል",
+  "@closesAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "opensAt": "በ{time} ይከፈታል",
+  "@opensAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "onlineNowFilter": "መስመር ላይ",
+  "pubertyFilter": "ጉርምስና",
+  "substanceFilter": "ጤናማ አኗኗር",
+  "availableNowBadge": "አሁን ይገኛሉ",
+  "nextSlotBadge": "ቀጣይ፡ {time}",
+  "@nextSlotBadge": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "verifiedPeerBadge": "የተረጋገጠ አቻ አማካሪ",
+  "chatConfidentialAction": "በሚስጥር አውራ",
+  "viewProfileBtn": "መገለጫ ይመልከቱ",
+  "safeguardingTitle": "የደህንነት እና የሚስጥራዊነት ዋስትና",
+  "experienceMetrics": "{years} ዓመት ልምድ • {sessions}+ ውይይቶች",
+  "@experienceMetrics": {
+    "placeholders": {
+      "years": {
+        "type": "int"
+      },
+      "sessions": {
+        "type": "int"
+      }
+    }
+  },
+  "sessionsCountLabel": "ውይይቶች",
+  "languagesSpokenLabel": "የሚናገሯቸው ቋንቋዎች",
+  "specialtiesLabel": "የልዩ ትኩረት መስኮች",
+  "startChatPrompt": "ከ{name} ጋር ሚስጥራዊ ውይይት ጀምር",
+  "@startChatPrompt": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "emergencyDisclaimer": "አቻ አማካሪዎች አጠቃላይ ድጋፍ እና ማዳመጥ ይሰጣሉ። ለከፍተኛ ጭንቀት ወይም ለህክምና ድንገተኛ አደጋ እባክዎን ወዲያውኑ ወደ 952 ወይም 8335 ነፃ የስልክ መስመሮች ይደውሉ።",
+  "sendPeerMessage": "መልእክት ላክ",
+  "peerChatComingSoon": "የቀጥታ ስም-አልባ ውይይት ተጀምሯል። አማካሪዎ በቅርብ ደቂቃዎች ውስጥ ምላሽ ይሰጥዎታል።",
+  "languageAll": "ሁሉም ቋንቋዎች"
 }

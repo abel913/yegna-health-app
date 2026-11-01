@@ -1567,6 +1567,240 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Choose Text Size'**
   String get textSizeDialogTitle;
+
+  /// No description provided for @srhVctFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'SRH & VCT'**
+  String get srhVctFilter;
+
+  /// No description provided for @mentalHealthFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'Mental Health'**
+  String get mentalHealthFilter;
+
+  /// No description provided for @listViewLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'List'**
+  String get listViewLabel;
+
+  /// No description provided for @mapViewLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Map'**
+  String get mapViewLabel;
+
+  /// No description provided for @openNowStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Now'**
+  String get openNowStatus;
+
+  /// No description provided for @closedStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Closed'**
+  String get closedStatus;
+
+  /// No description provided for @verifiedYouthFriendlyBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Verified Youth-Friendly'**
+  String get verifiedYouthFriendlyBadge;
+
+  /// No description provided for @freeForYouthBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Free Services'**
+  String get freeForYouthBadge;
+
+  /// No description provided for @callClinicAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Call Clinic'**
+  String get callClinicAction;
+
+  /// No description provided for @directionsAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Directions'**
+  String get directionsAction;
+
+  /// No description provided for @viewDetailsAction.
+  ///
+  /// In en, this message translates to:
+  /// **'View Details'**
+  String get viewDetailsAction;
+
+  /// No description provided for @confidentialityNoticeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Youth Confidentiality Guarantee'**
+  String get confidentialityNoticeTitle;
+
+  /// No description provided for @landmarkLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Landmark'**
+  String get landmarkLabel;
+
+  /// No description provided for @operatingHoursLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Operating Hours'**
+  String get operatingHoursLabel;
+
+  /// No description provided for @servicesOfferedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Available Services'**
+  String get servicesOfferedLabel;
+
+  /// No description provided for @resetFiltersAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Filters'**
+  String get resetFiltersAction;
+
+  /// No description provided for @copiedToClipboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone number copied to clipboard'**
+  String get copiedToClipboard;
+
+  /// No description provided for @campusClinicBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Campus Clinic'**
+  String get campusClinicBadge;
+
+  /// No description provided for @distanceKm.
+  ///
+  /// In en, this message translates to:
+  /// **'{distance} km away'**
+  String distanceKm(String distance);
+
+  /// No description provided for @closesAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Closes at {time}'**
+  String closesAt(String time);
+
+  /// No description provided for @opensAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Opens at {time}'**
+  String opensAt(String time);
+
+  /// No description provided for @onlineNowFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'Online'**
+  String get onlineNowFilter;
+
+  /// No description provided for @pubertyFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'Puberty'**
+  String get pubertyFilter;
+
+  /// No description provided for @substanceFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'Healthy Lifestyle'**
+  String get substanceFilter;
+
+  /// No description provided for @availableNowBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Available Now'**
+  String get availableNowBadge;
+
+  /// No description provided for @nextSlotBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Next: {time}'**
+  String nextSlotBadge(String time);
+
+  /// No description provided for @verifiedPeerBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Verified Peer Counselor'**
+  String get verifiedPeerBadge;
+
+  /// No description provided for @chatConfidentialAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat Confidential'**
+  String get chatConfidentialAction;
+
+  /// No description provided for @viewProfileBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'View Profile'**
+  String get viewProfileBtn;
+
+  /// No description provided for @safeguardingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Safeguarding & Confidentiality'**
+  String get safeguardingTitle;
+
+  /// No description provided for @experienceMetrics.
+  ///
+  /// In en, this message translates to:
+  /// **'{years} yrs exp • {sessions}+ sessions'**
+  String experienceMetrics(int years, int sessions);
+
+  /// No description provided for @sessionsCountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Sessions'**
+  String get sessionsCountLabel;
+
+  /// No description provided for @languagesSpokenLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Languages Spoken'**
+  String get languagesSpokenLabel;
+
+  /// No description provided for @specialtiesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Focus Areas'**
+  String get specialtiesLabel;
+
+  /// No description provided for @startChatPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Start confidential conversation with {name}'**
+  String startChatPrompt(String name);
+
+  /// No description provided for @emergencyDisclaimer.
+  ///
+  /// In en, this message translates to:
+  /// **'Peer mentors provide general guidance and active listening. In severe emotional distress or medical emergency, please call toll-free hotlines 952 or 8335 immediately.'**
+  String get emergencyDisclaimer;
+
+  /// No description provided for @sendPeerMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Send Message'**
+  String get sendPeerMessage;
+
+  /// No description provided for @peerChatComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Live anonymous messaging session initialized. Your counselor will respond within moments.'**
+  String get peerChatComingSoon;
+
+  /// No description provided for @languageAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All Languages'**
+  String get languageAll;
 }
 
 class _AppLocalizationsDelegate
