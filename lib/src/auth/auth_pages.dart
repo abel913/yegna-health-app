@@ -37,6 +37,8 @@ class _AuthPageState extends State<AuthPage> {
   final _displayName = TextEditingController();
   late AuthPageMode _mode = widget.initialMode;
   bool _recoverySent = false;
+  bool _obscurePassword = true;
+  bool _obscureConfirmation = true;
 
   @override
   void initState() {
@@ -216,45 +218,117 @@ class _AuthPageState extends State<AuthPage> {
               ),
             ),
 
-            // Scrollable Content Centered in MaxWidth (480px)
+            // Responsive scrollable content centered vertically and horizontally
             SafeArea(
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 480),
-                  child: ListView(
-                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
-                    children: [
-                      if (!widget.controller.isConfigured) ...[
-                        _AuthGlassContainer(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              _Notice(
-                                icon: Icons.info_outline,
-                                text: l10n.authConfigMissing,
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  return SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 16),
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight: constraints.maxHeight > 32
+                            ? constraints.maxHeight - 32
+                            : 0,
+                        maxWidth: 440,
+                      ),
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            if (!widget.controller.isConfigured) ...[
+                              _AuthGlassContainer(
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    _Notice(
+                                      icon: Icons.info_outline,
+                                      text: l10n.authConfigMissing,
+                                    ),
+                                    const SizedBox(height: 14),
+                                    Text(
+                                      l10n.guestAccessDescription,
+                                      style: const TextStyle(
+                                        fontSize: 13,
+                                        color: Color(0xFF26435F),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 18),
+                                    OutlinedButton(
+                                      style: OutlinedButton.styleFrom(
+                                        backgroundColor:
+                                            Colors.white.withValues(alpha: 0.7),
+                                        side: const BorderSide(
+                                          color: Color(0xFFBAE6FD),
+                                          width: 1.2,
+                                        ),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(16),
+                                        ),
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 13),
+                                      ),
+                                      onPressed: () =>
+                                          Navigator.of(context).pop(),
+                                      child: Text(
+                                        l10n.continueAsGuest,
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w700,
+                                          color: Color(0xFF0369A1),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                              const SizedBox(height: 14),
-                              Text(
-                                l10n.guestAccessDescription,
-                                style: const TextStyle(
-                                  fontSize: 13,
-                                  color: Color(0xFF26435F),
+                            ] else ...[
+                              _AuthGlassContainer(
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    if (_mode ==
+                                        AuthPageMode.verificationPending)
+                                      _verificationPending(l10n)
+                                    else if (_mode ==
+                                        AuthPageMode.passwordUpdated)
+                                      _passwordUpdated(l10n)
+                                    else if (_mode == AuthPageMode.recover &&
+                                        _recoverySent)
+                                      _recoverySentView(l10n)
+                                    else
+                                      _form(l10n),
+                                    if (widget.controller.issue != null) ...[
+                                      const SizedBox(height: 12),
+                                      _Notice(
+                                        icon: Icons.error_outline,
+                                        text: _issueText(
+                                            l10n, widget.controller.issue!),
+                                        isError: true,
+                                      ),
+                                    ],
+                                  ],
                                 ),
                               ),
                               const SizedBox(height: 16),
                               OutlinedButton(
                                 style: OutlinedButton.styleFrom(
                                   backgroundColor:
-                                      Colors.white.withValues(alpha: 0.7),
+                                      Colors.white.withValues(alpha: 0.65),
                                   side: const BorderSide(
                                     color: Color(0xFFBAE6FD),
                                     width: 1.2,
                                   ),
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(14),
+                                    borderRadius: BorderRadius.circular(16),
                                   ),
                                   padding:
-                                      const EdgeInsets.symmetric(vertical: 11),
+                                      const EdgeInsets.symmetric(vertical: 12),
                                 ),
                                 onPressed: () => Navigator.of(context).pop(),
                                 child: Text(
@@ -266,72 +340,22 @@ class _AuthPageState extends State<AuthPage> {
                                   ),
                                 ),
                               ),
-                            ],
-                          ),
-                        ),
-                      ] else ...[
-                        _AuthGlassContainer(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              if (_mode == AuthPageMode.verificationPending)
-                                _verificationPending(l10n)
-                              else if (_mode == AuthPageMode.passwordUpdated)
-                                _passwordUpdated(l10n)
-                              else if (_mode == AuthPageMode.recover &&
-                                  _recoverySent)
-                                _recoverySentView(l10n)
-                              else
-                                _form(l10n),
-                              if (widget.controller.issue != null) ...[
-                                const SizedBox(height: 12),
-                                _Notice(
-                                  icon: Icons.error_outline,
-                                  text: _issueText(
-                                      l10n, widget.controller.issue!),
-                                  isError: true,
+                              const SizedBox(height: 8),
+                              Text(
+                                l10n.guestAccessDescription,
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: Color(0xFF4A6277),
                                 ),
-                              ],
+                              ),
                             ],
-                          ),
+                          ],
                         ),
-                        const SizedBox(height: 12),
-                        OutlinedButton(
-                          style: OutlinedButton.styleFrom(
-                            backgroundColor:
-                                Colors.white.withValues(alpha: 0.7),
-                            side: const BorderSide(
-                              color: Color(0xFFBAE6FD),
-                              width: 1.2,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(14),
-                            ),
-                            padding: const EdgeInsets.symmetric(vertical: 11),
-                          ),
-                          onPressed: () => Navigator.of(context).pop(),
-                          child: Text(
-                            l10n.continueAsGuest,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w700,
-                              color: Color(0xFF0369A1),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          l10n.guestAccessDescription,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontSize: 11.5,
-                            color: Color(0xFF4A6277),
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
           ],
@@ -360,54 +384,64 @@ class _AuthPageState extends State<AuthPage> {
           Row(
             children: [
               Container(
-                width: 32,
-                height: 32,
+                width: 44,
+                height: 44,
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
                     colors: [Color(0xFF0284C7), Color(0xFF38BDF8)],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(14),
                   boxShadow: const [
                     BoxShadow(
-                      color: Color(0x250284C7),
-                      blurRadius: 6,
-                      offset: Offset(0, 2),
+                      color: Color(0x350284C7),
+                      blurRadius: 10,
+                      offset: Offset(0, 4),
                     ),
                   ],
                 ),
                 child: const Icon(
                   Icons.shield_rounded,
                   color: Colors.white,
-                  size: 18,
+                  size: 24,
                 ),
               ),
-              const SizedBox(width: 10),
+              const SizedBox(width: 14),
               Expanded(
-                child: Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 19,
-                    fontWeight: FontWeight.w800,
-                    color: Color(0xFF08264A),
-                    letterSpacing: -0.3,
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontSize: 21,
+                        fontWeight: FontWeight.w800,
+                        color: Color(0xFF08264A),
+                        letterSpacing: -0.4,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      isRegister
+                          ? l10n.guestAccessDescription
+                          : isRecovery
+                              ? l10n.recoveryInstructions
+                              : l10n.profileDescription,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xFF64748B),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
-          if (isRecovery) ...[
-            Text(
-              l10n.recoveryInstructions,
-              style: const TextStyle(
-                fontSize: 12.5,
-                color: Color(0xFF4A6277),
-              ),
-            ),
-            const SizedBox(height: 12),
-          ],
+          const SizedBox(height: 18),
           if (isRegister) ...[
             _textField(
               controller: _displayName,
@@ -419,7 +453,7 @@ class _AuthPageState extends State<AuthPage> {
               ),
               textCapitalization: TextCapitalization.words,
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 11),
           ],
           if (!isNewPassword) ...[
             _textField(
@@ -431,14 +465,25 @@ class _AuthPageState extends State<AuthPage> {
               validator: (value) =>
                   _validationText(l10n, AuthValidation.email(value ?? '')),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 11),
           ],
           if (!isRecovery) ...[
             _textField(
               controller: _password,
               label: isNewPassword ? l10n.newPasswordLabel : l10n.passwordLabel,
               prefixIcon: Icons.lock_outline_rounded,
-              obscureText: true,
+              obscureText: _obscurePassword,
+              suffixIcon: IconButton(
+                icon: Icon(
+                  _obscurePassword
+                      ? Icons.visibility_outlined
+                      : Icons.visibility_off_outlined,
+                  size: 20,
+                  color: const Color(0xFF0284C7),
+                ),
+                onPressed: () =>
+                    setState(() => _obscurePassword = !_obscurePassword),
+              ),
               autofillHints: isRegister
                   ? const [AutofillHints.newPassword]
                   : const [AutofillHints.password],
@@ -453,12 +498,23 @@ class _AuthPageState extends State<AuthPage> {
             ),
           ],
           if (isRegister || isNewPassword) ...[
-            const SizedBox(height: 8),
+            const SizedBox(height: 11),
             _textField(
               controller: _confirmation,
               label: l10n.confirmPasswordLabel,
               prefixIcon: Icons.lock_reset_rounded,
-              obscureText: true,
+              obscureText: _obscureConfirmation,
+              suffixIcon: IconButton(
+                icon: Icon(
+                  _obscureConfirmation
+                      ? Icons.visibility_outlined
+                      : Icons.visibility_off_outlined,
+                  size: 20,
+                  color: const Color(0xFF0284C7),
+                ),
+                onPressed: () => setState(
+                    () => _obscureConfirmation = !_obscureConfirmation),
+              ),
               autofillHints: const [AutofillHints.newPassword],
               validator: (value) => _validationText(
                 l10n,
@@ -468,39 +524,44 @@ class _AuthPageState extends State<AuthPage> {
             ),
           ],
           if (_mode == AuthPageMode.signIn)
-            Align(
-              alignment: AlignmentDirectional.centerEnd,
-              child: TextButton(
-                style: TextButton.styleFrom(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  minimumSize: Size.zero,
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                ),
-                onPressed: () => _changeMode(AuthPageMode.recover),
-                child: Text(
-                  l10n.forgotPassword,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xFF0284C7),
+            Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: Align(
+                alignment: AlignmentDirectional.centerEnd,
+                child: TextButton(
+                  style: TextButton.styleFrom(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  onPressed: () => _changeMode(AuthPageMode.recover),
+                  child: Text(
+                    l10n.forgotPassword,
+                    style: const TextStyle(
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF0284C7),
+                    ),
                   ),
                 ),
               ),
             ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 14),
           Container(
-            height: 44,
+            height: 48,
             decoration: BoxDecoration(
               gradient: const LinearGradient(
                 colors: [Color(0xFF0284C7), Color(0xFF0369A1)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(16),
               boxShadow: const [
                 BoxShadow(
                   color: Color(0x350284C7),
-                  blurRadius: 10,
-                  offset: Offset(0, 3),
+                  blurRadius: 14,
+                  offset: Offset(0, 5),
                 ),
               ],
             ),
@@ -509,70 +570,93 @@ class _AuthPageState extends State<AuthPage> {
                 backgroundColor: Colors.transparent,
                 shadowColor: Colors.transparent,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
+                  borderRadius: BorderRadius.circular(16),
                 ),
               ),
               onPressed: widget.controller.isBusy ? null : _submit,
               child: widget.controller.isBusy
                   ? const SizedBox.square(
-                      dimension: 18,
+                      dimension: 20,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
                         color: Colors.white,
                       ),
                     )
-                  : Text(
-                      isRegister
-                          ? l10n.registerAction
-                          : isRecovery
-                              ? l10n.sendRecoveryEmail
-                              : isNewPassword
-                                  ? l10n.updatePassword
-                                  : l10n.loginAction,
-                      style: const TextStyle(
-                        fontSize: 14.5,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: 0.3,
-                      ),
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          isRegister
+                              ? l10n.registerAction
+                              : isRecovery
+                                  ? l10n.sendRecoveryEmail
+                                  : isNewPassword
+                                      ? l10n.updatePassword
+                                      : l10n.loginAction,
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 0.3,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        const Icon(Icons.arrow_forward_rounded, size: 18),
+                      ],
                     ),
             ),
           ),
           if (_mode == AuthPageMode.signIn || isRegister) ...[
-            const SizedBox(height: 6),
-            TextButton(
-              style: TextButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 3),
-                minimumSize: Size.zero,
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              ),
-              onPressed: () => _changeMode(
-                isRegister ? AuthPageMode.signIn : AuthPageMode.register,
-              ),
-              child: Text(
-                isRegister ? l10n.hasAccount : l10n.noAccount,
-                style: const TextStyle(
-                  fontSize: 12.5,
-                  fontWeight: FontWeight.w700,
-                  color: Color(0xFF0369A1),
+            const SizedBox(height: 14),
+            Center(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: const Color(0xFF0284C7).withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(
+                    color: const Color(0xFFBAE6FD).withValues(alpha: 0.7),
+                    width: 1,
+                  ),
+                ),
+                child: TextButton(
+                  style: TextButton.styleFrom(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  onPressed: () => _changeMode(
+                    isRegister ? AuthPageMode.signIn : AuthPageMode.register,
+                  ),
+                  child: Text(
+                    isRegister ? l10n.hasAccount : l10n.noAccount,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF0369A1),
+                    ),
+                  ),
                 ),
               ),
             ),
           ],
           if (isRecovery || isNewPassword) ...[
-            const SizedBox(height: 6),
-            TextButton(
-              style: TextButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 3),
-                minimumSize: Size.zero,
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              ),
-              onPressed: () => _changeMode(AuthPageMode.signIn),
-              child: Text(
-                l10n.signIn,
-                style: const TextStyle(
-                  fontSize: 12.5,
-                  fontWeight: FontWeight.w700,
-                  color: Color(0xFF0369A1),
+            const SizedBox(height: 14),
+            Center(
+              child: TextButton(
+                style: TextButton.styleFrom(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  minimumSize: Size.zero,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+                onPressed: () => _changeMode(AuthPageMode.signIn),
+                child: Text(
+                  l10n.signIn,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF0369A1),
+                  ),
                 ),
               ),
             ),
@@ -753,11 +837,12 @@ class _AuthPageState extends State<AuthPage> {
     TextCapitalization textCapitalization = TextCapitalization.none,
     bool obscureText = false,
     IconData? prefixIcon,
+    Widget? suffixIcon,
   }) =>
       TextFormField(
         controller: controller,
         style: const TextStyle(
-          fontSize: 14,
+          fontSize: 14.5,
           fontWeight: FontWeight.w600,
           color: Color(0xFF08264A),
         ),
@@ -765,50 +850,51 @@ class _AuthPageState extends State<AuthPage> {
           isDense: true,
           labelText: label,
           labelStyle: const TextStyle(
-            fontSize: 13,
+            fontSize: 13.5,
             fontWeight: FontWeight.w600,
             color: Color(0xFF475569),
           ),
           prefixIcon: prefixIcon != null
-              ? Icon(prefixIcon, size: 18, color: const Color(0xFF0284C7))
+              ? Icon(prefixIcon, size: 20, color: const Color(0xFF0284C7))
               : null,
+          suffixIcon: suffixIcon,
           filled: true,
-          fillColor: Colors.white.withValues(alpha: 0.68),
+          fillColor: Colors.white.withValues(alpha: 0.75),
           contentPadding:
-              const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(16),
             borderSide: BorderSide(
               color: Colors.white.withValues(alpha: 0.90),
               width: 1.2,
             ),
           ),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(16),
             borderSide: const BorderSide(
               color: Color(0xFFBAE6FD),
               width: 1.2,
             ),
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(16),
             borderSide: const BorderSide(
               color: Color(0xFF0284C7),
-              width: 1.8,
+              width: 2.0,
             ),
           ),
           errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(16),
             borderSide: const BorderSide(
               color: Color(0xFFDC2626),
               width: 1.2,
             ),
           ),
           focusedErrorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(16),
             borderSide: const BorderSide(
               color: Color(0xFFDC2626),
-              width: 1.8,
+              width: 2.0,
             ),
           ),
         ),
@@ -1343,8 +1429,8 @@ class _AuthGlassContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const borderRadius = 22.0;
-    const padding = EdgeInsets.symmetric(horizontal: 18, vertical: 16);
+    const borderRadius = 24.0;
+    const padding = EdgeInsets.symmetric(horizontal: 22, vertical: 22);
     return ClipRRect(
       borderRadius: BorderRadius.circular(borderRadius),
       child: BackdropFilter(

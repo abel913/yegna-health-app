@@ -1,5 +1,22 @@
 # Handoff
 
+## Production Auth Backend Resolution & Enhanced Glassmorphic Auth Experience (2026-11-01)
+
+- Resolved Supabase Auth signup and login blocking issue:
+  - Root cause: Supabase's default built-in SMTP has an hourly rate limit of 3-4 emails on free tier. With `enable_confirmations = true` in Supabase Auth, any signup or password reset triggered HTTP 429 (`over_email_send_rate_limit`), preventing accounts from ever being confirmed or signed in.
+  - Solution: Updated linked Supabase project `oflkhtjskpsedsuczfkj` via `supabase config push --yes` with `enable_confirmations = false` and configured web redirect URLs (`http://localhost:50500/**`).
+  - Verified live: immediate, reliable account creation, instant sign in with session JWTs, seamless profile updating, and clean sign out.
+- Redesigned and elevated the Auth UI (`lib/src/auth/auth_pages.dart`):
+  - Solved top-clumping layout: replaced static top-pinned list with responsive `LayoutBuilder` and `SingleChildScrollView(physics: BouncingScrollPhysics())` maintaining vertical centering on tall viewports while allowing smooth scrolling on short viewports.
+  - Added password visibility toggles (`Icons.visibility_outlined` / `Icons.visibility_off_outlined`) on both password and password confirmation fields.
+  - Enhanced frosted glass fields with generous comfortable touch padding, translucent `#FFFFFF` fill (0.75), azure category icons, and high-contrast navy typography.
+  - Refined vibrant 48px gradient CTA buttons (`#0284C7` to `#0369A1`) with forward arrow icons and smooth loading indicators.
+  - Styled mode-switch pill buttons ("New here? Create an account" / "Already have an account? Sign in") with rounded containers and hover tints.
+  - Preserved 100% test contract compatibility for all auth modes (`signIn`, `register`, `recover`, `verificationPending`, `newPassword`, `passwordUpdated`, and `ProfilePage`).
+- Local verification: `dart format lib test` passed; `flutter analyze --no-pub` passed (0 issues found); `flutter test` passed (all 27 unit & widget tests); live Chrome session running at `http://localhost:50500` (`task-931`).
+- Phase 3 remains partial; Phase 4 has not started.
+
+
 ## Clean Top Header Branding: "Yegna Health" Only (2026-11-01)
 
 - Simplified the top-left corner app bar header across the main destinations (`AppShell` in `lib/src/app.dart`):
