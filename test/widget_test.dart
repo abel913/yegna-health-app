@@ -33,8 +33,6 @@ void main() {
       matching: find.text(amharic.accountTab),
     ));
     await tester.pumpAndSettle();
-    await tester.tap(find.widgetWithText(ListTile, amharic.accountTitle));
-    await tester.pumpAndSettle();
 
     expect(find.text(amharic.emailLabel), findsOneWidget);
     expect(find.text(amharic.noAccount), findsOneWidget);
@@ -87,14 +85,11 @@ void main() {
 
     await tester.tap(find.text(en.learnTab).last);
     await tester.pumpAndSettle();
-    expect(find.text(en.articlesHeading), findsOneWidget);
-    expect(find.text(en.assessmentsHeading), findsOneWidget);
+    expect(find.text(en.learningHeading), findsOneWidget);
 
-    await tester.tap(find.text(en.accountTab).last);
-    await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('language_dropdown_button')));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('አማ').last);
+    await tester.tap(find.text('አማርኛ'));
     await tester.pumpAndSettle();
     final am = await AppLocalizations.delegate.load(const Locale('am'));
     expect(
@@ -104,7 +99,13 @@ void main() {
       ),
       findsOneWidget,
     );
-    expect(find.text(am.languageTitle), findsOneWidget);
+
+    await tester.tap(find.descendant(
+      of: find.byType(NavigationBar),
+      matching: find.text(am.accountTab),
+    ));
+    await tester.pumpAndSettle();
+    expect(find.text(am.authConfigMissing), findsOneWidget);
     authController.dispose();
   });
 
@@ -148,8 +149,6 @@ void main() {
       of: find.byType(NavigationBar),
       matching: find.text(l10n.accountTab),
     ));
-    await tester.pumpAndSettle();
-    await tester.tap(find.widgetWithText(ListTile, l10n.accountTitle));
     await tester.pumpAndSettle();
     expect(find.text(l10n.emailLabel), findsOneWidget);
     expect(find.text(l10n.continueAsGuest), findsOneWidget);
@@ -263,8 +262,6 @@ void main() {
       of: find.byType(NavigationBar),
       matching: find.text(l10n.accountTab),
     ));
-    await tester.pumpAndSettle();
-    await tester.tap(find.widgetWithText(ListTile, l10n.accountTitle));
     await tester.pumpAndSettle();
     await tester.tap(find.text(l10n.noAccount));
     await tester.pumpAndSettle();

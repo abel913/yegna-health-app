@@ -220,7 +220,7 @@ class AppLocalizationsAm extends AppLocalizations {
   String get passwordRecoveryTitle => 'የይለፍ ቃልዎን ዳግም ያስጀምሩ';
 
   @override
-  String get learningHeading => 'የጤና ትምህርት';
+  String get learningHeading => 'የትምህርት ክፍሎች';
 
   @override
   String get learningIntroduction =>
@@ -529,4 +529,80 @@ class AppLocalizationsAm extends AppLocalizations {
 
   @override
   String get guestReadyPill => 'ያለ ክፍያ ክፍት';
+
+  @override
+  String get learningModulesTitle => 'የትምህርት ክፍሎች';
+
+  @override
+  String get moreButton => 'ተጨማሪ';
+
+  @override
+  String get takeQuizButton => 'ፈተናውን ውሰዱ';
+
+  @override
+  String moduleLabel(String number) {
+    return 'ክፍል $number';
+  }
+
+  @override
+  String get module01Title => 'የወጣቶች ጤና እና የጉርምስና ወቅት';
+
+  @override
+  String get module01Desc =>
+      'ይህ ክፍል በጉርምስና ወቅት ስለሚከሰቱ አካላዊ እና ስሜታዊ ለውጦች፣ የግል ንጽሕና እና በራስ መተማመን ያብራራል።';
+
+  @override
+  String get module02Title => 'በግብረ ሥጋ ግንኙነት የሚተላለፉ ኢንፌክሽኖች (STI)';
+
+  @override
+  String get module02Desc =>
+      'ይህ ክፍል በግብረ ሥጋ ግንኙነት ስለሚተላለፉ ኢንፌክሽኖች፣ ምልክቶቻቸው፣ እንዴት እንደሚመረመሩ፣ እንደሚታከሙ እና እንደሚከላከሉ ያብራራል።';
+
+  @override
+  String get module03Title => 'የጉበት በሽታ (ሄፓታይተስ)';
+
+  @override
+  String get module03Desc =>
+      'ይህ ክፍል ስለ ሄፓታይተስ፣ መንስኤዎቹ፣ ዓይነቶቹ፣ ምልክቶቹ እና የጉበት ጤናን እንዴት እንደሚጎዳ ያስተዋውቃል።';
+
+  @override
+  String get module04Title => 'በጾታ ላይ የተመሰረተ ጥቃት (GBV)';
+
+  @override
+  String get module04Desc =>
+      'ይህ ክፍል በጾታ ላይ የተመሰረተ ጥቃትን፣ ዓይነቶቹን፣ መንስኤዎቹን እና በግለሰቦችና በማህበረሰብ ላይ የሚያደርሰውን ተፅዕኖ ይመረምራል።';
+
+  @override
+  String get module05Title => 'የሥነ-ተዋልዶ ጤና (SRH)';
+
+  @override
+  String get module05Desc =>
+      'ይህ ክፍል ግለሰቦች ከሥነ-ተዋልዶ፣ ግንኙነቶች እና ተዋልዶ ጤና ጋር የተያያዙ ጉዳዮችን በሚገባ እንዲረዱ ያግዛል።';
+
+  @override
+  String get module06Title => 'የአእምሮ ጤና እና ደህንነት';
+
+  @override
+  String get module06Desc =>
+      'ይህ ክፍል ስለ አእምሮ ጤና፣ ውጥረትን ስለመቆጣጠር፣ ጭንቀትን ስለማሸነፍ እና አስተማማኝ ድጋፍ ስለማግኘት ያብራራል።';
+
+  @override
+  String get module07Title => 'የኤችአይቪ/ኤድስ ቫይረስ (HIV/AIDS)';
+
+  @override
+  String get module07Desc =>
+      'ይህ የትምህርት ክፍል ስለ ኤችአይቪ/ኤድስ ምንነት፣ እንዴት እንደሚተላለፍ፣ የመከላከያ መንገዶች እና ስለ ህክምናው መሰረታዊ ግንዛቤ ይሰጣል።';
+
+  @override
+  String get module08Title => 'የዕፅ ሱስ እና አላግባብ መጠቀም';
+
+  @override
+  String get module08Desc =>
+      'ይህ የትምህርት ክፍል የተለያዩ የዕፅ ዓይነቶችን፣ በአእምሮ እና በባህሪ ላይ የሚያሳድሩትን ተፅዕኖ እና ጤናማ የአኗኗር ዘይቤን ስለመከተል ያስረዳል።';
+
+  @override
+  String get completedStatus => 'ተጠናቋል';
+
+  @override
+  String get moduleComingSoon => 'ሙሉ የትምህርት ክፍሎች እና ፈተናዎች ለቀጣዩ ደረጃ እየተዘጋጁ ነው።';
 }

@@ -7,6 +7,7 @@ import 'package:yegna_health_app/src/auth/auth_controller.dart';
 import 'package:yegna_health_app/src/locale_controller.dart';
 import 'package:yegna_health_app/src/learning/assessment_repository.dart';
 import 'package:yegna_health_app/src/learning/learning_models.dart';
+import 'package:yegna_health_app/src/learning/learning_progress_controller.dart';
 import 'package:yegna_health_app/src/learning/learn_pages.dart';
 
 import 'support/fake_auth_repository.dart';
@@ -39,6 +40,10 @@ void main() {
   }
 
   Future<void> pumpHarness(WidgetTester tester, _Harness harness) async {
+    tester.view.physicalSize = const Size(800, 1000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
     await tester.pumpWidget(YegnaHealthApp(
       localeController: harness.localeController,
       authController: harness.authController,
@@ -59,9 +64,9 @@ void main() {
     await tester.tap(find.text(l10n.learnTab).last);
     await tester.pumpAndSettle();
     expect(find.text(l10n.learningHeading), findsOneWidget);
-    expect(find.text('Test article'), findsOneWidget);
+    expect(find.text(l10n.moreButton).first, findsOneWidget);
 
-    await tester.tap(find.text('Test article'));
+    await tester.tap(find.text(l10n.moreButton).first);
     await tester.pumpAndSettle();
     expect(find.text('Test article body.'), findsOneWidget);
 
@@ -90,9 +95,7 @@ void main() {
         AppLocalizations.of(tester.element(find.byType(NavigationBar)));
     await tester.tap(find.text(l10n.learnTab).last);
     await tester.pumpAndSettle();
-    await tester.tap(find.text(l10n.assessmentsHeading).first);
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Test assessment'));
+    await tester.tap(find.text(l10n.takeQuizButton).first);
     await tester.pumpAndSettle();
 
     expect(find.text('Test question one?'), findsOneWidget);
@@ -124,17 +127,26 @@ void main() {
   testWidgets('guest progress remains local and cannot enable cloud sync',
       (tester) async {
     final harness = await createHarness();
-    await pumpHarness(tester, harness);
-    final l10n =
-        AppLocalizations.of(tester.element(find.byType(NavigationBar)));
-    await tester.tap(find.text(l10n.learnTab).last);
+    final progressController = LearningProgressController(
+      repository: harness.progressStore,
+      authController: harness.authController,
+    );
+    await tester.pumpWidget(MaterialApp(
+      locale: const Locale('en'),
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: LearningProgressScreen(
+        controller: progressController,
+        assessmentRepository: harness.assessments,
+      ),
+    ));
     await tester.pumpAndSettle();
-    await tester.tap(find.text(l10n.progressHeading).first);
-    await tester.pumpAndSettle();
+    final l10n = await AppLocalizations.delegate.load(const Locale('en'));
 
     expect(find.text(l10n.progressSyncSignInRequired), findsOneWidget);
     expect(harness.progressStore.lastSyncChoice, isNull);
     await tester.pumpWidget(const SizedBox.shrink());
+    progressController.dispose();
     harness.authController.dispose();
     harness.localeController.dispose();
   });
@@ -149,7 +161,7 @@ void main() {
     await pumpHarness(tester, harness);
     final l10n =
         AppLocalizations.of(tester.element(find.byType(NavigationBar)));
-    await tester.tap(find.text(l10n.learnTab).last);
+    await tester.tap(find.text(l10n.accountTab).last);
     await tester.pumpAndSettle();
     await tester.tap(find.text(l10n.progressHeading).first);
     await tester.pumpAndSettle();
@@ -197,13 +209,21 @@ void main() {
       ),
       requestId: requestId,
     );
-    await pumpHarness(tester, harness);
-    final l10n =
-        AppLocalizations.of(tester.element(find.byType(NavigationBar)));
-    await tester.tap(find.text(l10n.learnTab).last);
+    final progressController = LearningProgressController(
+      repository: harness.progressStore,
+      authController: harness.authController,
+    );
+    await tester.pumpWidget(MaterialApp(
+      locale: const Locale('en'),
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: LearningProgressScreen(
+        controller: progressController,
+        assessmentRepository: harness.assessments,
+      ),
+    ));
     await tester.pumpAndSettle();
-    await tester.tap(find.text(l10n.progressHeading).first);
-    await tester.pumpAndSettle();
+    final l10n = await AppLocalizations.delegate.load(const Locale('en'));
 
     await tester.scrollUntilVisible(
       find.text(l10n.pendingScore),
@@ -225,6 +245,7 @@ void main() {
     expect(attempts.single.versionId, versionId);
 
     await tester.pumpWidget(const SizedBox.shrink());
+    progressController.dispose();
     harness.authController.dispose();
     harness.localeController.dispose();
   });

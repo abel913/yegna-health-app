@@ -53,6 +53,10 @@ class _AppShellState extends State<AppShell> {
   }
 
   void _onDestinationSelected(int index) {
+    if (index == 4 && !widget.authController.isAuthenticated) {
+      _openAccount();
+      return;
+    }
     if (index != _selectedIndex) {
       setState(() {
         _previousIndex = _selectedIndex;
@@ -70,8 +74,14 @@ class _AppShellState extends State<AppShell> {
       };
 
   void _handleAuthChange() {
-    if (!mounted ||
-        !widget.authController.recoveryRequested ||
+    if (!mounted) return;
+    if (!widget.authController.isAuthenticated && _selectedIndex == 4) {
+      setState(() {
+        _previousIndex = _selectedIndex;
+        _selectedIndex = 0;
+      });
+    }
+    if (!widget.authController.recoveryRequested ||
         _accountRouteOpen ||
         _recoveryRouteOpen) {
       return;
@@ -97,7 +107,15 @@ class _AppShellState extends State<AppShell> {
         : AuthPage(controller: widget.authController);
     Navigator.of(context)
         .push<void>(MaterialPageRoute<void>(builder: (_) => page))
-        .whenComplete(() => _accountRouteOpen = false);
+        .whenComplete(() {
+      _accountRouteOpen = false;
+      if (mounted && widget.authController.isAuthenticated) {
+        setState(() {
+          _previousIndex = _selectedIndex;
+          _selectedIndex = 4;
+        });
+      }
+    });
   }
 
   void _openArticle(String articleId) {
@@ -107,6 +125,15 @@ class _AppShellState extends State<AppShell> {
         repository: widget.educationRepository,
         progressController: widget.progressController,
         localeController: widget.localeController,
+      ),
+    ));
+  }
+
+  void _openLearningProgress() {
+    Navigator.of(context).push<void>(MaterialPageRoute<void>(
+      builder: (_) => LearningProgressScreen(
+        controller: widget.progressController,
+        assessmentRepository: widget.assessmentRepository,
       ),
     ));
   }
@@ -136,8 +163,9 @@ class _AppShellState extends State<AppShell> {
         localeController: widget.localeController,
         authController: widget.authController,
         progressController: widget.progressController,
+        assessmentRepository: widget.assessmentRepository,
         onOpenAccount: _openAccount,
-        onOpenLearning: () => _onDestinationSelected(3),
+        onOpenLearningProgress: _openLearningProgress,
       ),
     ];
     return Scaffold(
@@ -173,14 +201,10 @@ class _AppShellState extends State<AppShell> {
           ),
         ),
         actions: [
-          _LanguageDropdown(localeController: widget.localeController),
-          IconButton(
-            tooltip: l10n.accountTitle,
-            onPressed: _openAccount,
-            icon: const Icon(Icons.account_circle_outlined,
-                color: Color(0xFF0284C7)),
-          ),
+          const _NotificationButton(),
           const SizedBox(width: 8),
+          _LanguageDropdown(localeController: widget.localeController),
+          const SizedBox(width: 14),
         ],
       ),
       body: SafeArea(
@@ -503,6 +527,81 @@ class _ScoopedNotchBarPainter extends CustomPainter {
   }
 }
 
+class _NotificationButton extends StatelessWidget {
+  const _NotificationButton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Container(
+            width: 38,
+            height: 38,
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.85),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(
+                color: const Color(0xFFBAE6FD).withValues(alpha: 0.9),
+                width: 1.2,
+              ),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x100284C7),
+                  blurRadius: 10,
+                  offset: Offset(0, 3),
+                ),
+              ],
+            ),
+            child: IconButton(
+              icon: const Icon(
+                Icons.notifications_none_rounded,
+                size: 20,
+                color: Color(0xFF005A71),
+              ),
+              padding: EdgeInsets.zero,
+              tooltip: 'Notifications',
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('2 updates available for learning modules'),
+                    duration: Duration(seconds: 2),
+                  ),
+                );
+              },
+            ),
+          ),
+          Positioned(
+            top: -2,
+            right: -2,
+            child: Container(
+              padding: const EdgeInsets.all(4),
+              decoration: const BoxDecoration(
+                color: Color(0xFFEF4444),
+                shape: BoxShape.circle,
+              ),
+              constraints: const BoxConstraints(
+                minWidth: 16,
+                minHeight: 16,
+              ),
+              child: const Text(
+                '2',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _LanguageDropdown extends StatelessWidget {
   const _LanguageDropdown({required this.localeController});
   final LocaleController localeController;
@@ -766,15 +865,17 @@ class _AccountPage extends StatelessWidget {
     required this.localeController,
     required this.authController,
     required this.progressController,
+    required this.assessmentRepository,
     required this.onOpenAccount,
-    required this.onOpenLearning,
+    required this.onOpenLearningProgress,
   });
 
   final LocaleController localeController;
   final AuthController authController;
   final LearningProgressController progressController;
+  final AssessmentRepository assessmentRepository;
   final VoidCallback onOpenAccount;
-  final VoidCallback onOpenLearning;
+  final VoidCallback onOpenLearningProgress;
 
   @override
   Widget build(BuildContext context) {
@@ -814,7 +915,7 @@ class _AccountPage extends StatelessWidget {
             title: Text(l10n.progressHeading),
             subtitle: Text(l10n.learningIntroduction),
             trailing: const Icon(Icons.chevron_right),
-            onTap: onOpenLearning,
+            onTap: onOpenLearningProgress,
           ),
         ),
         const SizedBox(height: 10),

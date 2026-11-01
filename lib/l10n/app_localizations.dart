@@ -503,7 +503,7 @@ abstract class AppLocalizations {
   /// No description provided for @learningHeading.
   ///
   /// In en, this message translates to:
-  /// **'Health education'**
+  /// **'Learning Modules'**
   String get learningHeading;
 
   /// No description provided for @learningIntroduction.
@@ -1069,6 +1069,138 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Open & Free'**
   String get guestReadyPill;
+
+  /// No description provided for @learningModulesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Learning Modules'**
+  String get learningModulesTitle;
+
+  /// No description provided for @moreButton.
+  ///
+  /// In en, this message translates to:
+  /// **'More'**
+  String get moreButton;
+
+  /// No description provided for @takeQuizButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Take Quiz'**
+  String get takeQuizButton;
+
+  /// No description provided for @moduleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'MODULE {number}'**
+  String moduleLabel(String number);
+
+  /// No description provided for @module01Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Adolescent health & puberty'**
+  String get module01Title;
+
+  /// No description provided for @module01Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'This module covers physical and emotional changes during puberty, personal hygiene, and growing body confidence.'**
+  String get module01Desc;
+
+  /// No description provided for @module02Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Sexual transmitted infections (STI)'**
+  String get module02Title;
+
+  /// No description provided for @module02Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'This module explains Sexually Transmitted Infections, including what they are, their signs and symptoms, how they are diagnosed, treated, and prevented.'**
+  String get module02Desc;
+
+  /// No description provided for @module03Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Hepatitis'**
+  String get module03Title;
+
+  /// No description provided for @module03Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'This module introduces Hepatitis, focusing on its causes, types, symptoms, and how it affects liver health.'**
+  String get module03Desc;
+
+  /// No description provided for @module04Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Gender-based violence (GBV)'**
+  String get module04Title;
+
+  /// No description provided for @module04Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'This module addresses Gender-Based Violence, helping learners understand its forms, causes, and impact on individuals and society.'**
+  String get module04Desc;
+
+  /// No description provided for @module05Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Sexual and reproductive health (SRH)'**
+  String get module05Title;
+
+  /// No description provided for @module05Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'This module focuses on helping individuals understand their well-being in relation to sexuality, relationships, and reproduction.'**
+  String get module05Desc;
+
+  /// No description provided for @module06Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Mental health & wellbeing'**
+  String get module06Title;
+
+  /// No description provided for @module06Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'This module explores mental well-being, stress management, overcoming anxiety, and finding safe support.'**
+  String get module06Desc;
+
+  /// No description provided for @module07Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Human immune virus (HIV)/AIDS'**
+  String get module07Title;
+
+  /// No description provided for @module07Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'This module provides essential knowledge about HIV/AIDS, including what it is, how it spreads, how to prevent it, and how it can be treated.'**
+  String get module07Desc;
+
+  /// No description provided for @module08Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Substance Abuse'**
+  String get module08Title;
+
+  /// No description provided for @module08Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'This module explores by helping you understand different types of substances, how they affect the brain and behavior, and how to maintain a healthy lifestyle.'**
+  String get module08Desc;
+
+  /// No description provided for @completedStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get completedStatus;
+
+  /// No description provided for @moduleComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Full module content and interactive quizzes will be configured in the next step.'**
+  String get moduleComingSoon;
 }
 
 class _AppLocalizationsDelegate

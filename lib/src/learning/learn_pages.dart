@@ -5,6 +5,7 @@ import '../locale_controller.dart';
 import 'assessment_repository.dart';
 import 'education_repository.dart';
 import 'learning_models.dart';
+import 'learning_modules_carousel.dart';
 import 'learning_progress_controller.dart';
 
 class LearnPage extends StatefulWidget {
@@ -26,253 +27,333 @@ class LearnPage extends StatefulWidget {
 }
 
 class _LearnPageState extends State<LearnPage> {
-  late Future<_LibraryData> _libraryFuture;
   String _locale = '';
-  String? _selectedCategory;
-  String _search = '';
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final locale = Localizations.localeOf(context).languageCode;
-    if (_locale != locale) {
-      _locale = locale;
-      _libraryFuture = _loadLibrary(locale);
-    }
+    _locale = Localizations.localeOf(context).languageCode;
   }
 
-  Future<_LibraryData> _loadLibrary(String locale) async {
-    final values = await Future.wait([
-      widget.educationRepository.categories(locale),
-      widget.educationRepository.articles(locale),
-    ]);
-    return _LibraryData(
-      categories: values[0] as CachedValue<List<LearningCategory>>,
-      articles: values[1] as CachedValue<List<ArticlePreview>>,
-    );
+  Future<void> _reload() async {
+    try {
+      await Future.wait([
+        widget.educationRepository.articles(_locale),
+        widget.assessmentRepository.assessments(_locale),
+      ]);
+    } catch (_) {}
   }
 
-  void _reload() => setState(() => _libraryFuture = _loadLibrary(_locale));
-
-  @override
-  Widget build(BuildContext context) {
+  void _openModuleInfo(BuildContext context, LearningModuleItem module) {
     final l10n = AppLocalizations.of(context);
-    return DefaultTabController(
-      length: 3,
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(20, 12, 20, 6),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(l10n.learningHeading,
-                    style: Theme.of(context)
-                        .textTheme
-                        .headlineSmall
-                        ?.copyWith(fontWeight: FontWeight.w700)),
-                const SizedBox(height: 6),
-                Text(l10n.learningIntroduction,
-                    style: Theme.of(context).textTheme.bodyMedium),
-                const SizedBox(height: 8),
-                ListenableBuilder(
-                  listenable: widget.progressController,
-                  builder: (context, _) {
-                    final progress = widget.progressController.progress;
-                    return Card(
-                      color: const Color(0xFFF0F2FF),
-                      child: Padding(
-                        padding: const EdgeInsets.all(12),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(l10n.learningProgressTitle,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleMedium
-                                    ?.copyWith(fontWeight: FontWeight.w700)),
-                            const SizedBox(height: 8),
-                            if (widget.progressController.isLoading)
-                              const LinearProgressIndicator()
-                            else
-                              Wrap(
-                                spacing: 10,
-                                runSpacing: 8,
-                                children: [
-                                  _ProgressPill(
-                                    icon: Icons.menu_book_outlined,
-                                    label: l10n.completedArticlesCount(
-                                        progress?.articles.length ?? 0),
-                                  ),
-                                  _ProgressPill(
-                                    icon: Icons.quiz_outlined,
-                                    label: l10n.assessmentAttemptsCount(
-                                        progress?.attempts.length ?? 0),
-                                  ),
-                                ],
-                              ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => Container(
+        padding: const EdgeInsets.fromLTRB(24, 20, 24, 32),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 44,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFCBD5E1),
+                  borderRadius: BorderRadius.circular(2),
                 ),
-              ],
+              ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-            child: Material(
-              color: Theme.of(context).colorScheme.surfaceContainerLow,
-              borderRadius: BorderRadius.circular(16),
-              child: TabBar(
-                dividerColor: Colors.transparent,
-                indicatorSize: TabBarIndicatorSize.tab,
-                indicator: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary,
-                  borderRadius: BorderRadius.circular(13),
-                ),
-                labelColor: Colors.white,
-                unselectedLabelColor:
-                    Theme.of(context).colorScheme.onSurfaceVariant,
-                labelStyle: Theme.of(context).textTheme.labelLarge?.copyWith(
-                      fontWeight: FontWeight.w700,
+            const SizedBox(height: 18),
+            Text(
+              l10n.moduleLabel(module.number).toUpperCase(),
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w800,
+                color: Color(0xFF0284C7),
+              ),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              module.title(l10n),
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w800,
+                color: Color(0xFF0B2545),
+              ),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              module.description(l10n),
+              style: const TextStyle(
+                fontSize: 14,
+                height: 1.55,
+                color: Color(0xFF475569),
+              ),
+            ),
+            const SizedBox(height: 18),
+            Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF0F9FF),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: const Color(0xFFBAE6FD)),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.info_outline_rounded,
+                      color: Color(0xFF0284C7), size: 22),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      l10n.moduleComingSoon,
+                      style: const TextStyle(
+                        fontSize: 12.5,
+                        color: Color(0xFF005A71),
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                tabs: [
-                  Tab(text: l10n.articlesHeading),
-                  Tab(text: l10n.assessmentsHeading),
-                  Tab(text: l10n.progressHeading),
+                  ),
                 ],
               ),
             ),
-          ),
-          Expanded(
-            child: TabBarView(
-              children: [
-                _buildArticles(context),
-                _AssessmentList(
-                  repository: widget.assessmentRepository,
-                  progressController: widget.progressController,
-                  locale: _locale,
+            const SizedBox(height: 20),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () => Navigator.pop(context),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF005A71),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
                 ),
-                LearningProgressPage(
-                  controller: widget.progressController,
-                  assessmentRepository: widget.assessmentRepository,
-                ),
-              ],
+                child: const Text('OK',
+                    style: TextStyle(fontWeight: FontWeight.w700)),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildArticles(BuildContext context) {
+  void _openQuizInfo(BuildContext context, LearningModuleItem module) {
     final l10n = AppLocalizations.of(context);
-    return FutureBuilder<_LibraryData>(
-      future: _libraryFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        if (snapshot.hasError) {
-          return _ErrorState(
-            message: snapshot.error is EducationUnavailable
-                ? l10n.educationUnavailable
-                : l10n.learningLoadError,
-            onRetry: _reload,
-          );
-        }
-        final data = snapshot.requireData;
-        final categories = data.categories.value;
-        final visible = data.articles.value.where((article) {
-          final matchesCategory = _selectedCategory == null ||
-              article.categoryId == _selectedCategory;
-          final query = _search.trim().toLowerCase();
-          final matchesSearch = query.isEmpty ||
-              article.title.toLowerCase().contains(query) ||
-              article.summary.toLowerCase().contains(query);
-          return matchesCategory && matchesSearch;
-        }).toList(growable: false);
-        return RefreshIndicator(
-          onRefresh: () async => _reload(),
-          child: ListView(
-            padding: const EdgeInsets.all(16),
-            children: [
-              if (data.categories.isStale || data.articles.isStale)
-                _StaleBanner(date: data.articles.fetchedAt ?? DateTime.now()),
-              TextField(
-                decoration: InputDecoration(
-                  labelText: l10n.searchArticles,
-                  prefixIcon: const Icon(Icons.search),
-                  border: const OutlineInputBorder(),
-                ),
-                onChanged: (value) => setState(() => _search = value),
-              ),
-              const SizedBox(height: 12),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsetsDirectional.only(end: 8),
-                      child: ChoiceChip(
-                        label: Text(l10n.allCategories),
-                        selected: _selectedCategory == null,
-                        onSelected: (_) =>
-                            setState(() => _selectedCategory = null),
-                      ),
-                    ),
-                    for (final category in categories)
-                      Padding(
-                        padding: const EdgeInsetsDirectional.only(end: 8),
-                        child: ChoiceChip(
-                          label: Text(category.name),
-                          selected: _selectedCategory == category.id,
-                          onSelected: (_) =>
-                              setState(() => _selectedCategory = category.id),
-                        ),
-                      ),
-                  ],
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => Container(
+        padding: const EdgeInsets.fromLTRB(24, 20, 24, 32),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 44,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFCBD5E1),
+                  borderRadius: BorderRadius.circular(2),
                 ),
               ),
-              if (visible.isEmpty)
-                Card(
-                  color: Theme.of(context).colorScheme.surfaceContainerLow,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 26),
-                    child: Column(
-                      children: [
-                        Icon(Icons.menu_book_outlined,
-                            size: 30,
-                            color: Theme.of(context).colorScheme.primary),
-                        const SizedBox(height: 10),
-                        Text(
-                          _search.isEmpty && _selectedCategory == null
-                              ? l10n.noReviewedArticles
-                              : l10n.noSearchResults,
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                      ],
+            ),
+            const SizedBox(height: 18),
+            Row(
+              children: [
+                const Icon(Icons.quiz_outlined,
+                    color: Color(0xFF0284C7), size: 24),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    '${l10n.takeQuizButton}: ${module.title(l10n)}',
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                      color: Color(0xFF0B2545),
                     ),
                   ),
-                )
-              else
-                ...visible.map((article) => Card(
-                      child: ListTile(
-                        leading: const Icon(Icons.menu_book_outlined),
-                        title: Text(article.title),
-                        subtitle: Text(article.summary),
-                        trailing: const Icon(Icons.chevron_right),
-                        onTap: () => _openArticle(article.id),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Text(
+              module.description(l10n),
+              style: const TextStyle(
+                fontSize: 14,
+                height: 1.55,
+                color: Color(0xFF475569),
+              ),
+            ),
+            const SizedBox(height: 18),
+            Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF0F9FF),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: const Color(0xFFBAE6FD)),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.psychology_outlined,
+                      color: Color(0xFF0284C7), size: 22),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      l10n.moduleComingSoon,
+                      style: const TextStyle(
+                        fontSize: 12.5,
+                        color: Color(0xFF005A71),
+                        fontWeight: FontWeight.w600,
                       ),
-                    )),
-            ],
-          ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () => Navigator.pop(context),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF005A71),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                ),
+                child: const Text('OK',
+                    style: TextStyle(fontWeight: FontWeight.w700)),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _handleOpenModule(
+      BuildContext context, LearningModuleItem module) async {
+    try {
+      final cachedArticles = await widget.educationRepository.articles(_locale);
+      final articles = cachedArticles.value;
+      if (articles.isNotEmpty) {
+        final matched = articles.firstWhere(
+          (a) =>
+              a.slug.contains(module.id) ||
+              a.id == module.id ||
+              module.id.contains(a.slug),
+          orElse: () => articles.first,
         );
-      },
+        if (context.mounted) {
+          _openArticle(matched.id);
+          return;
+        }
+      }
+    } catch (_) {}
+
+    if (context.mounted) {
+      _openModuleInfo(context, module);
+    }
+  }
+
+  Future<void> _handleOpenQuiz(
+      BuildContext context, LearningModuleItem module) async {
+    try {
+      final assessments =
+          await widget.assessmentRepository.assessments(_locale);
+      if (assessments.isNotEmpty) {
+        final matched = assessments.firstWhere(
+          (a) =>
+              a.slug.contains(module.id) ||
+              a.id == module.id ||
+              module.id.contains(a.slug),
+          orElse: () => assessments.first,
+        );
+        if (context.mounted) {
+          Navigator.of(context).push<void>(MaterialPageRoute<void>(
+            builder: (_) => AssessmentSessionPage(
+              summary: matched,
+              repository: widget.assessmentRepository,
+              progressController: widget.progressController,
+            ),
+          ));
+          return;
+        }
+      }
+    } catch (_) {}
+
+    if (context.mounted) {
+      _openQuizInfo(context, module);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: SafeArea(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsetsDirectional.fromSTEB(20, 14, 16, 8),
+              child: Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: Text(
+                  l10n.learningHeading,
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.w800,
+                        color: const Color(0xFF005A71),
+                      ),
+                ),
+              ),
+            ),
+            Expanded(
+              child: RefreshIndicator(
+                onRefresh: () async => _reload(),
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(
+                    parent: BouncingScrollPhysics(),
+                  ),
+                  padding: const EdgeInsets.fromLTRB(16, 6, 16, 28),
+                  child: ListenableBuilder(
+                    listenable: widget.progressController,
+                    builder: (context, _) {
+                      final completed = widget
+                              .progressController.progress?.articles
+                              .map((a) => a.articleId)
+                              .toSet() ??
+                          const <String>{};
+                      return LearningModulesCarousel(
+                        completedModuleIds: completed,
+                        onOpenModule: (m) => _handleOpenModule(context, m),
+                        onOpenQuiz: (m) => _handleOpenQuiz(context, m),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -286,35 +367,6 @@ class _LearnPageState extends State<LearnPage> {
       ),
     ));
   }
-}
-
-class _LibraryData {
-  const _LibraryData({required this.categories, required this.articles});
-  final CachedValue<List<LearningCategory>> categories;
-  final CachedValue<List<ArticlePreview>> articles;
-}
-
-class _ProgressPill extends StatelessWidget {
-  const _ProgressPill({required this.icon, required this.label});
-  final IconData icon;
-  final String label;
-
-  @override
-  Widget build(BuildContext context) => Container(
-        padding: const EdgeInsetsDirectional.fromSTEB(10, 7, 10, 7),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(14),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, size: 18, color: const Color(0xFF005A71)),
-            const SizedBox(width: 8),
-            Text(label, style: Theme.of(context).textTheme.labelMedium),
-          ],
-        ),
-      );
 }
 
 class ArticlePage extends StatefulWidget {
@@ -899,6 +951,31 @@ class _AssessmentSessionPageState extends State<AssessmentSessionPage> {
       _questionIndex = 0;
       _submission = null;
     });
+  }
+}
+
+class LearningProgressScreen extends StatelessWidget {
+  const LearningProgressScreen({
+    required this.controller,
+    required this.assessmentRepository,
+    super.key,
+  });
+
+  final LearningProgressController controller;
+  final AssessmentRepository assessmentRepository;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(l10n.progressHeading),
+      ),
+      body: LearningProgressPage(
+        controller: controller,
+        assessmentRepository: assessmentRepository,
+      ),
+    );
   }
 }
 

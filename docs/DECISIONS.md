@@ -43,3 +43,28 @@ The Flutter choices are implemented locally. Migrations `20261030174702`, `20261
   - Amharic / Ge'ez script: `Noto Sans Ethiopic` (Variable Font `[wdth,wght]`). The gold standard for modern screen-optimized Ethiopic script, eliminating archaic ductus and clipping.
 - Implementation pattern: Declared in `pubspec.yaml` under `assets/fonts/` for 100% offline-first reliability in low-connectivity regions with zero additional package dependencies. Configured in `ThemeData` via `fontFamily: 'PlusJakartaSans'` with `fontFamilyFallback: const ['NotoSansEthiopic']`.
 - Typography adjustments: Configured neutral `letterSpacing: 0` to prevent Amharic glyph collisions, paired with relaxed vertical line heights (`1.38 – 1.58`) to accommodate Ethiopic ascenders and vowel modifiers cleanly across all screens.
+
+## 2026-11-01 — Learning Screen Carousel Focus & Personal Progress Relocation
+
+- Learn Screen Architecture: Redesigned the `LearnPage` to strictly focus on the Youth Learning Modules Carousel (Modules 01 - 06), matching the target reference UI and eliminating the legacy tab bar (`Articles`, `Assessments`, `My learning`), header intro text, and cluttered learning summary card.
+- Personal Progress Relocation: Relocated user-specific learning activity, cloud progress synchronization, and cached attempt management into `LearningProgressScreen`, accessible directly from the Account / Profile page under "My learning". This decouples general curriculum browsing from personal account state while retaining 100% offline-first storage and sync capabilities.
+
+## 2026-11-01 — Learning Modules Expansion (Modules 07 & 08) & Visual Progress Indication
+
+- Curriculum Expansion: Expanded the learning carousel from 6 to 8 modules to incorporate critical youth health topics:
+  - Module 07: Human immune virus (HIV)/AIDS (rapid testing & community support illustration)
+  - Module 08: Substance Abuse (healthy choices & counseling illustration)
+- Localized Content: Provided full English and Amharic resource strings in `app_en.arb` and `app_am.arb` for both modules, regenerated via `flutter gen-l10n`.
+- Progress Indication: Added visual completion state support (`completedModuleIds` linked to `LearningProgressController`), rendering an authentic green `✔ Completed` indicator badge and progress bar on completed module cards matching the reference app layout. Pagination indicator dynamically scales across 8 dots with count display (`$page / 8`).
+- Direct Navigation: Module action buttons (`More ->` and `Take Quiz`) connect directly to article lessons and interactive assessment sessions respectively, maintaining full testability with 0 unverified mock dependencies.
+
+## 2026-11-01 — Top Bar Notification Placement & Direct Bottom Nav Login
+
+- Top Bar Action Placement: Unified the top app header by placing the notification bell with badge counter directly beside the language dropdown in the main `AppBar`. Removed the redundant account button from the top right.
+- Streamlined Learn Screen Header: Removed the reloading icon and notification icon from the `LearnPage` body, leaving a clean "Learning Modules" title.
+- Direct Guest Authentication Routing: Configured the bottom navigation Account tab to immediately route unauthenticated guests to `AuthPage` (sign-in / sign-up), avoiding intermediate landing steps. Upon successful sign-in, the view smoothly transitions to the authenticated account profile.
+
+## 2026-11-01 — Carousel Card Illustration Full-Width Scaling
+
+- Illustration Container Refactor: Removed the fixed 190px height limitation and card-wide inset padding. Replaced with an `Expanded` container and minimal 8px horizontal margins with `fit: BoxFit.contain, width: double.infinity`.
+- Card Proportions: Increased carousel card height dynamically (`540 - 600 dp`), giving the illustration over 340 dp of vertical room. This allows horizontal scaling to reach over 90% of the card width, matching the visual prominence and wide layout seen in the authentic reference app.

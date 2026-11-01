@@ -1,5 +1,93 @@
 # Handoff
 
+## Youth Learning Modules 07 (HIV/AIDS) & 08 (Substance Abuse) Addition (2026-11-01)
+
+- Added Module 07 and Module 08 to the interactive `LearningModulesCarousel`:
+  - **Module 07: Human immune virus (HIV)/AIDS**:
+    - Extracted authentic illustration `assets/images/learning/module_07_hiv.png` (rapid testing scene with healthcare worker, youth patient, and Habesha family member).
+    - Configured layout: `illustrationOnTop: true`.
+    - English: "Human immune virus (HIV)/AIDS" / "This module provides essential knowledge about HIV/AIDS, including what it is, how it spreads, how to prevent it, and how it can be treated."
+    - Amharic: "የኤችአይቪ/ኤድስ ቫይረስ (HIV/AIDS)" / "ይህ የትምህርት ክፍል ስለ ኤችአይቪ/ኤድስ ምንነት፣ እንዴት እንደሚተላለፍ፣ የመከላከያ መንገዶች እና ስለ ህክምናው መሰረታዊ ግንዛቤ ይሰጣል።"
+  - **Module 08: Substance Abuse**:
+    - Extracted authentic illustration `assets/images/learning/module_08_substance_abuse.png` ("CHOOSE HEALTHY LIFESTYLES" / "MY CHOICE" session with healthcare provider and attentive youth).
+    - Configured layout: `illustrationOnTop: false`.
+    - English: "Substance Abuse" / "This module explores by helping you understand different types of substances, how they affect the brain and behavior, and how to maintain a healthy lifestyle."
+    - Amharic: "የዕፅ ሱስ እና አላግባብ መጠቀም" / "ይህ የትምህርት ክፍል የተለያዩ የዕፅ ዓይነቶችን፣ በአእምሮ እና በባህሪ ላይ የሚያሳድሩትን ተፅዕኖ እና ጤናማ የአኗኗር ዘይቤን ስለመከተል ያስረዳል።"
+- Enhanced Carousel Completion & Progress States:
+  - Dynamically extended pagination indicators to 8 dots and counter format (`$page / 8`).
+  - Added module completion state handling (`completedModuleIds` via `ListenableBuilder` listening to `LearningProgressController`).
+  - Implemented authentic green `✔ Completed` indicator badge and progress bar on completed modules matching the reference design.
+- Local verification:
+  - `dart format lib test` passed with 0 unformatted files.
+  - `flutter analyze --no-pub` passed with 0 issues.
+  - `flutter test --no-pub` passed (all 27 tests passing).
+  - Hot restarted live Flutter web server at `http://localhost:56770`.
+- Phase 3 remains partial; Phase 4 has not started.
+
+## Carousel Card Illustration Expansion & Full-Width Scaling (2026-11-01)
+
+- Resolved illustration sizing and horizontal reach on learning carousel cards (`lib/src/learning/learning_modules_carousel.dart`):
+  - Replaced the previous 190px height ceiling with an `Expanded` layout container, giving the illustration the full available vertical canvas (320-370 dp) inside the card.
+  - Removed container-wide inset padding that was squishing illustrations inward, isolating padding to the `contentSection` (`EdgeInsets.fromLTRB(20, 18, 20, 14)`).
+  - Configured `imageSection` with minimal margins (`EdgeInsets.fromLTRB(8, 4, 8, 8)`), `width: double.infinity`, and `fit: BoxFit.contain`, allowing illustrations to expand horizontally and span nearly edge-to-edge across the card width (~90%+ card width) matching the reference app design.
+  - Adjusted the carousel height to a responsive 540-600 dp (`(screenHeight * 0.65).clamp(540.0, 600.0)`), giving the cards generous height so illustrations and text breathe naturally without clipping.
+- Local verification:
+  - `dart format lib test` passed with 0 unformatted files.
+  - `flutter analyze --no-pub` passed with 0 errors and 0 warnings.
+  - `flutter test --no-pub` passed (all 27 tests passing).
+  - Hot restarted live Flutter web server at `http://localhost:56770`.
+- Phase 3 remains partial; Phase 4 has not started.
+
+## Header Action Relocation & Direct Guest Login Navigation (2026-11-01)
+
+- Re-architected top header actions and account access:
+  - Relocated notification bell button (`_NotificationButton`) to the global top `AppBar` beside the language dropdown selector (`_LanguageDropdown`), complete with badge count indicator (`2`) and glassmorphic rounded styling.
+  - Removed top-right corner account button from the `AppBar` actions.
+  - Removed the reloading / sync button and the notification button from the `LearnPage` header, creating an uncluttered view with clean `Learning Modules` headline.
+  - Updated bottom navigation bar: tapping the `Account` tab (`index == 4`) when unauthenticated immediately navigates the guest user directly to the Login/Registration screen (`AuthPage`).
+  - Seamless authenticated return: when a guest completes login or registration from the bottom navigation trigger, the app automatically transitions to their authenticated Account/Profile view.
+- Local verification:
+  - `dart format lib test` passed with 0 unformatted files.
+  - `flutter analyze --no-pub` passed with 0 errors and 0 warnings.
+  - `flutter test --no-pub` passed (all 27 tests passing).
+  - Hot restarted live Flutter web server at `http://localhost:56770`.
+- Phase 3 remains partial; Phase 4 has not started.
+
+## Learning Screen Clutter Removal & Dedicated Learning Modules Carousel (2026-11-01)
+
+- Removed legacy clutter from the Learn screen as requested by the user:
+  - Completely removed the redundant and cramped top section: old "Health education" title, subtitle paragraph ("Browse educational resources reviewed for publication..."), the "Your learning activity" card (completed articles & assessment counts), and the overflowing tab bar (`[Articles] [Assessmen...] [My learning]`).
+  - Transferred personal progress & cloud sync settings (`LearningProgressPage`) to a dedicated route (`LearningProgressScreen`) opened via the "My learning" tile in the Account/Profile tab (`_AccountPage`).
+  - Streamlined `LearnPage` in `lib/src/learning/learn_pages.dart` to a clean, focused, single-purpose Youth Learning Modules view matching the reference design:
+    - Top bar: "Learning Modules" title, notification bell with red badge '2', and sync/refresh button.
+    - Carousel: horizontal `PageView` displaying 6 interactive modules with alternating layout (illustration top vs. bottom), active pill dots, and page counter (`1 / 6`).
+    - Action buttons: "More ->" opens article education content, and "Take Quiz" opens the assessment quiz directly.
+  - Aligned all automated widget and integration tests (`test/learning_ui_test.dart` and `test/widget_test.dart`) to the new streamlined navigation flow.
+- Local verification:
+  - `dart format lib test` passed with 0 unformatted files.
+  - `flutter analyze --no-pub` passed with 0 errors and 0 warnings.
+  - `flutter test --no-pub` passed (all 27 tests passing).
+  - Hot restarted the live Flutter web server at `http://localhost:56770`.
+- Phase 3 remains partial; Phase 4 has not started.
+
+## Youth Learning Modules Carousel Integration (2026-11-01)
+
+- Implemented the reference Youth Learning Modules Carousel in `LearnPage` (`lib/src/learning/learn_pages.dart` and `lib/src/learning/learning_modules_carousel.dart`):
+  - Created interactive 6-module carousel card pager with smooth swiping, dot indicators, and page counter (`$page / 6`):
+    - Module 01: Adolescent health & puberty (`module_01_puberty.jpg`)
+    - Module 02: Sexual transmitted infections (STI) (`module_02_sti.png`)
+    - Module 03: Hepatitis (`module_03_hepatitis.png`)
+    - Module 04: Gender-based violence (GBV) (`module_04_gbv.png`)
+    - Module 05: Sexual and reproductive health (SRH) (`module_05_srh.png`)
+    - Module 06: Mental health & wellbeing (`module_06_mental_health.jpg`)
+  - Faithfully matched reference layout with alternating illustrations (top vs. bottom), module labels (`MODULE 02`), titles, descriptions, and action buttons (`More ->` and `Take Quiz`).
+  - Implemented top bar matching reference UI: "Learning Modules" title, notification bell with red badge count '2', and quick sync/refresh button.
+  - Added localized module bottom sheets for `More ->` and `Take Quiz` with status notification that full lesson articles and interactive quizzes will be configured in the next phase step.
+  - Added 12 new matching localization keys in `lib/l10n/app_en.arb` and `lib/l10n/app_am.arb` and regenerated localization with `flutter gen-l10n`.
+  - Bundled module illustrations in `assets/images/learning/` and declared in `pubspec.yaml`.
+- Local verification: `dart format lib test` passed; `flutter analyze --no-pub` passed (0 issues found); `flutter test --no-pub` passed (all 27 tests); hot restart executed on the active web server.
+- Phase 3 remains partial; Phase 4 has not started.
+
 ## Production Auth Backend Resolution & Enhanced Glassmorphic Auth Experience (2026-11-01)
 
 - Resolved Supabase Auth signup and login blocking issue:

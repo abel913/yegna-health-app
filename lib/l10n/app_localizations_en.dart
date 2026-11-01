@@ -232,7 +232,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get passwordRecoveryTitle => 'Reset your password';
 
   @override
-  String get learningHeading => 'Health education';
+  String get learningHeading => 'Learning Modules';
 
   @override
   String get learningIntroduction =>
@@ -554,4 +554,81 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get guestReadyPill => 'Open & Free';
+
+  @override
+  String get learningModulesTitle => 'Learning Modules';
+
+  @override
+  String get moreButton => 'More';
+
+  @override
+  String get takeQuizButton => 'Take Quiz';
+
+  @override
+  String moduleLabel(String number) {
+    return 'MODULE $number';
+  }
+
+  @override
+  String get module01Title => 'Adolescent health & puberty';
+
+  @override
+  String get module01Desc =>
+      'This module covers physical and emotional changes during puberty, personal hygiene, and growing body confidence.';
+
+  @override
+  String get module02Title => 'Sexual transmitted infections (STI)';
+
+  @override
+  String get module02Desc =>
+      'This module explains Sexually Transmitted Infections, including what they are, their signs and symptoms, how they are diagnosed, treated, and prevented.';
+
+  @override
+  String get module03Title => 'Hepatitis';
+
+  @override
+  String get module03Desc =>
+      'This module introduces Hepatitis, focusing on its causes, types, symptoms, and how it affects liver health.';
+
+  @override
+  String get module04Title => 'Gender-based violence (GBV)';
+
+  @override
+  String get module04Desc =>
+      'This module addresses Gender-Based Violence, helping learners understand its forms, causes, and impact on individuals and society.';
+
+  @override
+  String get module05Title => 'Sexual and reproductive health (SRH)';
+
+  @override
+  String get module05Desc =>
+      'This module focuses on helping individuals understand their well-being in relation to sexuality, relationships, and reproduction.';
+
+  @override
+  String get module06Title => 'Mental health & wellbeing';
+
+  @override
+  String get module06Desc =>
+      'This module explores mental well-being, stress management, overcoming anxiety, and finding safe support.';
+
+  @override
+  String get module07Title => 'Human immune virus (HIV)/AIDS';
+
+  @override
+  String get module07Desc =>
+      'This module provides essential knowledge about HIV/AIDS, including what it is, how it spreads, how to prevent it, and how it can be treated.';
+
+  @override
+  String get module08Title => 'Substance Abuse';
+
+  @override
+  String get module08Desc =>
+      'This module explores by helping you understand different types of substances, how they affect the brain and behavior, and how to maintain a healthy lifestyle.';
+
+  @override
+  String get completedStatus => 'Completed';
+
+  @override
+  String get moduleComingSoon =>
+      'Full module content and interactive quizzes will be configured in the next step.';
 }
