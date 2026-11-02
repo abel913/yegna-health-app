@@ -948,6 +948,23 @@
         "type": "String"
       }
     }
-  }
+  },
+  "chatbotTitle": "Yegna Health Assistant",
+  "chatbotSubtitle": "Confidential youth health guidance",
+  "chatbotDisclaimer": "Educational health assistant only, not a doctor. For clinical emergencies, call 952 or 8335.",
+  "chatbotInputHint": "Ask about health, modules, or clinics...",
+  "chatbotWelcomeMessage": "Hello! I am your private Yegna Health Assistant. Ask me anything about puberty, HIV/AIDS, STIs, reproductive health, mental health, or finding youth-friendly clinics in Ethiopia.",
+  "chatbotSuggestedHiv": "How to prevent HIV?",
+  "chatbotSuggestedPuberty": "Normal puberty changes",
+  "chatbotSuggestedClinics": "Where can I get tested?",
+  "chatbotSuggestedContraception": "Emergency contraception",
+  "chatbotEmergencyAlert": "Immediate emergency help is available. Call 952 (Health Emergency) or 8335 (Youth Helpline) now for free confidential care.",
+  "chatbotEmergencyTitle": "Emergency Helpline Alert",
+  "chatbotEmergencyCall952": "Call 952 (Health)",
+  "chatbotEmergencyCall8335": "Call 8335 (Youth)",
+  "chatbotClearChat": "Clear conversation",
+  "chatbotTyping": "Yegna Assistant is typing...",
+  "askYegnaFabTooltip": "Ask Yegna Health Assistant",
+  "askYegnaFabLabel": "Ask AI"
 }
 

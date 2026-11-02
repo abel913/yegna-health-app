@@ -5233,6 +5233,108 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Call {number}'**
   String callHotlineAction(String number);
+
+  /// No description provided for @chatbotTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Yegna Health Assistant'**
+  String get chatbotTitle;
+
+  /// No description provided for @chatbotSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Confidential youth health guidance'**
+  String get chatbotSubtitle;
+
+  /// No description provided for @chatbotDisclaimer.
+  ///
+  /// In en, this message translates to:
+  /// **'Educational health assistant only, not a doctor. For clinical emergencies, call 952 or 8335.'**
+  String get chatbotDisclaimer;
+
+  /// No description provided for @chatbotInputHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask about health, modules, or clinics...'**
+  String get chatbotInputHint;
+
+  /// No description provided for @chatbotWelcomeMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Hello! I am your private Yegna Health Assistant. Ask me anything about puberty, HIV/AIDS, STIs, reproductive health, mental health, or finding youth-friendly clinics in Ethiopia.'**
+  String get chatbotWelcomeMessage;
+
+  /// No description provided for @chatbotSuggestedHiv.
+  ///
+  /// In en, this message translates to:
+  /// **'How to prevent HIV?'**
+  String get chatbotSuggestedHiv;
+
+  /// No description provided for @chatbotSuggestedPuberty.
+  ///
+  /// In en, this message translates to:
+  /// **'Normal puberty changes'**
+  String get chatbotSuggestedPuberty;
+
+  /// No description provided for @chatbotSuggestedClinics.
+  ///
+  /// In en, this message translates to:
+  /// **'Where can I get tested?'**
+  String get chatbotSuggestedClinics;
+
+  /// No description provided for @chatbotSuggestedContraception.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency contraception'**
+  String get chatbotSuggestedContraception;
+
+  /// No description provided for @chatbotEmergencyAlert.
+  ///
+  /// In en, this message translates to:
+  /// **'Immediate emergency help is available. Call 952 (Health Emergency) or 8335 (Youth Helpline) now for free confidential care.'**
+  String get chatbotEmergencyAlert;
+
+  /// No description provided for @chatbotEmergencyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency Helpline Alert'**
+  String get chatbotEmergencyTitle;
+
+  /// No description provided for @chatbotEmergencyCall952.
+  ///
+  /// In en, this message translates to:
+  /// **'Call 952 (Health)'**
+  String get chatbotEmergencyCall952;
+
+  /// No description provided for @chatbotEmergencyCall8335.
+  ///
+  /// In en, this message translates to:
+  /// **'Call 8335 (Youth)'**
+  String get chatbotEmergencyCall8335;
+
+  /// No description provided for @chatbotClearChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear conversation'**
+  String get chatbotClearChat;
+
+  /// No description provided for @chatbotTyping.
+  ///
+  /// In en, this message translates to:
+  /// **'Yegna Assistant is typing...'**
+  String get chatbotTyping;
+
+  /// No description provided for @askYegnaFabTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask Yegna Health Assistant'**
+  String get askYegnaFabTooltip;
+
+  /// No description provided for @askYegnaFabLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask AI'**
+  String get askYegnaFabLabel;
 }
 
 class _AppLocalizationsDelegate

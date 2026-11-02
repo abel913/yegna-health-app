@@ -911,6 +911,23 @@
   "sendSmsAction": "የጽሑፍ መልዕክት",
   "phoneCallUnavailable": "በዚህ መሳሪያ ላይ ስልክ መደወል አልተቻለም",
   "telegramUnavailable": "ቴሌግራም መክፈት አልተቻለም",
-  "callHotlineAction": "{number} ይደውሉ"
+  "callHotlineAction": "{number} ይደውሉ",
+  "chatbotTitle": "የየኛ ጤና ረዳት",
+  "chatbotSubtitle": "ሚስጥራዊ የወጣቶች ጤና መረጃ",
+  "chatbotDisclaimer": "የትምህርት ረዳት ብቻ እንጂ ሐኪም አይደለም። ለአስቸኳይ ድንገተኛ ሁኔታ በ 952 ወይም 8335 ይደውሉ።",
+  "chatbotInputHint": "ስለ ጤና፣ ስለምዕራፎች ወይም ክሊኒኮች ይጠይቁ...",
+  "chatbotWelcomeMessage": "ሰላም! እኔ የየኛ ጤና ረዳት ነኝ። ስለ ጉርምስና፣ ኤችአይቪ፣ አባላዘር በሽታዎች፣ ስነ-ተዋልዶ ጤና፣ ወይም በአቅራቢያዎ ያሉ የወጣቶች ክሊኒኮችን በተመለከተ ማንኛውንም ጥያቄ መጠየቅ ይችላሉ።",
+  "chatbotSuggestedHiv": "ኤችአይቪን እንዴት መከላከል ይቻላል?",
+  "chatbotSuggestedPuberty": "የጉርምስና ተፈጥሯዊ ለውጦች",
+  "chatbotSuggestedClinics": "የምርመራ አገልግሎት የት ማግኘት እችላለሁ?",
+  "chatbotSuggestedContraception": "የአስቸኳይ ጊዜ የወሊድ መከላከያ",
+  "chatbotEmergencyAlert": "አስቸኳይ የጤና ድጋፍ በነፃ ይገኛል። እባክዎ አሁኑኑ በ 952 (የጤና ድንገተኛ አደጋ) ወይም በ 8335 (የወጣቶች መስመር) ይደውሉ።",
+  "chatbotEmergencyTitle": "የድንገተኛ እርዳታ ጥሪ",
+  "chatbotEmergencyCall952": "በ 952 ይደውሉ (ጤና)",
+  "chatbotEmergencyCall8335": "በ 8335 ይደውሉ (ወጣቶች)",
+  "chatbotClearChat": "ውይይቱን አጽዳ",
+  "chatbotTyping": "የየኛ ረዳት በመጻፍ ላይ ነው...",
+  "askYegnaFabTooltip": "የየኛ ጤና ረዳትን ይጠይቁ",
+  "askYegnaFabLabel": "AI ጠይቅ"
 }
 

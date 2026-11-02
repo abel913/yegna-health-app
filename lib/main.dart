@@ -9,6 +9,9 @@ import 'src/auth/auth_controller.dart';
 import 'src/auth/auth_repository.dart';
 import 'src/auth/secure_auth_storage.dart';
 import 'src/auth/supabase_auth_repository.dart';
+import 'src/chatbot/chatbot_repository.dart';
+import 'src/chatbot/composite_chatbot_repository.dart';
+import 'src/chatbot/supabase_gemini_chatbot_repository.dart';
 import 'src/discovery/facility_repository.dart';
 import 'src/discovery/mentor_repository.dart';
 import 'src/locale_controller.dart';
@@ -34,9 +37,15 @@ Future<void> main() async {
       ? const UnconfiguredAuthRepository()
       : SupabaseAuthRepository(supabaseClient);
   final authController = AuthController(authRepository);
+  final chatbotRepository = CompositeChatbotRepository(
+    remoteRepository: supabaseClient == null
+        ? null
+        : SupabaseGeminiChatbotRepository(supabaseClient),
+  );
   runApp(YegnaHealthApp(
     localeController: localeController,
     authController: authController,
+    chatbotRepository: chatbotRepository,
     educationRepository: supabaseClient == null
         ? const UnconfiguredEducationRepository()
         : SupabaseEducationRepository(supabaseClient, LearningCache()),
@@ -79,6 +88,7 @@ class YegnaHealthApp extends StatefulWidget {
     this.progressStore,
     this.facilityRepository,
     this.mentorRepository,
+    this.chatbotRepository,
     super.key,
   });
 
@@ -89,6 +99,7 @@ class YegnaHealthApp extends StatefulWidget {
   final LearningProgressStore? progressStore;
   final FacilityRepository? facilityRepository;
   final MentorRepository? mentorRepository;
+  final ChatbotRepository? chatbotRepository;
 
   @override
   State<YegnaHealthApp> createState() => _YegnaHealthAppState();
@@ -100,6 +111,7 @@ class _YegnaHealthAppState extends State<YegnaHealthApp> {
   late final AssessmentRepository _assessmentRepository;
   late final FacilityRepository _facilityRepository;
   late final MentorRepository _mentorRepository;
+  late final ChatbotRepository _chatbotRepository;
 
   @override
   void initState() {
@@ -112,6 +124,8 @@ class _YegnaHealthAppState extends State<YegnaHealthApp> {
         widget.facilityRepository ?? const UnconfiguredFacilityRepository();
     _mentorRepository =
         widget.mentorRepository ?? const UnconfiguredMentorRepository();
+    _chatbotRepository =
+        widget.chatbotRepository ?? CompositeChatbotRepository();
     _progressController = LearningProgressController(
       repository: widget.progressStore ?? ProgressRepository(null),
       authController: widget.authController,
@@ -274,6 +288,7 @@ class _YegnaHealthAppState extends State<YegnaHealthApp> {
             progressController: _progressController,
             facilityRepository: _facilityRepository,
             mentorRepository: _mentorRepository,
+            chatbotRepository: _chatbotRepository,
           ),
         ),
       );

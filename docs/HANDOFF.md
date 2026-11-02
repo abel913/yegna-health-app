@@ -1,5 +1,23 @@
 # Handoff
 
+## Conversational AI Health Chatbot & Curriculum Knowledge Engine (2026-11-02)
+
+- Delivered the complete Yegna Health Conversational AI Chatbot:
+  - **Floating Action Button (`YegnaChatbotFab`)**: Mounted in `lib/src/app.dart` on the bottom right of Home (`index 0`) and Learn (`index 3`) screens with "Ask AI" branding and smooth route transition.
+  - **Full-Screen Chat UI (`YegnaChatbotPage`)**: Clean message thread, suggested prompt chips, educational safety disclaimer banner, clear-chat action, and emergency crisis callout cards (952 / 8335).
+  - **Knowledge Engine & Architecture (`lib/src/chatbot/`)**:
+    - `ChatMessage` & `EmergencyHotlineAction` models.
+    - `LocalCurriculumChatbotRepository`: Hermetic on-device knowledge base covering all 8 curriculum modules and Addis Ababa youth clinics in English and Amharic.
+    - `SupabaseGeminiChatbotRepository`: Invokes `ask-assistant` Supabase Edge Function with Google Gemini API.
+    - `CompositeChatbotRepository`: Seamless fallback to local curriculum if offline or unconfigured.
+  - **Edge Function (`supabase/functions/ask-assistant/index.ts`)**:
+    - Deno edge function supporting Gemini API with curriculum grounding instructions.
+  - **Docs Plan**: Stored comprehensive plan in `docs/CHATBOT_PLAN.md`.
+  - **Verification**:
+    - `dart format lib test` passed cleanly (0 changed).
+    - `flutter analyze --no-pub` passed (0 issues found).
+    - `flutter test --no-pub` passed with all 87 tests passing.
+
 ## Mentors Direct Phone Calling, Telegram Contacts & Interactive Hotlines (2026-11-02)
 
 - Built and verified real-world communication channels for peer mentors:

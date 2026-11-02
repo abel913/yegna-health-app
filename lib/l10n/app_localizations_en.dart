@@ -3025,4 +3025,58 @@ class AppLocalizationsEn extends AppLocalizations {
   String callHotlineAction(String number) {
     return 'Call $number';
   }
+
+  @override
+  String get chatbotTitle => 'Yegna Health Assistant';
+
+  @override
+  String get chatbotSubtitle => 'Confidential youth health guidance';
+
+  @override
+  String get chatbotDisclaimer =>
+      'Educational health assistant only, not a doctor. For clinical emergencies, call 952 or 8335.';
+
+  @override
+  String get chatbotInputHint => 'Ask about health, modules, or clinics...';
+
+  @override
+  String get chatbotWelcomeMessage =>
+      'Hello! I am your private Yegna Health Assistant. Ask me anything about puberty, HIV/AIDS, STIs, reproductive health, mental health, or finding youth-friendly clinics in Ethiopia.';
+
+  @override
+  String get chatbotSuggestedHiv => 'How to prevent HIV?';
+
+  @override
+  String get chatbotSuggestedPuberty => 'Normal puberty changes';
+
+  @override
+  String get chatbotSuggestedClinics => 'Where can I get tested?';
+
+  @override
+  String get chatbotSuggestedContraception => 'Emergency contraception';
+
+  @override
+  String get chatbotEmergencyAlert =>
+      'Immediate emergency help is available. Call 952 (Health Emergency) or 8335 (Youth Helpline) now for free confidential care.';
+
+  @override
+  String get chatbotEmergencyTitle => 'Emergency Helpline Alert';
+
+  @override
+  String get chatbotEmergencyCall952 => 'Call 952 (Health)';
+
+  @override
+  String get chatbotEmergencyCall8335 => 'Call 8335 (Youth)';
+
+  @override
+  String get chatbotClearChat => 'Clear conversation';
+
+  @override
+  String get chatbotTyping => 'Yegna Assistant is typing...';
+
+  @override
+  String get askYegnaFabTooltip => 'Ask Yegna Health Assistant';
+
+  @override
+  String get askYegnaFabLabel => 'Ask AI';
 }

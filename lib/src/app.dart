@@ -12,6 +12,9 @@ import 'home/home_page.dart';
 import 'locale_controller.dart';
 import 'learning/assessment_repository.dart';
 import 'learning/education_repository.dart';
+import 'chatbot/chatbot_repository.dart';
+import 'chatbot/composite_chatbot_repository.dart';
+import 'chatbot/yegna_chatbot_fab.dart';
 import 'learning/learn_pages.dart';
 import 'learning/learning_progress_controller.dart';
 
@@ -24,6 +27,7 @@ class AppShell extends StatefulWidget {
     required this.progressController,
     this.facilityRepository,
     this.mentorRepository,
+    this.chatbotRepository,
     super.key,
   });
 
@@ -34,6 +38,7 @@ class AppShell extends StatefulWidget {
   final LearningProgressController progressController;
   final FacilityRepository? facilityRepository;
   final MentorRepository? mentorRepository;
+  final ChatbotRepository? chatbotRepository;
 
   @override
   State<AppShell> createState() => _AppShellState();
@@ -297,6 +302,12 @@ class _AppShellState extends State<AppShell> {
           ),
         ),
       ),
+      floatingActionButton: (_selectedIndex == 0 || _selectedIndex == 3)
+          ? YegnaChatbotFab(
+              chatbotRepository:
+                  widget.chatbotRepository ?? CompositeChatbotRepository(),
+            )
+          : null,
       bottomNavigationBar: SafeArea(
         top: false,
         child: LayoutBuilder(

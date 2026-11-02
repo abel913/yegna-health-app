@@ -2962,4 +2962,58 @@ class AppLocalizationsAm extends AppLocalizations {
   String callHotlineAction(String number) {
     return '$number ይደውሉ';
   }
+
+  @override
+  String get chatbotTitle => 'የየኛ ጤና ረዳት';
+
+  @override
+  String get chatbotSubtitle => 'ሚስጥራዊ የወጣቶች ጤና መረጃ';
+
+  @override
+  String get chatbotDisclaimer =>
+      'የትምህርት ረዳት ብቻ እንጂ ሐኪም አይደለም። ለአስቸኳይ ድንገተኛ ሁኔታ በ 952 ወይም 8335 ይደውሉ።';
+
+  @override
+  String get chatbotInputHint => 'ስለ ጤና፣ ስለምዕራፎች ወይም ክሊኒኮች ይጠይቁ...';
+
+  @override
+  String get chatbotWelcomeMessage =>
+      'ሰላም! እኔ የየኛ ጤና ረዳት ነኝ። ስለ ጉርምስና፣ ኤችአይቪ፣ አባላዘር በሽታዎች፣ ስነ-ተዋልዶ ጤና፣ ወይም በአቅራቢያዎ ያሉ የወጣቶች ክሊኒኮችን በተመለከተ ማንኛውንም ጥያቄ መጠየቅ ይችላሉ።';
+
+  @override
+  String get chatbotSuggestedHiv => 'ኤችአይቪን እንዴት መከላከል ይቻላል?';
+
+  @override
+  String get chatbotSuggestedPuberty => 'የጉርምስና ተፈጥሯዊ ለውጦች';
+
+  @override
+  String get chatbotSuggestedClinics => 'የምርመራ አገልግሎት የት ማግኘት እችላለሁ?';
+
+  @override
+  String get chatbotSuggestedContraception => 'የአስቸኳይ ጊዜ የወሊድ መከላከያ';
+
+  @override
+  String get chatbotEmergencyAlert =>
+      'አስቸኳይ የጤና ድጋፍ በነፃ ይገኛል። እባክዎ አሁኑኑ በ 952 (የጤና ድንገተኛ አደጋ) ወይም በ 8335 (የወጣቶች መስመር) ይደውሉ።';
+
+  @override
+  String get chatbotEmergencyTitle => 'የድንገተኛ እርዳታ ጥሪ';
+
+  @override
+  String get chatbotEmergencyCall952 => 'በ 952 ይደውሉ (ጤና)';
+
+  @override
+  String get chatbotEmergencyCall8335 => 'በ 8335 ይደውሉ (ወጣቶች)';
+
+  @override
+  String get chatbotClearChat => 'ውይይቱን አጽዳ';
+
+  @override
+  String get chatbotTyping => 'የየኛ ረዳት በመጻፍ ላይ ነው...';
+
+  @override
+  String get askYegnaFabTooltip => 'የየኛ ጤና ረዳትን ይጠይቁ';
+
+  @override
+  String get askYegnaFabLabel => 'AI ጠይቅ';
 }

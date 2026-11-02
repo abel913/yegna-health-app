@@ -1,5 +1,32 @@
 # Phase status
 
+## Conversational AI Health Chatbot & Curriculum Knowledge Engine (2026-11-02)
+
+**Status: Completed & 100% Verified.**
+- **Floating Action Button (`YegnaChatbotFab`)**:
+  - Mounted to the `Scaffold`'s `floatingActionButton` on the bottom right of both **Home** (`index 0`) and **Learn** (`index 3`) screens.
+  - Features gradient branding, `Icons.smart_toy_rounded`, "Ask AI" / "AI ጠይቅ" localized label, and emerald green "AI" badge.
+- **Conversational Health Screen (`YegnaChatbotPage`)**:
+  - Full-screen conversational view with glassmorphic app bar, bot avatar with online status indicator, and clear chat action.
+  - **Top Safety Notice**: Bilingual educational disclaimer banner distinguishing general guidance from medical diagnoses.
+  - **Animated Message Thread**: User bubbles with gradient branding; assistant bubbles with verified avatar.
+  - **Emergency Crisis Guardrails**: Detects acute crisis keywords (e.g. self-harm, assault, acute danger) and renders prominent red emergency cards with direct one-tap call buttons for **952 (National Health Emergency)** and **8335 (National Youth & Mental Health Line)**.
+  - **Suggested Quick Chips**: Horizontal scrollable chips (`_SuggestedChipsBar`) enabling one-tap exploration of HIV, Puberty, STIs, Contraception, and Clinic locations.
+  - **Typing Indicator**: Clean progress indicator bubble while the assistant is preparing answers.
+- **Multi-Tier Architecture & Offline Resilience**:
+  - `ChatbotRepository`: Interface for AI assistant interactions.
+  - `LocalCurriculumChatbotRepository`: Grounded on-device knowledge engine across all 8 modules (Puberty, STIs, Hepatitis, GBV, SRH, Mental Health, HIV/AIDS, Substance Abuse) and verified Addis Ababa clinics (FGAE, Selam, AAU, St. Paul, ALERT), supporting both English and Amharic with zero external latency or connectivity requirements.
+  - `SupabaseGeminiChatbotRepository`: Connects to Supabase Edge Function `ask-assistant` backed by Google's Gemini API with system prompt curriculum grounding.
+  - `CompositeChatbotRepository`: Automatically routes to the Gemini/Supabase backend when online and configured, and seamlessly falls back to the on-device knowledge engine when offline or unconfigured with zero downtime.
+- **Supabase Edge Function (`supabase/functions/ask-assistant/`)**:
+  - Deno handler with CORS, API key verification, emergency intent detection, and Google Gemini API integration with educational youth guardrails.
+- **Bilingual Localization**:
+  - Added 18 new strings in `lib/l10n/app_en.arb` and `lib/l10n/app_am.arb`, regenerated with `flutter gen-l10n`.
+- **Verification**:
+  - `dart format lib test` passed (0 unformatted files).
+  - `flutter analyze --no-pub` passed (0 issues found).
+  - `flutter test --no-pub` passed (**all 87 tests passing**, including 18 new chatbot unit, page, and FAB integration tests).
+
 ## Mentors Direct Calling, Telegram Contacts & Interactive Hotlines (2026-11-02)
 
 **Status: Completed & Verified.**
