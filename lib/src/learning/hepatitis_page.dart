@@ -710,33 +710,6 @@ class _HepatitisDetailPageState extends State<HepatitisDetailPage> {
                       onPressed: () => _markCompleted(context, l10n),
                     ),
                   ),
-
-                const SizedBox(height: 12),
-                SizedBox(
-                  width: double.infinity,
-                  child: OutlinedButton.icon(
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: const Color(0xFF005A71),
-                      side: const BorderSide(
-                        color: Color(0xFF005A71),
-                        width: 1.4,
-                      ),
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                    ),
-                    icon: const Icon(Icons.arrow_back_rounded),
-                    label: Text(
-                      l10n.returnToLesson,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 15,
-                      ),
-                    ),
-                    onPressed: () => Navigator.of(context).pop(),
-                  ),
-                ),
               ],
             ),
           );

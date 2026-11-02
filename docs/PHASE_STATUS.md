@@ -1,5 +1,13 @@
 # Phase status
 
+## Cleaned Module Detail Actions (2026-11-02)
+
+**Status: Completed & Verified.**
+- Removed redundant bottom "Return to Lesson" buttons from all learning module detail screens (`substance_abuse_page.dart`, `hepatitis_page.dart`, and `sti_module_page.dart`).
+- Learners already have prominent, standard navigation back to the learning module list via the top-left AppBar back arrow (`IconButton(icon: Icon(Icons.arrow_back_rounded), onPressed: () => Navigator.of(context).pop())`).
+- Bottom action area now cleanly presents the primary actions: `Mark as Completed` (or `Completed` status badge) and `Take Quiz` (where available), eliminating visual clutter and redundant navigation buttons.
+- All 53 unit and widget tests pass. `dart analyze` reports 0 issues. Live Chrome session hot-restarted cleanly.
+
 ## Hepatitis Detail Learning Module Rebuild (2026-11-02)
 
 **Status: Phase 3 Learning Module UI Rebuild Complete & Verified.**
