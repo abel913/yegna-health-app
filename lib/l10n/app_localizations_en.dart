@@ -822,6 +822,211 @@ class AppLocalizationsEn extends AppLocalizations {
       'Avoid alcohol and substance abuse: Intoxication impairs judgment and significantly reduces the use of protection.';
 
   @override
+  String get hepatitisHeroDesc =>
+      'Hepatitis is inflammation of the liver caused by viruses or other factors, often showing mild or no symptoms but potentially leading to serious complications like cirrhosis, liver failure, or cancer if untreated; early diagnosis and proper management are essential.';
+
+  @override
+  String get hepatitisNoteContent =>
+      'Hepatitis can be prevented and managed—practice good hygiene, avoid risky behaviors, get vaccinated where possible, and seek early testing to protect your liver health.';
+
+  @override
+  String get hepatitisSection1Title => 'Definition';
+
+  @override
+  String get hepatitisSection1Desc1 =>
+      'Hepatitis is a general term used to describe inflammation of the liver. Liver inflammation can be caused by several viruses (viral hepatitis), chemicals, drugs, alcohol, certain genetic disorders or by an overactive immune system that mistakenly attacks the liver, called autoimmune hepatitis.';
+
+  @override
+  String get hepatitisSection1Desc2 =>
+      'There are several types of hepatitis, which are categorized as viral hepatitis and non-viral hepatitis. The most common types of viral hepatitis are A, B, C, D, and E. Then there are non-viral causes of hepatitis, such as autoimmune hepatitis, alcoholic hepatitis, and drug-induced hepatitis.';
+
+  @override
+  String get hepatitisSection2Title => 'Sign and symptoms of Hepatitis';
+
+  @override
+  String get hepatitisSection2Intro =>
+      'Many people with hepatitis A, B, C, D or E exhibit only mild symptoms or no symptoms at all. Each form of the virus, however, can cause more severe symptoms. Symptoms of hepatitis A, B and C may include: -';
+
+  @override
+  String get hepatitisSymptom1 => 'fever';
+
+  @override
+  String get hepatitisSymptom2 => 'malaise';
+
+  @override
+  String get hepatitisSymptom3 => 'loss of appetite';
+
+  @override
+  String get hepatitisSymptom4 => 'diarrhea';
+
+  @override
+  String get hepatitisSymptom5 => 'nausea';
+
+  @override
+  String get hepatitisSymptom6 => 'abdominal discomfort';
+
+  @override
+  String get hepatitisSymptom7 =>
+      'dark-colored urine and jaundice (a yellowing of the skin and whites of the eyes).';
+
+  @override
+  String get hepatitisSection2ChronicNote =>
+      'In some cases, the virus can also cause a chronic liver infection that can later develop into cirrhosis (a scarring of the liver) or liver cancer. These patients are at risk of death.';
+
+  @override
+  String get hepatitisBTitle => 'Hepatitis B';
+
+  @override
+  String get hepatitisBDesc =>
+      'Hepatitis B is a viral infection that affects the liver, caused by the Hepatitis B virus (HBV). It can range from a mild illness to a serious, long-term (chronic) condition that can lead to liver cirrhosis, liver failure, or liver cancer.';
+
+  @override
+  String get hepatitisBTransmissionIntro =>
+      'The virus is transmitted through contact with infectious body fluids, such as blood, semen, and vaginal fluids, commonly through:';
+
+  @override
+  String get hepatitisBTransmission1 => 'Unprotected sexual contact';
+
+  @override
+  String get hepatitisBTransmission2 =>
+      'Sharing needles or other drug paraphernalia';
+
+  @override
+  String get hepatitisBTransmission3 =>
+      'From an infected mother to her newborn during childbirth';
+
+  @override
+  String get hepatitisBTransmission4 =>
+      'Exposure to contaminated blood in healthcare settings';
+
+  @override
+  String get hepatitisBAlert =>
+      'Hepatitis B is preventable with a vaccine, but it has no cure.';
+
+  @override
+  String get hepatitisCTitle => 'Hepatitis C';
+
+  @override
+  String get hepatitisCDesc =>
+      'Hepatitis C is a viral infection caused by the Hepatitis C virus (HCV), primarily affecting the liver. It is most commonly spread through blood-to-blood contact, often through:';
+
+  @override
+  String get hepatitisCTransmission1 =>
+      'Sharing needles or other drug equipment';
+
+  @override
+  String get hepatitisCTransmission2 =>
+      'Receiving contaminated blood products or unscreened transfusions';
+
+  @override
+  String get hepatitisCTransmission3 =>
+      'Mother-to-child transmission during childbirth (less common than Hepatitis B)';
+
+  @override
+  String get hepatitisCTransmission4 =>
+      'Unprotected sexual practices that involve potential blood contact';
+
+  @override
+  String get hepatitisCAlert =>
+      'Unlike Hepatitis B, there is currently no vaccine for Hepatitis C, but over 95% of cases can be cured with direct-acting antiviral (DAA) medications.';
+
+  @override
+  String get hepatitisSection3Title => 'Diagnosis of Hepatitis';
+
+  @override
+  String get hepatitisSection3Intro =>
+      'Because viral hepatitis often shows mild or no early symptoms, laboratory diagnostic screening is critical for early detection and liver protection:';
+
+  @override
+  String get hepatitisDiagnosis1 =>
+      'Serological blood tests: Testing for HBV surface antigen (HBsAg) or HCV antibodies.';
+
+  @override
+  String get hepatitisDiagnosis2 =>
+      'Liver function tests (LFTs): Measuring liver enzymes (ALT, AST, bilirubin) to evaluate liver inflammation and function.';
+
+  @override
+  String get hepatitisDiagnosis3 =>
+      'Viral load molecular tests: PCR tests detecting viral RNA/DNA to confirm active infection and monitor treatment effectiveness.';
+
+  @override
+  String get hepatitisDiagnosis4 =>
+      'Liver imaging & elastography: Ultrasound scans and FibroScan to evaluate liver stiffness, scarring, and check for cirrhosis.';
+
+  @override
+  String get hepatitisSection4Title => 'Complication of Hepatitis';
+
+  @override
+  String get hepatitisSection4Intro =>
+      'Without timely medical monitoring and management, chronic hepatitis progression can lead to severe, life-threatening complications:';
+
+  @override
+  String get hepatitisComplication1 =>
+      'Liver Cirrhosis: Progressive fibrotic scarring of liver tissue that permanently replaces healthy functional cells.';
+
+  @override
+  String get hepatitisComplication2 =>
+      'Liver Failure (End-Stage Liver Disease): Complete inability of the liver to filter toxins, produce clotting proteins, and regulate metabolism.';
+
+  @override
+  String get hepatitisComplication3 =>
+      'Hepatocellular Carcinoma (Liver Cancer): Chronic Hepatitis B and C infections are leading causes of primary liver cancer worldwide.';
+
+  @override
+  String get hepatitisComplication4 =>
+      'Portal Hypertension & Ascites: Elevated blood pressure in the portal vein causing fluid buildup in the abdomen and bleeding varices.';
+
+  @override
+  String get hepatitisSection5Title => 'Management and treatment of Hepatitis';
+
+  @override
+  String get hepatitisSection5Intro =>
+      'Clinical management depends on the specific viral type and whether the infection is acute or chronic:';
+
+  @override
+  String get hepatitisTreatment1 =>
+      'Chronic Hepatitis B: Lifelong oral antiviral medications (such as Tenofovir or Entecavir) that suppress viral replication, halt liver damage, and prevent cancer.';
+
+  @override
+  String get hepatitisTreatment2 =>
+      'Chronic Hepatitis C: Highly effective 8–12 week oral direct-acting antiviral (DAA) therapy achieving cure rates above 95%.';
+
+  @override
+  String get hepatitisTreatment3 =>
+      'Lifestyle modifications: Complete avoidance of alcohol, balanced liver-friendly nutrition, avoiding hepatotoxic herbal compounds, and maintaining a healthy weight.';
+
+  @override
+  String get hepatitisTreatment4 =>
+      'Routine clinical monitoring: Regular liver function tests, viral load assessments, and ultrasound cancer surveillance.';
+
+  @override
+  String get hepatitisSection6Title => 'Prevention Of Hepatitis';
+
+  @override
+  String get hepatitisSection6Intro =>
+      'Hepatitis transmission can be effectively interrupted through proactive vaccination, barrier hygiene, and clinical safety measures:';
+
+  @override
+  String get hepatitisPrevention1 =>
+      'Vaccination: Timely Hepatitis B vaccination (especially the birth dose within 24 hours of delivery, followed by infant series) and Hepatitis A vaccination.';
+
+  @override
+  String get hepatitisPrevention2 =>
+      'Safe injection practices: Using sterile single-use needles and avoiding sharing any injection or body-piercing equipment.';
+
+  @override
+  String get hepatitisPrevention3 =>
+      'Safer sexual practices: Consistent and correct condom use to prevent Hepatitis B and co-infection with other STIs or HIV.';
+
+  @override
+  String get hepatitisPrevention4 =>
+      'Clean water and food hygiene: Washing hands thoroughly with soap, drinking safe treated water, and hygienic food prep to prevent Hepatitis A and E.';
+
+  @override
+  String get hepatitisPrevention5 =>
+      'Blood safety: Rigorous screening of all donated blood products and stringent sterilization of medical/dental instruments.';
+
+  @override
   String get substanceHeroDesc =>
       'Substance abuse is the harmful use of drugs or alcohol that affects health, behavior, and relationships, leading to physical and mental problems, dependency, and serious life consequences if not addressed early.';
 

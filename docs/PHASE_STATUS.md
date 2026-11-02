@@ -1,5 +1,25 @@
 # Phase status
 
+## Hepatitis Detail Learning Module Rebuild (2026-11-02)
+
+**Status: Phase 3 Learning Module UI Rebuild Complete & Verified.**
+- Implemented `HepatitisDetailPage` (`lib/src/learning/hepatitis_page.dart`) for Module 03 matching user reference screenshots:
+  - **Top Hero Card**: Rounded card with authentic liver health and vaccination illustration (`assets/images/learning/module_03_hepatitis.png`), title `Hepatitis`, and high-contrast educational synopsis.
+  - **Note Section**: Light-blue card with lightbulb icon highlighting prevention, hygiene, vaccination, and early testing.
+  - **Learning Sections Header**: Vertical azure indicator bar and dynamic reading count badge (`X / 6 read`).
+  - **6 Interactive Accordion Sections with Dynamic Badging**:
+    - Unread sections display their numerical indicator (`1`, `2`, `3`, `4`, `5`, `6`) in a bold circular azure badge; read sections display a white checkmark icon (`✔`).
+    - 1. **Definition**: General liver inflammation definition, viral (A, B, C, D, E) vs. non-viral causes (autoimmune, alcoholic, drug-induced).
+    - 2. **Sign and symptoms of Hepatitis**: General symptoms (fever, malaise, jaundice, dark urine), chronic infection/cirrhosis/cancer progression risks, detailed Hepatitis B transmission and vaccine callout ("Hepatitis B is preventable with a vaccine, but it has no cure"), and Hepatitis C transmission and direct-acting antiviral (DAA) cure callout.
+    - 3. **Diagnosis of Hepatitis**: Serology (HBsAg, anti-HCV), Liver function tests (LFTs), viral load PCR, and ultrasound elastography.
+    - 4. **Complication of Hepatitis**: Liver Cirrhosis, Liver Failure (End-Stage), Hepatocellular Carcinoma (Liver Cancer), and Portal Hypertension / Ascites.
+    - 5. **Management and treatment of Hepatitis**: Antivirals for HBV (Tenofovir), DAA therapy cures for HCV, alcohol cessation, and semi-annual cancer surveillance.
+    - 6. **Prevention Of Hepatitis**: HBV birth-dose vaccination series, sterile single-use needles, barrier protection (condoms), water/food hygiene, and screened blood transfusions.
+  - **Progress Integration**: Connected to `LearningProgressController` with completion state persistence for `module-03`.
+  - **Bilingual Localization**: Added complete English and Amharic ARB resources in `lib/l10n/app_en.arb` and `lib/l10n/app_am.arb`, cleanly regenerated via `flutter gen-l10n`.
+  - **Test Suite**: Created `test/hepatitis_page_test.dart` testing 6-accordion layout, numerical-to-checkmark badge transitions, expansion, completion persistence, and Amharic translation. All 53 tests passing across full codebase.
+
+
 ## Mental Health & Wellbeing Detail Learning Module & Interactive Quiz Rebuild (2026-11-02)
 
 **Status: Phase 3 Learning Module & Assessment Rebuild Complete & Verified.**

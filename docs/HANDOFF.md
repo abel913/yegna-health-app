@@ -1,5 +1,23 @@
 # Handoff
 
+## Hepatitis Detail Learning Module Rebuild (2026-11-02)
+
+- Built and verified the dedicated learning module screen `HepatitisDetailPage` (`lib/src/learning/hepatitis_page.dart`) for Module 03 matching user reference screenshots:
+  - Top Hero Card featuring `assets/images/learning/module_03_hepatitis.png`, title "Hepatitis", and clinical overview summary.
+  - Note Section with light-blue card container, lightbulb icon, and liver protection advice.
+  - Learning Sections Header with dynamic reading count badge (`X / 6 read`).
+  - 6 interactive accordion sections with dynamic indicator badges (numerical badge when unread, white checkmark when read):
+    1. **Definition**: General liver inflammation, viral A–E and non-viral etiologies.
+    2. **Sign and symptoms of Hepatitis**: Systemic symptoms (fever, malaise, jaundice, dark urine), chronic liver disease warning, Hepatitis B transmission & vaccine callout ("Hepatitis B is preventable with a vaccine, but it has no cure"), and Hepatitis C transmission & DAA cure callout.
+    3. **Diagnosis of Hepatitis**: Serology, LFTs, PCR viral load, ultrasound & elastography.
+    4. **Complication of Hepatitis**: Cirrhosis, Liver Failure, Hepatocellular Carcinoma, Ascites.
+    5. **Management and treatment of Hepatitis**: HBV antivirals, HCV DAA cures, lifestyle management, surveillance.
+    6. **Prevention Of Hepatitis**: Vaccination, safe needles, condoms, hygiene, and safe blood supplies.
+  - Linked to `LearnPage` carousel when selecting Module 03.
+  - Added full English and Amharic ARB resources.
+  - Widget and unit tests in `test/hepatitis_page_test.dart` (53/53 tests passing across the app).
+
+
 ## Mental Health & Wellbeing Detail Learning Module & Interactive Quiz Rebuild (2026-11-02)
 
 - Built and verified the dedicated learning module screen `MentalHealthDetailPage` (`lib/src/learning/mental_health_page.dart`) and interactive quiz `MentalHealthQuizPage` (`lib/src/learning/mental_health_quiz_page.dart`) for Module 06 matching established high-polish UI patterns:

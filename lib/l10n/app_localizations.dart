@@ -1496,6 +1496,336 @@ abstract class AppLocalizations {
   /// **'Avoid alcohol and substance abuse: Intoxication impairs judgment and significantly reduces the use of protection.'**
   String get stiPreventionItem6;
 
+  /// No description provided for @hepatitisHeroDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Hepatitis is inflammation of the liver caused by viruses or other factors, often showing mild or no symptoms but potentially leading to serious complications like cirrhosis, liver failure, or cancer if untreated; early diagnosis and proper management are essential.'**
+  String get hepatitisHeroDesc;
+
+  /// No description provided for @hepatitisNoteContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Hepatitis can be prevented and managed—practice good hygiene, avoid risky behaviors, get vaccinated where possible, and seek early testing to protect your liver health.'**
+  String get hepatitisNoteContent;
+
+  /// No description provided for @hepatitisSection1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Definition'**
+  String get hepatitisSection1Title;
+
+  /// No description provided for @hepatitisSection1Desc1.
+  ///
+  /// In en, this message translates to:
+  /// **'Hepatitis is a general term used to describe inflammation of the liver. Liver inflammation can be caused by several viruses (viral hepatitis), chemicals, drugs, alcohol, certain genetic disorders or by an overactive immune system that mistakenly attacks the liver, called autoimmune hepatitis.'**
+  String get hepatitisSection1Desc1;
+
+  /// No description provided for @hepatitisSection1Desc2.
+  ///
+  /// In en, this message translates to:
+  /// **'There are several types of hepatitis, which are categorized as viral hepatitis and non-viral hepatitis. The most common types of viral hepatitis are A, B, C, D, and E. Then there are non-viral causes of hepatitis, such as autoimmune hepatitis, alcoholic hepatitis, and drug-induced hepatitis.'**
+  String get hepatitisSection1Desc2;
+
+  /// No description provided for @hepatitisSection2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign and symptoms of Hepatitis'**
+  String get hepatitisSection2Title;
+
+  /// No description provided for @hepatitisSection2Intro.
+  ///
+  /// In en, this message translates to:
+  /// **'Many people with hepatitis A, B, C, D or E exhibit only mild symptoms or no symptoms at all. Each form of the virus, however, can cause more severe symptoms. Symptoms of hepatitis A, B and C may include: -'**
+  String get hepatitisSection2Intro;
+
+  /// No description provided for @hepatitisSymptom1.
+  ///
+  /// In en, this message translates to:
+  /// **'fever'**
+  String get hepatitisSymptom1;
+
+  /// No description provided for @hepatitisSymptom2.
+  ///
+  /// In en, this message translates to:
+  /// **'malaise'**
+  String get hepatitisSymptom2;
+
+  /// No description provided for @hepatitisSymptom3.
+  ///
+  /// In en, this message translates to:
+  /// **'loss of appetite'**
+  String get hepatitisSymptom3;
+
+  /// No description provided for @hepatitisSymptom4.
+  ///
+  /// In en, this message translates to:
+  /// **'diarrhea'**
+  String get hepatitisSymptom4;
+
+  /// No description provided for @hepatitisSymptom5.
+  ///
+  /// In en, this message translates to:
+  /// **'nausea'**
+  String get hepatitisSymptom5;
+
+  /// No description provided for @hepatitisSymptom6.
+  ///
+  /// In en, this message translates to:
+  /// **'abdominal discomfort'**
+  String get hepatitisSymptom6;
+
+  /// No description provided for @hepatitisSymptom7.
+  ///
+  /// In en, this message translates to:
+  /// **'dark-colored urine and jaundice (a yellowing of the skin and whites of the eyes).'**
+  String get hepatitisSymptom7;
+
+  /// No description provided for @hepatitisSection2ChronicNote.
+  ///
+  /// In en, this message translates to:
+  /// **'In some cases, the virus can also cause a chronic liver infection that can later develop into cirrhosis (a scarring of the liver) or liver cancer. These patients are at risk of death.'**
+  String get hepatitisSection2ChronicNote;
+
+  /// No description provided for @hepatitisBTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Hepatitis B'**
+  String get hepatitisBTitle;
+
+  /// No description provided for @hepatitisBDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Hepatitis B is a viral infection that affects the liver, caused by the Hepatitis B virus (HBV). It can range from a mild illness to a serious, long-term (chronic) condition that can lead to liver cirrhosis, liver failure, or liver cancer.'**
+  String get hepatitisBDesc;
+
+  /// No description provided for @hepatitisBTransmissionIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'The virus is transmitted through contact with infectious body fluids, such as blood, semen, and vaginal fluids, commonly through:'**
+  String get hepatitisBTransmissionIntro;
+
+  /// No description provided for @hepatitisBTransmission1.
+  ///
+  /// In en, this message translates to:
+  /// **'Unprotected sexual contact'**
+  String get hepatitisBTransmission1;
+
+  /// No description provided for @hepatitisBTransmission2.
+  ///
+  /// In en, this message translates to:
+  /// **'Sharing needles or other drug paraphernalia'**
+  String get hepatitisBTransmission2;
+
+  /// No description provided for @hepatitisBTransmission3.
+  ///
+  /// In en, this message translates to:
+  /// **'From an infected mother to her newborn during childbirth'**
+  String get hepatitisBTransmission3;
+
+  /// No description provided for @hepatitisBTransmission4.
+  ///
+  /// In en, this message translates to:
+  /// **'Exposure to contaminated blood in healthcare settings'**
+  String get hepatitisBTransmission4;
+
+  /// No description provided for @hepatitisBAlert.
+  ///
+  /// In en, this message translates to:
+  /// **'Hepatitis B is preventable with a vaccine, but it has no cure.'**
+  String get hepatitisBAlert;
+
+  /// No description provided for @hepatitisCTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Hepatitis C'**
+  String get hepatitisCTitle;
+
+  /// No description provided for @hepatitisCDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Hepatitis C is a viral infection caused by the Hepatitis C virus (HCV), primarily affecting the liver. It is most commonly spread through blood-to-blood contact, often through:'**
+  String get hepatitisCDesc;
+
+  /// No description provided for @hepatitisCTransmission1.
+  ///
+  /// In en, this message translates to:
+  /// **'Sharing needles or other drug equipment'**
+  String get hepatitisCTransmission1;
+
+  /// No description provided for @hepatitisCTransmission2.
+  ///
+  /// In en, this message translates to:
+  /// **'Receiving contaminated blood products or unscreened transfusions'**
+  String get hepatitisCTransmission2;
+
+  /// No description provided for @hepatitisCTransmission3.
+  ///
+  /// In en, this message translates to:
+  /// **'Mother-to-child transmission during childbirth (less common than Hepatitis B)'**
+  String get hepatitisCTransmission3;
+
+  /// No description provided for @hepatitisCTransmission4.
+  ///
+  /// In en, this message translates to:
+  /// **'Unprotected sexual practices that involve potential blood contact'**
+  String get hepatitisCTransmission4;
+
+  /// No description provided for @hepatitisCAlert.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlike Hepatitis B, there is currently no vaccine for Hepatitis C, but over 95% of cases can be cured with direct-acting antiviral (DAA) medications.'**
+  String get hepatitisCAlert;
+
+  /// No description provided for @hepatitisSection3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Diagnosis of Hepatitis'**
+  String get hepatitisSection3Title;
+
+  /// No description provided for @hepatitisSection3Intro.
+  ///
+  /// In en, this message translates to:
+  /// **'Because viral hepatitis often shows mild or no early symptoms, laboratory diagnostic screening is critical for early detection and liver protection:'**
+  String get hepatitisSection3Intro;
+
+  /// No description provided for @hepatitisDiagnosis1.
+  ///
+  /// In en, this message translates to:
+  /// **'Serological blood tests: Testing for HBV surface antigen (HBsAg) or HCV antibodies.'**
+  String get hepatitisDiagnosis1;
+
+  /// No description provided for @hepatitisDiagnosis2.
+  ///
+  /// In en, this message translates to:
+  /// **'Liver function tests (LFTs): Measuring liver enzymes (ALT, AST, bilirubin) to evaluate liver inflammation and function.'**
+  String get hepatitisDiagnosis2;
+
+  /// No description provided for @hepatitisDiagnosis3.
+  ///
+  /// In en, this message translates to:
+  /// **'Viral load molecular tests: PCR tests detecting viral RNA/DNA to confirm active infection and monitor treatment effectiveness.'**
+  String get hepatitisDiagnosis3;
+
+  /// No description provided for @hepatitisDiagnosis4.
+  ///
+  /// In en, this message translates to:
+  /// **'Liver imaging & elastography: Ultrasound scans and FibroScan to evaluate liver stiffness, scarring, and check for cirrhosis.'**
+  String get hepatitisDiagnosis4;
+
+  /// No description provided for @hepatitisSection4Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Complication of Hepatitis'**
+  String get hepatitisSection4Title;
+
+  /// No description provided for @hepatitisSection4Intro.
+  ///
+  /// In en, this message translates to:
+  /// **'Without timely medical monitoring and management, chronic hepatitis progression can lead to severe, life-threatening complications:'**
+  String get hepatitisSection4Intro;
+
+  /// No description provided for @hepatitisComplication1.
+  ///
+  /// In en, this message translates to:
+  /// **'Liver Cirrhosis: Progressive fibrotic scarring of liver tissue that permanently replaces healthy functional cells.'**
+  String get hepatitisComplication1;
+
+  /// No description provided for @hepatitisComplication2.
+  ///
+  /// In en, this message translates to:
+  /// **'Liver Failure (End-Stage Liver Disease): Complete inability of the liver to filter toxins, produce clotting proteins, and regulate metabolism.'**
+  String get hepatitisComplication2;
+
+  /// No description provided for @hepatitisComplication3.
+  ///
+  /// In en, this message translates to:
+  /// **'Hepatocellular Carcinoma (Liver Cancer): Chronic Hepatitis B and C infections are leading causes of primary liver cancer worldwide.'**
+  String get hepatitisComplication3;
+
+  /// No description provided for @hepatitisComplication4.
+  ///
+  /// In en, this message translates to:
+  /// **'Portal Hypertension & Ascites: Elevated blood pressure in the portal vein causing fluid buildup in the abdomen and bleeding varices.'**
+  String get hepatitisComplication4;
+
+  /// No description provided for @hepatitisSection5Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Management and treatment of Hepatitis'**
+  String get hepatitisSection5Title;
+
+  /// No description provided for @hepatitisSection5Intro.
+  ///
+  /// In en, this message translates to:
+  /// **'Clinical management depends on the specific viral type and whether the infection is acute or chronic:'**
+  String get hepatitisSection5Intro;
+
+  /// No description provided for @hepatitisTreatment1.
+  ///
+  /// In en, this message translates to:
+  /// **'Chronic Hepatitis B: Lifelong oral antiviral medications (such as Tenofovir or Entecavir) that suppress viral replication, halt liver damage, and prevent cancer.'**
+  String get hepatitisTreatment1;
+
+  /// No description provided for @hepatitisTreatment2.
+  ///
+  /// In en, this message translates to:
+  /// **'Chronic Hepatitis C: Highly effective 8–12 week oral direct-acting antiviral (DAA) therapy achieving cure rates above 95%.'**
+  String get hepatitisTreatment2;
+
+  /// No description provided for @hepatitisTreatment3.
+  ///
+  /// In en, this message translates to:
+  /// **'Lifestyle modifications: Complete avoidance of alcohol, balanced liver-friendly nutrition, avoiding hepatotoxic herbal compounds, and maintaining a healthy weight.'**
+  String get hepatitisTreatment3;
+
+  /// No description provided for @hepatitisTreatment4.
+  ///
+  /// In en, this message translates to:
+  /// **'Routine clinical monitoring: Regular liver function tests, viral load assessments, and ultrasound cancer surveillance.'**
+  String get hepatitisTreatment4;
+
+  /// No description provided for @hepatitisSection6Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Prevention Of Hepatitis'**
+  String get hepatitisSection6Title;
+
+  /// No description provided for @hepatitisSection6Intro.
+  ///
+  /// In en, this message translates to:
+  /// **'Hepatitis transmission can be effectively interrupted through proactive vaccination, barrier hygiene, and clinical safety measures:'**
+  String get hepatitisSection6Intro;
+
+  /// No description provided for @hepatitisPrevention1.
+  ///
+  /// In en, this message translates to:
+  /// **'Vaccination: Timely Hepatitis B vaccination (especially the birth dose within 24 hours of delivery, followed by infant series) and Hepatitis A vaccination.'**
+  String get hepatitisPrevention1;
+
+  /// No description provided for @hepatitisPrevention2.
+  ///
+  /// In en, this message translates to:
+  /// **'Safe injection practices: Using sterile single-use needles and avoiding sharing any injection or body-piercing equipment.'**
+  String get hepatitisPrevention2;
+
+  /// No description provided for @hepatitisPrevention3.
+  ///
+  /// In en, this message translates to:
+  /// **'Safer sexual practices: Consistent and correct condom use to prevent Hepatitis B and co-infection with other STIs or HIV.'**
+  String get hepatitisPrevention3;
+
+  /// No description provided for @hepatitisPrevention4.
+  ///
+  /// In en, this message translates to:
+  /// **'Clean water and food hygiene: Washing hands thoroughly with soap, drinking safe treated water, and hygienic food prep to prevent Hepatitis A and E.'**
+  String get hepatitisPrevention4;
+
+  /// No description provided for @hepatitisPrevention5.
+  ///
+  /// In en, this message translates to:
+  /// **'Blood safety: Rigorous screening of all donated blood products and stringent sterilization of medical/dental instruments.'**
+  String get hepatitisPrevention5;
+
   /// No description provided for @substanceHeroDesc.
   ///
   /// In en, this message translates to:

@@ -793,6 +793,213 @@ class AppLocalizationsAm extends AppLocalizations {
       'ከአልኮል እና ከአደንዛዥ ዕፅ መራቅ፦ ስካር ውሳኔ የመስጠት አቅምን ስለሚያዳክም ጥንቃቄ የጎደለው ግንኙነት ውስጥ የመግባት እድልን ይጨምራል።';
 
   @override
+  String get hepatitisHeroDesc =>
+      'ሄፓታይተስ በቫይረሶች ወይም በሌሎች ምክንያቶች የሚከሰት የጉበት እብጠት ሲሆን ብዙውን ጊዜ ቀላል ወይም ምንም ምልክት አያሳይም፤ ነገር ግን ካልታከመ ወደ ጉበት ጠባሳ (ሲሮሲስ)፣ የጉበት ሥራ ማቆም ወይም የጉበት ካንሰር ሊያመራ ይችላል። ቅድመ ምርመራ እና ተገቢ ህክምና ወሳኝ ናቸው።';
+
+  @override
+  String get hepatitisNoteContent =>
+      'ሄፓታይተስ መከላከል እና ማከም የሚቻል ነው—ጥሩ ንፅህናን መጠበቅ፣ አደገኛ ልማዶችን ማስወገድ፣ በተቻለ መጠን መከተብ እና የጉበት ጤናዎን ለመጠበቅ ቀድመው መመርመር ይመከራል።';
+
+  @override
+  String get hepatitisSection1Title => 'ትርጓሜ (Definition)';
+
+  @override
+  String get hepatitisSection1Desc1 =>
+      'ሄፓታይተስ የጉበት እብጠትን ለመግለጽ የሚያገለግል አጠቃላይ የህክምና ቃል ነው። የጉበት እብጠት በተለያዩ ቫይረሶች (ቫይራል ሄፓታይተስ)፣ በኬሚካሎች፣ በመድሃኒቶች፣ በአልኮል፣ በአንዳንድ የዘረመል ችግሮች ወይም የበሽታ መከላከያ ስርዓታችን ጉበትን በስህተት በማጥቃቱ (ኦቶኢሚውን ሄፓታይተስ) ሊከሰት ይችላል።';
+
+  @override
+  String get hepatitisSection1Desc2 =>
+      'ሄፓታይተስ በቫይረስ እና በቫይረስ ባልሆኑ ምክንያቶች የሚከፈልባቸው በርካታ ዓይነቶች አሉት። በጣም የተለመዱት የቫይረስ ሄፓታይተስ ዓይነቶች A, B, C, D እና E ናቸው። በቫይረስ ምክንያት የማይከሰቱት ደግሞ ኦቶኢሚውን ሄፓታይተስ፣ በአልኮል የሚመጣ ሄፓታይተስ እና በመድሃኒት የሚመጣ ሄፓታይተስ ናቸው።';
+
+  @override
+  String get hepatitisSection2Title =>
+      'የሄፓታይተስ ምልክቶች (Sign and symptoms of Hepatitis)';
+
+  @override
+  String get hepatitisSection2Intro =>
+      'በሄፓታይተስ A, B, C, D ወይም E የተያዙ ብዙ ሰዎች ቀላል ምልክቶች ብቻ ያሳያሉ ወይም ምንም ዓይነት ምልክት ላያሳዩ ይችላሉ። ይሁን እንጂ እያንዳንዱ የቫይረስ ዓይነት የከፋ ምልክቶችን ሊያስከትል ይችላል። የሄፓታይተስ A, B እና C ምልክቶች የሚከተሉትን ሊያካትቱ ይችላሉ፦';
+
+  @override
+  String get hepatitisSymptom1 => 'ትኩሳት';
+
+  @override
+  String get hepatitisSymptom2 => 'የአካል ድካም እና መዛል';
+
+  @override
+  String get hepatitisSymptom3 => 'የምግብ ፍላጎት መቀነስ';
+
+  @override
+  String get hepatitisSymptom4 => 'ተቅማጥ';
+
+  @override
+  String get hepatitisSymptom5 => 'የማቅለሽለሽ ስሜት';
+
+  @override
+  String get hepatitisSymptom6 => 'የሆድ ህመም እና አለመመቸት';
+
+  @override
+  String get hepatitisSymptom7 =>
+      'የሽንት ቀለም መጥቆር እና የአይን ወይም የቆዳ ቢጫ መሆን (Jaundice)';
+
+  @override
+  String get hepatitisSection2ChronicNote =>
+      'በአንዳንድ ሁኔታዎች ቫይረሱ ወደ ጉበት ጠባሳ (ሲሮሲስ) ወይም ወደ ጉበት ካንሰር የሚያመራ ሥር የሰደደ የጉበት ኢንፌክሽን ሊያስከትል ይችላል። እነዚህ ታካሚዎች ለሞት አደጋ የተጋለጡ ናቸው።';
+
+  @override
+  String get hepatitisBTitle => 'ሄፓታይተስ ቢ (Hepatitis B)';
+
+  @override
+  String get hepatitisBDesc =>
+      'ሄፓታይተስ ቢ በሄፓታይተስ ቢ ቫይረስ (HBV) የሚከሰት እና ጉበትን የሚያጠቃ የቫይረስ ኢንፌክሽን ነው። ከቀላል ህመም እስከ ከባድና ሥር የሰደደ የጉበት ጠባሳ (ሲሮሲስ)፣ የጉበት ሥራ ማቆም ወይም የጉበት ካንሰር ሊያደርስ ይችላል።';
+
+  @override
+  String get hepatitisBTransmissionIntro =>
+      'ቫይረሱ እንደ ደም፣ የዘር ፈሳሽ እና የሴት ብልት ፈሳሽ ካሉ የበከሉ የሰውነት ፈሳሾች ጋር በሚደረግ ንክኪ የሚተላለፍ ሲሆን በዋናነት የሚከተሉትን ያጠቃልላል፦';
+
+  @override
+  String get hepatitisBTransmission1 => 'ያልተጠበቀ የግብረ-ሥጋ ግንኙነት';
+
+  @override
+  String get hepatitisBTransmission2 =>
+      'መርፌዎችን ወይም ሌሎች የዕፅ መርፌ መሳሪያዎችን በጋራ መጠቀም';
+
+  @override
+  String get hepatitisBTransmission3 =>
+      'በወሊድ ወቅት በቫይረሱ ከተያዘች እናት ወደ አዲስ ለተወለደው ህፃን';
+
+  @override
+  String get hepatitisBTransmission4 => 'በጤና ተቋማት ውስጥ ከተበከለ ደም ጋር የሚኖር ንክኪ';
+
+  @override
+  String get hepatitisBAlert =>
+      'ሄፓታይተስ ቢ በክትባት መከላከል የሚቻል ሲሆን ነገር ግን እስካሁን ፍቱን ፈውስ የለውም።';
+
+  @override
+  String get hepatitisCTitle => 'ሄፓታይተስ ሲ (Hepatitis C)';
+
+  @override
+  String get hepatitisCDesc =>
+      'ሄፓታይተስ ሲ በሄፓታይተስ ሲ ቫይረስ (HCV) የሚከሰት እና በዋናነት ጉበትን የሚያጠቃ የቫይረስ ኢንፌክሽን ነው። በብዛት የሚተላለፈው በደም ንክኪ ሲሆን በዋናነት፦';
+
+  @override
+  String get hepatitisCTransmission1 => 'መርፌዎችን ወይም የዕፅ መጠቀሚያ መሳሪያዎችን በጋራ መጠቀም';
+
+  @override
+  String get hepatitisCTransmission2 =>
+      'ያልተመረመረ ወይም የተበከለ ደም እና የደም ውጤቶችን መውሰድ';
+
+  @override
+  String get hepatitisCTransmission3 =>
+      'በወሊድ ወቅት ከእናት ወደ ልጅ መተላለፍ (ከሄፓታይተስ ቢ ያነሰ)';
+
+  @override
+  String get hepatitisCTransmission4 =>
+      'የደም ንክኪ ሊያስከትሉ የሚችሉ ያልተጠበቁ የግብረ-ሥጋ ግንኙነቶች';
+
+  @override
+  String get hepatitisCAlert =>
+      'እንደ ሄፓታይተስ ቢ ክትባት ባይኖረውም፣ ሄፓታይተስ ሲ በቀጥታ በሚሰሩ የፀረ-ቫይረስ መድሃኒቶች (DAA) ከ95% በላይ በሆኑ ታካሚዎች ላይ ሙሉ በሙሉ ሊድን ይችላል።';
+
+  @override
+  String get hepatitisSection3Title => 'የሄፓታይተስ ምርመራ (Diagnosis of Hepatitis)';
+
+  @override
+  String get hepatitisSection3Intro =>
+      'የቫይረስ ሄፓታይተስ ብዙውን ጊዜ ቀደም ብሎ ምልክት ስለማያሳይ፣ ጉበት ከመጎዳቱ በፊት ቀድሞ ለማወቅ የላብራቶሪ ምርመራ ወሳኝ ነው፦';
+
+  @override
+  String get hepatitisDiagnosis1 =>
+      'የደም ሴሮሎጂ ምርመራ፦ የሄፓታይተስ ቢ ንጣፍ አንቲጅን (HBsAg) ወይም የሄፓታይተስ ሲ ፀረ እንግዳ አካላት (Antibodies) መኖርን ማረጋገጥ።';
+
+  @override
+  String get hepatitisDiagnosis2 =>
+      'የጉበት ተግባር ምርመራ (LFTs)፦ የጉበት ኢንዛይሞችን (ALT, AST, Bilirubin) በመለካት የጉበት ጤናን እና እብጠትን ማወቅ።';
+
+  @override
+  String get hepatitisDiagnosis3 =>
+      'የቫይረስ መጠን ሞለኪውላር ምርመራ (PCR)፦ በደም ውስጥ ያለውን የቫይረስ የዘረመል መጠን (Viral Load) በማወቅ የመድሃኒት ውጤታማነትን መከታተል።';
+
+  @override
+  String get hepatitisDiagnosis4 =>
+      'የጉበት አልትራሳውንድ እና ኢላስቶግራፊ፦ የጉበትን ጥንካሬ፣ የጠባሳ መጠን እና የሲሮሲስ መኖርን በምስል ማረጋገጥ።';
+
+  @override
+  String get hepatitisSection4Title =>
+      'የሄፓታይተስ ችግሮች (Complication of Hepatitis)';
+
+  @override
+  String get hepatitisSection4Intro =>
+      'በወቅቱ ህክምና እና ክትትል ካልተደረገ ሥር የሰደደ ሄፓታይተስ ወደ ከፋ አደገኛ የጉበት ችግሮች ያመራል፦';
+
+  @override
+  String get hepatitisComplication1 =>
+      'የጉበት ጠባሳ (Cirrhosis)፦ ጤነኛውን የጉበት ህዋስ በጠባሳ በመተካት የጉበትን መደበኛ ተግባር የሚያዛባ ዘላቂ ጉዳት።';
+
+  @override
+  String get hepatitisComplication2 =>
+      'የጉበት ሥራ ማቆም (Liver Failure)፦ ጉበት መርዛማ ንጥረ ነገሮችን ማጣራት እና ፕሮቲኖችን ማመንጨት ሙሉ በሙሉ የሚያቆምበት የመጨረሻ ደረጃ።';
+
+  @override
+  String get hepatitisComplication3 =>
+      'የጉበት ካንሰር (Liver Cancer)፦ ሥር የሰደደ የሄፓታይተስ ቢ እና ሲ ኢንፌክሽን ለቀዳሚው የጉበት ካንሰር ዋና መንስኤዎች ናቸው።';
+
+  @override
+  String get hepatitisComplication4 =>
+      'የፖርታል የደም ግፊት እና የሆድ ፈሳሽ (Ascites)፦ በጉበት ደም ቧንቧ ላይ ከፍተኛ ግፊት በመፈጠሩ በሆድ ውስጥ ፈሳሽ መቋጠር እና የደም መፍሰስ።';
+
+  @override
+  String get hepatitisSection5Title =>
+      'የሄፓታይተስ አያያዝ እና ህክምና (Management and treatment of Hepatitis)';
+
+  @override
+  String get hepatitisSection5Intro =>
+      'የህክምናው ዓይነት እንደ ቫይረሱ ዓይነት እና ኢንፌክሽኑ ድንገተኛ ወይም ሥር የሰደደ መሆኑ ይወሰናል፦';
+
+  @override
+  String get hepatitisTreatment1 =>
+      'ሥር የሰደደ ሄፓታይተስ ቢ፦ የቫይረሱን መራባት የሚገቱ፣ የጉበት ጉዳትን የሚያቆሙ እና ካንሰርን የሚከላከሉ የረጅም ጊዜ ፀረ-ቫይረስ መድሃኒቶች (እንደ ቴኖፎቪር)።';
+
+  @override
+  String get hepatitisTreatment2 =>
+      'ሥር የሰደደ ሄፓታይተስ ሲ፦ ከ8 እስከ 12 ሳምንታት በሚወሰዱ ዘመናዊ የፀረ-ቫይረስ ኪኒኖች (DAA) ከ95% በላይ ሙሉ ፈውስ ማግኘት።';
+
+  @override
+  String get hepatitisTreatment3 =>
+      'ጤናማ የአኗኗር ዘይቤ፦ አልኮልን ሙሉ በሙሉ ማቆም፣ ጉበትን የማይጎዱ ጤናማ ምግቦችን መመገብ እና የተመጣጠነ የሰውነት ክብደት መጠበቅ።';
+
+  @override
+  String get hepatitisTreatment4 =>
+      'ቀጣይነት ያለው የህክምና ክትትል፦ በየስድስት ወሩ የጉበት ኢንዛይሞች እና የአልትራሳውንድ ምርመራዎችን በማድረግ የካንሰር ቅድመ መከላከል ክትትል ማድረግ።';
+
+  @override
+  String get hepatitisSection6Title =>
+      'ሄፓታይተስን መከላከል (Prevention Of Hepatitis)';
+
+  @override
+  String get hepatitisSection6Intro =>
+      'ሄፓታይተስን በክትባት፣ ንፅህናን በመጠበቅ እና ጥንቃቄ በተሞላበት የአኗኗር ዘይቤ ውጤታማ በሆነ መንገድ መከላከል ይቻላል፦';
+
+  @override
+  String get hepatitisPrevention1 =>
+      'ክትባት መከተብ፦ የሄፓታይተስ ቢ ክትባት (በተለይ ህፃን በተወለደ በ24 ሰዓት ውስጥ የሚሰጠውን የመነሻ ክትባት) እና የሄፓታይተስ ኤ ክትባት መውሰድ።';
+
+  @override
+  String get hepatitisPrevention2 =>
+      'ደህንነቱ የተጠበቀ የመርፌ አጠቃቀም፦ ንፁህ እና ለአንድ ጊዜ ብቻ የሚያገለግሉ መርፌዎችን መጠቀም፣ የሰውነት መበሻዎችን በጋራ አለመጠቀም።';
+
+  @override
+  String get hepatitisPrevention3 =>
+      'አስተማማኝ የግብረ-ሥጋ ግንኙነት፦ ሄፓታይተስ ቢ እና ሌሎች በግብረ-ሥጋ የሚተላለፉ ኢንፌክሽኖችን ለመከላከል ኮንዶምን ዘወትር በትክክል መጠቀም።';
+
+  @override
+  String get hepatitisPrevention4 =>
+      'የውሃ እና የምግብ ንፅህናን መጠበቅ፦ እጅን በሳሙና አዘውትሮ መታጠብ፣ ንፁህ የመጠጥ ውሃ መጠቀም (ሄፓታይተስ ኤ እና ኢ ለመከላከል)።';
+
+  @override
+  String get hepatitisPrevention5 =>
+      'የደም ደህንነት፦ የሚለገስ ደም በትክክል መመርመሩን ማረጋገጥ እና የህክምና መሳሪያዎችን በጥንቃቄ ማፅዳት/ማምከን።';
+
+  @override
   String get substanceHeroDesc =>
       'የዕፅ ሱስ ማለት ጤናን፣ ባህሪን እና ማህበራዊ ግንኙነቶችን የሚጎዳ ጎጂ የመድሃኒት ወይም የአልኮል አጠቃቀም ሲሆን ወደ አካላዊ እና አእምሯዊ ችግሮች፣ ጥገኝነት እና በወቅቱ ካልተፈታ ወደ ከባድ የህይወት አደጋዎች ይመራል።';
 
