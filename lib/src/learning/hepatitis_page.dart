@@ -473,41 +473,23 @@ class _HepatitisDetailPageState extends State<HepatitisDetailPage> {
                     _HepatitisBulletItem(body: l10n.hepatitisCTransmission2),
                     const SizedBox(height: 6),
                     _HepatitisBulletItem(body: l10n.hepatitisCTransmission3),
-                    const SizedBox(height: 6),
-                    _HepatitisBulletItem(body: l10n.hepatitisCTransmission4),
                     const SizedBox(height: 14),
 
-                    // Highlight Alert Card: Hepatitis C Cure with DAAs
-                    Container(
-                      padding: const EdgeInsets.all(14),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF0FDF4),
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                          color: const Color(0xFFBBF7D0),
-                          width: 1.2,
-                        ),
+                    Text(
+                      l10n.hepatitisCChronicDesc,
+                      style: const TextStyle(
+                        fontSize: 13.5,
+                        color: Color(0xFF334155),
+                        height: 1.55,
                       ),
-                      child: Row(
-                        children: [
-                          const Icon(
-                            Icons.verified_rounded,
-                            color: Color(0xFF16A34A),
-                            size: 20,
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Text(
-                              l10n.hepatitisCAlert,
-                              style: const TextStyle(
-                                fontSize: 13.5,
-                                fontWeight: FontWeight.w700,
-                                color: Color(0xFF166534),
-                                height: 1.45,
-                              ),
-                            ),
-                          ),
-                        ],
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      l10n.hepatitisCTreatmentDesc,
+                      style: const TextStyle(
+                        fontSize: 13.5,
+                        color: Color(0xFF334155),
+                        height: 1.55,
                       ),
                     ),
                   ],
@@ -532,21 +514,13 @@ class _HepatitisDetailPageState extends State<HepatitisDetailPage> {
                   },
                   children: [
                     Text(
-                      l10n.hepatitisSection3Intro,
+                      l10n.hepatitisSection3Desc,
                       style: const TextStyle(
                         fontSize: 13.5,
                         color: Color(0xFF334155),
                         height: 1.55,
                       ),
                     ),
-                    const SizedBox(height: 10),
-                    _HepatitisBulletItem(body: l10n.hepatitisDiagnosis1),
-                    const SizedBox(height: 8),
-                    _HepatitisBulletItem(body: l10n.hepatitisDiagnosis2),
-                    const SizedBox(height: 8),
-                    _HepatitisBulletItem(body: l10n.hepatitisDiagnosis3),
-                    const SizedBox(height: 8),
-                    _HepatitisBulletItem(body: l10n.hepatitisDiagnosis4),
                   ],
                 ),
                 const SizedBox(height: 12),
@@ -576,14 +550,35 @@ class _HepatitisDetailPageState extends State<HepatitisDetailPage> {
                         height: 1.55,
                       ),
                     ),
-                    const SizedBox(height: 10),
-                    _HepatitisBulletItem(body: l10n.hepatitisComplication1),
-                    const SizedBox(height: 8),
-                    _HepatitisBulletItem(body: l10n.hepatitisComplication2),
-                    const SizedBox(height: 8),
-                    _HepatitisBulletItem(body: l10n.hepatitisComplication3),
-                    const SizedBox(height: 8),
-                    _HepatitisBulletItem(body: l10n.hepatitisComplication4),
+                    const SizedBox(height: 14),
+                    _HepatitisNumberedHeaderItem(
+                      number: 1,
+                      title: l10n.hepatitisComp1Title,
+                      bulletText: l10n.hepatitisComp1Desc,
+                    ),
+                    _HepatitisNumberedHeaderItem(
+                      number: 2,
+                      title: l10n.hepatitisComp2Title,
+                      bulletText: l10n.hepatitisComp2Desc,
+                    ),
+                    _HepatitisNumberedHeaderItem(
+                      number: 3,
+                      title: l10n.hepatitisComp3Title,
+                      bulletText: l10n.hepatitisComp3Desc,
+                    ),
+                    _HepatitisNumberedHeaderItem(
+                      number: 4,
+                      title: l10n.hepatitisComp4Title,
+                      bulletText: l10n.hepatitisComp4Desc,
+                    ),
+                    Text(
+                      l10n.hepatitisSection4Conclusion,
+                      style: const TextStyle(
+                        fontSize: 13.5,
+                        color: Color(0xFF334155),
+                        height: 1.55,
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 12),
@@ -606,21 +601,13 @@ class _HepatitisDetailPageState extends State<HepatitisDetailPage> {
                   },
                   children: [
                     Text(
-                      l10n.hepatitisSection5Intro,
+                      l10n.hepatitisSection5Desc,
                       style: const TextStyle(
                         fontSize: 13.5,
                         color: Color(0xFF334155),
                         height: 1.55,
                       ),
                     ),
-                    const SizedBox(height: 10),
-                    _HepatitisBulletItem(body: l10n.hepatitisTreatment1),
-                    const SizedBox(height: 8),
-                    _HepatitisBulletItem(body: l10n.hepatitisTreatment2),
-                    const SizedBox(height: 8),
-                    _HepatitisBulletItem(body: l10n.hepatitisTreatment3),
-                    const SizedBox(height: 8),
-                    _HepatitisBulletItem(body: l10n.hepatitisTreatment4),
                   ],
                 ),
                 const SizedBox(height: 12),
@@ -643,23 +630,25 @@ class _HepatitisDetailPageState extends State<HepatitisDetailPage> {
                   },
                   children: [
                     Text(
-                      l10n.hepatitisSection6Intro,
+                      l10n.hepatitisSection6Subtitle,
                       style: const TextStyle(
-                        fontSize: 13.5,
-                        color: Color(0xFF334155),
-                        height: 1.55,
+                        fontSize: 14.5,
+                        fontWeight: FontWeight.w800,
+                        color: Color(0xFF08264A),
                       ),
                     ),
-                    const SizedBox(height: 10),
-                    _HepatitisBulletItem(body: l10n.hepatitisPrevention1),
+                    const SizedBox(height: 12),
+                    _HepatitisBulletItem(
+                        body: l10n.hepatitisPreventionMeasure1),
                     const SizedBox(height: 8),
-                    _HepatitisBulletItem(body: l10n.hepatitisPrevention2),
+                    _HepatitisBulletItem(
+                        body: l10n.hepatitisPreventionMeasure2),
                     const SizedBox(height: 8),
-                    _HepatitisBulletItem(body: l10n.hepatitisPrevention3),
+                    _HepatitisBulletItem(
+                        body: l10n.hepatitisPreventionMeasure3),
                     const SizedBox(height: 8),
-                    _HepatitisBulletItem(body: l10n.hepatitisPrevention4),
-                    const SizedBox(height: 8),
-                    _HepatitisBulletItem(body: l10n.hepatitisPrevention5),
+                    _HepatitisBulletItem(
+                        body: l10n.hepatitisPreventionMeasure4),
                   ],
                 ),
                 const SizedBox(height: 24),
@@ -903,6 +892,65 @@ class _HepatitisBulletItem extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+/// Numbered header item for complication sections (1, 2, 3, 4 with bold title & bullet).
+class _HepatitisNumberedHeaderItem extends StatelessWidget {
+  const _HepatitisNumberedHeaderItem({
+    required this.number,
+    required this.title,
+    required this.bulletText,
+  });
+
+  final int number;
+  final String title;
+  final String bulletText;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 26,
+                height: 26,
+                decoration: const BoxDecoration(
+                  color: Color(0xFF0284C7),
+                  shape: BoxShape.circle,
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  '$number',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 13,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 14.5,
+                    fontWeight: FontWeight.w800,
+                    color: Color(0xFF08264A),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          _HepatitisBulletItem(body: bulletText),
+        ],
+      ),
     );
   }
 }

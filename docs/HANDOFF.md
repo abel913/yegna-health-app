@@ -8,11 +8,11 @@
   - Learning Sections Header with dynamic reading count badge (`X / 6 read`).
   - 6 interactive accordion sections with dynamic indicator badges (numerical badge when unread, white checkmark when read):
     1. **Definition**: General liver inflammation, viral A–E and non-viral etiologies.
-    2. **Sign and symptoms of Hepatitis**: Systemic symptoms (fever, malaise, jaundice, dark urine), chronic liver disease warning, Hepatitis B transmission & vaccine callout ("Hepatitis B is preventable with a vaccine, but it has no cure"), and Hepatitis C transmission & DAA cure callout.
-    3. **Diagnosis of Hepatitis**: Serology, LFTs, PCR viral load, ultrasound & elastography.
-    4. **Complication of Hepatitis**: Cirrhosis, Liver Failure, Hepatocellular Carcinoma, Ascites.
-    5. **Management and treatment of Hepatitis**: HBV antivirals, HCV DAA cures, lifestyle management, surveillance.
-    6. **Prevention Of Hepatitis**: Vaccination, safe needles, condoms, hygiene, and safe blood supplies.
+    2. **Sign and symptoms of Hepatitis**: Systemic symptoms (fever, malaise, jaundice, dark urine), chronic liver disease warning, Hepatitis B transmission & vaccine callout, Hepatitis C transmission, and DAA cure paragraph.
+    3. **Diagnosis of Hepatitis**: Blood tests, imaging, and liver biopsy overview to determine cause and severity.
+    4. **Complication of Hepatitis**: Numbered complication items: 1: Chronic Hepatitis, 2: Cirrhosis, 3: Liver Failure, 4: Liver Cancer (Hepatocellular Carcinoma), and early diagnosis conclusion.
+    5. **Management and treatment of Hepatitis**: Supportive care for acute cases vs. long-term antiviral drugs and immunosuppressive therapies for chronic conditions.
+    6. **Prevention Of Hepatitis**: General preventive measures (Good Hygiene Practices, avoiding alcohol and drugs), vaccination, and blood safety.
   - Linked to `LearnPage` carousel when selecting Module 03.
   - Added full English and Amharic ARB resources.
   - Widget and unit tests in `test/hepatitis_page_test.dart` (53/53 tests passing across the app).

@@ -10,11 +10,11 @@
   - **6 Interactive Accordion Sections with Dynamic Badging**:
     - Unread sections display their numerical indicator (`1`, `2`, `3`, `4`, `5`, `6`) in a bold circular azure badge; read sections display a white checkmark icon (`✔`).
     - 1. **Definition**: General liver inflammation definition, viral (A, B, C, D, E) vs. non-viral causes (autoimmune, alcoholic, drug-induced).
-    - 2. **Sign and symptoms of Hepatitis**: General symptoms (fever, malaise, jaundice, dark urine), chronic infection/cirrhosis/cancer progression risks, detailed Hepatitis B transmission and vaccine callout ("Hepatitis B is preventable with a vaccine, but it has no cure"), and Hepatitis C transmission and direct-acting antiviral (DAA) cure callout.
-    - 3. **Diagnosis of Hepatitis**: Serology (HBsAg, anti-HCV), Liver function tests (LFTs), viral load PCR, and ultrasound elastography.
-    - 4. **Complication of Hepatitis**: Liver Cirrhosis, Liver Failure (End-Stage), Hepatocellular Carcinoma (Liver Cancer), and Portal Hypertension / Ascites.
-    - 5. **Management and treatment of Hepatitis**: Antivirals for HBV (Tenofovir), DAA therapy cures for HCV, alcohol cessation, and semi-annual cancer surveillance.
-    - 6. **Prevention Of Hepatitis**: HBV birth-dose vaccination series, sterile single-use needles, barrier protection (condoms), water/food hygiene, and screened blood transfusions.
+    - 2. **Sign and symptoms of Hepatitis**: General symptoms (fever, malaise, jaundice, dark urine), chronic infection/cirrhosis/cancer progression risks, Hepatitis B transmission & vaccine callout ("Hepatitis B is preventable with a vaccine, but it has no cure"), Hepatitis C blood transmission, and DAA cure paragraph.
+    - 3. **Diagnosis of Hepatitis**: Blood tests, imaging, and liver biopsy overview to determine cause, severity, and diagnostic markers.
+    - 4. **Complication of Hepatitis**: Numbered complication items matching reference screenshots: 1: Chronic Hepatitis (HBV/HCV chronic progression), 2: Cirrhosis (Liver Scarring), 3: Liver Failure (Acute or Chronic), 4: Liver Cancer (Hepatocellular Carcinoma), and early diagnosis conclusion.
+    - 5. **Management and treatment of Hepatitis**: Supportive care for acute forms (A and E) vs. long-term antiviral drugs and immunosuppressive therapies for chronic conditions (B and C).
+    - 6. **Prevention Of Hepatitis**: General preventive measures (Good Hygiene Practices, avoiding alcohol and drugs), vaccination, and safe needles/blood screening.
   - **Progress Integration**: Connected to `LearningProgressController` with completion state persistence for `module-03`.
   - **Bilingual Localization**: Added complete English and Amharic ARB resources in `lib/l10n/app_en.arb` and `lib/l10n/app_am.arb`, cleanly regenerated via `flutter gen-l10n`.
   - **Test Suite**: Created `test/hepatitis_page_test.dart` testing 6-accordion layout, numerical-to-checkmark badge transitions, expansion, completion persistence, and Amharic translation. All 53 tests passing across full codebase.

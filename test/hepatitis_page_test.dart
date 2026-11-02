@@ -116,11 +116,62 @@ void main() {
     expect(find.text('Hepatitis C'), findsOneWidget);
     expect(
         find.textContaining(
-            'over 95% of cases can be cured with direct-acting antiviral'),
+            'direct-acting antivirals (DAAs) offering a high cure rate'),
         findsOneWidget);
 
     // Dynamic Read Counter updates to 2
     expect(find.text('2 / 6 read'), findsOneWidget);
+
+    // Expand Section 3: Diagnosis of Hepatitis
+    final section3Finder = find.text('Diagnosis of Hepatitis');
+    await tester.ensureVisible(section3Finder);
+    await tester.pumpAndSettle();
+    await tester.tap(section3Finder);
+    await tester.pumpAndSettle();
+    expect(
+        find.textContaining(
+            'combination of blood tests, imaging, and sometimes liver biopsy'),
+        findsOneWidget);
+
+    // Expand Section 4: Complication of Hepatitis
+    final section4Finder = find.text('Complication of Hepatitis');
+    await tester.ensureVisible(section4Finder);
+    await tester.pumpAndSettle();
+    await tester.tap(section4Finder);
+    await tester.pumpAndSettle();
+    expect(find.text('Chronic Hepatitis'), findsOneWidget);
+    expect(find.text('Cirrhosis'), findsOneWidget);
+    expect(find.text('Liver Failure'), findsOneWidget);
+    expect(
+        find.text('Liver Cancer (Hepatocellular Carcinoma)'), findsOneWidget);
+    expect(
+        find.textContaining(
+            'Chronic Hepatitis B and C: If untreated, viral hepatitis can progress to chronic infection'),
+        findsOneWidget);
+
+    // Expand Section 5: Management and treatment of Hepatitis
+    final section5Finder = find.text('Management and treatment of Hepatitis');
+    await tester.ensureVisible(section5Finder);
+    await tester.pumpAndSettle();
+    await tester.tap(section5Finder);
+    await tester.pumpAndSettle();
+    expect(
+        find.textContaining(
+            'resolve on their own with supportive care, others'),
+        findsOneWidget);
+
+    // Expand Section 6: Prevention Of Hepatitis
+    final section6Finder = find.text('Prevention Of Hepatitis');
+    await tester.ensureVisible(section6Finder);
+    await tester.pumpAndSettle();
+    await tester.tap(section6Finder);
+    await tester.pumpAndSettle();
+    expect(find.text('General Preventive Measures for All Types of Hepatitis'),
+        findsOneWidget);
+    expect(find.textContaining('Good Hygiene Practices'), findsOneWidget);
+
+    // Dynamic Read Counter updates to 6
+    expect(find.text('6 / 6 read'), findsOneWidget);
 
     // Scroll down and mark as completed
     final markBtnFinder = find.text('Mark as Completed');

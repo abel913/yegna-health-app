@@ -916,115 +916,95 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get hepatitisCTransmission2 =>
-      'Receiving contaminated blood products or unscreened transfusions';
+      'Receiving contaminated blood products (though this is less common now due to screening)';
 
   @override
   String get hepatitisCTransmission3 =>
-      'Mother-to-child transmission during childbirth (less common than Hepatitis B)';
+      'In some cases, through sexual contact or from an infected mother to her baby during childbirth.';
 
   @override
-  String get hepatitisCTransmission4 =>
-      'Unprotected sexual practices that involve potential blood contact';
+  String get hepatitisCChronicDesc =>
+      'Unlike Hepatitis B, Hepatitis C often becomes chronic, meaning the infection persists for years and can lead to liver damage, cirrhosis, liver cancer, and even liver failure. Many people with Hepatitis C don\'t show symptoms until liver damage is severe.';
 
   @override
-  String get hepatitisCAlert =>
-      'Unlike Hepatitis B, there is currently no vaccine for Hepatitis C, but over 95% of cases can be cured with direct-acting antiviral (DAA) medications.';
+  String get hepatitisCTreatmentDesc =>
+      'Treatment has evolved significantly, with direct-acting antivirals (DAAs) offering a high cure rate, making chronic Hepatitis C much more manageable now than in the past.';
 
   @override
   String get hepatitisSection3Title => 'Diagnosis of Hepatitis';
 
   @override
-  String get hepatitisSection3Intro =>
-      'Because viral hepatitis often shows mild or no early symptoms, laboratory diagnostic screening is critical for early detection and liver protection:';
-
-  @override
-  String get hepatitisDiagnosis1 =>
-      'Serological blood tests: Testing for HBV surface antigen (HBsAg) or HCV antibodies.';
-
-  @override
-  String get hepatitisDiagnosis2 =>
-      'Liver function tests (LFTs): Measuring liver enzymes (ALT, AST, bilirubin) to evaluate liver inflammation and function.';
-
-  @override
-  String get hepatitisDiagnosis3 =>
-      'Viral load molecular tests: PCR tests detecting viral RNA/DNA to confirm active infection and monitor treatment effectiveness.';
-
-  @override
-  String get hepatitisDiagnosis4 =>
-      'Liver imaging & elastography: Ultrasound scans and FibroScan to evaluate liver stiffness, scarring, and check for cirrhosis.';
+  String get hepatitisSection3Desc =>
+      'The diagnosis of hepatitis involves a combination of blood tests, imaging, and sometimes liver biopsy to determine the cause, severity, and appropriate treatment of the disease. Each type of hepatitis has its own set of diagnostic markers, so identifying the specific cause is essential for effective management.';
 
   @override
   String get hepatitisSection4Title => 'Complication of Hepatitis';
 
   @override
   String get hepatitisSection4Intro =>
-      'Without timely medical monitoring and management, chronic hepatitis progression can lead to severe, life-threatening complications:';
+      'Complications of hepatitis can vary depending on the type (A, B, C, etc.), the severity of the infection, and whether it becomes chronic. Some common and serious complications include:';
 
   @override
-  String get hepatitisComplication1 =>
-      'Liver Cirrhosis: Progressive fibrotic scarring of liver tissue that permanently replaces healthy functional cells.';
+  String get hepatitisComp1Title => 'Chronic Hepatitis';
 
   @override
-  String get hepatitisComplication2 =>
-      'Liver Failure (End-Stage Liver Disease): Complete inability of the liver to filter toxins, produce clotting proteins, and regulate metabolism.';
+  String get hepatitisComp1Desc =>
+      'Chronic Hepatitis B and C: If untreated, viral hepatitis can progress to chronic infection, where the virus remains in the body for years, leading to ongoing liver inflammation.';
 
   @override
-  String get hepatitisComplication3 =>
-      'Hepatocellular Carcinoma (Liver Cancer): Chronic Hepatitis B and C infections are leading causes of primary liver cancer worldwide.';
+  String get hepatitisComp2Title => 'Cirrhosis';
 
   @override
-  String get hepatitisComplication4 =>
-      'Portal Hypertension & Ascites: Elevated blood pressure in the portal vein causing fluid buildup in the abdomen and bleeding varices.';
+  String get hepatitisComp2Desc =>
+      'Liver Scarring: Long-term inflammation can cause cirrhosis, a condition where the liver tissue becomes scarred, impairing liver function. This can result from chronic Hepatitis B, C, or alcohol use.';
+
+  @override
+  String get hepatitisComp3Title => 'Liver Failure';
+
+  @override
+  String get hepatitisComp3Desc =>
+      'Acute or Chronic Liver Failure: Severe liver damage can lead to liver failure, where the liver loses its ability to perform vital functions such as detoxification and protein production. It can occur acutely (e.g., in acute Hepatitis B or D) or chronically in cases of Hepatitis C.';
+
+  @override
+  String get hepatitisComp4Title => 'Liver Cancer (Hepatocellular Carcinoma)';
+
+  @override
+  String get hepatitisComp4Desc =>
+      'Chronic Hepatitis B and C increase the risk of developing liver cancer over time due to ongoing liver cell damage and mutations.';
+
+  @override
+  String get hepatitisSection4Conclusion =>
+      'Early diagnosis and management of hepatitis, particularly chronic forms, are key to preventing or managing these complications.';
 
   @override
   String get hepatitisSection5Title => 'Management and treatment of Hepatitis';
 
   @override
-  String get hepatitisSection5Intro =>
-      'Clinical management depends on the specific viral type and whether the infection is acute or chronic:';
-
-  @override
-  String get hepatitisTreatment1 =>
-      'Chronic Hepatitis B: Lifelong oral antiviral medications (such as Tenofovir or Entecavir) that suppress viral replication, halt liver damage, and prevent cancer.';
-
-  @override
-  String get hepatitisTreatment2 =>
-      'Chronic Hepatitis C: Highly effective 8–12 week oral direct-acting antiviral (DAA) therapy achieving cure rates above 95%.';
-
-  @override
-  String get hepatitisTreatment3 =>
-      'Lifestyle modifications: Complete avoidance of alcohol, balanced liver-friendly nutrition, avoiding hepatotoxic herbal compounds, and maintaining a healthy weight.';
-
-  @override
-  String get hepatitisTreatment4 =>
-      'Routine clinical monitoring: Regular liver function tests, viral load assessments, and ultrasound cancer surveillance.';
+  String get hepatitisSection5Desc =>
+      'The treatment of hepatitis varies based on its type and severity. While many forms (especially Hepatitis A and E) resolve on their own with supportive care, others (like Hepatitis B, C, and chronic conditions) require long-term management with antiviral drugs, lifestyle changes, or immunosuppressive therapies. Early diagnosis and appropriate treatment are key to preventing liver damage and complications such as cirrhosis and liver cancer.';
 
   @override
   String get hepatitisSection6Title => 'Prevention Of Hepatitis';
 
   @override
-  String get hepatitisSection6Intro =>
-      'Hepatitis transmission can be effectively interrupted through proactive vaccination, barrier hygiene, and clinical safety measures:';
+  String get hepatitisSection6Subtitle =>
+      'General Preventive Measures for All Types of Hepatitis';
 
   @override
-  String get hepatitisPrevention1 =>
-      'Vaccination: Timely Hepatitis B vaccination (especially the birth dose within 24 hours of delivery, followed by infant series) and Hepatitis A vaccination.';
+  String get hepatitisPreventionMeasure1 =>
+      'Good Hygiene Practices: Wash hands thoroughly with soap and water after using the bathroom, handling food, and before eating.';
 
   @override
-  String get hepatitisPrevention2 =>
-      'Safe injection practices: Using sterile single-use needles and avoiding sharing any injection or body-piercing equipment.';
+  String get hepatitisPreventionMeasure2 =>
+      'Avoid alcohol and drugs: Excessive alcohol use and drug abuse can exacerbate liver damage.';
 
   @override
-  String get hepatitisPrevention3 =>
-      'Safer sexual practices: Consistent and correct condom use to prevent Hepatitis B and co-infection with other STIs or HIV.';
+  String get hepatitisPreventionMeasure3 =>
+      'Vaccination: Vaccines against Hepatitis A and Hepatitis B are safe, highly effective, and available.';
 
   @override
-  String get hepatitisPrevention4 =>
-      'Clean water and food hygiene: Washing hands thoroughly with soap, drinking safe treated water, and hygienic food prep to prevent Hepatitis A and E.';
-
-  @override
-  String get hepatitisPrevention5 =>
-      'Blood safety: Rigorous screening of all donated blood products and stringent sterilization of medical/dental instruments.';
+  String get hepatitisPreventionMeasure4 =>
+      'Safe needles & blood screening: Always use sterile single-use needles and ensure medical blood products are rigorously screened.';
 
   @override
   String get substanceHeroDesc =>
