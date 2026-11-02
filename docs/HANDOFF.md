@@ -9,7 +9,7 @@
   - 5 interactive accordion cards with checkmark indicators and smooth expanding transitions:
     1. **Defination**: CD4 cell targets, HIV vs. AIDS stages, and U=U viral suppression.
     2. **Mode of transmission**: Body fluid transmission paths and myth-busting highlight card.
-    3. **HIV-Prevention**: PEP 72-hour emergency protocol, 10-step condom guide, and educational video preview cards with modals.
+    3. **HIV-Prevention**: Primary ABC prevention methods with circular blue letter badges (A - F), PrEP and PEP 72-hour clinical guidance, 10-step condom guide, and interactive YouTube video cards (`https://youtu.be/EdSq2HB7jqU` lubricants demonstration and `https://youtu.be/ii8ezLev2PU` counseling demonstration) with `url_launcher` external playback and in-app modal sheets.
     4. **HIV testing**: PITC and VCT testing modalities.
     5. **Treatment for HIV positive client**: ART regimens, early initiation, and clinic access.
   - Bilingual localization in `lib/l10n/app_en.arb` and `lib/l10n/app_am.arb`, regenerated via `flutter gen-l10n`.

@@ -679,6 +679,43 @@ class AppLocalizationsAm extends AppLocalizations {
   String get hivPreventionTitle => 'የኤችአይቪ መከላከያ መንገዶች';
 
   @override
+  String get hivPreventionIntro =>
+      'ራስን ከኤችአይቪ መጠበቅ ቫይረሱ እንዴት እንደሚተላለፍ ከመረዳት ይጀምራል። አንዳንድ የኤችአይቪ መከላከያ ዘዴዎች እንደሚከተለው ተብራርተዋል፦';
+
+  @override
+  String get hivMethodA => 'ከጋብቻ በፊት ከግብረ-ሥጋ ግንኙነት መታቀብ (ግንኙነት አለማድረግ)';
+
+  @override
+  String get hivMethodB => 'ከተመረመሩ በኋላ ለአንድ የፍቅር አጋር ብቻ ታማኝ መሆን።';
+
+  @override
+  String get hivMethodC =>
+      'በማንኛውም ጊዜ በሚደረግ የግብረ-ሥጋ ግንኙነት ኮንዶምን ዘወትርና በትክክል መጠቀም።';
+
+  @override
+  String get hivMethodD =>
+      'ስለታም ቁሳቁሶችን ከሌሎች ሰዎች ጋር አለመጋራት እንዲሁም በአግባቡ መጠቀምና ማስወገድ።';
+
+  @override
+  String get hivAdditionalPreventionIntro =>
+      'ከላይ ከተጠቀሱት የመከላከያ ዘዴዎች በተጨማሪ የሚከተሉትም ኤችአይቪን ለመከላከል ያገለግላሉ፦';
+
+  @override
+  String get hivMethodE =>
+      'ቫይረሱ ወደ ፅንሱ እንዳይተላለፍ ኤችአይቪ በደማቸው ለሚገኝ ነፍሰጡር እናቶች የፀረ-ኤችአይቪ ህክምና መስጠት።';
+
+  @override
+  String get hivMethodF =>
+      'የቅድመ-ተጋላጭነት መከላከያ መድሃኒት (PrEP) - ለኤችአይቪ ከፍተኛ ተጋላጭ ለሆኑ ሰዎች የሚሰጥ ሲሆን ለቫይረሱ ከመጋለጣቸው በፊት ይሰጣል።';
+
+  @override
+  String get prepDesc =>
+      'የቅድመ-ተጋላጭነት መከላከያ መድሃኒት (PrEP) የኤችአይቪ ኢንፌክሽን ተጋላጭነትን ለመቀነስ የሚወሰድ መድሃኒት ነው። PrEP የሚከላከለው ከኤችአይቪ ብቻ ስለሆነ፣ ከሌሎች አባለዘር በሽታዎች ለመከላከል የኮንዶም አጠቃቀም አሁንም አስፈላጊ ነው። ለኤችአይቪ ከፍተኛ ተጋላጭ ለሆኑ ሰዎች ይሰጣል። ይህ አገልግሎት በጤና ጣቢያዎችና በሆስፒታሎች ባሉ የመንግስት ጤና ተቋማት ውስጥ ይገኛል።';
+
+  @override
+  String get watchOnYouTube => 'በዩቲዩብ ይመልከቱ';
+
+  @override
   String get moduleComingSoon => 'ሙሉ የትምህርት ክፍሎች እና ፈተናዎች ለቀጣዩ ደረጃ እየተዘጋጁ ነው።';
 
   @override

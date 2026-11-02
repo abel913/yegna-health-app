@@ -10,7 +10,7 @@
   - **5 Expandable Clinical Accordion Sections**:
     1. **Defination**: CD4 cell mechanics, HIV vs. AIDS stages, and Undetectable = Untransmittable (U=U).
     2. **Mode of transmission**: Direct body fluids, PMTCT prevention, and myth-busting highlight card.
-    3. **HIV-Prevention**: Post-Exposure Prophylaxis (PEP) protocols, 10-step condom usage guide, and embedded video demonstration cards.
+    3. **HIV-Prevention**: Primary ABC prevention methods with circular blue letter badges (A - F: Abstinence, Being faithful, Condom usage, Sharp objects, PMTCT, PrEP), full PrEP and PEP clinical guidance, 10-step condom usage guide, and two embedded YouTube video cards (`https://youtu.be/EdSq2HB7jqU` lubricants demonstration and `https://youtu.be/ii8ezLev2PU` counseling demonstration) with `url_launcher` external playback and in-app modal sheets.
     4. **HIV testing**: Provider Initiated Testing and Counseling (PITC) and Voluntary Counseling and Testing (VCT) services.
     5. **Treatment for HIV positive client**: Antiretroviral therapy (ART) regimen, early initiation, and public clinic availability.
   - **Interactive Progression**: Tracks read sections dynamically, marks completion, and preserves quiz access.

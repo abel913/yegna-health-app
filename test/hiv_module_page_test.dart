@@ -80,11 +80,16 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.textContaining('Human Immunodeficiency Virus'), findsOneWidget);
 
-    // Tap HIV-Prevention: should expand and show PEP
+    // Tap HIV-Prevention: should expand and show A-F badges, PrEP, PEP, and condom steps
     final prevFinder = find.text('HIV-Prevention');
     await tester.ensureVisible(prevFinder);
     await tester.tap(prevFinder);
     await tester.pumpAndSettle();
+    expect(find.text('A'), findsOneWidget);
+    expect(find.text('F'), findsOneWidget);
+    expect(find.textContaining('Abstinence from sex'), findsOneWidget);
+    expect(
+        find.textContaining('pre-exposure prophylaxis (PrEP)'), findsOneWidget);
     expect(
         find.textContaining('Post-exposure prophylaxis (PEP)'), findsOneWidget);
     expect(

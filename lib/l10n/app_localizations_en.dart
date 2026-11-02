@@ -704,6 +704,45 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hivPreventionTitle => 'HIV-Prevention';
 
   @override
+  String get hivPreventionIntro =>
+      'Protecting yourself from HIV begins with understanding how the virus is spread. Some of HIV prevention methods are discussed as follows:';
+
+  @override
+  String get hivMethodA =>
+      'Abstinence from sex (not having sex), before marriage';
+
+  @override
+  String get hivMethodB =>
+      'Being faithful (Decide to one sexual partner) after testing.';
+
+  @override
+  String get hivMethodC =>
+      'Consistent and correct use of condom every time you have sex.';
+
+  @override
+  String get hivMethodD =>
+      'Not sharing sharp objects with other people and Proper use and removal of sharp objects.';
+
+  @override
+  String get hivAdditionalPreventionIntro =>
+      'In addition to above mentioned prevention methods, the following are also used to prevent HIV.';
+
+  @override
+  String get hivMethodE =>
+      'Provision of anti-HIV treatment for pregnant women living with HIV to avoid transmission to fetus.';
+
+  @override
+  String get hivMethodF =>
+      'Pre-Exposure Prophylaxis- Given for people at high risk of acquiring HIV and it is given before exposure to HIV.';
+
+  @override
+  String get prepDesc =>
+      'pre-exposure prophylaxis (PrEP) is HIV medicine taken to prevent the chances of getting HIV infection.. Since PrEP only protects against HIV, condom use is still important for the protection against other STI. It will be provided to people at substantial risk (high risk) of acquiring HIV. This service is available at public health facilities like Health center and Hospital.';
+
+  @override
+  String get watchOnYouTube => 'Watch on YouTube';
+
+  @override
   String get moduleComingSoon =>
       'Full module content and interactive quizzes will be configured in the next step.';
 

@@ -1316,6 +1316,66 @@ abstract class AppLocalizations {
   /// **'HIV-Prevention'**
   String get hivPreventionTitle;
 
+  /// No description provided for @hivPreventionIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Protecting yourself from HIV begins with understanding how the virus is spread. Some of HIV prevention methods are discussed as follows:'**
+  String get hivPreventionIntro;
+
+  /// No description provided for @hivMethodA.
+  ///
+  /// In en, this message translates to:
+  /// **'Abstinence from sex (not having sex), before marriage'**
+  String get hivMethodA;
+
+  /// No description provided for @hivMethodB.
+  ///
+  /// In en, this message translates to:
+  /// **'Being faithful (Decide to one sexual partner) after testing.'**
+  String get hivMethodB;
+
+  /// No description provided for @hivMethodC.
+  ///
+  /// In en, this message translates to:
+  /// **'Consistent and correct use of condom every time you have sex.'**
+  String get hivMethodC;
+
+  /// No description provided for @hivMethodD.
+  ///
+  /// In en, this message translates to:
+  /// **'Not sharing sharp objects with other people and Proper use and removal of sharp objects.'**
+  String get hivMethodD;
+
+  /// No description provided for @hivAdditionalPreventionIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'In addition to above mentioned prevention methods, the following are also used to prevent HIV.'**
+  String get hivAdditionalPreventionIntro;
+
+  /// No description provided for @hivMethodE.
+  ///
+  /// In en, this message translates to:
+  /// **'Provision of anti-HIV treatment for pregnant women living with HIV to avoid transmission to fetus.'**
+  String get hivMethodE;
+
+  /// No description provided for @hivMethodF.
+  ///
+  /// In en, this message translates to:
+  /// **'Pre-Exposure Prophylaxis- Given for people at high risk of acquiring HIV and it is given before exposure to HIV.'**
+  String get hivMethodF;
+
+  /// No description provided for @prepDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'pre-exposure prophylaxis (PrEP) is HIV medicine taken to prevent the chances of getting HIV infection.. Since PrEP only protects against HIV, condom use is still important for the protection against other STI. It will be provided to people at substantial risk (high risk) of acquiring HIV. This service is available at public health facilities like Health center and Hospital.'**
+  String get prepDesc;
+
+  /// No description provided for @watchOnYouTube.
+  ///
+  /// In en, this message translates to:
+  /// **'Watch on YouTube'**
+  String get watchOnYouTube;
+
   /// No description provided for @moduleComingSoon.
   ///
   /// In en, this message translates to:

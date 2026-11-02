@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../l10n/app_localizations.dart';
 import 'assessment_repository.dart';
 import 'learning_progress_controller.dart';
+
+const String kHivVideo1Url = 'https://youtu.be/EdSq2HB7jqU?si=TkGVTHA3TmYIXI-S';
+const String kHivVideo2Url = 'https://youtu.be/ii8ezLev2PU?si=QRNmr68hzDcRZZD6';
 
 /// Detailed learning page for Module 07 (Human immune virus - HIV/AIDS).
 ///
 /// Features authentic optical glass styling and 5 clinical accordion sections:
 /// 1. Defination (Definition & immune impact)
 /// 2. Mode of transmission (Body fluids & dispelling myths)
-/// 3. HIV-Prevention (PEP, 10-step condom usage, and video demonstrations)
+/// 3. HIV-Prevention (A-F prevention methods, PrEP/PEP, 10-step condom usage, YouTube videos)
 /// 4. HIV testing (PITC and VCT modalities)
 /// 5. Treatment for HIV positive client (ART regimen, access, and viral suppression)
 class HivModuleDetailPage extends StatefulWidget {
@@ -33,6 +37,17 @@ class _HivModuleDetailPageState extends State<HivModuleDetailPage> {
 
   // Track sections read by user (defaults to all 5 read matching reference).
   final Set<int> _readSections = <int>{0, 1, 2, 3, 4};
+
+  Future<void> _launchVideoUrl(String url) async {
+    final uri = Uri.parse(url);
+    try {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } catch (_) {
+      try {
+        await launchUrl(uri);
+      } catch (_) {}
+    }
+  }
 
   Future<void> _markCompleted(
       BuildContext context, AppLocalizations l10n) async {
@@ -59,6 +74,7 @@ class _HivModuleDetailPageState extends State<HivModuleDetailPage> {
   void _showVideoModal({
     required BuildContext context,
     required String imageAsset,
+    required String videoUrl,
     required String title,
     required String description,
     required AppLocalizations l10n,
@@ -100,40 +116,46 @@ class _HivModuleDetailPageState extends State<HivModuleDetailPage> {
               const SizedBox(height: 14),
               ClipRRect(
                 borderRadius: BorderRadius.circular(16),
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Image.asset(
-                      imageAsset,
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                      height: 200,
-                    ),
-                    Container(
-                      height: 200,
-                      color: Colors.black.withValues(alpha: 0.25),
-                    ),
-                    Container(
-                      width: 58,
-                      height: 58,
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.95),
-                        shape: BoxShape.circle,
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.black26,
-                            blurRadius: 10,
-                            offset: Offset(0, 4),
-                          ),
-                        ],
+                child: InkWell(
+                  onTap: () {
+                    Navigator.of(ctx).pop();
+                    _launchVideoUrl(videoUrl);
+                  },
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Image.asset(
+                        imageAsset,
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: 190,
                       ),
-                      child: const Icon(
-                        Icons.play_arrow_rounded,
-                        size: 38,
-                        color: Color(0xFF0284C7),
+                      Container(
+                        height: 190,
+                        color: Colors.black.withValues(alpha: 0.25),
                       ),
-                    ),
-                  ],
+                      Container(
+                        width: 58,
+                        height: 58,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.95),
+                          shape: BoxShape.circle,
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.black26,
+                              blurRadius: 10,
+                              offset: Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: const Icon(
+                          Icons.play_arrow_rounded,
+                          size: 38,
+                          color: Color(0xFFEF4444),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               const SizedBox(height: 16),
@@ -148,10 +170,38 @@ class _HivModuleDetailPageState extends State<HivModuleDetailPage> {
               const SizedBox(height: 20),
               SizedBox(
                 width: double.infinity,
-                child: FilledButton(
+                child: FilledButton.icon(
                   style: FilledButton.styleFrom(
-                    backgroundColor: const Color(0xFF0284C7),
+                    backgroundColor: const Color(0xFFEF4444),
                     padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                  ),
+                  icon:
+                      const Icon(Icons.play_arrow_rounded, color: Colors.white),
+                  label: Text(
+                    l10n.watchOnYouTube,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 15,
+                      color: Colors.white,
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.of(ctx).pop();
+                    _launchVideoUrl(videoUrl);
+                  },
+                ),
+              ),
+              const SizedBox(height: 10),
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: const Color(0xFF475569),
+                    side: const BorderSide(color: Color(0xFFCBD5E1)),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14),
                     ),
@@ -160,8 +210,8 @@ class _HivModuleDetailPageState extends State<HivModuleDetailPage> {
                   child: Text(
                     l10n.closeButton,
                     style: const TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14.5,
                     ),
                   ),
                 ),
@@ -542,7 +592,7 @@ class _HivModuleDetailPageState extends State<HivModuleDetailPage> {
                   ],
                 ),
 
-                // Section 3: HIV-Prevention
+                // Section 3: HIV-Prevention (with A-F badges, PrEP/PEP, and YouTube videos)
                 _AccordionCard(
                   title: l10n.hivPreventionTitle,
                   isExpanded: _expandedSections.contains(2),
@@ -558,6 +608,53 @@ class _HivModuleDetailPageState extends State<HivModuleDetailPage> {
                     });
                   },
                   children: [
+                    // Intro Paragraph
+                    Text(
+                      l10n.hivPreventionIntro,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Color(0xFF334155),
+                        height: 1.55,
+                      ),
+                    ),
+                    const SizedBox(height: 14),
+
+                    // Primary Prevention Methods A - D
+                    _AlphaBadgeItem(letter: 'A', text: l10n.hivMethodA),
+                    _AlphaBadgeItem(letter: 'B', text: l10n.hivMethodB),
+                    _AlphaBadgeItem(letter: 'C', text: l10n.hivMethodC),
+                    _AlphaBadgeItem(letter: 'D', text: l10n.hivMethodD),
+                    const SizedBox(height: 10),
+
+                    // Intermediary paragraph
+                    Text(
+                      l10n.hivAdditionalPreventionIntro,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Color(0xFF0F172A),
+                        height: 1.55,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 14),
+
+                    // Clinical Prevention Methods E - F
+                    _AlphaBadgeItem(letter: 'E', text: l10n.hivMethodE),
+                    _AlphaBadgeItem(letter: 'F', text: l10n.hivMethodF),
+                    const SizedBox(height: 12),
+
+                    // PrEP Full Clinical Description
+                    Text(
+                      l10n.prepDesc,
+                      style: const TextStyle(
+                        fontSize: 13.5,
+                        color: Color(0xFF334155),
+                        height: 1.55,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // PEP Section
                     Text(
                       l10n.pepTitle,
                       style: const TextStyle(
@@ -577,6 +674,8 @@ class _HivModuleDetailPageState extends State<HivModuleDetailPage> {
                       ),
                     ),
                     const SizedBox(height: 20),
+
+                    // Condom Heading & Subtitle
                     Text(
                       l10n.condomStepsTitle,
                       style: const TextStyle(
@@ -596,15 +695,19 @@ class _HivModuleDetailPageState extends State<HivModuleDetailPage> {
                       ),
                     ),
                     const SizedBox(height: 14),
+
+                    // Video 1: Condom Lubricants Warning Demonstration (YouTube linked)
                     _VideoPreviewCard(
                       imageAsset:
                           'assets/images/learning/hiv_video_lubricants.png',
+                      videoUrl: kHivVideo1Url,
                       watchLabel: l10n.watchVideo,
                       onTap: () {
                         _showVideoModal(
                           context: context,
                           imageAsset:
                               'assets/images/learning/hiv_video_lubricants.png',
+                          videoUrl: kHivVideo1Url,
                           title: l10n.videoDialogTitle,
                           description: l10n.lubricantsVideoDesc,
                           l10n: l10n,
@@ -612,6 +715,8 @@ class _HivModuleDetailPageState extends State<HivModuleDetailPage> {
                       },
                     ),
                     const SizedBox(height: 18),
+
+                    // 10 Numbered Condom Steps
                     _StepItem(number: 1, text: l10n.condomStep1),
                     _StepItem(number: 2, text: l10n.condomStep2),
                     _StepItem(number: 3, text: l10n.condomStep3),
@@ -623,15 +728,19 @@ class _HivModuleDetailPageState extends State<HivModuleDetailPage> {
                     _StepItem(number: 9, text: l10n.condomStep9),
                     _StepItem(number: 10, text: l10n.condomStep10),
                     const SizedBox(height: 14),
+
+                    // Video 2: Condom Counselling Demonstration (YouTube linked)
                     _VideoPreviewCard(
                       imageAsset:
                           'assets/images/learning/hiv_video_counselling.png',
+                      videoUrl: kHivVideo2Url,
                       watchLabel: l10n.watchVideo,
                       onTap: () {
                         _showVideoModal(
                           context: context,
                           imageAsset:
                               'assets/images/learning/hiv_video_counselling.png',
+                          videoUrl: kHivVideo2Url,
                           title: l10n.videoDialogTitle,
                           description: l10n.counsellingVideoDesc,
                           l10n: l10n,
@@ -930,15 +1039,68 @@ class _AccordionCard extends StatelessWidget {
   }
 }
 
-/// Interactive video preview container matching the reference card design.
+/// Alphabetical circular badge item (A, B, C, D, E, F) matching the reference design.
+class _AlphaBadgeItem extends StatelessWidget {
+  const _AlphaBadgeItem({
+    required this.letter,
+    required this.text,
+  });
+
+  final String letter;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 26,
+            height: 26,
+            decoration: const BoxDecoration(
+              color: Color(0xFF0284C7),
+              shape: BoxShape.circle,
+            ),
+            alignment: Alignment.center,
+            child: Text(
+              letter,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w800,
+                fontSize: 13,
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              text,
+              style: const TextStyle(
+                fontSize: 13.5,
+                color: Color(0xFF1E293B),
+                height: 1.45,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Interactive video preview container matching the reference card design with YouTube launch.
 class _VideoPreviewCard extends StatelessWidget {
   const _VideoPreviewCard({
     required this.imageAsset,
+    required this.videoUrl,
     required this.watchLabel,
     required this.onTap,
   });
 
   final String imageAsset;
+  final String videoUrl;
   final String watchLabel;
   final VoidCallback onTap;
 
@@ -1001,7 +1163,7 @@ class _VideoPreviewCard extends StatelessWidget {
                       child: const Icon(
                         Icons.play_arrow_rounded,
                         size: 32,
-                        color: Color(0xFF0284C7),
+                        color: Color(0xFFEF4444),
                       ),
                     ),
                   ],
@@ -1014,17 +1176,23 @@ class _VideoPreviewCard extends StatelessWidget {
                   children: [
                     const Icon(
                       Icons.play_circle_outline_rounded,
-                      color: Color(0xFF0284C7),
+                      color: Color(0xFFEF4444),
                       size: 20,
                     ),
                     const SizedBox(width: 8),
                     Text(
                       watchLabel,
                       style: const TextStyle(
-                        color: Color(0xFF0284C7),
+                        color: Color(0xFFEF4444),
                         fontWeight: FontWeight.w700,
                         fontSize: 14,
                       ),
+                    ),
+                    const Spacer(),
+                    const Icon(
+                      Icons.open_in_new_rounded,
+                      color: Color(0xFF94A3B8),
+                      size: 16,
                     ),
                   ],
                 ),

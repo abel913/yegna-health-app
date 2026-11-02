@@ -67,7 +67,15 @@ The Flutter choices are implemented locally. Migrations `20261030174702`, `20261
   3. Treatment for HIV positive clients (ART therapy, viral suppression, early intervention, and public facility access).
 - Progress Sync & Offline Localizations: Directly triggers `LearningProgressController.markArticleComplete`, instantly refreshing local secure storage, optional cloud synchronization, and carousel completion indicators. All 34 new text keys are fully localized in English and Amharic with zero external dependencies.
 
-## 2026-11-01 — Top Bar Notification Placement & Direct Bottom Nav Login
+## 2026-11-02 — External Video Launching via `url_launcher`
+
+- Added `url_launcher: ^6.3.3` to `pubspec.yaml` to enable launching educational video demonstrations directly on YouTube:
+  - Need & justification: Module 07 (HIV/AIDS) features authentic Ethiopian public health educational videos ("Condom Lubricants Warning Demonstration" and "Proper Condom Usage and Counseling"). Using `url_launcher` allows seamless, secure playback via the user's native YouTube app or external browser without bundling heavy in-app video players or WebView components.
+  - Video URLs:
+    - Condom Lubricants Warning: `https://youtu.be/EdSq2HB7jqU?si=TkGVTHA3TmYIXI-S`
+    - Condom Counseling & Usage: `https://youtu.be/ii8ezLev2PU?si=QRNmr68hzDcRZZD6`
+  - Graceful fallback: Video cards and detail modals provide in-app thumbnail previews, clinical descriptions, and a direct "Watch on YouTube" action with safe URL exception handling.
+
 
 - Top Bar Action Placement: Unified the top app header by placing the notification bell with badge counter directly beside the language dropdown in the main `AppBar`. Removed the redundant account button from the top right.
 - Streamlined Learn Screen Header: Removed the reloading icon and notification icon from the `LearnPage` body, leaving a clean "Learning Modules" title.
