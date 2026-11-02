@@ -85,3 +85,13 @@ The Flutter choices are implemented locally. Migrations `20261030174702`, `20261
 
 - Illustration Container Refactor: Removed the fixed 190px height limitation and card-wide inset padding. Replaced with an `Expanded` container and minimal 8px horizontal margins with `fit: BoxFit.contain, width: double.infinity`.
 - Card Proportions: Increased carousel card height dynamically (`540 - 600 dp`), giving the illustration over 340 dp of vertical room. This allows horizontal scaling to reach over 90% of the card width, matching the visual prominence and wide layout seen in the authentic reference app.
+
+## 2026-11-02 — Real Interactive Map: OpenStreetMap & Turn-by-Turn GPS Navigation
+
+- **Package Dependencies**: Added `flutter_map: ^8.3.2`, `latlong2: ^0.10.1`, and promoted `url_launcher: ^6.3.3` to direct dependency.
+- **Provider Choice (OpenStreetMap over Google Maps SDK)**:
+  - Selected OpenStreetMap (`flutter_map`) to provide a 100% open, API-key-free, and billing-free vector/raster map experience that runs out-of-the-box on Android, physical devices, Web, and the Android emulator without requiring Google Cloud Console billing setup or API keys.
+  - Zero proprietary secrets or vendor lock-in; complies with project rule prohibiting fake maps while avoiding credential leakage.
+- **Real Geographic Coordinates**: Connected verified Addis Ababa youth clinics and university health centers directly to their true GPS coordinates (`LatLng(latitude, longitude)`), rendering custom glassmorphic pin markers with animated scale and selection states.
+- **Camera & Map Interactions**: Integrated `MapController` for smooth animated camera moves on marker taps, zoom in/out button steps, and "Locate Me" centering.
+- **Turn-by-Turn GPS Navigation**: Wired the "Directions" button to launch external navigation apps (Google Maps, Apple Maps, or default system navigation) using `url_launcher` with `geo:` and Google Maps directions URLs.

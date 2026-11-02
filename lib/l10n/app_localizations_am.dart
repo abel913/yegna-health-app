@@ -935,4 +935,75 @@ class AppLocalizationsAm extends AppLocalizations {
 
   @override
   String get languageAll => 'ሁሉም ቋንቋዎች';
+
+  @override
+  String get greetingMorning => 'እንደምን አደሩ';
+
+  @override
+  String get greetingAfternoon => 'እንደምን ዋሉ';
+
+  @override
+  String get greetingEvening => 'እንደምን አመሹ';
+
+  @override
+  String get guestGreetingSubtitle => 'የግል እና አስተማማኝ የወጣቶች ጤና መመሪያዎ';
+
+  @override
+  String get guestUser => 'እንግዳ ተጠቃሚ';
+
+  @override
+  String get dailyTipBadge => 'የቀኑ የጤና መረጃ';
+
+  @override
+  String get dailyTipMythFact => 'እውነታ ወይስ የተሳሳተ አመለካከት';
+
+  @override
+  String get dailyTipTitle => 'በጉርምስና ወቅት የሚከሰቱ የሆርሞን ለውጦች';
+
+  @override
+  String get dailyTipBody =>
+      'የቆዳ ሽፍታና የስሜት መለዋወጥ በእድገት ወቅት የሚከሰቱ የተለመዱ አካላዊ ለውጦች እንጂ የንፅህና ጉድለት አይደሉም።';
+
+  @override
+  String get readArticleAction => 'ጽሑፉን ያንብቡ';
+
+  @override
+  String get emergencyHelplineTitle => '24/7 ነፃ እና ሚስጥራዊ የስልክ መስመሮች';
+
+  @override
+  String get emergencyHelplineSubtitle =>
+      'ነፃ መስመር፦ 952 (ጤና ጥበቃ) / 8335 (የወጣቶች መስመር)';
+
+  @override
+  String get emergencyHelplineAction => 'እርዳታ ያግኙ';
+
+  @override
+  String get emergencySheetTitle => 'አጣዳፊ እርዳታ እና ድጋፍ';
+
+  @override
+  String get emergencySheetDisclaimer =>
+      'ለአጣዳፊ የጤና እና የአእምሮ ጭንቀት ድንገተኛ አደጋዎች በማንኛውም ጊዜ በነፃ ይደውሉ።';
+
+  @override
+  String get emergencyHotline952Name => 'ብሔራዊ የጤና ድንገተኛ አደጋ መስመር';
+
+  @override
+  String get emergencyHotline952Desc =>
+      'የጤና ጥበቃ ሚኒስቴር 24/7 ነፃ የድንገተኛ የጤና አገልግሎት';
+
+  @override
+  String get emergencyHotline8335Name => 'ብሔራዊ የወጣቶች እና የአእምሮ ጤና መስመር';
+
+  @override
+  String get emergencyHotline8335Desc =>
+      'ሚስጥራዊ የስነ-ተዋልዶ እና የአእምሮ ጤና የምክር አገልግሎት';
+
+  @override
+  String get exploreServicesHeading => 'አገልግሎቶችን ያስሱ';
+
+  @override
+  String get exploreServicesSubtitle => 'የግል መገምገሚያ፣ የወጣቶች ማዕከላትና የምክር አገልግሎት';
+
+  @override
+  String get callNowAction => 'አሁን ይደውሉ';
 }

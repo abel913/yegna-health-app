@@ -1,9 +1,15 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../l10n/app_localizations.dart';
+import '../auth/auth_controller.dart';
+import '../learning/assessment_repository.dart';
 import '../learning/education_repository.dart';
+import '../learning/hiv_module_page.dart';
 import '../learning/learning_models.dart';
+import '../learning/learning_modules_carousel.dart';
+import '../learning/learning_progress_controller.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -14,6 +20,9 @@ class HomePage extends StatefulWidget {
     required this.onOpenFacilities,
     required this.onOpenAccount,
     required this.onOpenArticle,
+    this.authController,
+    this.progressController,
+    this.assessmentRepository,
     super.key,
   });
 
@@ -24,6 +33,9 @@ class HomePage extends StatefulWidget {
   final VoidCallback onOpenFacilities;
   final VoidCallback onOpenAccount;
   final ValueChanged<String> onOpenArticle;
+  final AuthController? authController;
+  final LearningProgressController? progressController;
+  final AssessmentRepository? assessmentRepository;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -61,9 +73,158 @@ class _HomePageState extends State<HomePage> {
     await _articles;
   }
 
+  String _getGreeting(int hour, AppLocalizations l10n) {
+    if (hour >= 5 && hour < 12) {
+      return l10n.greetingMorning;
+    } else if (hour >= 12 && hour < 17) {
+      return l10n.greetingAfternoon;
+    } else {
+      return l10n.greetingEvening;
+    }
+  }
+
+  void _showEmergencyHelplineSheet(
+      BuildContext context, AppLocalizations l10n) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.95),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x30000000),
+                blurRadius: 28,
+                offset: Offset(0, -6),
+              ),
+            ],
+          ),
+          padding: const EdgeInsets.fromLTRB(20, 14, 20, 36),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 44,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.withValues(alpha: 0.35),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 18),
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(9),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFFE4E6),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: const Icon(
+                      Icons.phone_in_talk_rounded,
+                      color: Color(0xFFE11D48),
+                      size: 24,
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          l10n.emergencySheetTitle,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w800,
+                            color: Color(0xFF08264A),
+                          ),
+                        ),
+                        const SizedBox(height: 3),
+                        Text(
+                          l10n.emergencySheetDisclaimer,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            height: 1.4,
+                            color: Color(0xFF4A6277),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 22),
+              _EmergencyHelplineTile(
+                number: '952',
+                name: l10n.emergencyHotline952Name,
+                description: l10n.emergencyHotline952Desc,
+                callActionLabel: l10n.callNowAction,
+                copiedToast: l10n.copiedToClipboard,
+              ),
+              const SizedBox(height: 12),
+              _EmergencyHelplineTile(
+                number: '8335',
+                name: l10n.emergencyHotline8335Name,
+                description: l10n.emergencyHotline8335Desc,
+                callActionLabel: l10n.callNowAction,
+                copiedToast: l10n.copiedToClipboard,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final hour = DateTime.now().hour;
+    final greeting = _getGreeting(hour, l10n);
+
+    Widget buildGreetingHeader() {
+      final auth = widget.authController;
+      if (auth != null) {
+        return ListenableBuilder(
+          listenable: auth,
+          builder: (context, _) {
+            final user = auth.user;
+            final isAuthed = auth.isAuthenticated;
+            final displayName =
+                (isAuthed && user != null && user.displayName.trim().isNotEmpty)
+                    ? user.displayName.trim()
+                    : null;
+            return _DeepGlassGreetingHeader(
+              greeting: greeting,
+              displayName: displayName,
+              subtitle: l10n.guestGreetingSubtitle,
+              confidentialText: l10n.confidentialPill,
+              reviewedText: l10n.reviewedPill,
+              guestReadyText: l10n.guestReadyPill,
+              accountTitle: l10n.accountTitle,
+              onOpenAccount: widget.onOpenAccount,
+            );
+          },
+        );
+      }
+      return _DeepGlassGreetingHeader(
+        greeting: greeting,
+        displayName: null,
+        subtitle: l10n.guestGreetingSubtitle,
+        confidentialText: l10n.confidentialPill,
+        reviewedText: l10n.reviewedPill,
+        guestReadyText: l10n.guestReadyPill,
+        accountTitle: l10n.accountTitle,
+        onOpenAccount: widget.onOpenAccount,
+      );
+    }
 
     return Container(
       decoration: const BoxDecoration(
@@ -101,7 +262,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           Positioned(
-            top: 80,
+            top: 90,
             right: -60,
             child: Container(
               width: 380,
@@ -119,7 +280,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           Positioned(
-            top: 320,
+            top: 360,
             left: -60,
             child: Container(
               width: 340,
@@ -137,7 +298,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           Positioned(
-            top: 480,
+            top: 540,
             right: -50,
             child: Container(
               width: 340,
@@ -154,28 +315,10 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
-          Positioned(
-            top: 750,
-            left: 10,
-            child: Container(
-              width: 320,
-              height: 320,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  colors: [
-                    Color(0x700284C7),
-                    Color(0x2538BDF8),
-                    Colors.transparent,
-                  ],
-                ),
-              ),
-            ),
-          ),
 
           // Decorative Floating Glass Spheres
           Positioned(
-            top: 60,
+            top: 70,
             left: 20,
             child: Container(
               width: 88,
@@ -196,11 +339,11 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           Positioned(
-            top: 440,
-            right: 30,
+            top: 480,
+            right: 26,
             child: Container(
-              width: 120,
-              height: 120,
+              width: 110,
+              height: 110,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
@@ -217,7 +360,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
 
-          // Main Scrollable Area (Centered in Max-Width for Clean 2x2 Proportions)
+          // Main Scrollable Dashboard Content
           RefreshIndicator(
             onRefresh: _refresh,
             child: Center(
@@ -226,38 +369,43 @@ class _HomePageState extends State<HomePage> {
                 child: ListView(
                   padding: const EdgeInsets.fromLTRB(16, 14, 16, 36),
                   children: [
-                    // Brand Header Bar
-                    _DeepGlassBrandHeader(
-                      onOpenAccount: widget.onOpenAccount,
-                      accountTitle: l10n.accountTitle,
-                    ),
+                    // 1. Dynamic Greeting & Profile Card (Single clean Account CTA)
+                    buildGreetingHeader(),
                     const SizedBox(height: 16),
 
-                    // Hero Glass Welcome Card
-                    _DeepGlassWelcomeCard(
-                      welcomeTitle: l10n.welcomeHeroTitle,
-                      welcomeBody: l10n.welcomeHeroSubtitle,
-                      confidentialText: l10n.confidentialPill,
-                      reviewedText: l10n.reviewedPill,
-                      guestReadyText: l10n.guestReadyPill,
-                      accountTitle: l10n.accountTitle,
-                      onOpenAccount: widget.onOpenAccount,
-                    ),
-                    const SizedBox(height: 24),
-
-                    // Section Heading: Explore
-                    _GlassSectionHeader(
-                      title: l10n.quickLinksHeading,
-                      subtitle: l10n.quickLinksDescription,
+                    // 2. Interactive Daily Insight Card (Myth vs Fact)
+                    _DeepGlassDailyTipCard(
+                      badgeText: l10n.dailyTipBadge,
+                      mythFactText: l10n.dailyTipMythFact,
+                      titleText: l10n.dailyTipTitle,
+                      bodyText: l10n.dailyTipBody,
+                      actionText: l10n.readArticleAction,
+                      onOpenLearning: widget.onOpenLearning,
                     ),
                     const SizedBox(height: 14),
 
-                    // 2x2 Feature Action Cards Grid
+                    // 3. 24/7 Confidential Helpline Quick Bar
+                    _DeepGlassCrisisBar(
+                      title: l10n.emergencyHelplineTitle,
+                      subtitle: l10n.emergencyHelplineSubtitle,
+                      actionLabel: l10n.emergencyHelplineAction,
+                      onTap: () => _showEmergencyHelplineSheet(context, l10n),
+                    ),
+                    const SizedBox(height: 24),
+
+                    // 4. Section Heading: Explore Services
+                    _GlassSectionHeader(
+                      title: l10n.exploreServicesHeading,
+                      subtitle: l10n.exploreServicesSubtitle,
+                    ),
+                    const SizedBox(height: 14),
+
+                    // 5. Refined 2x2 Feature Action Cards Grid (Aspect Ratio 1.15)
                     GridView.count(
                       crossAxisCount: 2,
                       crossAxisSpacing: 14,
                       mainAxisSpacing: 14,
-                      childAspectRatio: 1.05,
+                      childAspectRatio: 1.15,
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       children: [
@@ -305,7 +453,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     const SizedBox(height: 26),
 
-                    // Featured Health Topics
+                    // 6. Featured Health Topics Carousel with Real Modules & Photos
                     _GlassSectionHeader(
                       title: l10n.featuredArticlesHeading,
                       action: TextButton.icon(
@@ -318,136 +466,21 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     const SizedBox(height: 12),
-                    _DeepGlassArticlesCarousel(
-                      future: _articles,
+                    _DeepGlassLearningModulesCarousel(
+                      locale: widget.locale,
+                      progressController: widget.progressController,
+                      assessmentRepository: widget.assessmentRepository,
                       onOpenLearning: widget.onOpenLearning,
                       onOpenArticle: widget.onOpenArticle,
                     ),
                     const SizedBox(height: 22),
 
-                    // Discreet Health Education Disclaimer Banner
+                    // 7. Safeguarding Boundary Banner
                     _DeepGlassSafetyBanner(
                       text: l10n.healthEducationBoundary,
                     ),
                   ],
                 ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// Top Brand Header Bar in Deep Glass
-class _DeepGlassBrandHeader extends StatelessWidget {
-  const _DeepGlassBrandHeader({
-    required this.onOpenAccount,
-    required this.accountTitle,
-  });
-
-  final VoidCallback onOpenAccount;
-  final String accountTitle;
-
-  @override
-  Widget build(BuildContext context) {
-    return _DeepGlassContainer(
-      borderRadius: 24,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Row(
-        children: [
-          Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFF0284C7), Color(0xFF38BDF8)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(
-                color: Colors.white.withValues(alpha: 0.65),
-                width: 1.4,
-              ),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0x350284C7),
-                  blurRadius: 10,
-                  offset: Offset(0, 4),
-                ),
-              ],
-            ),
-            child: const Icon(
-              Icons.shield_rounded,
-              color: Colors.white,
-              size: 24,
-            ),
-          ),
-          const SizedBox(width: 12),
-          const Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'Yegna Health',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w800,
-                    color: Color(0xFF08264A),
-                    letterSpacing: -0.2,
-                  ),
-                ),
-                SizedBox(height: 2),
-                Text(
-                  'Youth & Community Health',
-                  style: TextStyle(
-                    fontSize: 11.5,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF0284C7),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          InkWell(
-            onTap: onOpenAccount,
-            borderRadius: BorderRadius.circular(20),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 7),
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF0284C7), Color(0xFF0369A1)],
-                ),
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Color(0x300284C7),
-                    blurRadius: 8,
-                    offset: Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    accountTitle,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  const Icon(
-                    Icons.arrow_forward_rounded,
-                    size: 14,
-                    color: Colors.white,
-                  ),
-                ],
               ),
             ),
           ),
@@ -552,11 +585,12 @@ class _DeepGlassContainer extends StatelessWidget {
   }
 }
 
-/// Hero Welcome Card in Deep Glass
-class _DeepGlassWelcomeCard extends StatelessWidget {
-  const _DeepGlassWelcomeCard({
-    required this.welcomeTitle,
-    required this.welcomeBody,
+/// Dynamic Greeting Header in Deep Glass (Single clean Account CTA & no duplicates)
+class _DeepGlassGreetingHeader extends StatelessWidget {
+  const _DeepGlassGreetingHeader({
+    required this.greeting,
+    required this.displayName,
+    required this.subtitle,
     required this.confidentialText,
     required this.reviewedText,
     required this.guestReadyText,
@@ -564,8 +598,9 @@ class _DeepGlassWelcomeCard extends StatelessWidget {
     required this.onOpenAccount,
   });
 
-  final String welcomeTitle;
-  final String welcomeBody;
+  final String greeting;
+  final String? displayName;
+  final String subtitle;
   final String confidentialText;
   final String reviewedText;
   final String guestReadyText;
@@ -573,144 +608,469 @@ class _DeepGlassWelcomeCard extends StatelessWidget {
   final VoidCallback onOpenAccount;
 
   @override
-  Widget build(BuildContext context) => _DeepGlassContainer(
-        borderRadius: 28,
-        padding: const EdgeInsets.all(22),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Top Badge & Account Quick Link Row
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4.5),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.9),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: const Color(0xFFBAE6FD),
-                      width: 1,
+  Widget build(BuildContext context) {
+    final titleText = displayName != null && displayName!.isNotEmpty
+        ? '$greeting, $displayName! 👋'
+        : '$greeting! 👋';
+
+    return _DeepGlassContainer(
+      borderRadius: 28,
+      padding: const EdgeInsets.all(22),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // Youth Health Shield Avatar Badge
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 11, vertical: 5),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.92),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: const Color(0xFFBAE6FD),
+                    width: 1,
+                  ),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Color(0x120284C7),
+                      blurRadius: 8,
+                      offset: Offset(0, 2),
                     ),
+                  ],
+                ),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.shield_rounded,
+                      size: 15,
+                      color: Color(0xFF0284C7),
+                    ),
+                    SizedBox(width: 6),
+                    Text(
+                      'Yegna Health',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w800,
+                        color: Color(0xFF0369A1),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Single Account Pill Button (Keeps test finding accountTitle intact)
+              InkWell(
+                onTap: onOpenAccount,
+                borderRadius: BorderRadius.circular(20),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 13,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFF0284C7), Color(0xFF0369A1)],
+                    ),
+                    borderRadius: BorderRadius.circular(20),
                     boxShadow: const [
                       BoxShadow(
-                        color: Color(0x100284C7),
-                        blurRadius: 6,
+                        color: Color(0x300284C7),
+                        blurRadius: 8,
                         offset: Offset(0, 2),
                       ),
                     ],
                   ),
-                  child: const Row(
+                  child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(
-                        Icons.verified_rounded,
-                        size: 14,
-                        color: Color(0xFF0284C7),
-                      ),
-                      SizedBox(width: 5),
                       Text(
-                        'Youth Health Platform',
-                        style: TextStyle(
-                          fontSize: 11,
+                        accountTitle,
+                        style: const TextStyle(
+                          fontSize: 12,
                           fontWeight: FontWeight.w700,
-                          color: Color(0xFF0369A1),
+                          color: Colors.white,
                         ),
+                      ),
+                      const SizedBox(width: 5),
+                      const Icon(
+                        Icons.arrow_forward_rounded,
+                        size: 14,
+                        color: Colors.white,
                       ),
                     ],
                   ),
                 ),
-                // Account Pill Button (Keeps test finding accountTitle intact)
-                InkWell(
-                  onTap: onOpenAccount,
-                  borderRadius: BorderRadius.circular(20),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 11, vertical: 4.5),
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF0284C7), Color(0xFF0369A1)],
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Text(
+            titleText,
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.w900,
+                  color: const Color(0xFF08264A),
+                  letterSpacing: -0.5,
+                ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            subtitle,
+            style: const TextStyle(
+              fontSize: 13.5,
+              height: 1.5,
+              fontWeight: FontWeight.w500,
+              color: Color(0xFF1E3A54),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              _GlassFeatureBadge(
+                icon: Icons.shield_outlined,
+                text: confidentialText,
+              ),
+              _GlassFeatureBadge(
+                icon: Icons.auto_stories_outlined,
+                text: reviewedText,
+              ),
+              _GlassFeatureBadge(
+                icon: Icons.check_circle_outline_rounded,
+                text: guestReadyText,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Interactive Daily Youth Health Insight Card (Myth vs Fact)
+class _DeepGlassDailyTipCard extends StatelessWidget {
+  const _DeepGlassDailyTipCard({
+    required this.onOpenLearning,
+    required this.badgeText,
+    required this.mythFactText,
+    required this.titleText,
+    required this.bodyText,
+    required this.actionText,
+  });
+
+  final VoidCallback onOpenLearning;
+  final String badgeText;
+  final String mythFactText;
+  final String titleText;
+  final String bodyText;
+  final String actionText;
+
+  @override
+  Widget build(BuildContext context) {
+    return _DeepGlassContainer(
+      borderRadius: 24,
+      padding: const EdgeInsets.all(18),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF0284C7), Color(0xFF0EA5E9)],
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Color(0x250284C7),
+                      blurRadius: 6,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.lightbulb_rounded,
+                      size: 14,
+                      color: Colors.white,
+                    ),
+                    const SizedBox(width: 5),
+                    Text(
+                      badgeText,
+                      style: const TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.white,
                       ),
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Color(0x2E0284C7),
-                          blurRadius: 8,
-                          offset: Offset(0, 2),
-                        ),
-                      ],
                     ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          accountTitle,
-                          style: const TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white,
-                          ),
-                        ),
-                        const SizedBox(width: 4),
-                        const Icon(
-                          Icons.arrow_forward_rounded,
-                          size: 13,
-                          color: Colors.white,
-                        ),
-                      ],
-                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFE0F2FE),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: const Color(0xFFBAE6FD)),
+                ),
+                child: Text(
+                  mythFactText,
+                  style: const TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF0369A1),
                   ),
                 ),
-              ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            titleText,
+            style: const TextStyle(
+              fontSize: 15.5,
+              fontWeight: FontWeight.w800,
+              color: Color(0xFF08264A),
             ),
-            const SizedBox(height: 16),
-
-            // Main Title
-            Text(
-              welcomeTitle,
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.w900,
-                    color: const Color(0xFF08264A),
-                    letterSpacing: -0.5,
-                  ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            bodyText,
+            style: const TextStyle(
+              fontSize: 13,
+              height: 1.45,
+              color: Color(0xFF1E3A54),
             ),
-            const SizedBox(height: 10),
-
-            // Empowering Body Text
-            Text(
-              welcomeBody,
-              style: const TextStyle(
-                fontSize: 14,
-                height: 1.55,
-                fontWeight: FontWeight.w400,
-                color: Color(0xFF1E3A54),
+          ),
+          const SizedBox(height: 12),
+          Align(
+            alignment: Alignment.centerRight,
+            child: InkWell(
+              onTap: onOpenLearning,
+              borderRadius: BorderRadius.circular(12),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      actionText,
+                      style: const TextStyle(
+                        fontSize: 12.5,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF0284C7),
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    const Icon(
+                      Icons.arrow_forward_rounded,
+                      size: 14,
+                      color: Color(0xFF0284C7),
+                    ),
+                  ],
+                ),
               ),
             ),
-            const SizedBox(height: 18),
+          ),
+        ],
+      ),
+    );
+  }
+}
 
-            // Three Frosted Micro Badges
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                _GlassFeatureBadge(
-                  icon: Icons.shield_outlined,
-                  text: confidentialText,
-                ),
-                _GlassFeatureBadge(
-                  icon: Icons.auto_stories_outlined,
-                  text: reviewedText,
-                ),
-                _GlassFeatureBadge(
-                  icon: Icons.check_circle_outline_rounded,
-                  text: guestReadyText,
+/// 24/7 Toll-Free Emergency Helpline Quick Bar
+class _DeepGlassCrisisBar extends StatelessWidget {
+  const _DeepGlassCrisisBar({
+    required this.title,
+    required this.subtitle,
+    required this.actionLabel,
+    required this.onTap,
+  });
+
+  final String title;
+  final String subtitle;
+  final String actionLabel;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return _DeepGlassContainer(
+      borderRadius: 20,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      onTap: onTap,
+      child: Row(
+        children: [
+          Container(
+            width: 42,
+            height: 42,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: const LinearGradient(
+                colors: [Color(0xFFE11D48), Color(0xFFFB7185)],
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFFE11D48).withValues(alpha: 0.35),
+                  blurRadius: 10,
+                  offset: const Offset(0, 3),
                 ),
               ],
             ),
-          ],
+            child: const Icon(
+              Icons.phone_in_talk_rounded,
+              color: Colors.white,
+              size: 20,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 13.5,
+                    fontWeight: FontWeight.w800,
+                    color: Color(0xFF881337),
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  subtitle,
+                  style: const TextStyle(
+                    fontSize: 11.5,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF9F1239),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            decoration: BoxDecoration(
+              color: const Color(0xFFBE123C),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Text(
+              actionLabel,
+              style: const TextStyle(
+                fontSize: 11.5,
+                fontWeight: FontWeight.w700,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Bottom Sheet Emergency Helpline Tile with Telephone Action & Clipboard Feedback
+class _EmergencyHelplineTile extends StatelessWidget {
+  const _EmergencyHelplineTile({
+    required this.number,
+    required this.name,
+    required this.description,
+    required this.callActionLabel,
+    required this.copiedToast,
+  });
+
+  final String number;
+  final String name;
+  final String description;
+  final String callActionLabel;
+  final String copiedToast;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFF1F2),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: const Color(0xFFFECDD3),
+          width: 1.2,
         ),
-      );
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: const Color(0xFFE11D48),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              number,
+              style: const TextStyle(
+                fontSize: 17,
+                fontWeight: FontWeight.w900,
+                color: Colors.white,
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name,
+                  style: const TextStyle(
+                    fontSize: 13.5,
+                    fontWeight: FontWeight.w800,
+                    color: Color(0xFF881337),
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  description,
+                  style: const TextStyle(
+                    fontSize: 11.5,
+                    color: Color(0xFF9F1239),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          IconButton(
+            onPressed: () {
+              Clipboard.setData(ClipboardData(text: number));
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('$copiedToast: $number'),
+                  duration: const Duration(seconds: 2),
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
+            },
+            icon: const Icon(
+              Icons.phone_rounded,
+              color: Color(0xFFE11D48),
+            ),
+            tooltip: callActionLabel,
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class _GlassFeatureBadge extends StatelessWidget {
@@ -722,7 +1082,7 @@ class _GlassFeatureBadge extends StatelessWidget {
   Widget build(BuildContext context) => Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5.5),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.82),
+          color: Colors.white.withValues(alpha: 0.85),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: Colors.white.withValues(alpha: 0.95),
@@ -754,7 +1114,7 @@ class _GlassFeatureBadge extends StatelessWidget {
       );
 }
 
-/// 2x2 Action Cards in Deep Frosted Glass
+/// 2x2 Action Cards in Deep Frosted Glass with comfortable aspect ratio (1.15)
 class _DeepGlassActionCard extends StatelessWidget {
   const _DeepGlassActionCard({
     required this.icon,
@@ -778,20 +1138,19 @@ class _DeepGlassActionCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 3D Glass Halo Icon
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
-                  width: 48,
-                  height: 48,
+                  width: 46,
+                  height: 46,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: iconGradient,
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(15),
                     border: Border.all(
                       color: Colors.white.withValues(alpha: 0.5),
                       width: 1.4,
@@ -799,12 +1158,12 @@ class _DeepGlassActionCard extends StatelessWidget {
                     boxShadow: [
                       BoxShadow(
                         color: iconGradient.first.withValues(alpha: 0.40),
-                        blurRadius: 14,
-                        offset: const Offset(0, 5),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
                       ),
                     ],
                   ),
-                  child: Icon(icon, color: Colors.white, size: 26),
+                  child: Icon(icon, color: Colors.white, size: 24),
                 ),
                 Container(
                   width: 28,
@@ -818,35 +1177,31 @@ class _DeepGlassActionCard extends StatelessWidget {
                   ),
                   child: const Icon(
                     Icons.arrow_forward_rounded,
-                    size: 16,
+                    size: 15,
                     color: Color(0xFF0284C7),
                   ),
                 ),
               ],
             ),
             const Spacer(),
-
-            // Card Title (High Contrast, Bold)
             Text(
               title,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(
-                fontSize: 16,
+                fontSize: 15.5,
                 fontWeight: FontWeight.w800,
                 color: Color(0xFF08264A),
                 letterSpacing: -0.2,
               ),
             ),
-            const SizedBox(height: 5),
-
-            // Card Description (Comfortable reading, no truncation)
+            const SizedBox(height: 4),
             Text(
               description,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(
-                fontSize: 12,
+                fontSize: 11.5,
                 height: 1.35,
                 fontWeight: FontWeight.w400,
                 color: Color(0xFF2B445B),
@@ -904,157 +1259,432 @@ class _GlassSectionHeader extends StatelessWidget {
       );
 }
 
-/// Featured Health Articles Carousel in Deep Glass
-class _DeepGlassArticlesCarousel extends StatelessWidget {
-  const _DeepGlassArticlesCarousel({
-    required this.future,
+/// Featured Health Education Modules Carousel with Real Photos and Progress from Learn Page
+class _DeepGlassLearningModulesCarousel extends StatelessWidget {
+  const _DeepGlassLearningModulesCarousel({
+    required this.locale,
     required this.onOpenLearning,
     required this.onOpenArticle,
+    this.progressController,
+    this.assessmentRepository,
   });
 
-  final Future<CachedValue<List<ArticlePreview>>> future;
+  final Locale locale;
   final VoidCallback onOpenLearning;
   final ValueChanged<String> onOpenArticle;
+  final LearningProgressController? progressController;
+  final AssessmentRepository? assessmentRepository;
+
+  void _handleModuleTap(BuildContext context, LearningModuleItem module) {
+    if (module.id == 'module-07' && progressController != null) {
+      Navigator.of(context).push<void>(
+        MaterialPageRoute<void>(
+          builder: (_) => HivModuleDetailPage(
+            progressController: progressController!,
+            assessmentRepository: assessmentRepository,
+            onOpenQuiz: onOpenLearning,
+          ),
+        ),
+      );
+    } else {
+      _showModuleBottomSheet(context, module);
+    }
+  }
+
+  void _showModuleBottomSheet(BuildContext context, LearningModuleItem module) {
+    final l10n = AppLocalizations.of(context);
+    final isAmharic = locale.languageCode == 'am';
+
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (ctx) => BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.96),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x30000000),
+                blurRadius: 28,
+                offset: Offset(0, -6),
+              ),
+            ],
+          ),
+          padding: const EdgeInsets.fromLTRB(20, 14, 20, 32),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 44,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.withValues(alpha: 0.35),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(18),
+                child: Image.asset(
+                  module.imageAsset,
+                  height: 180,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => Container(
+                    height: 180,
+                    color: const Color(0xFFBAE6FD),
+                    child: const Icon(
+                      Icons.image_not_supported_rounded,
+                      color: Color(0xFF0284C7),
+                      size: 40,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF0284C7), Color(0xFF0EA5E9)],
+                      ),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      l10n.moduleLabel(module.number).toUpperCase(),
+                      style: const TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  const Spacer(),
+                  if (progressController?.progress?.articles
+                          .any((a) => a.articleId == module.id) ==
+                      true)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 9, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF16A34A),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.check_circle_rounded,
+                            color: Colors.white,
+                            size: 13,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            l10n.completedStatus,
+                            style: const TextStyle(
+                              fontSize: 10.5,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Text(
+                module.title(l10n),
+                style: const TextStyle(
+                  fontSize: 19,
+                  fontWeight: FontWeight.w800,
+                  color: Color(0xFF08264A),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                module.description(l10n),
+                style: const TextStyle(
+                  fontSize: 13.5,
+                  height: 1.5,
+                  color: Color(0xFF475569),
+                ),
+              ),
+              const SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.pop(ctx);
+                    onOpenLearning();
+                  },
+                  icon: const Icon(Icons.menu_book_rounded, size: 18),
+                  label: Text(
+                    isAmharic ? 'በትምህርት ገጽ ይመልከቱ' : 'Explore in Learn Tab',
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w700, fontSize: 14),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF0284C7),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    elevation: 2,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final isAmharic = locale.languageCode == 'am';
 
-    return FutureBuilder<CachedValue<List<ArticlePreview>>>(
-      future: future,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Padding(
-            padding: EdgeInsets.all(24),
-            child: Center(
-              child: CircularProgressIndicator(color: Color(0xFF0284C7)),
-            ),
-          );
-        }
+    Widget buildCarousel(Set<String> completedIds) {
+      return SizedBox(
+        height: 255,
+        child: ListView.separated(
+          scrollDirection: Axis.horizontal,
+          itemCount: kLearningModules.length,
+          separatorBuilder: (_, __) => const SizedBox(width: 14),
+          itemBuilder: (context, index) {
+            final module = kLearningModules[index];
+            final isCompleted = completedIds.contains(module.id);
 
-        final articles = snapshot.data?.value.take(4).toList() ?? [];
-        if (snapshot.hasError || articles.isEmpty) {
-          return _DeepGlassContainer(
-            borderRadius: 22,
-            padding: const EdgeInsets.all(18),
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFFE0F2FE), Color(0xFFBAE6FD)],
-                    ),
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                  child: const Icon(
-                    Icons.menu_book_rounded,
-                    color: Color(0xFF0284C7),
-                    size: 26,
-                  ),
-                ),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        l10n.noFeaturedArticlesTitle,
-                        style: const TextStyle(
-                          fontSize: 14.5,
-                          fontWeight: FontWeight.w800,
-                          color: Color(0xFF08264A),
-                        ),
-                      ),
-                      const SizedBox(height: 3),
-                      Text(
-                        l10n.noFeaturedArticlesBody,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: Color(0xFF4A6277),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          );
-        }
-
-        return SizedBox(
-          height: 185,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            itemCount: articles.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 14),
-            itemBuilder: (context, index) {
-              final article = articles[index];
-              return SizedBox(
-                width: 270,
-                child: _DeepGlassContainer(
-                  borderRadius: 22,
-                  padding: const EdgeInsets.all(16),
-                  onTap: () => onOpenArticle(article.id),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 9, vertical: 3.5),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFE0F2FE),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: const Text(
-                              'Education',
-                              style: TextStyle(
-                                fontSize: 10.5,
-                                fontWeight: FontWeight.w700,
-                                color: Color(0xFF0369A1),
+            return SizedBox(
+              width: 275,
+              child: _DeepGlassContainer(
+                borderRadius: 22,
+                padding: EdgeInsets.zero,
+                onTap: () => _handleModuleTap(context, module),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Top Hero Image Banner with Optical Glass Border & Floating Badges
+                    Stack(
+                      children: [
+                        ClipRRect(
+                          borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(22),
+                          ),
+                          child: Image.asset(
+                            module.imageAsset,
+                            height: 125,
+                            width: double.infinity,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) => Container(
+                              height: 125,
+                              color: const Color(0xFFBAE6FD),
+                              child: const Icon(
+                                Icons.image_not_supported_rounded,
+                                color: Color(0xFF0284C7),
                               ),
                             ),
                           ),
-                          const Spacer(),
-                          const Icon(
-                            Icons.arrow_forward_rounded,
-                            size: 16,
-                            color: Color(0xFF0284C7),
+                        ),
+                        // Soft subtle gradient overlay at bottom of photo
+                        Positioned(
+                          bottom: 0,
+                          left: 0,
+                          right: 0,
+                          child: Container(
+                            height: 35,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  Colors.transparent,
+                                  Colors.black.withValues(alpha: 0.35),
+                                ],
+                              ),
+                            ),
                           ),
-                        ],
-                      ),
-                      const Spacer(),
-                      Text(
-                        article.title,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontSize: 14.5,
-                          fontWeight: FontWeight.w800,
-                          color: Color(0xFF08264A),
+                        ),
+                        // Module Number Tag
+                        Positioned(
+                          top: 10,
+                          left: 10,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 3.5,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.black.withValues(alpha: 0.65),
+                              borderRadius: BorderRadius.circular(9),
+                              border: Border.all(
+                                color: Colors.white.withValues(alpha: 0.4),
+                                width: 0.8,
+                              ),
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Color(0x35000000),
+                                  blurRadius: 6,
+                                  offset: Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: Text(
+                              'MODULE ${module.number}',
+                              style: const TextStyle(
+                                fontSize: 9.5,
+                                fontWeight: FontWeight.w800,
+                                color: Colors.white,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                          ),
+                        ),
+                        // Completed Status Badge
+                        if (isCompleted)
+                          Positioned(
+                            top: 10,
+                            right: 10,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 3.5,
+                              ),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF16A34A)
+                                    .withValues(alpha: 0.92),
+                                borderRadius: BorderRadius.circular(9),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Color(0x4016A34A),
+                                    blurRadius: 6,
+                                    offset: Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(
+                                    Icons.check_circle_rounded,
+                                    size: 11,
+                                    color: Colors.white,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    l10n.completedStatus,
+                                    style: const TextStyle(
+                                      fontSize: 9.5,
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+
+                    // Bottom Content (Title, Description, and Action)
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(14, 10, 14, 12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              module.title(l10n),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontSize: 13.5,
+                                fontWeight: FontWeight.w800,
+                                color: Color(0xFF08264A),
+                                height: 1.25,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Expanded(
+                              child: Text(
+                                module.description(l10n),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  height: 1.35,
+                                  color: Color(0xFF4A6277),
+                                ),
+                              ),
+                            ),
+                            Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 3,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFE0F2FE),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Text(
+                                    isAmharic ? 'ጤና ትምህርት' : 'Youth Health',
+                                    style: const TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w700,
+                                      color: Color(0xFF0369A1),
+                                    ),
+                                  ),
+                                ),
+                                const Spacer(),
+                                const Icon(
+                                  Icons.arrow_forward_rounded,
+                                  size: 16,
+                                  color: Color(0xFF0284C7),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        article.summary,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontSize: 11.5,
-                          color: Color(0xFF4A6277),
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              );
-            },
-          ),
-        );
-      },
-    );
+              ),
+            );
+          },
+        ),
+      );
+    }
+
+    Set<String> getCompletedIds() {
+      return progressController?.progress?.articles
+              .map((a) => a.articleId)
+              .toSet() ??
+          const <String>{};
+    }
+
+    if (progressController != null) {
+      return ListenableBuilder(
+        listenable: progressController!,
+        builder: (context, _) => buildCarousel(getCompletedIds()),
+      );
+    }
+
+    return buildCarousel(const {});
   }
 }
 

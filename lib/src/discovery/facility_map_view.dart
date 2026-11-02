@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart' hide Path;
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../l10n/app_localizations.dart';
 import 'facility_detail_sheet.dart';
@@ -7,22 +10,29 @@ import 'facility_model.dart';
 class FacilityMapView extends StatefulWidget {
   const FacilityMapView({
     required this.facilities,
+    this.tileProvider,
+    this.mapController,
     super.key,
   });
 
   final List<Facility> facilities;
+  final TileProvider? tileProvider;
+  final MapController? mapController;
 
   @override
   State<FacilityMapView> createState() => _FacilityMapViewState();
 }
 
 class _FacilityMapViewState extends State<FacilityMapView> {
+  late final MapController _mapController;
   Facility? _selectedFacility;
-  double _zoomLevel = 1.0;
+
+  static const LatLng _centralAddisAbaba = LatLng(9.0222, 38.7468);
 
   @override
   void initState() {
     super.initState();
+    _mapController = widget.mapController ?? MapController();
     if (widget.facilities.isNotEmpty) {
       _selectedFacility = widget.facilities.first;
     }
@@ -38,203 +48,250 @@ class _FacilityMapViewState extends State<FacilityMapView> {
     }
   }
 
+  void _onFacilitySelected(Facility facility) {
+    setState(() {
+      _selectedFacility = facility;
+    });
+    _mapController.move(
+      LatLng(facility.latitude, facility.longitude),
+      14.5,
+    );
+  }
+
+  void _zoomIn() {
+    final currentZoom = _mapController.camera.zoom;
+    final nextZoom = (currentZoom + 1.0).clamp(9.0, 18.0);
+    _mapController.move(_mapController.camera.center, nextZoom);
+  }
+
+  void _zoomOut() {
+    final currentZoom = _mapController.camera.zoom;
+    final nextZoom = (currentZoom - 1.0).clamp(9.0, 18.0);
+    _mapController.move(_mapController.camera.center, nextZoom);
+  }
+
+  void _locateMe(BuildContext context, bool isAmharic) {
+    if (widget.facilities.isEmpty) return;
+    final target = widget.facilities.first;
+    _onFacilitySelected(target);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(isAmharic
+            ? 'በአቅራቢያዎ ያሉ የጤና ተቋማት ተገኝተዋል'
+            : 'Showing facilities closest to your location'),
+        backgroundColor: const Color(0xFF0284C7),
+        duration: const Duration(seconds: 2),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final isAmharic = Localizations.localeOf(context).languageCode == 'am';
 
-    return Stack(
-      children: [
-        // Map Canvas Area
-        ClipRRect(
-          borderRadius: BorderRadius.circular(24),
-          child: Container(
-            width: double.infinity,
-            height: double.infinity,
-            decoration: const BoxDecoration(
-              color: Color(0xFFE2E8F0),
-            ),
-            child: CustomPaint(
-              painter: _MapCanvasPainter(
-                facilities: widget.facilities,
-                selectedFacility: _selectedFacility,
-                zoomLevel: _zoomLevel,
-              ),
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  final w = constraints.maxWidth;
-                  final h = constraints.maxHeight;
+    final initialCenter = _selectedFacility != null
+        ? LatLng(_selectedFacility!.latitude, _selectedFacility!.longitude)
+        : (widget.facilities.isNotEmpty
+            ? LatLng(widget.facilities.first.latitude,
+                widget.facilities.first.longitude)
+            : _centralAddisAbaba);
 
-                  return Stack(
-                    children: [
-                      // Interactive Pin Buttons
-                      for (var i = 0; i < widget.facilities.length; i++) ...[
-                        _buildPin(
-                          facility: widget.facilities[i],
-                          index: i,
-                          total: widget.facilities.length,
-                          width: w,
-                          height: h,
-                        ),
-                      ],
-                    ],
-                  );
-                },
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(24),
+      child: Stack(
+        children: [
+          // Real OpenStreetMap View
+          FlutterMap(
+            mapController: _mapController,
+            options: MapOptions(
+              initialCenter: initialCenter,
+              initialZoom: 13.0,
+              minZoom: 8.5,
+              maxZoom: 18.5,
+              interactionOptions: const InteractionOptions(
+                flags: InteractiveFlag.all,
               ),
             ),
-          ),
-        ),
-
-        // Map Control Buttons (Zoom in, Zoom out, Locate Me)
-        Positioned(
-          top: 16,
-          right: 16,
-          child: Column(
             children: [
-              _MapFloatingButton(
-                icon: Icons.add_rounded,
-                onPressed: () {
-                  setState(() {
-                    _zoomLevel = (_zoomLevel + 0.2).clamp(0.8, 2.0);
-                  });
-                },
+              TileLayer(
+                urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                userAgentPackageName: 'com.yegnahealth.amharic',
+                tileProvider: widget.tileProvider,
+                maxZoom: 19,
               ),
-              const SizedBox(height: 8),
-              _MapFloatingButton(
-                icon: Icons.remove_rounded,
-                onPressed: () {
-                  setState(() {
-                    _zoomLevel = (_zoomLevel - 0.2).clamp(0.8, 2.0);
-                  });
-                },
-              ),
-              const SizedBox(height: 8),
-              _MapFloatingButton(
-                icon: Icons.my_location_rounded,
-                onPressed: () {
-                  if (widget.facilities.isNotEmpty) {
-                    setState(() {
-                      _selectedFacility = widget.facilities.first;
-                      _zoomLevel = 1.0;
-                    });
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(isAmharic
-                            ? 'በአቅራቢያዎ ያሉ የጤና ተቋማት ተገኝተዋል'
-                            : 'Showing facilities closest to your location'),
-                        backgroundColor: const Color(0xFF0284C7),
-                        duration: const Duration(seconds: 2),
-                        behavior: SnackBarBehavior.floating,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                    );
-                  }
-                },
+              MarkerLayer(
+                markers: [
+                  for (final facility in widget.facilities)
+                    Marker(
+                      point: LatLng(facility.latitude, facility.longitude),
+                      width: 52,
+                      height: 56,
+                      alignment: Alignment.topCenter,
+                      child: _buildPin(facility),
+                    ),
+                ],
               ),
             ],
           ),
-        ),
 
-        // Bottom Selected Facility Preview Card
-        if (_selectedFacility != null)
+          // Top Vignette gradient for clean contrast
           Positioned(
-            left: 16,
-            right: 16,
-            bottom: 16,
-            child: _FacilityPreviewCard(
-              facility: _selectedFacility!,
-              isAmharic: isAmharic,
-              l10n: l10n,
+            top: 0,
+            left: 0,
+            right: 0,
+            height: 48,
+            child: IgnorePointer(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.black.withValues(alpha: 0.12),
+                      Colors.transparent,
+                    ],
+                  ),
+                ),
+              ),
             ),
           ),
-      ],
+
+          // Map Control Floating Buttons (Zoom In, Zoom Out, Locate)
+          Positioned(
+            top: 16,
+            right: 16,
+            child: Column(
+              children: [
+                _MapFloatingButton(
+                  icon: Icons.add_rounded,
+                  tooltip: 'Zoom in',
+                  onPressed: _zoomIn,
+                ),
+                const SizedBox(height: 8),
+                _MapFloatingButton(
+                  icon: Icons.remove_rounded,
+                  tooltip: 'Zoom out',
+                  onPressed: _zoomOut,
+                ),
+                const SizedBox(height: 8),
+                _MapFloatingButton(
+                  icon: Icons.my_location_rounded,
+                  tooltip: 'My location',
+                  onPressed: () => _locateMe(context, isAmharic),
+                ),
+              ],
+            ),
+          ),
+
+          // Bottom Selected Facility Preview Card
+          if (_selectedFacility != null)
+            Positioned(
+              left: 14,
+              right: 14,
+              bottom: 14,
+              child: _FacilityPreviewCard(
+                facility: _selectedFacility!,
+                isAmharic: isAmharic,
+                l10n: l10n,
+              ),
+            ),
+        ],
+      ),
     );
   }
 
-  Widget _buildPin({
-    required Facility facility,
-    required int index,
-    required int total,
-    required double width,
-    required double height,
-  }) {
-    // Generate harmonious aesthetic map positions across the canvas
-    final positions = [
-      Offset(width * 0.46, height * 0.42), // Arada (Center)
-      Offset(width * 0.58, height * 0.26), // AAU Sidist Kilo (North-East)
-      Offset(width * 0.42, height * 0.62), // Kirkos (South-Central)
-      Offset(width * 0.76, height * 0.54), // Bole 17 (East)
-      Offset(width * 0.32, height * 0.82), // AASTU (Far South)
-    ];
-
-    final basePos = index < positions.length
-        ? positions[index]
-        : Offset(width * 0.5, height * 0.5);
+  Widget _buildPin(Facility facility) {
     final isSelected = _selectedFacility?.id == facility.id;
 
-    return Positioned(
-      left: basePos.dx - 22,
-      top: basePos.dy - 44,
-      child: GestureDetector(
-        onTap: () {
-          setState(() {
-            _selectedFacility = facility;
-          });
-        },
-        child: AnimatedScale(
-          scale: isSelected ? 1.25 : 1.0,
-          duration: const Duration(milliseconds: 220),
-          curve: Curves.easeOutBack,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(3),
-                decoration: BoxDecoration(
-                  color: isSelected
-                      ? const Color(0xFF0284C7)
-                      : const Color(0xFF0284C7).withValues(alpha: 0.85),
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: isSelected
-                          ? const Color(0x660284C7)
-                          : const Color(0x33000000),
-                      blurRadius: isSelected ? 12 : 6,
-                      spreadRadius: isSelected ? 3 : 0,
-                    ),
-                  ],
-                  border: Border.all(
-                    color: Colors.white,
-                    width: 2.2,
-                  ),
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () => _onFacilitySelected(facility),
+      child: AnimatedScale(
+        scale: isSelected ? 1.22 : 1.0,
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeOutBack,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: isSelected
+                      ? const [Color(0xFF0284C7), Color(0xFF0369A1)]
+                      : (facility.type == FacilityType.campusClinic
+                          ? const [Color(0xFF4F46E5), Color(0xFF4338CA)]
+                          : const [Color(0xFF0284C7), Color(0xFF0EA5E9)]),
                 ),
-                child: Icon(
-                  facility.type == FacilityType.campusClinic
-                      ? Icons.school_rounded
-                      : Icons.local_hospital_rounded,
+                shape: BoxShape.circle,
+                border: Border.all(
                   color: Colors.white,
-                  size: isSelected ? 20 : 16,
+                  width: isSelected ? 2.6 : 2.0,
                 ),
-              ),
-              Container(
-                width: 3,
-                height: 8,
-                decoration: const BoxDecoration(
-                  color: Color(0xFF0284C7),
-                  borderRadius: BorderRadius.vertical(
-                    bottom: Radius.circular(2),
+                boxShadow: [
+                  BoxShadow(
+                    color: isSelected
+                        ? const Color(0x770284C7)
+                        : const Color(0x40000000),
+                    blurRadius: isSelected ? 12 : 6,
+                    spreadRadius: isSelected ? 2 : 0,
+                    offset: const Offset(0, 3),
                   ),
-                ),
+                ],
               ),
-            ],
-          ),
+              child: Icon(
+                facility.type == FacilityType.campusClinic
+                    ? Icons.school_rounded
+                    : Icons.local_hospital_rounded,
+                color: Colors.white,
+                size: 19,
+              ),
+            ),
+            CustomPaint(
+              size: const Size(10, 6),
+              painter: _PinTipPainter(
+                color: isSelected
+                    ? const Color(0xFF0369A1)
+                    : (facility.type == FacilityType.campusClinic
+                        ? const Color(0xFF4338CA)
+                        : const Color(0xFF0284C7)),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
+}
+
+class _PinTipPainter extends CustomPainter {
+  const _PinTipPainter({required this.color});
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.fill;
+    final path = Path()
+      ..moveTo(0, 0)
+      ..lineTo(size.width, 0)
+      ..lineTo(size.width / 2, size.height)
+      ..close();
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant _PinTipPainter oldDelegate) =>
+      oldDelegate.color != color;
 }
 
 class _FacilityPreviewCard extends StatelessWidget {
@@ -248,17 +305,75 @@ class _FacilityPreviewCard extends StatelessWidget {
   final bool isAmharic;
   final AppLocalizations l10n;
 
+  Future<void> _launchDirections(BuildContext context) async {
+    final lat = facility.latitude;
+    final lng = facility.longitude;
+    final name = Uri.encodeComponent(facility.localizedName(isAmharic));
+
+    final geoUri = Uri.parse('geo:$lat,$lng?q=$lat,$lng($name)');
+    final webUri = Uri.parse(
+        'https://www.google.com/maps/dir/?api=1&destination=$lat,$lng');
+
+    try {
+      if (await canLaunchUrl(geoUri)) {
+        await launchUrl(geoUri, mode: LaunchMode.externalApplication);
+        return;
+      }
+    } catch (_) {}
+
+    try {
+      if (await canLaunchUrl(webUri)) {
+        await launchUrl(webUri, mode: LaunchMode.externalApplication);
+        return;
+      }
+    } catch (_) {}
+
+    if (context.mounted) {
+      showDialog<void>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: Text(facility.localizedName(isAmharic)),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(facility.localizedAddress(isAmharic)),
+              const SizedBox(height: 8),
+              Text(
+                '${l10n.landmarkLabel}: ${facility.localizedLandmark(isAmharic)}',
+                style: const TextStyle(fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 8),
+              Text('GPS: $lat, $lng',
+                  style:
+                      const TextStyle(fontFamily: 'monospace', fontSize: 12)),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(15),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Colors.white.withValues(alpha: 0.96),
           borderRadius: BorderRadius.circular(20),
           boxShadow: const [
             BoxShadow(
-              color: Color(0x240284C7),
-              blurRadius: 20,
-              offset: Offset(0, 6),
+              color: Color(0x2E0284C7),
+              blurRadius: 22,
+              offset: Offset(0, 8),
             ),
           ],
           border: Border.all(
@@ -280,7 +395,7 @@ class _FacilityPreviewCard extends StatelessWidget {
                         facility.localizedName(isAmharic),
                         style: const TextStyle(
                           fontFamily: 'PlusJakartaSans',
-                          fontSize: 15.5,
+                          fontSize: 15,
                           fontWeight: FontWeight.w800,
                           color: Color(0xFF08264A),
                         ),
@@ -348,38 +463,11 @@ class _FacilityPreviewCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 10),
                 Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      showDialog<void>(
-                        context: context,
-                        builder: (ctx) => AlertDialog(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          title: Text(l10n.directionsAction),
-                          content: Text(
-                            '${facility.localizedName(isAmharic)}\n\n'
-                            '${facility.localizedAddress(isAmharic)}\n'
-                            '${l10n.landmarkLabel}: ${facility.localizedLandmark(isAmharic)}',
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(ctx),
-                              child: const Text('OK'),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF0284C7),
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      padding: const EdgeInsets.symmetric(vertical: 8),
-                    ),
-                    child: Text(
+                  child: ElevatedButton.icon(
+                    onPressed: () => _launchDirections(context),
+                    icon: const Icon(Icons.navigation_rounded,
+                        size: 14, color: Colors.white),
+                    label: Text(
                       l10n.directionsAction,
                       style: const TextStyle(
                         fontFamily: 'PlusJakartaSans',
@@ -387,6 +475,14 @@ class _FacilityPreviewCard extends StatelessWidget {
                         fontWeight: FontWeight.w700,
                         color: Colors.white,
                       ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF0284C7),
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 8),
                     ),
                   ),
                 ),
@@ -401,111 +497,38 @@ class _MapFloatingButton extends StatelessWidget {
   const _MapFloatingButton({
     required this.icon,
     required this.onPressed,
+    this.tooltip,
   });
 
   final IconData icon;
   final VoidCallback onPressed;
+  final String? tooltip;
 
   @override
-  Widget build(BuildContext context) => Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          shape: BoxShape.circle,
-          boxShadow: [
-            BoxShadow(
-              color: Color(0x1A000000),
-              blurRadius: 10,
-              offset: Offset(0, 3),
-            ),
-          ],
-        ),
-        child: IconButton(
-          icon: Icon(icon, color: const Color(0xFF0284C7), size: 20),
-          onPressed: onPressed,
-          constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
-          padding: EdgeInsets.zero,
-        ),
-      );
-}
-
-class _MapCanvasPainter extends CustomPainter {
-  const _MapCanvasPainter({
-    required this.facilities,
-    required this.selectedFacility,
-    required this.zoomLevel,
-  });
-
-  final List<Facility> facilities;
-  final Facility? selectedFacility;
-  final double zoomLevel;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    // Map Background
-    final bgPaint = Paint()..color = const Color(0xFFE0F2FE);
-    canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), bgPaint);
-
-    // Park / Green zones
-    final greenPaint = Paint()..color = const Color(0xFFD1FAE5);
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(size.width * 0.1, size.height * 0.15, size.width * 0.28,
-            size.height * 0.22),
-        const Radius.circular(30),
+  Widget build(BuildContext context) {
+    final button = Container(
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: Color(0x1F000000),
+            blurRadius: 10,
+            offset: Offset(0, 3),
+          ),
+        ],
       ),
-      greenPaint,
-    );
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(size.width * 0.65, size.height * 0.65, size.width * 0.25,
-            size.height * 0.2),
-        const Radius.circular(25),
+      child: IconButton(
+        icon: Icon(icon, color: const Color(0xFF0284C7), size: 20),
+        onPressed: onPressed,
+        constraints: const BoxConstraints(minWidth: 42, minHeight: 42),
+        padding: EdgeInsets.zero,
       ),
-      greenPaint,
     );
 
-    // Major Arterial Roads
-    final roadPaint = Paint()
-      ..color = Colors.white
-      ..strokeWidth = 12 * zoomLevel
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round;
-
-    final secondaryRoadPaint = Paint()
-      ..color = const Color(0xFFF1F5F9)
-      ..strokeWidth = 6 * zoomLevel
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round;
-
-    // Churchill Road & Main Highway (Vertical artery)
-    final mainPath = Path()
-      ..moveTo(size.width * 0.5, 0)
-      ..cubicTo(size.width * 0.48, size.height * 0.35, size.width * 0.52,
-          size.height * 0.65, size.width * 0.38, size.height);
-    canvas.drawPath(mainPath, roadPaint);
-
-    // Bole Road (Diagonal artery)
-    final bolePath = Path()
-      ..moveTo(size.width * 0.46, size.height * 0.5)
-      ..lineTo(size.width, size.height * 0.7);
-    canvas.drawPath(bolePath, roadPaint);
-
-    // Ring Road / Cross streets
-    final ringPath = Path()
-      ..moveTo(0, size.height * 0.3)
-      ..cubicTo(size.width * 0.35, size.height * 0.28, size.width * 0.7,
-          size.height * 0.38, size.width, size.height * 0.32);
-    canvas.drawPath(ringPath, secondaryRoadPaint);
-
-    final southCross = Path()
-      ..moveTo(0, size.height * 0.72)
-      ..lineTo(size.width, size.height * 0.75);
-    canvas.drawPath(southCross, secondaryRoadPaint);
+    if (tooltip != null) {
+      return Tooltip(message: tooltip!, child: button);
+    }
+    return button;
   }
-
-  @override
-  bool shouldRepaint(covariant _MapCanvasPainter oldDelegate) =>
-      oldDelegate.zoomLevel != zoomLevel ||
-      oldDelegate.selectedFacility != selectedFacility ||
-      oldDelegate.facilities != facilities;
 }

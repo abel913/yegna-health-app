@@ -1,5 +1,52 @@
 # Phase status
 
+## Real Interactive Map & Turn-by-Turn GPS Navigation (2026-11-02)
+
+**Status: Completed & Verified.**
+- Replaced the synthetic CustomPaint canvas map placeholder in `lib/src/discovery/facility_map_view.dart` with a real, fully interactive OpenStreetMap experience:
+  - **Tile Layer & Rendering**: Powered by `flutter_map: ^8.3.2` and `latlong2: ^0.10.1`, streaming real street-level vector tiles of Addis Ababa (`https://tile.openstreetmap.org/`) with custom user-agent compliance and top vignette gradient.
+  - **Exact GPS Pin Markers**: Positioned pins at real geographic coordinates across Addis Ababa (Arada Youth Center, AAU Sidist Kilo Campus Clinic, Kirkos Youth Center, Bole 17 Health Center, AASTU Student Clinic).
+  - **Animated Selection & Camera Panning**: Tapping any pin smoothly animates the camera to that facility with zoom level 14.5 and selects the card.
+  - **Interactive Controls**: Floating zoom-in (+), zoom-out (-), and "Locate Me" buttons for quick navigation.
+  - **Turn-by-Turn GPS Directions**: Wired "Directions" action using `url_launcher: ^6.3.3` to launch native device navigation (`geo:` URI scheme) with fallback to Google Maps web navigation.
+  - **Android Integration**: Added `geo` and `https` intent queries in `android/app/src/main/AndroidManifest.xml`.
+- Local verification:
+  - `dart format lib test` passed (0 unformatted files).
+  - `flutter analyze --no-pub` passed (0 issues).
+  - `flutter test --no-pub` passed (all 42 tests passing).
+  - Built and deployed on Android emulator `emulator-5554` (`Medium_Phone_API_37.0`); verified live street tiles of Addis Ababa, pin selection, camera animation, and launch to Google Maps.
+
+## Youth Health Home Dashboard Redesign (2026-11-02)
+
+**Status: Completed & Verified.**
+- Implemented full-featured, optical glassmorphic Youth Health Home Dashboard matching the approved plan:
+  - **Dynamic Time-of-Day Greeting & User Profile Integration**:
+    - Automatic bilingual greeting adapting to device hour: 05:00–11:59 (`Good morning` / `እንደምን አደሩ` 🌅), 12:00–16:59 (`Good afternoon` / `እንደምን ዋሉ` ☀️), 17:00–04:59 (`Good evening` / `እንደምን አመሹ` 🌙).
+    - Dynamic reactive header via `ListenableBuilder(listenable: authController)` displaying authenticated youth's display name or welcoming guest subtitle.
+    - Single, clean optical glassmorphic `Account ->` pill button eliminating redundant header cards and stacked duplicate buttons while preserving `find.text(l10n.accountTitle).first` test contract.
+  - **Daily Adolescent Health Insight / Myth-Buster Card**:
+    - Frosted container highlighting vetted adolescent health facts (puberty hormonal changes, skin adjustments, emotional well-being).
+    - Dual badge header (`Daily Insight` + `💡 Myth vs Fact`) with single-tap deep link into educational modules.
+  - **24/7 Confidential Emergency Helpline Quick Bar & Modal**:
+    - Direct access to national toll-free helplines: **952** (Ministry of Health Emergency & Health Hotline) and **8335** (National Youth & Mental Health Line).
+    - Tapping opens a translucent blurred modal bottom sheet with direct telephone actions and clipboard copy toast notifications.
+  - **Refined 2x2 Feature Action Grid**:
+    - Updated child aspect ratio to `1.15` ensuring comfortable typography with zero text clipping or ellipsis truncation across English and Amharic.
+    - Direct routes to Self-Assessment, Health Education, Verified Facilities, and Peer Counselors.
+  - **Featured Health Topics Carousel with Real Modules & Photos**:
+    - Replaced disconnected text-only carousel with `_DeepGlassLearningModulesCarousel` consuming all 8 real educational modules (`kLearningModules`) and authentic illustration photos from `assets/images/learning/` (Puberty, STIs, Hepatitis, GBV, SRH, Mental Health, HIV/AIDS, Substance Abuse).
+    - Top hero image banner (`125dp`) with floating `MODULE ##` badge and live progress completion pill (`✔ Completed` / `✔ ተጠናቋል`) listening directly to `LearningProgressController`.
+    - Interactive deep links: Module 07 directly opens `HivModuleDetailPage` with PEP clinical protocols, video demonstrations, and 10-step condom usage; other modules open interactive detail bottom sheets with "Explore in Learn Tab" action.
+  - **Safeguarding Boundary Banner**:
+    - Reassuring footer emphasizing confidentiality, certified sourcing, and non-clinical education boundaries.
+  - **Localization & Test Suite**:
+    - 21 new ARB keys added in English and Amharic in `lib/l10n/app_en.arb` and `lib/l10n/app_am.arb`, cleanly generated with `flutter gen-l10n`.
+    - Created `test/home_page_test.dart` validating dynamic greetings, authenticated display name, myth vs fact interactions, helpline modal sheet, and full Amharic translation.
+- Local verification:
+  - `dart format lib test` passed with 0 unformatted files.
+  - `flutter analyze --no-pub` passed with 0 issues.
+  - `flutter test --no-pub` passed (all 42 tests passing).
+
 ## Peer Mentors & Youth Counselors Discovery Experience (2026-11-01)
 
 **Status: Phase 4 Peer Support Complete & Verified.**
