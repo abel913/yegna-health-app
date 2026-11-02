@@ -55,19 +55,61 @@ void main() {
   }
 
   testWidgets(
-      'Learn navigation opens articles and switching locale keeps article',
+      'Learn navigation opens dedicated module and quiz pages from carousel',
       (tester) async {
     final harness = await createHarness();
     await pumpHarness(tester, harness);
-    var l10n = AppLocalizations.of(tester.element(find.byType(NavigationBar)));
+    final l10n =
+        AppLocalizations.of(tester.element(find.byType(NavigationBar)));
 
     await tester.tap(find.text(l10n.learnTab).last);
     await tester.pumpAndSettle();
     expect(find.text(l10n.learningHeading), findsOneWidget);
     expect(find.text(l10n.moreButton).first, findsOneWidget);
 
+    // Tapping More on Module 1 opens PubertyDetailPage
     await tester.tap(find.text(l10n.moreButton).first);
     await tester.pumpAndSettle();
+    expect(find.text(l10n.module01Title), findsOneWidget);
+
+    // Navigate back to Learn page
+    await tester.tap(find.byIcon(Icons.arrow_back_rounded));
+    await tester.pumpAndSettle();
+
+    // Tapping Take Quiz on Module 1 opens PubertyQuizPage
+    await tester.tap(find.text(l10n.takeQuizButton).first);
+    await tester.pumpAndSettle();
+    expect(find.text(l10n.pubertyQuizTitle), findsOneWidget);
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    harness.authController.dispose();
+    harness.localeController.dispose();
+  });
+
+  testWidgets(
+      'ArticlePage renders repository article and switching locale keeps article',
+      (tester) async {
+    final harness = await createHarness();
+    final progressController = LearningProgressController(
+      repository: harness.progressStore,
+      authController: harness.authController,
+    );
+    await tester.pumpWidget(ListenableBuilder(
+      listenable: harness.localeController,
+      builder: (context, _) => MaterialApp(
+        locale: harness.localeController.locale,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: ArticlePage(
+          articleId: 'test-article',
+          repository: harness.education,
+          progressController: progressController,
+          localeController: harness.localeController,
+        ),
+      ),
+    ));
+    await tester.pumpAndSettle();
+    var l10n = await AppLocalizations.delegate.load(const Locale('en'));
     expect(find.text('Test article body.'), findsOneWidget);
 
     await tester.tap(find.byTooltip(l10n.selectLanguage));
@@ -83,20 +125,32 @@ void main() {
     expect(find.text(l10n.articleMarkedComplete), findsOneWidget);
     expect((await harness.progressStore.load(null)).articles, hasLength(1));
     await tester.pumpWidget(const SizedBox.shrink());
+    progressController.dispose();
     harness.authController.dispose();
     harness.localeController.dispose();
   });
 
-  testWidgets('assessment interaction requires answers and shows server result',
+  testWidgets(
+      'AssessmentSessionPage requires answers, submits and displays server result',
       (tester) async {
     final harness = await createHarness();
-    await pumpHarness(tester, harness);
-    final l10n =
-        AppLocalizations.of(tester.element(find.byType(NavigationBar)));
-    await tester.tap(find.text(l10n.learnTab).last);
+    final progressController = LearningProgressController(
+      repository: harness.progressStore,
+      authController: harness.authController,
+    );
+    final assessments = await harness.assessments.assessments('en');
+    await tester.pumpWidget(MaterialApp(
+      locale: const Locale('en'),
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: AssessmentSessionPage(
+        summary: assessments.first,
+        repository: harness.assessments,
+        progressController: progressController,
+      ),
+    ));
     await tester.pumpAndSettle();
-    await tester.tap(find.text(l10n.takeQuizButton).first);
-    await tester.pumpAndSettle();
+    final l10n = await AppLocalizations.delegate.load(const Locale('en'));
 
     expect(find.text('Test question one?'), findsOneWidget);
     await tester.tap(find.text(l10n.nextQuestion));
@@ -120,6 +174,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Test question one?'), findsOneWidget);
     await tester.pumpWidget(const SizedBox.shrink());
+    progressController.dispose();
     harness.authController.dispose();
     harness.localeController.dispose();
   });

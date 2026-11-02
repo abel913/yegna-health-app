@@ -4321,6 +4321,840 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Call Now'**
   String get callNowAction;
+
+  /// No description provided for @pubertyHeroDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Puberty is a natural transition from childhood into adulthood, characterized by physical, hormonal, and emotional changes that shape personal growth and health.'**
+  String get pubertyHeroDesc;
+
+  /// No description provided for @pubertyNoteText.
+  ///
+  /// In en, this message translates to:
+  /// **'Every adolescent experiences puberty at their own unique pace—practicing good hygiene, understanding bodily changes, and embracing self-confidence helps ensure a healthy transition.'**
+  String get pubertyNoteText;
+
+  /// No description provided for @pubertySection1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Understanding Puberty & Adolescence'**
+  String get pubertySection1Title;
+
+  /// No description provided for @pubertySection1Subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'The Natural Transition to Adulthood'**
+  String get pubertySection1Subtitle;
+
+  /// No description provided for @pubertySection1Intro.
+  ///
+  /// In en, this message translates to:
+  /// **'Puberty is the developmental stage where the body undergoes rapid hormonal and biological changes, enabling physical maturity and reproductive capability.'**
+  String get pubertySection1Intro;
+
+  /// No description provided for @pubertySection1Item1.
+  ///
+  /// In en, this message translates to:
+  /// **'Hormonal triggers: The pituitary gland releases hormones that signal the body to grow and develop secondary sexual characteristics.'**
+  String get pubertySection1Item1;
+
+  /// No description provided for @pubertySection1Item2.
+  ///
+  /// In en, this message translates to:
+  /// **'Individual timing: Puberty typically begins between ages 9 and 14, varying naturally among individuals.'**
+  String get pubertySection1Item2;
+
+  /// No description provided for @pubertySection1Item3.
+  ///
+  /// In en, this message translates to:
+  /// **'Normal variation: Growing at different rates than peers is completely normal and healthy.'**
+  String get pubertySection1Item3;
+
+  /// No description provided for @pubertySection2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Physical Changes in Females & Males'**
+  String get pubertySection2Title;
+
+  /// No description provided for @pubertySection2Subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Key Physical Milestones'**
+  String get pubertySection2Subtitle;
+
+  /// No description provided for @pubertySection2FemaleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Changes in Females:'**
+  String get pubertySection2FemaleTitle;
+
+  /// No description provided for @pubertySection2FemaleItem1.
+  ///
+  /// In en, this message translates to:
+  /// **'Breast development and widening of hips'**
+  String get pubertySection2FemaleItem1;
+
+  /// No description provided for @pubertySection2FemaleItem2.
+  ///
+  /// In en, this message translates to:
+  /// **'Growth of body hair (underarms and pubic area)'**
+  String get pubertySection2FemaleItem2;
+
+  /// No description provided for @pubertySection2FemaleItem3.
+  ///
+  /// In en, this message translates to:
+  /// **'Onset of menstruation (menarche), the monthly cycle preparing the uterus for potential pregnancy'**
+  String get pubertySection2FemaleItem3;
+
+  /// No description provided for @pubertySection2MaleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Changes in Males:'**
+  String get pubertySection2MaleTitle;
+
+  /// No description provided for @pubertySection2MaleItem1.
+  ///
+  /// In en, this message translates to:
+  /// **'Deepening of the voice (voice cracks and lower pitch)'**
+  String get pubertySection2MaleItem1;
+
+  /// No description provided for @pubertySection2MaleItem2.
+  ///
+  /// In en, this message translates to:
+  /// **'Growth of facial, underarm, chest, and pubic hair'**
+  String get pubertySection2MaleItem2;
+
+  /// No description provided for @pubertySection2MaleItem3.
+  ///
+  /// In en, this message translates to:
+  /// **'Growth of testicles and penis, along with nocturnal emissions (\'wet dreams\'), a normal involuntary release of semen during sleep'**
+  String get pubertySection2MaleItem3;
+
+  /// No description provided for @pubertySection3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Emotional & Psychological Changes'**
+  String get pubertySection3Title;
+
+  /// No description provided for @pubertySection3Subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Navigating Thoughts and Emotions'**
+  String get pubertySection3Subtitle;
+
+  /// No description provided for @pubertySection3Intro.
+  ///
+  /// In en, this message translates to:
+  /// **'Alongside physical transformations, teenagers experience significant cognitive and emotional growth.'**
+  String get pubertySection3Intro;
+
+  /// No description provided for @pubertySection3Item1.
+  ///
+  /// In en, this message translates to:
+  /// **'Mood shifts: Fluctuating hormones combined with social adjustments can cause temporary mood swings.'**
+  String get pubertySection3Item1;
+
+  /// No description provided for @pubertySection3Item2.
+  ///
+  /// In en, this message translates to:
+  /// **'Identity search: Developing self-awareness, exploring personal values, and discovering individuality.'**
+  String get pubertySection3Item2;
+
+  /// No description provided for @pubertySection3Item3.
+  ///
+  /// In en, this message translates to:
+  /// **'Desire for independence: Transitioning toward greater personal autonomy and decision-making.'**
+  String get pubertySection3Item3;
+
+  /// No description provided for @pubertySection3Item4.
+  ///
+  /// In en, this message translates to:
+  /// **'Peer influence: Friendships and social groups become central to emotional support and communication.'**
+  String get pubertySection3Item4;
+
+  /// No description provided for @pubertySection4Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Hygiene & Self-Care during Adolescence'**
+  String get pubertySection4Title;
+
+  /// No description provided for @pubertySection4Subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Habits for Lifelong Health'**
+  String get pubertySection4Subtitle;
+
+  /// No description provided for @pubertySection4Item1.
+  ///
+  /// In en, this message translates to:
+  /// **'Bathing and deodorants: Sweat glands become more active; daily washing with clean water and mild soap prevents body odor.'**
+  String get pubertySection4Item1;
+
+  /// No description provided for @pubertySection4Item2.
+  ///
+  /// In en, this message translates to:
+  /// **'Skin and face care: Increased oil production can cause acne; wash the face twice daily and avoid squeezing pimples.'**
+  String get pubertySection4Item2;
+
+  /// No description provided for @pubertySection4Item3.
+  ///
+  /// In en, this message translates to:
+  /// **'Menstrual hygiene: Change sanitary pads or clean supplies every 4–6 hours, wash hands before and after, and dispose of materials safely.'**
+  String get pubertySection4Item3;
+
+  /// No description provided for @pubertySection4Item4.
+  ///
+  /// In en, this message translates to:
+  /// **'Nutrition and sleep: Growing bodies require 8–10 hours of restful sleep each night and a balanced diet rich in vitamins and iron.'**
+  String get pubertySection4Item4;
+
+  /// No description provided for @pubertyQuizTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Adolescent Health & Puberty Quiz'**
+  String get pubertyQuizTitle;
+
+  /// No description provided for @pubertyQ1Text.
+  ///
+  /// In en, this message translates to:
+  /// **'Puberty is a natural biological transition where each person grows and develops at their own unique, normal pace.'**
+  String get pubertyQ1Text;
+
+  /// No description provided for @pubertyQ1Insight.
+  ///
+  /// In en, this message translates to:
+  /// **'Puberty begins at different times for everyone, usually between ages 9 and 14. Variance in timing and growth rate is completely normal.'**
+  String get pubertyQ1Insight;
+
+  /// No description provided for @pubertyQ2Text.
+  ///
+  /// In en, this message translates to:
+  /// **'What is a normal and healthy physical change that occurs during male puberty?'**
+  String get pubertyQ2Text;
+
+  /// No description provided for @pubertyQ2OptA.
+  ///
+  /// In en, this message translates to:
+  /// **'Deepening of the voice and growth of facial/body hair'**
+  String get pubertyQ2OptA;
+
+  /// No description provided for @pubertyQ2OptB.
+  ///
+  /// In en, this message translates to:
+  /// **'Sudden complete loss of appetite'**
+  String get pubertyQ2OptB;
+
+  /// No description provided for @pubertyQ2OptC.
+  ///
+  /// In en, this message translates to:
+  /// **'Permanent loss of sleep'**
+  String get pubertyQ2OptC;
+
+  /// No description provided for @pubertyQ2OptD.
+  ///
+  /// In en, this message translates to:
+  /// **'Inability to run or exercise'**
+  String get pubertyQ2OptD;
+
+  /// No description provided for @pubertyQ2Insight.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice deepening, growth spurts, and hair development are classic signs of testosterone production and healthy male pubertal development.'**
+  String get pubertyQ2Insight;
+
+  /// No description provided for @pubertyQ3Text.
+  ///
+  /// In en, this message translates to:
+  /// **'What is the recommended hygiene practice during menstruation?'**
+  String get pubertyQ3Text;
+
+  /// No description provided for @pubertyQ3OptA.
+  ///
+  /// In en, this message translates to:
+  /// **'Change sanitary products regularly (every 4–6 hours) and wash hands'**
+  String get pubertyQ3OptA;
+
+  /// No description provided for @pubertyQ3OptB.
+  ///
+  /// In en, this message translates to:
+  /// **'Avoid bathing until the cycle ends'**
+  String get pubertyQ3OptB;
+
+  /// No description provided for @pubertyQ3OptC.
+  ///
+  /// In en, this message translates to:
+  /// **'Use unwashed cloths repeatedly without drying'**
+  String get pubertyQ3OptC;
+
+  /// No description provided for @pubertyQ3OptD.
+  ///
+  /// In en, this message translates to:
+  /// **'Avoid drinking water throughout the cycle'**
+  String get pubertyQ3OptD;
+
+  /// No description provided for @pubertyQ3Insight.
+  ///
+  /// In en, this message translates to:
+  /// **'Regularly changing sanitary supplies every 4 to 6 hours and practicing good hand hygiene prevents irritation and bacterial infections.'**
+  String get pubertyQ3Insight;
+
+  /// No description provided for @pubertyQ4Text.
+  ///
+  /// In en, this message translates to:
+  /// **'Emotional changes and mood shifts during adolescence are common and can be managed through open communication, exercise, and adequate sleep.'**
+  String get pubertyQ4Text;
+
+  /// No description provided for @pubertyQ4Insight.
+  ///
+  /// In en, this message translates to:
+  /// **'Hormonal shifts and expanding social worlds make emotional fluctuations normal. Talking to trusted friends or family helps navigate these feelings.'**
+  String get pubertyQ4Insight;
+
+  /// No description provided for @stiQuizTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sexually Transmitted Infections Quiz'**
+  String get stiQuizTitle;
+
+  /// No description provided for @stiQ1Text.
+  ///
+  /// In en, this message translates to:
+  /// **'Many sexually transmitted infections (STIs) may show no noticeable symptoms at first, which is why regular screening and testing are essential.'**
+  String get stiQ1Text;
+
+  /// No description provided for @stiQ1Insight.
+  ///
+  /// In en, this message translates to:
+  /// **'Asymptomatic infections are common with STIs like chlamydia and gonorrhea. Regular testing allows prompt treatment before complications occur.'**
+  String get stiQ1Insight;
+
+  /// No description provided for @stiQ2Text.
+  ///
+  /// In en, this message translates to:
+  /// **'Which of the following is an effective method for reducing the risk of transmitting most STIs during sexual activity?'**
+  String get stiQ2Text;
+
+  /// No description provided for @stiQ2OptA.
+  ///
+  /// In en, this message translates to:
+  /// **'Consistent and correct use of male or female condoms'**
+  String get stiQ2OptA;
+
+  /// No description provided for @stiQ2OptB.
+  ///
+  /// In en, this message translates to:
+  /// **'Taking vitamins immediately before contact'**
+  String get stiQ2OptB;
+
+  /// No description provided for @stiQ2OptC.
+  ///
+  /// In en, this message translates to:
+  /// **'Washing with hot water after intercourse only'**
+  String get stiQ2OptC;
+
+  /// No description provided for @stiQ2OptD.
+  ///
+  /// In en, this message translates to:
+  /// **'Relying on herbal teas'**
+  String get stiQ2OptD;
+
+  /// No description provided for @stiQ2Insight.
+  ///
+  /// In en, this message translates to:
+  /// **'Condoms provide a physical barrier that drastically lowers the risk of STI transmission when used correctly every time.'**
+  String get stiQ2Insight;
+
+  /// No description provided for @stiQ3Text.
+  ///
+  /// In en, this message translates to:
+  /// **'If you test positive for a bacterial STI and start antibiotics, what is the most important instruction to follow?'**
+  String get stiQ3Text;
+
+  /// No description provided for @stiQ3OptA.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete the entire course of medication as prescribed by the healthcare worker'**
+  String get stiQ3OptA;
+
+  /// No description provided for @stiQ3OptB.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop medication the moment pain disappears'**
+  String get stiQ3OptB;
+
+  /// No description provided for @stiQ3OptC.
+  ///
+  /// In en, this message translates to:
+  /// **'Share the remaining pills with friends'**
+  String get stiQ3OptC;
+
+  /// No description provided for @stiQ3OptD.
+  ///
+  /// In en, this message translates to:
+  /// **'Double the dose on the final day'**
+  String get stiQ3OptD;
+
+  /// No description provided for @stiQ3Insight.
+  ///
+  /// In en, this message translates to:
+  /// **'Stopping antibiotics early can lead to bacterial resistance and reinfection. Always complete the entire prescribed treatment course.'**
+  String get stiQ3Insight;
+
+  /// No description provided for @stiQ4Text.
+  ///
+  /// In en, this message translates to:
+  /// **'When someone is diagnosed and treated for an STI, it is vital that sexual partners are also notified and treated to prevent reinfection.'**
+  String get stiQ4Text;
+
+  /// No description provided for @stiQ4Insight.
+  ///
+  /// In en, this message translates to:
+  /// **'Treating partners simultaneously breaks the cycle of transmission and protects both individuals from repeated health complications.'**
+  String get stiQ4Insight;
+
+  /// No description provided for @hepatitisQuizTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Hepatitis Module Quiz'**
+  String get hepatitisQuizTitle;
+
+  /// No description provided for @hepatitisQ1Text.
+  ///
+  /// In en, this message translates to:
+  /// **'Hepatitis primarily affects which vital organ in the human body?'**
+  String get hepatitisQ1Text;
+
+  /// No description provided for @hepatitisQ1OptA.
+  ///
+  /// In en, this message translates to:
+  /// **'Liver'**
+  String get hepatitisQ1OptA;
+
+  /// No description provided for @hepatitisQ1OptB.
+  ///
+  /// In en, this message translates to:
+  /// **'Lungs'**
+  String get hepatitisQ1OptB;
+
+  /// No description provided for @hepatitisQ1OptC.
+  ///
+  /// In en, this message translates to:
+  /// **'Heart'**
+  String get hepatitisQ1OptC;
+
+  /// No description provided for @hepatitisQ1OptD.
+  ///
+  /// In en, this message translates to:
+  /// **'Kidneys'**
+  String get hepatitisQ1OptD;
+
+  /// No description provided for @hepatitisQ1Insight.
+  ///
+  /// In en, this message translates to:
+  /// **'Hepatitis is an inflammation of the liver, which performs vital roles like filtering toxins, aiding digestion, and storing energy.'**
+  String get hepatitisQ1Insight;
+
+  /// No description provided for @hepatitisQ2Text.
+  ///
+  /// In en, this message translates to:
+  /// **'Hepatitis A and Hepatitis E are primarily spread through contaminated food and water, making clean water and hand hygiene key defenses.'**
+  String get hepatitisQ2Text;
+
+  /// No description provided for @hepatitisQ2Insight.
+  ///
+  /// In en, this message translates to:
+  /// **'Hepatitis A and E spread via the fecal-oral route. Thorough handwashing and safe drinking water effectively stop transmission.'**
+  String get hepatitisQ2Insight;
+
+  /// No description provided for @hepatitisQ3Text.
+  ///
+  /// In en, this message translates to:
+  /// **'Which safe and effective preventive measure protects against Hepatitis B infection?'**
+  String get hepatitisQ3Text;
+
+  /// No description provided for @hepatitisQ3OptA.
+  ///
+  /// In en, this message translates to:
+  /// **'Hepatitis B vaccination and screening'**
+  String get hepatitisQ3OptA;
+
+  /// No description provided for @hepatitisQ3OptB.
+  ///
+  /// In en, this message translates to:
+  /// **'Drinking caffeinated beverages'**
+  String get hepatitisQ3OptB;
+
+  /// No description provided for @hepatitisQ3OptC.
+  ///
+  /// In en, this message translates to:
+  /// **'Avoiding regular exercise'**
+  String get hepatitisQ3OptC;
+
+  /// No description provided for @hepatitisQ3OptD.
+  ///
+  /// In en, this message translates to:
+  /// **'Taking painkillers daily'**
+  String get hepatitisQ3OptD;
+
+  /// No description provided for @hepatitisQ3Insight.
+  ///
+  /// In en, this message translates to:
+  /// **'The Hepatitis B vaccine provides long-lasting immunity. Avoiding needle-sharing and safe sexual practices also prevent transmission.'**
+  String get hepatitisQ3Insight;
+
+  /// No description provided for @hepatitisQ4Text.
+  ///
+  /// In en, this message translates to:
+  /// **'Modern direct-acting antiviral (DAA) medications can successfully cure more than 95% of chronic Hepatitis C infections.'**
+  String get hepatitisQ4Text;
+
+  /// No description provided for @hepatitisQ4Insight.
+  ///
+  /// In en, this message translates to:
+  /// **'Advances in medicine have made chronic Hepatitis C a curable condition with an oral medication course lasting 8 to 12 weeks.'**
+  String get hepatitisQ4Insight;
+
+  /// No description provided for @gbvQuizTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Gender-Based Violence Quiz'**
+  String get gbvQuizTitle;
+
+  /// No description provided for @gbvQ1Text.
+  ///
+  /// In en, this message translates to:
+  /// **'Gender-based violence (GBV) includes physical, sexual, psychological, and economic harm directed at an individual based on their gender.'**
+  String get gbvQ1Text;
+
+  /// No description provided for @gbvQ1Insight.
+  ///
+  /// In en, this message translates to:
+  /// **'GBV encompasses all forms of coercive control, emotional abuse, physical harm, and economic deprivation rooted in unequal gender norms.'**
+  String get gbvQ1Insight;
+
+  /// No description provided for @gbvQ2Text.
+  ///
+  /// In en, this message translates to:
+  /// **'What is a vital immediate step when supporting a survivor who has experienced sexual violence?'**
+  String get gbvQ2Text;
+
+  /// No description provided for @gbvQ2OptA.
+  ///
+  /// In en, this message translates to:
+  /// **'Ensure their safety and seek confidential medical care (including PEP within 72 hours)'**
+  String get gbvQ2OptA;
+
+  /// No description provided for @gbvQ2OptB.
+  ///
+  /// In en, this message translates to:
+  /// **'Blame them for being in the situation'**
+  String get gbvQ2OptB;
+
+  /// No description provided for @gbvQ2OptC.
+  ///
+  /// In en, this message translates to:
+  /// **'Disclose their private story to neighborhood groups'**
+  String get gbvQ2OptC;
+
+  /// No description provided for @gbvQ2OptD.
+  ///
+  /// In en, this message translates to:
+  /// **'Ignore their feelings and tell them to stay silent'**
+  String get gbvQ2OptD;
+
+  /// No description provided for @gbvQ2Insight.
+  ///
+  /// In en, this message translates to:
+  /// **'Immediate safety, non-judgmental empathy, and clinical care—including post-exposure prophylaxis (PEP) within 72 hours—are crucial for survivors.'**
+  String get gbvQ2Insight;
+
+  /// No description provided for @gbvQ3Text.
+  ///
+  /// In en, this message translates to:
+  /// **'What role can men and boys play in preventing gender-based violence in our communities?'**
+  String get gbvQ3Text;
+
+  /// No description provided for @gbvQ3OptA.
+  ///
+  /// In en, this message translates to:
+  /// **'Promote respectful relationships, reject violent norms, and speak out against abuse'**
+  String get gbvQ3OptA;
+
+  /// No description provided for @gbvQ3OptB.
+  ///
+  /// In en, this message translates to:
+  /// **'Remain silent when witnessing harassment'**
+  String get gbvQ3OptB;
+
+  /// No description provided for @gbvQ3OptC.
+  ///
+  /// In en, this message translates to:
+  /// **'Enforce rigid traditional inequalities'**
+  String get gbvQ3OptC;
+
+  /// No description provided for @gbvQ3OptD.
+  ///
+  /// In en, this message translates to:
+  /// **'Discourage girls from attending school'**
+  String get gbvQ3OptD;
+
+  /// No description provided for @gbvQ3Insight.
+  ///
+  /// In en, this message translates to:
+  /// **'Engaging men and boys as allies and champions for gender equality creates safer, more supportive communities for everyone.'**
+  String get gbvQ3Insight;
+
+  /// No description provided for @gbvQ4Text.
+  ///
+  /// In en, this message translates to:
+  /// **'Survivors of GBV are never to blame for the violence committed against them.'**
+  String get gbvQ4Text;
+
+  /// No description provided for @gbvQ4Insight.
+  ///
+  /// In en, this message translates to:
+  /// **'Responsibility for violence rests solely on the perpetrator. Blaming survivors causes secondary trauma and deters people from seeking help.'**
+  String get gbvQ4Insight;
+
+  /// No description provided for @srhHeroDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Sexual and Reproductive Health is a state of physical, mental, and social well-being in all matters relating to the reproductive system, relationships, and fertility.'**
+  String get srhHeroDesc;
+
+  /// No description provided for @srhNoteText.
+  ///
+  /// In en, this message translates to:
+  /// **'Informed decisions, mutual respect, open communication, and access to healthcare ensure healthy relationships and empowered family planning.'**
+  String get srhNoteText;
+
+  /// No description provided for @srhSection1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Understanding Sexual & Reproductive Health'**
+  String get srhSection1Title;
+
+  /// No description provided for @srhSection1Subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A Holistic View of Wellbeing'**
+  String get srhSection1Subtitle;
+
+  /// No description provided for @srhSection1Intro.
+  ///
+  /// In en, this message translates to:
+  /// **'SRH is not just about avoiding disease; it is the right to make informed choices about your body, sexuality, and future.'**
+  String get srhSection1Intro;
+
+  /// No description provided for @srhSection1Item1.
+  ///
+  /// In en, this message translates to:
+  /// **'Physical health: Caring for reproductive organs, preventing infections, and accessing routine checkups.'**
+  String get srhSection1Item1;
+
+  /// No description provided for @srhSection1Item2.
+  ///
+  /// In en, this message translates to:
+  /// **'Emotional health: Developing positive self-esteem, healthy body image, and respect in intimate relationships.'**
+  String get srhSection1Item2;
+
+  /// No description provided for @srhSection1Item3.
+  ///
+  /// In en, this message translates to:
+  /// **'Social wellbeing: Experiencing equality, free from stigma, coercion, or gender discrimination.'**
+  String get srhSection1Item3;
+
+  /// No description provided for @srhSection2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Anatomy & Reproductive Systems'**
+  String get srhSection2Title;
+
+  /// No description provided for @srhSection2Subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How the Human Body Functions'**
+  String get srhSection2Subtitle;
+
+  /// No description provided for @srhSection2Intro.
+  ///
+  /// In en, this message translates to:
+  /// **'Understanding how female and male reproductive systems work empowers individuals to care for their bodily health.'**
+  String get srhSection2Intro;
+
+  /// No description provided for @srhSection2Item1.
+  ///
+  /// In en, this message translates to:
+  /// **'Female anatomy: Ovaries produce eggs and hormones (estrogen/progesterone); fallopian tubes guide eggs to the uterus where a baby can develop.'**
+  String get srhSection2Item1;
+
+  /// No description provided for @srhSection2Item2.
+  ///
+  /// In en, this message translates to:
+  /// **'Male anatomy: Testicles produce sperm and testosterone; sperm travels through the vas deferens and urethra.'**
+  String get srhSection2Item2;
+
+  /// No description provided for @srhSection2Item3.
+  ///
+  /// In en, this message translates to:
+  /// **'Conception: Fertilization occurs when a sperm cell joins with a mature egg, initiating pregnancy.'**
+  String get srhSection2Item3;
+
+  /// No description provided for @srhSection3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Family Planning & Contraceptive Methods'**
+  String get srhSection3Title;
+
+  /// No description provided for @srhSection3Subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Empowering Family and Life Planning'**
+  String get srhSection3Subtitle;
+
+  /// No description provided for @srhSection3Intro.
+  ///
+  /// In en, this message translates to:
+  /// **'Family planning allows individuals and couples to decide if and when to have children, promoting maternal and child health.'**
+  String get srhSection3Intro;
+
+  /// No description provided for @srhSection3Item1.
+  ///
+  /// In en, this message translates to:
+  /// **'Barrier methods: Male and female condoms prevent pregnancy and provide essential protection against STIs and HIV (dual protection).'**
+  String get srhSection3Item1;
+
+  /// No description provided for @srhSection3Item2.
+  ///
+  /// In en, this message translates to:
+  /// **'Hormonal methods: Pills, injections, implants, and IUDs offer reliable pregnancy prevention by regulating ovulation and cervical mucus.'**
+  String get srhSection3Item2;
+
+  /// No description provided for @srhSection3Item3.
+  ///
+  /// In en, this message translates to:
+  /// **'Permanent methods: Vasectomy and tubal ligation are voluntary surgical procedures for individuals who have completed their family size.'**
+  String get srhSection3Item3;
+
+  /// No description provided for @srhSection3Item4.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency contraception: Can prevent unintended pregnancy when taken within 72 to 120 hours following unprotected intercourse.'**
+  String get srhSection3Item4;
+
+  /// No description provided for @srhSection4Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Consent, Rights & Healthy Relationships'**
+  String get srhSection4Title;
+
+  /// No description provided for @srhSection4Subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Building Trust and Mutual Respect'**
+  String get srhSection4Subtitle;
+
+  /// No description provided for @srhSection4Intro.
+  ///
+  /// In en, this message translates to:
+  /// **'Healthy relationships are built on communication, equality, and uncoerced consent.'**
+  String get srhSection4Intro;
+
+  /// No description provided for @srhSection4Item1.
+  ///
+  /// In en, this message translates to:
+  /// **'What is consent: An active, freely given, reversible, and informed agreement between partners.'**
+  String get srhSection4Item1;
+
+  /// No description provided for @srhSection4Item2.
+  ///
+  /// In en, this message translates to:
+  /// **'Bodily autonomy: Everyone has the fundamental right to make decisions regarding their own body and reproductive health.'**
+  String get srhSection4Item2;
+
+  /// No description provided for @srhSection4Item3.
+  ///
+  /// In en, this message translates to:
+  /// **'Effective communication: Talking openly with partners about boundaries, health history, and contraception leads to safer relationships.'**
+  String get srhSection4Item3;
+
+  /// No description provided for @srhQuizTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sexual & Reproductive Health Quiz'**
+  String get srhQuizTitle;
+
+  /// No description provided for @srhQ1Text.
+  ///
+  /// In en, this message translates to:
+  /// **'Sexual and Reproductive Health includes physical, emotional, and social well-being, not merely the absence of disease.'**
+  String get srhQ1Text;
+
+  /// No description provided for @srhQ1Insight.
+  ///
+  /// In en, this message translates to:
+  /// **'The World Health Organization recognizes SRH as a positive, holistic state of wellbeing that respects individual rights and choices.'**
+  String get srhQ1Insight;
+
+  /// No description provided for @srhQ2Text.
+  ///
+  /// In en, this message translates to:
+  /// **'Which family planning method provides \'dual protection\' by preventing both unintended pregnancy AND sexually transmitted infections?'**
+  String get srhQ2Text;
+
+  /// No description provided for @srhQ2OptA.
+  ///
+  /// In en, this message translates to:
+  /// **'External or internal condoms'**
+  String get srhQ2OptA;
+
+  /// No description provided for @srhQ2OptB.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily oral contraceptive pills alone'**
+  String get srhQ2OptB;
+
+  /// No description provided for @srhQ2OptC.
+  ///
+  /// In en, this message translates to:
+  /// **'Injectable hormones alone'**
+  String get srhQ2OptC;
+
+  /// No description provided for @srhQ2OptD.
+  ///
+  /// In en, this message translates to:
+  /// **'Intrauterine devices (IUDs) alone'**
+  String get srhQ2OptD;
+
+  /// No description provided for @srhQ2Insight.
+  ///
+  /// In en, this message translates to:
+  /// **'While hormonal methods prevent pregnancy effectively, only barrier methods like condoms protect against STIs and HIV simultaneously.'**
+  String get srhQ2Insight;
+
+  /// No description provided for @srhQ3Text.
+  ///
+  /// In en, this message translates to:
+  /// **'Consent in any healthy relationship must be freely given, enthusiastic, informed, and can be changed or withdrawn at any time.'**
+  String get srhQ3Text;
+
+  /// No description provided for @srhQ3Insight.
+  ///
+  /// In en, this message translates to:
+  /// **'True consent requires freedom of choice without pressure or fear. Respecting partner boundaries is fundamental to healthy relationships.'**
+  String get srhQ3Insight;
+
+  /// No description provided for @srhQ4Text.
+  ///
+  /// In en, this message translates to:
+  /// **'Family planning enables individuals and couples to choose if, when, and how many children to have, supporting maternal and family well-being.'**
+  String get srhQ4Text;
+
+  /// No description provided for @srhQ4Insight.
+  ///
+  /// In en, this message translates to:
+  /// **'Family planning empowers women and families, reduces maternal complications, and supports healthy child development and financial stability.'**
+  String get srhQ4Insight;
 }
 
 class _AppLocalizationsDelegate

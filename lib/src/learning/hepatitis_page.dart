@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../l10n/app_localizations.dart';
 import 'assessment_repository.dart';
+import 'hepatitis_quiz_page.dart';
 import 'learning_progress_controller.dart';
 
 /// Detailed learning module screen for Module 03: Hepatitis.
@@ -710,6 +711,42 @@ class _HepatitisDetailPageState extends State<HepatitisDetailPage> {
                       onPressed: () => _markCompleted(context, l10n),
                     ),
                   ),
+
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFF005A71),
+                      side: const BorderSide(
+                        color: Color(0xFF005A71),
+                        width: 1.4,
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                    ),
+                    icon: const Icon(Icons.quiz_outlined),
+                    label: Text(
+                      l10n.takeQuizButton,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 15,
+                      ),
+                    ),
+                    onPressed: widget.onOpenQuiz ??
+                        () {
+                          Navigator.of(context).push<void>(
+                            MaterialPageRoute<void>(
+                              builder: (_) => HepatitisQuizPage(
+                                progressController: widget.progressController,
+                              ),
+                            ),
+                          );
+                        },
+                  ),
+                ),
               ],
             ),
           );

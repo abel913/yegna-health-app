@@ -2476,4 +2476,507 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get callNowAction => 'Call Now';
+
+  @override
+  String get pubertyHeroDesc =>
+      'Puberty is a natural transition from childhood into adulthood, characterized by physical, hormonal, and emotional changes that shape personal growth and health.';
+
+  @override
+  String get pubertyNoteText =>
+      'Every adolescent experiences puberty at their own unique pace—practicing good hygiene, understanding bodily changes, and embracing self-confidence helps ensure a healthy transition.';
+
+  @override
+  String get pubertySection1Title => 'Understanding Puberty & Adolescence';
+
+  @override
+  String get pubertySection1Subtitle => 'The Natural Transition to Adulthood';
+
+  @override
+  String get pubertySection1Intro =>
+      'Puberty is the developmental stage where the body undergoes rapid hormonal and biological changes, enabling physical maturity and reproductive capability.';
+
+  @override
+  String get pubertySection1Item1 =>
+      'Hormonal triggers: The pituitary gland releases hormones that signal the body to grow and develop secondary sexual characteristics.';
+
+  @override
+  String get pubertySection1Item2 =>
+      'Individual timing: Puberty typically begins between ages 9 and 14, varying naturally among individuals.';
+
+  @override
+  String get pubertySection1Item3 =>
+      'Normal variation: Growing at different rates than peers is completely normal and healthy.';
+
+  @override
+  String get pubertySection2Title => 'Physical Changes in Females & Males';
+
+  @override
+  String get pubertySection2Subtitle => 'Key Physical Milestones';
+
+  @override
+  String get pubertySection2FemaleTitle => 'Changes in Females:';
+
+  @override
+  String get pubertySection2FemaleItem1 =>
+      'Breast development and widening of hips';
+
+  @override
+  String get pubertySection2FemaleItem2 =>
+      'Growth of body hair (underarms and pubic area)';
+
+  @override
+  String get pubertySection2FemaleItem3 =>
+      'Onset of menstruation (menarche), the monthly cycle preparing the uterus for potential pregnancy';
+
+  @override
+  String get pubertySection2MaleTitle => 'Changes in Males:';
+
+  @override
+  String get pubertySection2MaleItem1 =>
+      'Deepening of the voice (voice cracks and lower pitch)';
+
+  @override
+  String get pubertySection2MaleItem2 =>
+      'Growth of facial, underarm, chest, and pubic hair';
+
+  @override
+  String get pubertySection2MaleItem3 =>
+      'Growth of testicles and penis, along with nocturnal emissions (\'wet dreams\'), a normal involuntary release of semen during sleep';
+
+  @override
+  String get pubertySection3Title => 'Emotional & Psychological Changes';
+
+  @override
+  String get pubertySection3Subtitle => 'Navigating Thoughts and Emotions';
+
+  @override
+  String get pubertySection3Intro =>
+      'Alongside physical transformations, teenagers experience significant cognitive and emotional growth.';
+
+  @override
+  String get pubertySection3Item1 =>
+      'Mood shifts: Fluctuating hormones combined with social adjustments can cause temporary mood swings.';
+
+  @override
+  String get pubertySection3Item2 =>
+      'Identity search: Developing self-awareness, exploring personal values, and discovering individuality.';
+
+  @override
+  String get pubertySection3Item3 =>
+      'Desire for independence: Transitioning toward greater personal autonomy and decision-making.';
+
+  @override
+  String get pubertySection3Item4 =>
+      'Peer influence: Friendships and social groups become central to emotional support and communication.';
+
+  @override
+  String get pubertySection4Title => 'Hygiene & Self-Care during Adolescence';
+
+  @override
+  String get pubertySection4Subtitle => 'Daily Habits for Lifelong Health';
+
+  @override
+  String get pubertySection4Item1 =>
+      'Bathing and deodorants: Sweat glands become more active; daily washing with clean water and mild soap prevents body odor.';
+
+  @override
+  String get pubertySection4Item2 =>
+      'Skin and face care: Increased oil production can cause acne; wash the face twice daily and avoid squeezing pimples.';
+
+  @override
+  String get pubertySection4Item3 =>
+      'Menstrual hygiene: Change sanitary pads or clean supplies every 4–6 hours, wash hands before and after, and dispose of materials safely.';
+
+  @override
+  String get pubertySection4Item4 =>
+      'Nutrition and sleep: Growing bodies require 8–10 hours of restful sleep each night and a balanced diet rich in vitamins and iron.';
+
+  @override
+  String get pubertyQuizTitle => 'Adolescent Health & Puberty Quiz';
+
+  @override
+  String get pubertyQ1Text =>
+      'Puberty is a natural biological transition where each person grows and develops at their own unique, normal pace.';
+
+  @override
+  String get pubertyQ1Insight =>
+      'Puberty begins at different times for everyone, usually between ages 9 and 14. Variance in timing and growth rate is completely normal.';
+
+  @override
+  String get pubertyQ2Text =>
+      'What is a normal and healthy physical change that occurs during male puberty?';
+
+  @override
+  String get pubertyQ2OptA =>
+      'Deepening of the voice and growth of facial/body hair';
+
+  @override
+  String get pubertyQ2OptB => 'Sudden complete loss of appetite';
+
+  @override
+  String get pubertyQ2OptC => 'Permanent loss of sleep';
+
+  @override
+  String get pubertyQ2OptD => 'Inability to run or exercise';
+
+  @override
+  String get pubertyQ2Insight =>
+      'Voice deepening, growth spurts, and hair development are classic signs of testosterone production and healthy male pubertal development.';
+
+  @override
+  String get pubertyQ3Text =>
+      'What is the recommended hygiene practice during menstruation?';
+
+  @override
+  String get pubertyQ3OptA =>
+      'Change sanitary products regularly (every 4–6 hours) and wash hands';
+
+  @override
+  String get pubertyQ3OptB => 'Avoid bathing until the cycle ends';
+
+  @override
+  String get pubertyQ3OptC => 'Use unwashed cloths repeatedly without drying';
+
+  @override
+  String get pubertyQ3OptD => 'Avoid drinking water throughout the cycle';
+
+  @override
+  String get pubertyQ3Insight =>
+      'Regularly changing sanitary supplies every 4 to 6 hours and practicing good hand hygiene prevents irritation and bacterial infections.';
+
+  @override
+  String get pubertyQ4Text =>
+      'Emotional changes and mood shifts during adolescence are common and can be managed through open communication, exercise, and adequate sleep.';
+
+  @override
+  String get pubertyQ4Insight =>
+      'Hormonal shifts and expanding social worlds make emotional fluctuations normal. Talking to trusted friends or family helps navigate these feelings.';
+
+  @override
+  String get stiQuizTitle => 'Sexually Transmitted Infections Quiz';
+
+  @override
+  String get stiQ1Text =>
+      'Many sexually transmitted infections (STIs) may show no noticeable symptoms at first, which is why regular screening and testing are essential.';
+
+  @override
+  String get stiQ1Insight =>
+      'Asymptomatic infections are common with STIs like chlamydia and gonorrhea. Regular testing allows prompt treatment before complications occur.';
+
+  @override
+  String get stiQ2Text =>
+      'Which of the following is an effective method for reducing the risk of transmitting most STIs during sexual activity?';
+
+  @override
+  String get stiQ2OptA =>
+      'Consistent and correct use of male or female condoms';
+
+  @override
+  String get stiQ2OptB => 'Taking vitamins immediately before contact';
+
+  @override
+  String get stiQ2OptC => 'Washing with hot water after intercourse only';
+
+  @override
+  String get stiQ2OptD => 'Relying on herbal teas';
+
+  @override
+  String get stiQ2Insight =>
+      'Condoms provide a physical barrier that drastically lowers the risk of STI transmission when used correctly every time.';
+
+  @override
+  String get stiQ3Text =>
+      'If you test positive for a bacterial STI and start antibiotics, what is the most important instruction to follow?';
+
+  @override
+  String get stiQ3OptA =>
+      'Complete the entire course of medication as prescribed by the healthcare worker';
+
+  @override
+  String get stiQ3OptB => 'Stop medication the moment pain disappears';
+
+  @override
+  String get stiQ3OptC => 'Share the remaining pills with friends';
+
+  @override
+  String get stiQ3OptD => 'Double the dose on the final day';
+
+  @override
+  String get stiQ3Insight =>
+      'Stopping antibiotics early can lead to bacterial resistance and reinfection. Always complete the entire prescribed treatment course.';
+
+  @override
+  String get stiQ4Text =>
+      'When someone is diagnosed and treated for an STI, it is vital that sexual partners are also notified and treated to prevent reinfection.';
+
+  @override
+  String get stiQ4Insight =>
+      'Treating partners simultaneously breaks the cycle of transmission and protects both individuals from repeated health complications.';
+
+  @override
+  String get hepatitisQuizTitle => 'Hepatitis Module Quiz';
+
+  @override
+  String get hepatitisQ1Text =>
+      'Hepatitis primarily affects which vital organ in the human body?';
+
+  @override
+  String get hepatitisQ1OptA => 'Liver';
+
+  @override
+  String get hepatitisQ1OptB => 'Lungs';
+
+  @override
+  String get hepatitisQ1OptC => 'Heart';
+
+  @override
+  String get hepatitisQ1OptD => 'Kidneys';
+
+  @override
+  String get hepatitisQ1Insight =>
+      'Hepatitis is an inflammation of the liver, which performs vital roles like filtering toxins, aiding digestion, and storing energy.';
+
+  @override
+  String get hepatitisQ2Text =>
+      'Hepatitis A and Hepatitis E are primarily spread through contaminated food and water, making clean water and hand hygiene key defenses.';
+
+  @override
+  String get hepatitisQ2Insight =>
+      'Hepatitis A and E spread via the fecal-oral route. Thorough handwashing and safe drinking water effectively stop transmission.';
+
+  @override
+  String get hepatitisQ3Text =>
+      'Which safe and effective preventive measure protects against Hepatitis B infection?';
+
+  @override
+  String get hepatitisQ3OptA => 'Hepatitis B vaccination and screening';
+
+  @override
+  String get hepatitisQ3OptB => 'Drinking caffeinated beverages';
+
+  @override
+  String get hepatitisQ3OptC => 'Avoiding regular exercise';
+
+  @override
+  String get hepatitisQ3OptD => 'Taking painkillers daily';
+
+  @override
+  String get hepatitisQ3Insight =>
+      'The Hepatitis B vaccine provides long-lasting immunity. Avoiding needle-sharing and safe sexual practices also prevent transmission.';
+
+  @override
+  String get hepatitisQ4Text =>
+      'Modern direct-acting antiviral (DAA) medications can successfully cure more than 95% of chronic Hepatitis C infections.';
+
+  @override
+  String get hepatitisQ4Insight =>
+      'Advances in medicine have made chronic Hepatitis C a curable condition with an oral medication course lasting 8 to 12 weeks.';
+
+  @override
+  String get gbvQuizTitle => 'Gender-Based Violence Quiz';
+
+  @override
+  String get gbvQ1Text =>
+      'Gender-based violence (GBV) includes physical, sexual, psychological, and economic harm directed at an individual based on their gender.';
+
+  @override
+  String get gbvQ1Insight =>
+      'GBV encompasses all forms of coercive control, emotional abuse, physical harm, and economic deprivation rooted in unequal gender norms.';
+
+  @override
+  String get gbvQ2Text =>
+      'What is a vital immediate step when supporting a survivor who has experienced sexual violence?';
+
+  @override
+  String get gbvQ2OptA =>
+      'Ensure their safety and seek confidential medical care (including PEP within 72 hours)';
+
+  @override
+  String get gbvQ2OptB => 'Blame them for being in the situation';
+
+  @override
+  String get gbvQ2OptC => 'Disclose their private story to neighborhood groups';
+
+  @override
+  String get gbvQ2OptD => 'Ignore their feelings and tell them to stay silent';
+
+  @override
+  String get gbvQ2Insight =>
+      'Immediate safety, non-judgmental empathy, and clinical care—including post-exposure prophylaxis (PEP) within 72 hours—are crucial for survivors.';
+
+  @override
+  String get gbvQ3Text =>
+      'What role can men and boys play in preventing gender-based violence in our communities?';
+
+  @override
+  String get gbvQ3OptA =>
+      'Promote respectful relationships, reject violent norms, and speak out against abuse';
+
+  @override
+  String get gbvQ3OptB => 'Remain silent when witnessing harassment';
+
+  @override
+  String get gbvQ3OptC => 'Enforce rigid traditional inequalities';
+
+  @override
+  String get gbvQ3OptD => 'Discourage girls from attending school';
+
+  @override
+  String get gbvQ3Insight =>
+      'Engaging men and boys as allies and champions for gender equality creates safer, more supportive communities for everyone.';
+
+  @override
+  String get gbvQ4Text =>
+      'Survivors of GBV are never to blame for the violence committed against them.';
+
+  @override
+  String get gbvQ4Insight =>
+      'Responsibility for violence rests solely on the perpetrator. Blaming survivors causes secondary trauma and deters people from seeking help.';
+
+  @override
+  String get srhHeroDesc =>
+      'Sexual and Reproductive Health is a state of physical, mental, and social well-being in all matters relating to the reproductive system, relationships, and fertility.';
+
+  @override
+  String get srhNoteText =>
+      'Informed decisions, mutual respect, open communication, and access to healthcare ensure healthy relationships and empowered family planning.';
+
+  @override
+  String get srhSection1Title => 'Understanding Sexual & Reproductive Health';
+
+  @override
+  String get srhSection1Subtitle => 'A Holistic View of Wellbeing';
+
+  @override
+  String get srhSection1Intro =>
+      'SRH is not just about avoiding disease; it is the right to make informed choices about your body, sexuality, and future.';
+
+  @override
+  String get srhSection1Item1 =>
+      'Physical health: Caring for reproductive organs, preventing infections, and accessing routine checkups.';
+
+  @override
+  String get srhSection1Item2 =>
+      'Emotional health: Developing positive self-esteem, healthy body image, and respect in intimate relationships.';
+
+  @override
+  String get srhSection1Item3 =>
+      'Social wellbeing: Experiencing equality, free from stigma, coercion, or gender discrimination.';
+
+  @override
+  String get srhSection2Title => 'Anatomy & Reproductive Systems';
+
+  @override
+  String get srhSection2Subtitle => 'How the Human Body Functions';
+
+  @override
+  String get srhSection2Intro =>
+      'Understanding how female and male reproductive systems work empowers individuals to care for their bodily health.';
+
+  @override
+  String get srhSection2Item1 =>
+      'Female anatomy: Ovaries produce eggs and hormones (estrogen/progesterone); fallopian tubes guide eggs to the uterus where a baby can develop.';
+
+  @override
+  String get srhSection2Item2 =>
+      'Male anatomy: Testicles produce sperm and testosterone; sperm travels through the vas deferens and urethra.';
+
+  @override
+  String get srhSection2Item3 =>
+      'Conception: Fertilization occurs when a sperm cell joins with a mature egg, initiating pregnancy.';
+
+  @override
+  String get srhSection3Title => 'Family Planning & Contraceptive Methods';
+
+  @override
+  String get srhSection3Subtitle => 'Empowering Family and Life Planning';
+
+  @override
+  String get srhSection3Intro =>
+      'Family planning allows individuals and couples to decide if and when to have children, promoting maternal and child health.';
+
+  @override
+  String get srhSection3Item1 =>
+      'Barrier methods: Male and female condoms prevent pregnancy and provide essential protection against STIs and HIV (dual protection).';
+
+  @override
+  String get srhSection3Item2 =>
+      'Hormonal methods: Pills, injections, implants, and IUDs offer reliable pregnancy prevention by regulating ovulation and cervical mucus.';
+
+  @override
+  String get srhSection3Item3 =>
+      'Permanent methods: Vasectomy and tubal ligation are voluntary surgical procedures for individuals who have completed their family size.';
+
+  @override
+  String get srhSection3Item4 =>
+      'Emergency contraception: Can prevent unintended pregnancy when taken within 72 to 120 hours following unprotected intercourse.';
+
+  @override
+  String get srhSection4Title => 'Consent, Rights & Healthy Relationships';
+
+  @override
+  String get srhSection4Subtitle => 'Building Trust and Mutual Respect';
+
+  @override
+  String get srhSection4Intro =>
+      'Healthy relationships are built on communication, equality, and uncoerced consent.';
+
+  @override
+  String get srhSection4Item1 =>
+      'What is consent: An active, freely given, reversible, and informed agreement between partners.';
+
+  @override
+  String get srhSection4Item2 =>
+      'Bodily autonomy: Everyone has the fundamental right to make decisions regarding their own body and reproductive health.';
+
+  @override
+  String get srhSection4Item3 =>
+      'Effective communication: Talking openly with partners about boundaries, health history, and contraception leads to safer relationships.';
+
+  @override
+  String get srhQuizTitle => 'Sexual & Reproductive Health Quiz';
+
+  @override
+  String get srhQ1Text =>
+      'Sexual and Reproductive Health includes physical, emotional, and social well-being, not merely the absence of disease.';
+
+  @override
+  String get srhQ1Insight =>
+      'The World Health Organization recognizes SRH as a positive, holistic state of wellbeing that respects individual rights and choices.';
+
+  @override
+  String get srhQ2Text =>
+      'Which family planning method provides \'dual protection\' by preventing both unintended pregnancy AND sexually transmitted infections?';
+
+  @override
+  String get srhQ2OptA => 'External or internal condoms';
+
+  @override
+  String get srhQ2OptB => 'Daily oral contraceptive pills alone';
+
+  @override
+  String get srhQ2OptC => 'Injectable hormones alone';
+
+  @override
+  String get srhQ2OptD => 'Intrauterine devices (IUDs) alone';
+
+  @override
+  String get srhQ2Insight =>
+      'While hormonal methods prevent pregnancy effectively, only barrier methods like condoms protect against STIs and HIV simultaneously.';
+
+  @override
+  String get srhQ3Text =>
+      'Consent in any healthy relationship must be freely given, enthusiastic, informed, and can be changed or withdrawn at any time.';
+
+  @override
+  String get srhQ3Insight =>
+      'True consent requires freedom of choice without pressure or fear. Respecting partner boundaries is fundamental to healthy relationships.';
+
+  @override
+  String get srhQ4Text =>
+      'Family planning enables individuals and couples to choose if, when, and how many children to have, supporting maternal and family well-being.';
+
+  @override
+  String get srhQ4Insight =>
+      'Family planning empowers women and families, reduces maternal complications, and supports healthy child development and financial stability.';
 }

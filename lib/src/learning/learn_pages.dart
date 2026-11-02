@@ -4,17 +4,24 @@ import '../../l10n/app_localizations.dart';
 import '../locale_controller.dart';
 import 'assessment_repository.dart';
 import 'education_repository.dart';
-import 'learning_models.dart';
-import 'learning_modules_carousel.dart';
+import 'gbv_page.dart';
+import 'gbv_quiz_page.dart';
+import 'hepatitis_page.dart';
+import 'hepatitis_quiz_page.dart';
 import 'hiv_module_page.dart';
 import 'hiv_quiz_page.dart';
-import 'hepatitis_page.dart';
-import 'gbv_page.dart';
+import 'learning_models.dart';
+import 'learning_modules_carousel.dart';
 import 'learning_progress_controller.dart';
-import 'sti_module_page.dart';
-import 'substance_abuse_page.dart';
 import 'mental_health_page.dart';
 import 'mental_health_quiz_page.dart';
+import 'puberty_page.dart';
+import 'puberty_quiz_page.dart';
+import 'srh_page.dart';
+import 'srh_quiz_page.dart';
+import 'sti_module_page.dart';
+import 'sti_quiz_page.dart';
+import 'substance_abuse_page.dart';
 import 'substance_abuse_quiz_page.dart';
 
 class LearnPage extends StatefulWidget {
@@ -259,9 +266,9 @@ class _LearnPageState extends State<LearnPage> {
 
   Future<void> _handleOpenModule(
       BuildContext context, LearningModuleItem module) async {
-    if (module.id == 'module-07') {
+    if (module.id == 'module-01') {
       Navigator.of(context).push<void>(MaterialPageRoute<void>(
-        builder: (_) => HivModuleDetailPage(
+        builder: (_) => PubertyDetailPage(
           progressController: widget.progressController,
           assessmentRepository: widget.assessmentRepository,
           onOpenQuiz: () => _handleOpenQuiz(context, module),
@@ -299,9 +306,29 @@ class _LearnPageState extends State<LearnPage> {
       ));
       return;
     }
+    if (module.id == 'module-05') {
+      Navigator.of(context).push<void>(MaterialPageRoute<void>(
+        builder: (_) => SrhDetailPage(
+          progressController: widget.progressController,
+          assessmentRepository: widget.assessmentRepository,
+          onOpenQuiz: () => _handleOpenQuiz(context, module),
+        ),
+      ));
+      return;
+    }
     if (module.id == 'module-06') {
       Navigator.of(context).push<void>(MaterialPageRoute<void>(
         builder: (_) => MentalHealthDetailPage(
+          progressController: widget.progressController,
+          assessmentRepository: widget.assessmentRepository,
+          onOpenQuiz: () => _handleOpenQuiz(context, module),
+        ),
+      ));
+      return;
+    }
+    if (module.id == 'module-07') {
+      Navigator.of(context).push<void>(MaterialPageRoute<void>(
+        builder: (_) => HivModuleDetailPage(
           progressController: widget.progressController,
           assessmentRepository: widget.assessmentRepository,
           onOpenQuiz: () => _handleOpenQuiz(context, module),
@@ -345,9 +372,41 @@ class _LearnPageState extends State<LearnPage> {
 
   Future<void> _handleOpenQuiz(
       BuildContext context, LearningModuleItem module) async {
-    if (module.id == 'module-07') {
+    if (module.id == 'module-01') {
       Navigator.of(context).push<void>(MaterialPageRoute<void>(
-        builder: (_) => HivQuizPage(
+        builder: (_) => PubertyQuizPage(
+          progressController: widget.progressController,
+        ),
+      ));
+      return;
+    }
+    if (module.id == 'module-02') {
+      Navigator.of(context).push<void>(MaterialPageRoute<void>(
+        builder: (_) => StiQuizPage(
+          progressController: widget.progressController,
+        ),
+      ));
+      return;
+    }
+    if (module.id == 'module-03') {
+      Navigator.of(context).push<void>(MaterialPageRoute<void>(
+        builder: (_) => HepatitisQuizPage(
+          progressController: widget.progressController,
+        ),
+      ));
+      return;
+    }
+    if (module.id == 'module-04') {
+      Navigator.of(context).push<void>(MaterialPageRoute<void>(
+        builder: (_) => GbvQuizPage(
+          progressController: widget.progressController,
+        ),
+      ));
+      return;
+    }
+    if (module.id == 'module-05') {
+      Navigator.of(context).push<void>(MaterialPageRoute<void>(
+        builder: (_) => SrhQuizPage(
           progressController: widget.progressController,
         ),
       ));
@@ -356,6 +415,14 @@ class _LearnPageState extends State<LearnPage> {
     if (module.id == 'module-06') {
       Navigator.of(context).push<void>(MaterialPageRoute<void>(
         builder: (_) => MentalHealthQuizPage(
+          progressController: widget.progressController,
+        ),
+      ));
+      return;
+    }
+    if (module.id == 'module-07') {
+      Navigator.of(context).push<void>(MaterialPageRoute<void>(
+        builder: (_) => HivQuizPage(
           progressController: widget.progressController,
         ),
       ));

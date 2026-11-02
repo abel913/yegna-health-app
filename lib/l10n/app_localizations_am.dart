@@ -2424,4 +2424,496 @@ class AppLocalizationsAm extends AppLocalizations {
 
   @override
   String get callNowAction => 'አሁን ይደውሉ';
+
+  @override
+  String get pubertyHeroDesc =>
+      'የጉርምስና ወቅት ከአካላዊ፣ ከሆርሞንና ከስሜታዊ ለውጦች ጋር የተያያዘ የተፈጥሮ የዕድገት ደረጃ ሲሆን የግል እድገትንና ጤናን ይቀርጻል።';
+
+  @override
+  String get pubertyNoteText =>
+      'እያንዳንዱ ታዳጊ ጉርምስናን በራሱ የተፈጥሮ ፍጥነት ያሳልፋል—ጥሩ የግል ንጽህናን መጠበቅ፣ የሰውነት ለውጦችን መረዳትና በራስ መተማመን ለጤናማ ሽግግር ወሳኝ ናቸው።';
+
+  @override
+  String get pubertySection1Title => 'የጉርምስና እና የታዳጊነት ወቅት ግንዛቤ';
+
+  @override
+  String get pubertySection1Subtitle => 'ወደ ጉልምስና የሚደረግ ተፈጥሯዊ ሽግግር';
+
+  @override
+  String get pubertySection1Intro =>
+      'ጉርምስና የሰውነት ሆርሞኖች እና አካላዊ እድገት በፍጥነት የሚከሰቱበት እና የመራባት አቅም የሚዳብርበት ተፈጥሯዊ የዕድገት ምዕራፍ ነው።';
+
+  @override
+  String get pubertySection1Item1 =>
+      'የሆርሞን ለውጦች፡ የፒቱታሪ እጢ ሆርሞኖችን በማመንጨት ሰውነት እንዲያድግና ሁለተኛ ደረጃ የፆታ ባህሪያትን እንዲያሳይ ያደርጋል።';
+
+  @override
+  String get pubertySection1Item2 =>
+      'የዕድሜ ልዩነት፡ ጉርምስና በአብዛኛው በ9 እና በ14 ዓመት መካከል የሚጀምር ሲሆን በሰዎች መካከል የጊዜ ልዩነት መኖሩ የተለመደ ነው።';
+
+  @override
+  String get pubertySection1Item3 =>
+      'የተፈጥሮ ልዩነቶች፡ ከእኩዮች ጋር በእድገት ፍጥነት መለያየት ሙሉ በሙሉ ተፈጥሯዊና ጤናማ ነው።';
+
+  @override
+  String get pubertySection2Title => 'በወንዶች እና በሴቶች ላይ የሚታዩ አካላዊ ለውጦች';
+
+  @override
+  String get pubertySection2Subtitle => 'ዋና ዋና የአካል ለውጦች';
+
+  @override
+  String get pubertySection2FemaleTitle => 'በሴቶች ላይ የሚታዩ ለውጦች፡';
+
+  @override
+  String get pubertySection2FemaleItem1 => 'የጡት ማደግ እና የወገብ መስፋት';
+
+  @override
+  String get pubertySection2FemaleItem2 => 'የብብትና የብልት አካባቢ ፀጉር ማብቀል';
+
+  @override
+  String get pubertySection2FemaleItem3 =>
+      'የወር አበባ መጀመር፣ ማህፀን ለእርግዝና ዝግጁ የሚሆንበት ወርሃዊ ተፈጥሯዊ ዑደት';
+
+  @override
+  String get pubertySection2MaleTitle => 'በወንዶች ላይ የሚታዩ ለውጦች፡';
+
+  @override
+  String get pubertySection2MaleItem1 => 'የድምፅ መጎርነን (የድምፅ መለወጥ)';
+
+  @override
+  String get pubertySection2MaleItem2 =>
+      'የፊት፣ የብብት፣ የደረት እና የብልት አካባቢ ፀጉር ማብቀል';
+
+  @override
+  String get pubertySection2MaleItem3 =>
+      'የዘር ፍሬ እና ብልት ማደግ እንዲሁም በእንቅልፍ ወቅት የሚከሰት የተፈጥሮ የዘር ፈሳሽ መፍሰስ';
+
+  @override
+  String get pubertySection3Title => 'ስሜታዊ እና ስነ-ልቦናዊ ለውጦች';
+
+  @override
+  String get pubertySection3Subtitle => 'ሀሳቦችንና ስሜቶችን በአግባቡ መምራት';
+
+  @override
+  String get pubertySection3Intro =>
+      'ከአካላዊ ለውጦች ጎን ለጎን ታዳጊዎች ከፍተኛ የአስተሳሰብ እና የስሜት እድገት ያሳያሉ።';
+
+  @override
+  String get pubertySection3Item1 =>
+      'የስሜት መዋዠቅ፡ የሆርሞን ለውጦች ከማህበራዊ ሁኔታዎች ጋር ተዳምረው ጊዜያዊ የስሜት መለዋወጥ ሊያስከትሉ ይችላሉ።';
+
+  @override
+  String get pubertySection3Item2 =>
+      'ማንነትን ማወቅ፡ ራስን መረዳት፣ የግል እሴቶችን መለየት እና የራስን ማንነት መገንባት።';
+
+  @override
+  String get pubertySection3Item3 =>
+      'ነጻነትን መፈለግ፡ የራስን ውሳኔ የመወሰን እና ነጻ የመሆን ፍላጎት መጨመር።';
+
+  @override
+  String get pubertySection3Item4 =>
+      'የጓደኞች ተጽዕኖ፡ ጓደኝነት እና ማህበራዊ ግንኙነቶች ለስሜታዊ ድጋፍ ትልቅ ቦታ ይኖራቸዋል።';
+
+  @override
+  String get pubertySection4Title => 'በጉርምስና ወቅት የግል ንጽህና እና እንክብካቤ';
+
+  @override
+  String get pubertySection4Subtitle => 'ለዕድሜ ልክ ጤና የሚጠቅሙ ዕለታዊ ልማዶች';
+
+  @override
+  String get pubertySection4Item1 =>
+      'መታጠብ እና የሰውነት ሽታ መከላከል፡ የላብ እጢዎች በከፍተኛ ሁኔታ ስለሚሰሩ በንጹህ ውሃ እና ሳሙና በየቀኑ መታጠብ የሰውነት ሽታን ይከላከላል።';
+
+  @override
+  String get pubertySection4Item2 =>
+      'የፊትና የቆዳ እንክብካቤ፡ የቅባት መጨመር የፊት ላይ ብጉር ሊያመጣ ስለሚችል ፊትን በቀን ሁለት ጊዜ መታጠብና ብጉርን አለመንካት ይመረጣል።';
+
+  @override
+  String get pubertySection4Item3 =>
+      'የወር አበባ ንጽህና፡ ሞዴስን በየ4-6 ሰዓቱ መቀየር፣ እጅን በሳሙና መታጠብ እና ያገለገሉ ቁሳቁሶችን በአግባቡ ማስወገድ።';
+
+  @override
+  String get pubertySection4Item4 =>
+      'ምግብና እንቅልፍ፡ በማደግ ላይ ያለ ሰውነት በቂ እረፍት (8-10 ሰዓታት እንቅልፍ) እና የተመጣጠነ ምግብ ይፈልጋል።';
+
+  @override
+  String get pubertyQuizTitle => 'የታዳጊዎች ጤና እና ጉርምስና ጥያቄዎች';
+
+  @override
+  String get pubertyQ1Text =>
+      'ጉርምስና እያንዳንዱ ሰው በራሱ የተፈጥሮ ፍጥነት የሚያልፍበት ጤናማና ተፈጥሯዊ የዕድገት ደረጃ ነው።';
+
+  @override
+  String get pubertyQ1Insight =>
+      'ጉርምስና ለሁሉም ሰው በተለያየ ዕድሜ (ከ9 እስከ 14 ዓመት) ይጀምራል፤ በጊዜውና በፍጥነቱ መለያየት ፍጹም ተፈጥሯዊ ነው።';
+
+  @override
+  String get pubertyQ2Text =>
+      'በወንዶች የጉርምስና ወቅት የሚታየው ጤናማና ተፈጥሯዊ አካላዊ ለውጥ የትኛው ነው?';
+
+  @override
+  String get pubertyQ2OptA => 'የድምፅ መጎርነን እና የፊት እንዲሁም የሰውነት ፀጉር ማብቀል';
+
+  @override
+  String get pubertyQ2OptB => 'ድንገተኛ የምግብ ፍላጎት ሙሉ በሙሉ መጥፋት';
+
+  @override
+  String get pubertyQ2OptC => 'እንቅልፍ ሙሉ በሙሉ ማጣት';
+
+  @override
+  String get pubertyQ2OptD => 'የአካል ብቃት እንቅስቃሴ ማድረግ አለመቻል';
+
+  @override
+  String get pubertyQ2Insight =>
+      'የድምፅ መጎርነን እና የሰውነት ፀጉር ማደግ የወንድ ሆርሞን (ቴስቶስትሮን) መመንጨትና የተፈጥሮ ዕድገት ምልክቶች ናቸው።';
+
+  @override
+  String get pubertyQ3Text => 'በወር አበባ ወቅት የሚመከረው ትክክለኛ የንጽህና አጠባበቅ የትኛው ነው?';
+
+  @override
+  String get pubertyQ3OptA => 'የንጽህና መጠበቂያ ቁሳቁሶችን በየ 4–6 ሰዓት መቀየር እና እጅን መታጠብ';
+
+  @override
+  String get pubertyQ3OptB => 'የወር አበባ እስኪያበቃ ድረስ አለመታጠብ';
+
+  @override
+  String get pubertyQ3OptC => 'ያልታጠበ ጨርቅን ደጋግሞ መጠቀም';
+
+  @override
+  String get pubertyQ3OptD => 'በዑደቱ ወቅት ውሃ አለመጠጣት';
+
+  @override
+  String get pubertyQ3Insight =>
+      'የንጽህና መጠበቂያዎችን በየ 4 እስከ 6 ሰዓቱ መቀየርና እጅን በሳሙና መታጠብ ኢንፌክሽንንና አለርጂን ይከላከላል።';
+
+  @override
+  String get pubertyQ4Text =>
+      'በጉርምስና ወቅት የሚታዩ የስሜት መለዋወጦች የተለመዱ ሲሆኑ በውይይት፣ በአካል ብቃት እንቅስቃሴ እና በበቂ እንቅልፍ ማስተካከል ይቻላል።';
+
+  @override
+  String get pubertyQ4Insight =>
+      'የሆርሞን ለውጦች የስሜት መዋዠቅ ሊፈጥሩ ይችላሉ፤ ከታመኑ ቤተሰቦች ወይም ጓደኞች ጋር መወያየት መፍትሄ ያመጣል።';
+
+  @override
+  String get stiQuizTitle => 'በግብረ-ሥጋ ግንኙነት የሚተላለፉ ኢንፌክሽኖች ጥያቄዎች';
+
+  @override
+  String get stiQ1Text =>
+      'ብዙ በግብረ-ሥጋ ግንኙነት የሚተላለፉ ኢንፌክሽኖች መጀመሪያ ላይ ምንም ምልክት ላያሳዩ ስለሚችሉ መደበኛ ምርመራ ማድረግ አስፈላጊ ነው።';
+
+  @override
+  String get stiQ1Insight =>
+      'እንደ ክላሚዲያ እና ጨብጥ ያሉ ኢንፌክሽኖች ብዙ ጊዜ ምልክት አያሳዩም፤ መደበኛ ምርመራ ማድረግ ችግሮች ሳይፈጠሩ ቀድሞ ለማከም ይረዳል።';
+
+  @override
+  String get stiQ2Text =>
+      'በግብረ-ሥጋ ግንኙነት ወቅት የአባላዘር በሽታዎችን የመተላለፍ እድል በከፍተኛ ደረጃ የሚቀንሰው የትኛው ነው?';
+
+  @override
+  String get stiQ2OptA => 'ኮንዶምን በአግባቡ እና ዘወትር መጠቀም';
+
+  @override
+  String get stiQ2OptB => 'ከግንኙነት በፊት ቫይታሚን መውሰድ';
+
+  @override
+  String get stiQ2OptC => 'ከግንኙነት በኋላ በሙቅ ውሃ ብቻ መታጠብ';
+
+  @override
+  String get stiQ2OptD => 'የባህል ሻይ መጠጣት';
+
+  @override
+  String get stiQ2Insight =>
+      'ኮንዶምን በአግባቡና በተከታታይ መጠቀም የአባላዘር ኢንፌክሽኖች እንዳይተላለፉ አስተማማኝ መከላከያ ይሆናል።';
+
+  @override
+  String get stiQ3Text =>
+      'በአባላዘር በሽታ ተይዘው ፀረ-ባክቴሪያ (አንቲባዮቲክ) መድኃኒት ከታዘዘልዎት መከተል ያለብዎት ዋነኛ መመሪያ የትኛው ነው?';
+
+  @override
+  String get stiQ3OptA => 'በጤና ባለሙያው የታዘዘውን ሙሉ የመድኃኒት መጠን ሳይቋርጡ መጨረስ';
+
+  @override
+  String get stiQ3OptB => 'ህመሙ ልክ ሲጠፋ መድኃኒቱን ወዲያው ማቆም';
+
+  @override
+  String get stiQ3OptC => 'የቀረውን መድኃኒት ለጓደኛ ማጋራት';
+
+  @override
+  String get stiQ3OptD => 'በመጨረሻው ቀን እጥፍ መጠን መውሰድ';
+
+  @override
+  String get stiQ3Insight =>
+      'መድኃኒትን ቀድሞ ማቆም ባክቴሪያው መድኃኒቱን እንዲላመድ እና በሽታው ተመልሶ እንዲመጣ ያደርጋል፤ ሙሉ መጠኑን መጨረስ ግድ ነው።';
+
+  @override
+  String get stiQ4Text =>
+      'አንድ ሰው በአባላዘር በሽታ ተመርምሮ ሲታከም በሽታው እንዳይደጋገም የፍቅር አጋሩም አብሮ መታከም አለበት።';
+
+  @override
+  String get stiQ4Insight =>
+      'አጋርን አብሮ ማከም ኢንፌክሽኑ ተመልሶ እንዳይተላለፍ እና ዘላቂ ጤና እንዲኖር ያደርጋል።';
+
+  @override
+  String get hepatitisQuizTitle => 'የሄፓታይተስ ሞጁል ጥያቄዎች';
+
+  @override
+  String get hepatitisQ1Text => 'ሄፓታይተስ በዋናነት የትኛውን የሰውነት ክፍል ያጠቃል?';
+
+  @override
+  String get hepatitisQ1OptA => 'ጉበት';
+
+  @override
+  String get hepatitisQ1OptB => 'ሳንባ';
+
+  @override
+  String get hepatitisQ1OptC => 'ልብ';
+
+  @override
+  String get hepatitisQ1OptD => 'ኩላሊት';
+
+  @override
+  String get hepatitisQ1Insight =>
+      'ሄፓታይተስ መርዞችን በማጣራት፣ ምግብ በማዋሃድና ሃይል በማከማቸት ወሳኝ የሆነውን ጉበት የሚያጠቃ እብጠት ነው።';
+
+  @override
+  String get hepatitisQ2Text =>
+      'ሄፓታይተስ ኤ እና ሄፓታይተስ ኢ በዋናነት በተበከለ ምግብ እና ውሃ ስለሚተላለፉ ንጹህ ውሃ መጠቀም እና እጅን መታጠብ ቁልፍ መከላከያ ናቸው።';
+
+  @override
+  String get hepatitisQ2Insight =>
+      'ሄፓታይተስ ኤ እና ኢ በምግብ እና በውሃ ይተላለፋሉ፤ እጅን በአግባቡ መታጠብና ንጹህ ውሃ መጠቀም ስርጭቱን ይከላከላል።';
+
+  @override
+  String get hepatitisQ3Text => 'ከሄፓታይተስ ቢ ኢንፌክሽን በአስተማማኝ ሁኔታ የሚከላከል የትኛው ነው?';
+
+  @override
+  String get hepatitisQ3OptA => 'የሄፓታይተስ ቢ ክትባት መከተብ እና ምርመራ ማድረግ';
+
+  @override
+  String get hepatitisQ3OptB => 'ካፌይን ያላቸውን መጠጦች አብዝቶ መጠጣት';
+
+  @override
+  String get hepatitisQ3OptC => 'የሰውነት እንቅስቃሴ አለማድረግ';
+
+  @override
+  String get hepatitisQ3OptD => 'የህመም ማስታገሻዎችን በየቀኑ መውሰድ';
+
+  @override
+  String get hepatitisQ3Insight =>
+      'የሄፓታይተስ ቢ ክትባት ዘላቂ የመከላከል አቅም ይሰጣል፤ ስለታማ ቁሳቁሶችን አለመጋራትም በሽታውን ይከላከላል።';
+
+  @override
+  String get hepatitisQ4Text =>
+      'ዘመናዊ የፀረ-ቫይረስ (DAA) መድኃኒቶች ከ95% በላይ የሚሆኑ የከፋ የሄፓታይተስ ሲ ታማሚዎችን ሙሉ በሙሉ ማዳን ይችላሉ።';
+
+  @override
+  String get hepatitisQ4Insight =>
+      'የህክምና እድገት ሥር የሰደደውን ሄፓታይተስ ሲ በ8-12 ሳምንታት የጡባዊ መድኃኒት ሙሉ በሙሉ ሊድን የሚችል አድርጎታል።';
+
+  @override
+  String get gbvQuizTitle => 'በፆታ ላይ የተመሰረተ ጥቃት ጥያቄዎች';
+
+  @override
+  String get gbvQ1Text =>
+      'በፆታ ላይ የተመሰረተ ጥቃት (GBV) በአንድ ግለሰብ ላይ በፆታው ምክንያት የሚደርስ አካላዊ፣ ወሲባዊ፣ ስነ-ልቦናዊ እና ኢኮኖሚያዊ ጉዳትን ያካትታል።';
+
+  @override
+  String get gbvQ1Insight =>
+      'GBV ጫናን፣ ስሜታዊ ጥቃትን፣ አካላዊ ጉዳትን እና የኢኮኖሚ ጥገኝነትን የሚያካትት ሰፊ ማህበራዊና የሰብአዊ መብት ጉዳይ ነው።';
+
+  @override
+  String get gbvQ2Text =>
+      'ፆታዊ ጥቃት የደረሰበትን ሰው በሚደገፍበት ወቅት ወሳኝ የሆነው አስቸኳይ እርምጃ የትኛው ነው?';
+
+  @override
+  String get gbvQ2OptA =>
+      'ደህንነታቸውን ማረጋገጥ እና ሚስጥራዊ የህክምና እርዳታ (በ72 ሰዓታት ውስጥ የPEP ህክምና) ማግኘት';
+
+  @override
+  String get gbvQ2OptB => 'ለደረሰባቸው ሁኔታ እነሱን ተጠያቂ ማድረግ';
+
+  @override
+  String get gbvQ2OptC => 'የግል ታሪካቸውን ለአካባቢው ሰው ማውራት';
+
+  @override
+  String get gbvQ2OptD => 'ስሜታቸውን ችላ ብሎ ዝም እንዲሉ መምከር';
+
+  @override
+  String get gbvQ2Insight =>
+      'አስቸኳይ ደህንነትን መጠበቅ፣ ያለፍርድ ማዳመጥ እና በ72 ሰዓታት ውስጥ የPEP ህክምና ማግኘት ለተጎጂዎች ህይወት አድን ነው።';
+
+  @override
+  String get gbvQ3Text =>
+      'ወንዶች በማህበረሰቡ ውስጥ በፆታ ላይ የተመሰረተ ጥቃትን ለመከላከል ምን አይነት አዎንታዊ ሚና መጫወት ይችላሉ?';
+
+  @override
+  String get gbvQ3OptA => 'የተከበረ ግንኙነትን ማበረታታት፣ የጥቃት ባህልን መቃወም እና ድምጽ መሆን';
+
+  @override
+  String get gbvQ3OptB => 'ጥቃት ሲፈጸም እያዩ ዝም ማለት';
+
+  @override
+  String get gbvQ3OptC => 'ጎጂ ልማዳዊ ድርጊቶችን ማበረታታት';
+
+  @override
+  String get gbvQ3OptD => 'ሴቶች ትምህርት እንዳይማሩ መከልከል';
+
+  @override
+  String get gbvQ3Insight =>
+      'ወንዶችን ለፆታ እኩልነት አጋርና ግንባር ቀደም ተሟጋች ማድረግ ለሁሉም ሰው አስተማማኝ ማህበረሰብ ይፈጥራል።';
+
+  @override
+  String get gbvQ4Text =>
+      'በፆታ ላይ የተመሰረተ ጥቃት ሰለባ የሆኑ ሰዎች ለደረሰባቸው ጥቃት ፈጽሞ ተጠያቂ አይደሉም።';
+
+  @override
+  String get gbvQ4Insight =>
+      'የጥቃቱ ሙሉ ተጠያቂ አጥፊው ብቻ ነው፤ ተጎጂዎችን ተጠያቂ ማድረግ ተጨማሪ ስነ-ልቦናዊ ጉዳት ያስከትላል።';
+
+  @override
+  String get srhHeroDesc =>
+      'የሥነ-ተዋልዶ ጤና ከመራቢያ አካላት፣ ከግንኙነቶች እና ከመውለድ ጋር በተያያዙ ጉዳዮች ሁሉ ሙሉ አካላዊ፣ አእምሮአዊ እና ማህበራዊ ደህንነት ነው።';
+
+  @override
+  String get srhNoteText =>
+      'በቂ ግንዛቤ ማግኘት፣ የጋራ መከባበር፣ ግልጽ ውይይት እና የጤና አገልግሎት ማግኘት ለጤናማ ግንኙነትና ለቤተሰብ እቅድ ወሳኝ ናቸው።';
+
+  @override
+  String get srhSection1Title => 'የሥነ-ተዋልዶ ጤና ግንዛቤ';
+
+  @override
+  String get srhSection1Subtitle => 'አጠቃላይ የጤና እና የደህንነት እይታ';
+
+  @override
+  String get srhSection1Intro =>
+      'የሥነ-ተዋልዶ ጤና በሽታ አለመኖር ብቻ ሳይሆን ስለ ሰውነት፣ ስለ ግንኙነት እና ስለወደፊት ህይወት በመረጃ ላይ የተመሰረተ ውሳኔ የማድረግ መብት ነው።';
+
+  @override
+  String get srhSection1Item1 =>
+      'አካላዊ ጤና፡ የመራቢያ አካላትን መንከባከብ፣ ኢንፌክሽኖችን መከላከል እና መደበኛ ምርመራ ማድረግ።';
+
+  @override
+  String get srhSection1Item2 =>
+      'ስሜታዊ ጤና፡ በራስ መተማመንን መገንባት፣ የሰውነት ገጽታን መውደድ እና በግንኙነት ውስጥ መከባበር።';
+
+  @override
+  String get srhSection1Item3 =>
+      'ማህበራዊ ደህንነት፡ ከአድሎ፣ ከማግለልና ከፆታ ልዩነት የጸዳ እኩልነትን መጎናጸፍ።';
+
+  @override
+  String get srhSection2Title => 'የሥነ-ተዋልዶ አካላት እና አሰራራቸው';
+
+  @override
+  String get srhSection2Subtitle => 'የሰውነት ተፈጥሯዊ አሰራር';
+
+  @override
+  String get srhSection2Intro =>
+      'የሴት እና የወንድ የስነ-ተዋልዶ አካላትን አሰራር መረዳት ሰዎች ጤናቸውን በአግባቡ እንዲጠብቁ ያግዛል።';
+
+  @override
+  String get srhSection2Item1 =>
+      'የሴት ስነ-ተዋልዶ አካላት፡ እንቁላል እና ሆርሞኖችን (ኢስትሮጅን/ፕሮጄስትሮን) ያመነጫሉ፤ ማህፀን ደግሞ ፅንስ የሚያድግበት ነው።';
+
+  @override
+  String get srhSection2Item2 =>
+      'የወንድ ስነ-ተዋልዶ አካላት፡ የዘር ፍሬ እና ቴስቶስትሮን ያመነጫሉ፤ ስፐርም በሽንት ቧንቧ በኩል ይጓዛል።';
+
+  @override
+  String get srhSection2Item3 =>
+      'ፅንስ መፈጠር፡ የወንድ የዘር ፈሳሽ ከበሰለ እንቁላል ጋር ሲገናኝ እርግዝና ይፈጠራል።';
+
+  @override
+  String get srhSection3Title => 'የቤተሰብ ምጣኔ እና የወሊድ መከላከያ ዘዴዎች';
+
+  @override
+  String get srhSection3Subtitle => 'የህይወት እና የቤተሰብ እቅድን ማሳለጥ';
+
+  @override
+  String get srhSection3Intro =>
+      'የቤተሰብ ምጣኔ ሰዎች መቼና ስንት ልጆች እንደሚፈልጉ እንዲወስኑ በማድረግ የእናቶችንና የህፃናትን ጤና ይጠብቃል።';
+
+  @override
+  String get srhSection3Item1 =>
+      'የኮንዶም አጠቃቀም፡ እርግዝናን የሚከላከል ከመሆኑም ባሻገር ከአባላዘር በሽታዎችና ከኤች አይ ቪ ይጠብቃል (ድርብ ጥበቃ)።';
+
+  @override
+  String get srhSection3Item2 =>
+      'የሆርሞን ዘዴዎች፡ የሚዋጡ ኪኒኖች፣ የመርፌ መድኃኒቶችና የእጅ ውስጥ መከላከያዎች አስተማማኝ ጥበቃ ይሰጣሉ።';
+
+  @override
+  String get srhSection3Item3 =>
+      'ዘላቂ ዘዴዎች፡ የልጅ ፍላጎታቸውን ላጠናቀቁ ሰዎች የሚደረጉ ቀላል የቀዶ ጥገና ዘዴዎች ናቸው።';
+
+  @override
+  String get srhSection3Item4 =>
+      'የአስቸኳይ ጊዜ መከላከያ፡ ጥንቃቄ የጎደለው ግንኙነት ከተፈጠረ በኋላ በ 72–120 ሰዓታት ውስጥ ያልተፈለገ እርግዝናን መከላከል ይችላል።';
+
+  @override
+  String get srhSection4Title => 'ስምምነት፣ መብቶች እና ጤናማ ግንኙነቶች';
+
+  @override
+  String get srhSection4Subtitle => 'መተማመን እና የጋራ መከባበርን መገንባት';
+
+  @override
+  String get srhSection4Intro =>
+      'ጤናማ ግንኙነቶች የሚገነቡት በግልጽ ውይይት፣ በእኩልነት እና ያለምንም ጫና በሚደረግ የጋራ ስምምነት ነው።';
+
+  @override
+  String get srhSection4Item1 =>
+      'ስምምነት ማለት፡ ያለ ምንም ማስገደድ፣ በነጻነትና በግልጽ የሚደረግ የሁለትዮሽ ስምምነት ነው።';
+
+  @override
+  String get srhSection4Item2 =>
+      'የሰውነት ራስን በራስ የማስተዳደር መብት፡ እያንዳንዱ ሰው በገዛ ሰውነቱ እና በስነ-ተዋልዶ ጤናው ላይ የመወሰን ሙሉ መብት አለው።';
+
+  @override
+  String get srhSection4Item3 =>
+      'ግልጽ ውይይት፡ ከአጋር ጋር ስለ ድንበሮች፣ ስለ ጤና ታሪክ እና ስለ መከላከያ ዘዴዎች መወያየት ግንኙነትን ጤናማ ያደርጋል።';
+
+  @override
+  String get srhQuizTitle => 'የሥነ-ተዋልዶ ጤና ጥያቄዎች';
+
+  @override
+  String get srhQ1Text =>
+      'የሥነ-ተዋልዶ ጤና የአካል፣ የአእምሮ እና የማህበራዊ ደህንነትን የሚያጠቃልል እንጂ በሽታ አለመኖር ብቻ አይደለም።';
+
+  @override
+  String get srhQ1Insight =>
+      'የዓለም ጤና ድርጅት የሥነ-ተዋልዶ ጤናን የግል መብትንና ምርጫን የሚያከብር ሁለንተናዊ ደህንነት እንደሆነ ይገልጻል።';
+
+  @override
+  String get srhQ2Text =>
+      'ያልተፈለገ እርግዝናን ከመከላከል በተጨማሪ ከአባላዘር በሽታዎች \'ድርብ ጥበቃ\' የሚሰጠው የትኛው ዘዴ ነው?';
+
+  @override
+  String get srhQ2OptA => 'የወንድ ወይም የሴት ኮንዶም';
+
+  @override
+  String get srhQ2OptB => 'የሚዋጡ የወሊድ መከላከያ ኪኒኖች ብቻ';
+
+  @override
+  String get srhQ2OptC => 'የመርፌ መከላከያዎች ብቻ';
+
+  @override
+  String get srhQ2OptD => 'የማህፀን ሉፕ ብቻ';
+
+  @override
+  String get srhQ2Insight =>
+      'የሆርሞን ዘዴዎች እርግዝናን ብቻ የሚከላከሉ ሲሆን ኮንዶም ግን እርግዝናንና የአባላዘር ኢንፌክሽኖችን በአንድ ላይ ይከላከላል።';
+
+  @override
+  String get srhQ3Text =>
+      'በማንኛውም ጤናማ ግንኙነት ውስጥ ስምምነት በነጻነት፣ በፍላጎትና በግልጽ የሚሰጥ እንዲሁም በማንኛውም ጊዜ ሊለወጥ የሚችል መሆን አለበት።';
+
+  @override
+  String get srhQ3Insight =>
+      'ትክክለኛ ስምምነት ያለምንም ማስገደድ የሚደረግ ነው፤ የአጋርን ድንበር ማክበር ለጤናማ ግንኙነት መሰረት ነው።';
+
+  @override
+  String get srhQ4Text =>
+      'የቤተሰብ ምጣኔ ሰዎች መቼና ስንት ልጆች መውለድ እንዳለባቸው እንዲመርጡ በማድረግ የእናቶችንና የቤተሰብን ደህንነት ያጠናክራል።';
+
+  @override
+  String get srhQ4Insight =>
+      'የቤተሰብ ምጣኔ ሴቶችን ያበረታል፣ የእናቶች ሞትን ይቀንሳል እንዲሁም ለልጆች ጤናማ እድገት አስተዋጽኦ ያደርጋል።';
 }
