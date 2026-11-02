@@ -604,6 +604,81 @@ class AppLocalizationsAm extends AppLocalizations {
   String get completedStatus => 'ተጠናቋል';
 
   @override
+  String get hivHeroDesc =>
+      'የኤችአይቪ/ኤድስ ቫይረስ የበሽታ መከላከያ ሥርዓትን የሚያዳክም ቫይረስ ሲሆን፣ በዋናነት ጥንቃቄ በጎደለው የግብረ-ሥጋ ግንኙነት፣ በደም ንክኪ እና ከእናት ወደ ልጅ ይተላለፋል፤ ነገር ግን በጥንቃቄ እርምጃዎች መከላከል እና ቀደም ብሎ በመመርመርና በህክምና (ART) በሚገባ መቆጣጠር ይቻላል።';
+
+  @override
+  String get hivNoteTitle => 'ማስታወሻ';
+
+  @override
+  String get hivNoteContent =>
+      'ኤችአይቪን መከላከል እና መቆጣጠር ይቻላል—ደህንነታቸው የተጠበቁ ባህሪያትን ይለማመዱ፣ ቀድመው ይመረመሩ፣ እና ጤናማ ሕይወት ለመምራትና ሌሎችን ለመጠበቅ ሕክምና (ART) ይጀምሩ።';
+
+  @override
+  String get learningSectionsTitle => 'የትምህርት ክፍሎች';
+
+  @override
+  String readSectionsCount(int count, int total) {
+    return '$count / $total ተነቧል';
+  }
+
+  @override
+  String get hivDefinitionTitle => 'ትርጓሜ';
+
+  @override
+  String get hivDefinitionSubtitle =>
+      'ኤችአይቪ/ኤድስ ምንድን ነው እና የሰውነትን በሽታ የመከላከል አቅም እንዴት ይጎዳል';
+
+  @override
+  String get hivDefinitionDesc1 =>
+      'ኤችአይቪ (የሰውነት በሽታ መከላከያ አቅም ማነስ ቫይረስ) በሰውነታችን ውስጥ ኢንፌክሽኖችን ለመዋጋት የሚረዱትን የሲዲ4 (CD4) ነጭ የደም ሴሎችን የሚያጠቃ ቫይረስ ነው።';
+
+  @override
+  String get hivDefinitionDesc2 =>
+      'ተገቢው ህክምና ካልተደረገለት ኤችአይቪ የሲዲ4 ሴሎችን ቀስ በቀስ በማውደም ወደ ኤድስ (የተገኘ የበሽታ መከላከያ አቅም ማጣት ደረጃ) ሊሸጋገር ይችላል።';
+
+  @override
+  String get hivDefinitionDesc3 =>
+      'በዘመናዊ የፀረ-ኤችአይቪ ህክምና (ART) አማካኝነት ቫይረሱን በደም ውስጥ እንዳይታወቅ በማድረግ ጤናማ እና ረጅም ዕድሜ መኖር ይቻላል (የማይታወቅ = የማይተላለፍ ወይም U=U)።';
+
+  @override
+  String get hivTransmissionTitle => 'የመተላለፊያ መንገዶች';
+
+  @override
+  String get hivTransmissionSubtitle =>
+      'ቫይረሱ እንዴት ይተላለፋል እና የተሳሳቱ ግንዛቤዎች ማስተካከያ';
+
+  @override
+  String get hivTransmissionIntro =>
+      'ኤችአይቪ የሚተላለፈው ቫይረሱ በደሙ ውስጥ ካለ ሰው የሰውነት ፈሳሾች ጋር በሚኖር ቀጥተኛ ንክኪ ነው፦';
+
+  @override
+  String get hivTransmissionItem1 =>
+      'ጥንቃቄ የጎደለው የግብረ-ሥጋ ግንኙነት (ያለ ኮንዶም የሚደረግ ግንኙነት)።';
+
+  @override
+  String get hivTransmissionItem2 =>
+      'የተበከሉ መርፌዎችን፣ ምላጮችን እና ስለታም የመበሻ ቁሳቁሶችን በጋራ መጠቀም።';
+
+  @override
+  String get hivTransmissionItem3 =>
+      'ከእናት ወደ ልጅ በእርግዝና፣ በወሊድ ወይም በማጥባት ወቅት (በቅድመ-ወሊድ PMTCT ክትትል ሙሉ በሙሉ መከላከል ይቻላል)።';
+
+  @override
+  String get hivTransmissionItem4 =>
+      'ያልተመረመረ ደም በመውሰድ (በሆስፒታሎች ጥብቅ ምርመራ ምክንያት እጅግ በጣም ያልተለመደ ነው)።';
+
+  @override
+  String get hivNotTransmittedTitle => 'ኤችአይቪ በማይተላለፍባቸው መንገዶች፦';
+
+  @override
+  String get hivNotTransmittedDesc =>
+      'ኤችአይቪ ከሰውነት ውጭ ሊቆይ አይችልም። በእጅ መጨባበጥ፣ ማቀፍ፣ ሳል፣ ማስነጠስ፣ መጸዳጃ ቤት ወይም የምግብ ዕቃዎችን በጋራ በመጠቀም እንዲሁም በወባ ትንኝ ንክሻ ፈጽሞ አይተላለፍም።';
+
+  @override
+  String get hivPreventionTitle => 'የኤችአይቪ መከላከያ መንገዶች';
+
+  @override
   String get moduleComingSoon => 'ሙሉ የትምህርት ክፍሎች እና ፈተናዎች ለቀጣዩ ደረጃ እየተዘጋጁ ነው።';
 
   @override

@@ -193,6 +193,36 @@
   "module08Title": "Substance Abuse",
   "module08Desc": "This module explores by helping you understand different types of substances, how they affect the brain and behavior, and how to maintain a healthy lifestyle.",
   "completedStatus": "Completed",
+  "hivHeroDesc": "HIV/AIDS is a virus that weakens the immune system, spreads mainly through unsafe sex, blood, and mother-to-child, but can be prevented with safe practices and managed effectively with early testing and treatment (ART).",
+  "hivNoteTitle": "Note",
+  "hivNoteContent": "HIV can be prevented and managed—practice safe behaviors, get tested early, and start treatment (ART) to live a healthy life and protect others.",
+  "learningSectionsTitle": "Learning Sections",
+  "readSectionsCount": "{count} / {total} read",
+  "@readSectionsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "hivDefinitionTitle": "Defination",
+  "hivDefinitionSubtitle": "What is HIV/AIDS and how it affects the immune system",
+  "hivDefinitionDesc1": "HIV (Human Immunodeficiency Virus) is a virus that attacks the body’s immune system, specifically the CD4 white blood cells (T cells) that fight off infections.",
+  "hivDefinitionDesc2": "Without treatment, HIV can gradually destroy CD4 cells over time and advance to AIDS (Acquired Immunodeficiency Syndrome), which is the most advanced clinical stage of HIV infection.",
+  "hivDefinitionDesc3": "With modern antiretroviral therapy (ART), people living with HIV suppress the virus to undetectable levels (Undetectable = Untransmittable or U=U), stay healthy, and live long, normal lives.",
+  "hivTransmissionTitle": "Mode of transmission",
+  "hivTransmissionSubtitle": "How the virus spreads and debunking common myths",
+  "hivTransmissionIntro": "HIV is transmitted through contact with specific body fluids from someone with a detectable viral load:",
+  "hivTransmissionItem1": "Unprotected sexual intercourse (vaginal or anal sex without condoms).",
+  "hivTransmissionItem2": "Sharing contaminated needles, syringes, tattoo needles, or sharp piercing instruments.",
+  "hivTransmissionItem3": "Mother-to-child transmission during pregnancy, childbirth, or breastfeeding (largely preventable through PMTCT care).",
+  "hivTransmissionItem4": "Transfusion of unscreened blood (extremely rare due to universal laboratory screening).",
+  "hivNotTransmittedTitle": "How HIV is NOT transmitted:",
+  "hivNotTransmittedDesc": "HIV cannot survive outside the human body. It is NOT spread through shaking hands, hugging, coughing, sneezing, sharing food or toilets, swimming pools, or mosquito/insect bites.",
+  "hivPreventionTitle": "HIV-Prevention",
   "moduleComingSoon": "Full module content and interactive quizzes will be configured in the next step.",
   "watchVideo": "Watch video",
   "waysToPreventHiv": "Ways to prevent HIV",

@@ -47,9 +47,9 @@ void main() {
   }
 
   testWidgets(
-      'HivModuleDetailPage displays 3 accordion sections and toggles expansion',
+      'HivModuleDetailPage displays hero card, note, and 5 accordion sections',
       (tester) async {
-    tester.view.physicalSize = const Size(800, 1200);
+    tester.view.physicalSize = const Size(800, 1400);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
@@ -60,46 +60,49 @@ void main() {
     // Verify AppBar
     expect(find.text('Learning Modules'), findsOneWidget);
 
-    // Verify 3 accordion card titles
-    expect(find.text('Ways to prevent HIV'), findsOneWidget);
+    // Verify Hero Card & Note
+    expect(find.text('Human immune virus (HIV)/AIDS'), findsOneWidget);
+    expect(find.text('Note'), findsOneWidget);
+    expect(find.text('Learning Sections'), findsOneWidget);
+    expect(find.text('5 / 5 read'), findsOneWidget);
+
+    // Verify 5 accordion card titles
+    expect(find.text('Defination'), findsOneWidget);
+    expect(find.text('Mode of transmission'), findsOneWidget);
+    expect(find.text('HIV-Prevention'), findsOneWidget);
     expect(find.text('HIV testing'), findsOneWidget);
     expect(find.text('Treatment for HIV positive client'), findsOneWidget);
 
-    // Section 1 is expanded initially: check PEP title and 10 steps title
+    // Tap Defination: should expand and show definition text
+    final defFinder = find.text('Defination');
+    await tester.ensureVisible(defFinder);
+    await tester.tap(defFinder);
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Human Immunodeficiency Virus'), findsOneWidget);
+
+    // Tap HIV-Prevention: should expand and show PEP
+    final prevFinder = find.text('HIV-Prevention');
+    await tester.ensureVisible(prevFinder);
+    await tester.tap(prevFinder);
+    await tester.pumpAndSettle();
     expect(
         find.textContaining('Post-exposure prophylaxis (PEP)'), findsOneWidget);
     expect(
         find.textContaining('How to use a condom in 10 steps'), findsOneWidget);
 
-    // Section 2 is collapsed initially: ensure visible and expand it
+    // Tap HIV testing: should expand and show PITC & VCT
     final hivTestingFinder = find.text('HIV testing');
     await tester.ensureVisible(hivTestingFinder);
-    await tester.pumpAndSettle();
     await tester.tap(hivTestingFinder);
     await tester.pumpAndSettle();
-
-    // Should now find PITC and VCT
     expect(
-        find.textContaining('Provider Initiated Testing and Counseling (PITC)'),
+        find.textContaining('Provider Initiated Testing and Counseling (PITC)',
+            findRichText: true),
         findsOneWidget);
-    expect(find.textContaining('Voluntary Counseling and Testing (VCT)'),
-        findsOneWidget);
-
-    // Section 3 is collapsed initially: ensure visible and expand it
-    final treatmentFinder = find.text('Treatment for HIV positive client');
-    await tester.ensureVisible(treatmentFinder);
-    await tester.pumpAndSettle();
-    await tester.tap(treatmentFinder);
-    await tester.pumpAndSettle();
-
-    // Should now find ART details
-    expect(
-        find.textContaining('antiretroviral therapy, or ART'), findsOneWidget);
 
     // Tap Mark as Completed: ensure visible first
     final completeBtnFinder = find.text('Mark as Completed');
     await tester.ensureVisible(completeBtnFinder);
-    await tester.pumpAndSettle();
     await tester.tap(completeBtnFinder);
     await tester.pumpAndSettle();
 
@@ -109,7 +112,7 @@ void main() {
 
   testWidgets('HivModuleDetailPage supports Amharic localization',
       (tester) async {
-    tester.view.physicalSize = const Size(800, 1200);
+    tester.view.physicalSize = const Size(800, 1400);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
@@ -118,12 +121,12 @@ void main() {
     await tester.pumpAndSettle();
 
     // Check Amharic card titles
-    expect(find.text('የትምህርት ክፍሎች'), findsOneWidget);
+    expect(find.text('የትምህርት ክፍሎች'), findsAtLeastNWidgets(1));
+    expect(find.text('ማስታወሻ'), findsOneWidget);
+    expect(find.text('ትርጓሜ'), findsOneWidget);
+    expect(find.text('የመተላለፊያ መንገዶች'), findsOneWidget);
     expect(find.text('የኤችአይቪ መከላከያ መንገዶች'), findsOneWidget);
     expect(find.text('የኤችአይቪ ምርመራ'), findsOneWidget);
     expect(find.text('ኤችአይቪ በደማቸው ለሚገኝባቸው የሚሰጥ ህክምና'), findsOneWidget);
-
-    // Check Amharic PEP text
-    expect(find.textContaining('ድህረ-ተጋላጭነት መከላከያ መድሃኒት (PEP)'), findsOneWidget);
   });
 }

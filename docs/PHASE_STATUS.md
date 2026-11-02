@@ -1,5 +1,23 @@
 # Phase status
 
+## HIV/AIDS Detail Learning Module Experience Rebuild (2026-11-02)
+
+**Status: Phase 3 Learning Module UI Rebuild Complete & Verified.**
+- Fully rebuilt the interactive detail page for Module 07 (HIV/AIDS) launched from the learning carousel's "More ->" action matching user-provided reference screenshots:
+  - **Top Hero Card**: Rounded card with authentic Ethiopian clinical rapid test illustration (`assets/images/learning/module_07_hiv.png`), bold title, and high-contrast educational synopsis.
+  - **Note Section**: Light-blue card with lightbulb icon highlighting core prevention and ART longevity messages.
+  - **Learning Sections Header**: Vertical azure indicator bar and dynamic reading progress badge (`5 / 5 read`).
+  - **5 Expandable Clinical Accordion Sections**:
+    1. **Defination**: CD4 cell mechanics, HIV vs. AIDS stages, and Undetectable = Untransmittable (U=U).
+    2. **Mode of transmission**: Direct body fluids, PMTCT prevention, and myth-busting highlight card.
+    3. **HIV-Prevention**: Post-Exposure Prophylaxis (PEP) protocols, 10-step condom usage guide, and embedded video demonstration cards.
+    4. **HIV testing**: Provider Initiated Testing and Counseling (PITC) and Voluntary Counseling and Testing (VCT) services.
+    5. **Treatment for HIV positive client**: Antiretroviral therapy (ART) regimen, early initiation, and public clinic availability.
+  - **Interactive Progression**: Tracks read sections dynamically, marks completion, and preserves quiz access.
+  - **Bilingual Localization**: Added matching strings in English and Amharic ARBs and regenerated with `flutter gen-l10n`.
+  - **Test Suite**: Updated `test/hiv_module_page_test.dart` to verify all 5 accordions, expansions, and Amharic localization. All 39 tests passing.
+
+
 ## Peer Mentors & Youth Counselors Discovery Experience (2026-11-01)
 
 **Status: Phase 4 Peer Support Complete & Verified.**

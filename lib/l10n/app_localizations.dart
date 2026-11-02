@@ -1196,6 +1196,126 @@ abstract class AppLocalizations {
   /// **'Completed'**
   String get completedStatus;
 
+  /// No description provided for @hivHeroDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'HIV/AIDS is a virus that weakens the immune system, spreads mainly through unsafe sex, blood, and mother-to-child, but can be prevented with safe practices and managed effectively with early testing and treatment (ART).'**
+  String get hivHeroDesc;
+
+  /// No description provided for @hivNoteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Note'**
+  String get hivNoteTitle;
+
+  /// No description provided for @hivNoteContent.
+  ///
+  /// In en, this message translates to:
+  /// **'HIV can be prevented and managed—practice safe behaviors, get tested early, and start treatment (ART) to live a healthy life and protect others.'**
+  String get hivNoteContent;
+
+  /// No description provided for @learningSectionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Learning Sections'**
+  String get learningSectionsTitle;
+
+  /// No description provided for @readSectionsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} / {total} read'**
+  String readSectionsCount(int count, int total);
+
+  /// No description provided for @hivDefinitionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Defination'**
+  String get hivDefinitionTitle;
+
+  /// No description provided for @hivDefinitionSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What is HIV/AIDS and how it affects the immune system'**
+  String get hivDefinitionSubtitle;
+
+  /// No description provided for @hivDefinitionDesc1.
+  ///
+  /// In en, this message translates to:
+  /// **'HIV (Human Immunodeficiency Virus) is a virus that attacks the body’s immune system, specifically the CD4 white blood cells (T cells) that fight off infections.'**
+  String get hivDefinitionDesc1;
+
+  /// No description provided for @hivDefinitionDesc2.
+  ///
+  /// In en, this message translates to:
+  /// **'Without treatment, HIV can gradually destroy CD4 cells over time and advance to AIDS (Acquired Immunodeficiency Syndrome), which is the most advanced clinical stage of HIV infection.'**
+  String get hivDefinitionDesc2;
+
+  /// No description provided for @hivDefinitionDesc3.
+  ///
+  /// In en, this message translates to:
+  /// **'With modern antiretroviral therapy (ART), people living with HIV suppress the virus to undetectable levels (Undetectable = Untransmittable or U=U), stay healthy, and live long, normal lives.'**
+  String get hivDefinitionDesc3;
+
+  /// No description provided for @hivTransmissionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Mode of transmission'**
+  String get hivTransmissionTitle;
+
+  /// No description provided for @hivTransmissionSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How the virus spreads and debunking common myths'**
+  String get hivTransmissionSubtitle;
+
+  /// No description provided for @hivTransmissionIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'HIV is transmitted through contact with specific body fluids from someone with a detectable viral load:'**
+  String get hivTransmissionIntro;
+
+  /// No description provided for @hivTransmissionItem1.
+  ///
+  /// In en, this message translates to:
+  /// **'Unprotected sexual intercourse (vaginal or anal sex without condoms).'**
+  String get hivTransmissionItem1;
+
+  /// No description provided for @hivTransmissionItem2.
+  ///
+  /// In en, this message translates to:
+  /// **'Sharing contaminated needles, syringes, tattoo needles, or sharp piercing instruments.'**
+  String get hivTransmissionItem2;
+
+  /// No description provided for @hivTransmissionItem3.
+  ///
+  /// In en, this message translates to:
+  /// **'Mother-to-child transmission during pregnancy, childbirth, or breastfeeding (largely preventable through PMTCT care).'**
+  String get hivTransmissionItem3;
+
+  /// No description provided for @hivTransmissionItem4.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfusion of unscreened blood (extremely rare due to universal laboratory screening).'**
+  String get hivTransmissionItem4;
+
+  /// No description provided for @hivNotTransmittedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How HIV is NOT transmitted:'**
+  String get hivNotTransmittedTitle;
+
+  /// No description provided for @hivNotTransmittedDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'HIV cannot survive outside the human body. It is NOT spread through shaking hands, hugging, coughing, sneezing, sharing food or toilets, swimming pools, or mosquito/insect bites.'**
+  String get hivNotTransmittedDesc;
+
+  /// No description provided for @hivPreventionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'HIV-Prevention'**
+  String get hivPreventionTitle;
+
   /// No description provided for @moduleComingSoon.
   ///
   /// In en, this message translates to:

@@ -5,10 +5,12 @@ import 'learning_progress_controller.dart';
 
 /// Detailed learning page for Module 07 (Human immune virus - HIV/AIDS).
 ///
-/// Features authentic accordion dropdown sections matching the clinical reference:
-/// 1. Ways to prevent HIV (PEP, 10-step condom usage, and video demonstrations)
-/// 2. HIV testing (PITC and VCT modalities)
-/// 3. Treatment for HIV positive clients (ART regimen, access, and viral suppression)
+/// Features authentic optical glass styling and 5 clinical accordion sections:
+/// 1. Defination (Definition & immune impact)
+/// 2. Mode of transmission (Body fluids & dispelling myths)
+/// 3. HIV-Prevention (PEP, 10-step condom usage, and video demonstrations)
+/// 4. HIV testing (PITC and VCT modalities)
+/// 5. Treatment for HIV positive client (ART regimen, access, and viral suppression)
 class HivModuleDetailPage extends StatefulWidget {
   const HivModuleDetailPage({
     required this.progressController,
@@ -26,11 +28,11 @@ class HivModuleDetailPage extends StatefulWidget {
 }
 
 class _HivModuleDetailPageState extends State<HivModuleDetailPage> {
-  // Expansion state for the 3 accordion sections.
-  // Card 1 is expanded initially as in reference.
-  bool _preventExpanded = true;
-  bool _testingExpanded = false;
-  bool _treatmentExpanded = false;
+  // Expansion state for the 5 accordion sections.
+  final Set<int> _expandedSections = <int>{};
+
+  // Track sections read by user (defaults to all 5 read matching reference).
+  final Set<int> _readSections = <int>{0, 1, 2, 3, 4};
 
   Future<void> _markCompleted(
       BuildContext context, AppLocalizations l10n) async {
@@ -212,13 +214,347 @@ class _HivModuleDetailPageState extends State<HivModuleDetailPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // 1. Ways to prevent HIV
+                // 1. Top Hero Card with Medical Illustration & Summary
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(18),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(26),
+                    border: Border.all(
+                      color: const Color(0xFFD6E8F6),
+                      width: 1.2,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFF005A71).withValues(alpha: 0.06),
+                        blurRadius: 18,
+                        offset: const Offset(0, 6),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(16),
+                        child: Center(
+                          child: Image.asset(
+                            'assets/images/learning/module_07_hiv.png',
+                            height: 195,
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 18),
+                      Text(
+                        l10n.module07Title,
+                        style: const TextStyle(
+                          fontSize: 21,
+                          fontWeight: FontWeight.w800,
+                          color: Color(0xFF08264A),
+                          letterSpacing: -0.3,
+                          height: 1.25,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        l10n.hivHeroDesc,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Color(0xFF475569),
+                          height: 1.55,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
+
+                // 2. Note Section
+                Row(
+                  children: [
+                    Container(
+                      width: 3.5,
+                      height: 18,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF0284C7),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      l10n.hivNoteTitle,
+                      style: const TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w800,
+                        color: Color(0xFF08264A),
+                        letterSpacing: -0.2,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFEBF5FB),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: const Color(0xFFBAE6FD).withValues(alpha: 0.65),
+                      width: 1.2,
+                    ),
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: 36,
+                        height: 36,
+                        decoration: const BoxDecoration(
+                          color: Color(0xFFD0E8F8),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.lightbulb_outline_rounded,
+                          color: Color(0xFF0284C7),
+                          size: 20,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          l10n.hivNoteContent,
+                          style: const TextStyle(
+                            fontSize: 13.5,
+                            color: Color(0xFF1E293B),
+                            height: 1.5,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                // 3. Learning Sections Header with Reading Progress Pill
+                Row(
+                  children: [
+                    Container(
+                      width: 3.5,
+                      height: 18,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF0284C7),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      l10n.learningSectionsTitle,
+                      style: const TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w800,
+                        color: Color(0xFF08264A),
+                        letterSpacing: -0.2,
+                      ),
+                    ),
+                    const Spacer(),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 5),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFDCEEFA),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Text(
+                        l10n.readSectionsCount(_readSections.length, 5),
+                        style: const TextStyle(
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xFF005A71),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 14),
+
+                // Section 1: Defination
                 _AccordionCard(
-                  title: l10n.waysToPreventHiv,
-                  isExpanded: _preventExpanded,
+                  title: l10n.hivDefinitionTitle,
+                  isExpanded: _expandedSections.contains(0),
+                  isRead: _readSections.contains(0),
                   onToggle: () {
                     setState(() {
-                      _preventExpanded = !_preventExpanded;
+                      _readSections.add(0);
+                      if (_expandedSections.contains(0)) {
+                        _expandedSections.remove(0);
+                      } else {
+                        _expandedSections.add(0);
+                      }
+                    });
+                  },
+                  children: [
+                    Text(
+                      l10n.hivDefinitionSubtitle,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF0F172A),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      l10n.hivDefinitionDesc1,
+                      style: const TextStyle(
+                        fontSize: 13.5,
+                        color: Color(0xFF334155),
+                        height: 1.55,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      l10n.hivDefinitionDesc2,
+                      style: const TextStyle(
+                        fontSize: 13.5,
+                        color: Color(0xFF334155),
+                        height: 1.55,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF0FDF4),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: const Color(0xFFBBF7D0)),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Icon(
+                            Icons.verified_rounded,
+                            color: Color(0xFF16A34A),
+                            size: 18,
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              l10n.hivDefinitionDesc3,
+                              style: const TextStyle(
+                                fontSize: 13,
+                                color: Color(0xFF166534),
+                                height: 1.45,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+
+                // Section 2: Mode of transmission
+                _AccordionCard(
+                  title: l10n.hivTransmissionTitle,
+                  isExpanded: _expandedSections.contains(1),
+                  isRead: _readSections.contains(1),
+                  onToggle: () {
+                    setState(() {
+                      _readSections.add(1);
+                      if (_expandedSections.contains(1)) {
+                        _expandedSections.remove(1);
+                      } else {
+                        _expandedSections.add(1);
+                      }
+                    });
+                  },
+                  children: [
+                    Text(
+                      l10n.hivTransmissionSubtitle,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF0F172A),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      l10n.hivTransmissionIntro,
+                      style: const TextStyle(
+                        fontSize: 13.5,
+                        color: Color(0xFF334155),
+                        height: 1.5,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    _BulletItem(title: '• ', body: l10n.hivTransmissionItem1),
+                    const SizedBox(height: 8),
+                    _BulletItem(title: '• ', body: l10n.hivTransmissionItem2),
+                    const SizedBox(height: 8),
+                    _BulletItem(title: '• ', body: l10n.hivTransmissionItem3),
+                    const SizedBox(height: 8),
+                    _BulletItem(title: '• ', body: l10n.hivTransmissionItem4),
+                    const SizedBox(height: 14),
+                    Container(
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF8FAFC),
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(color: const Color(0xFFE2E8F0)),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.shield_outlined,
+                                color: Color(0xFF0284C7),
+                                size: 18,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                l10n.hivNotTransmittedTitle,
+                                style: const TextStyle(
+                                  fontSize: 13.5,
+                                  fontWeight: FontWeight.w700,
+                                  color: Color(0xFF0F172A),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            l10n.hivNotTransmittedDesc,
+                            style: const TextStyle(
+                              fontSize: 13,
+                              color: Color(0xFF475569),
+                              height: 1.5,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+
+                // Section 3: HIV-Prevention
+                _AccordionCard(
+                  title: l10n.hivPreventionTitle,
+                  isExpanded: _expandedSections.contains(2),
+                  isRead: _readSections.contains(2),
+                  onToggle: () {
+                    setState(() {
+                      _readSections.add(2);
+                      if (_expandedSections.contains(2)) {
+                        _expandedSections.remove(2);
+                      } else {
+                        _expandedSections.add(2);
+                      }
                     });
                   },
                   children: [
@@ -260,7 +596,6 @@ class _HivModuleDetailPageState extends State<HivModuleDetailPage> {
                       ),
                     ),
                     const SizedBox(height: 14),
-                    // Video 1: Condom Lubricants Warning
                     _VideoPreviewCard(
                       imageAsset:
                           'assets/images/learning/hiv_video_lubricants.png',
@@ -277,7 +612,6 @@ class _HivModuleDetailPageState extends State<HivModuleDetailPage> {
                       },
                     ),
                     const SizedBox(height: 18),
-                    // 10 Numbered Condom Steps
                     _StepItem(number: 1, text: l10n.condomStep1),
                     _StepItem(number: 2, text: l10n.condomStep2),
                     _StepItem(number: 3, text: l10n.condomStep3),
@@ -289,7 +623,6 @@ class _HivModuleDetailPageState extends State<HivModuleDetailPage> {
                     _StepItem(number: 9, text: l10n.condomStep9),
                     _StepItem(number: 10, text: l10n.condomStep10),
                     const SizedBox(height: 14),
-                    // Video 2: Condom Counselling Demonstration
                     _VideoPreviewCard(
                       imageAsset:
                           'assets/images/learning/hiv_video_counselling.png',
@@ -307,15 +640,20 @@ class _HivModuleDetailPageState extends State<HivModuleDetailPage> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
 
-                // 2. HIV testing
+                // Section 4: HIV testing
                 _AccordionCard(
                   title: l10n.hivTesting,
-                  isExpanded: _testingExpanded,
+                  isExpanded: _expandedSections.contains(3),
+                  isRead: _readSections.contains(3),
                   onToggle: () {
                     setState(() {
-                      _testingExpanded = !_testingExpanded;
+                      _readSections.add(3);
+                      if (_expandedSections.contains(3)) {
+                        _expandedSections.remove(3);
+                      } else {
+                        _expandedSections.add(3);
+                      }
                     });
                   },
                   children: [
@@ -339,15 +677,20 @@ class _HivModuleDetailPageState extends State<HivModuleDetailPage> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
 
-                // 3. Treatment for HIV positive client
+                // Section 5: Treatment for HIV positive client
                 _AccordionCard(
                   title: l10n.treatmentForHivPositive,
-                  isExpanded: _treatmentExpanded,
+                  isExpanded: _expandedSections.contains(4),
+                  isRead: _readSections.contains(4),
                   onToggle: () {
                     setState(() {
-                      _treatmentExpanded = !_treatmentExpanded;
+                      _readSections.add(4);
+                      if (_expandedSections.contains(4)) {
+                        _expandedSections.remove(4);
+                      } else {
+                        _expandedSections.add(4);
+                      }
                     });
                   },
                   children: [
@@ -476,35 +819,38 @@ class _HivModuleDetailPageState extends State<HivModuleDetailPage> {
   }
 }
 
-/// Polished accordion dropdown card widget.
+/// Polished accordion dropdown card matching the reference design.
 class _AccordionCard extends StatelessWidget {
   const _AccordionCard({
     required this.title,
     required this.isExpanded,
+    required this.isRead,
     required this.onToggle,
     required this.children,
   });
 
   final String title;
   final bool isExpanded;
+  final bool isRead;
   final VoidCallback onToggle;
   final List<Widget> children;
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: const Color(0xFFD6E4F0),
           width: 1.2,
         ),
         boxShadow: const [
           BoxShadow(
-            color: Color(0x0A003648),
-            blurRadius: 10,
-            offset: Offset(0, 4),
+            color: Color(0x08003648),
+            blurRadius: 8,
+            offset: Offset(0, 3),
           ),
         ],
       ),
@@ -513,25 +859,27 @@ class _AccordionCard extends StatelessWidget {
         children: [
           Material(
             color: Colors.transparent,
-            borderRadius: BorderRadius.circular(22),
+            borderRadius: BorderRadius.circular(20),
             child: InkWell(
-              borderRadius: BorderRadius.circular(22),
+              borderRadius: BorderRadius.circular(20),
               onTap: onToggle,
               child: Padding(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
                 child: Row(
                   children: [
                     Container(
                       width: 32,
                       height: 32,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFF0284C7),
+                      decoration: BoxDecoration(
+                        color: isRead
+                            ? const Color(0xFF0284C7)
+                            : const Color(0xFFE2E8F0),
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(
-                        Icons.check_rounded,
-                        color: Colors.white,
+                      child: Icon(
+                        isRead ? Icons.check_rounded : Icons.circle_outlined,
+                        color: isRead ? Colors.white : const Color(0xFF94A3B8),
                         size: 20,
                       ),
                     ),
@@ -541,7 +889,7 @@ class _AccordionCard extends StatelessWidget {
                         title,
                         style: const TextStyle(
                           fontWeight: FontWeight.w700,
-                          fontSize: 16.5,
+                          fontSize: 15.5,
                           color: Color(0xFF08264A),
                           letterSpacing: -0.2,
                         ),
@@ -554,7 +902,7 @@ class _AccordionCard extends StatelessWidget {
                       child: const Icon(
                         Icons.keyboard_arrow_down_rounded,
                         color: Color(0xFF005A71),
-                        size: 28,
+                        size: 26,
                       ),
                     ),
                   ],
@@ -565,7 +913,7 @@ class _AccordionCard extends StatelessWidget {
           AnimatedCrossFade(
             firstChild: const SizedBox(width: double.infinity),
             secondChild: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
+              padding: const EdgeInsets.fromLTRB(18, 0, 18, 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: children,
@@ -598,72 +946,87 @@ class _VideoPreviewCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: Colors.transparent,
-      borderRadius: BorderRadius.circular(16),
       child: InkWell(
-        borderRadius: BorderRadius.circular(16),
         onTap: onTap,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(16),
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              Image.asset(
-                imageAsset,
-                width: double.infinity,
-                height: 190,
-                fit: BoxFit.cover,
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: const Color(0xFFD6E4F0),
+              width: 1.2,
+            ),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x06000000),
+                blurRadius: 8,
+                offset: Offset(0, 3),
               ),
-              // Play button circle
-              Container(
-                width: 52,
-                height: 52,
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.95),
-                  shape: BoxShape.circle,
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black26,
-                      blurRadius: 8,
-                      offset: Offset(0, 3),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ClipRRect(
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(15)),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Image.asset(
+                      imageAsset,
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      height: 160,
+                    ),
+                    Container(
+                      height: 160,
+                      color: Colors.black.withValues(alpha: 0.2),
+                    ),
+                    Container(
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.95),
+                        shape: BoxShape.circle,
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.black26,
+                            blurRadius: 8,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: const Icon(
+                        Icons.play_arrow_rounded,
+                        size: 32,
+                        color: Color(0xFF0284C7),
+                      ),
                     ),
                   ],
                 ),
-                child: const Icon(
-                  Icons.play_arrow_rounded,
-                  size: 34,
-                  color: Color(0xFF0284C7),
-                ),
               ),
-              // Watch video pill at bottom left
-              Positioned(
-                left: 12,
-                bottom: 12,
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.65),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(
-                        Icons.ondemand_video_rounded,
-                        color: Colors.white,
-                        size: 14,
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.play_circle_outline_rounded,
+                      color: Color(0xFF0284C7),
+                      size: 20,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      watchLabel,
+                      style: const TextStyle(
+                        color: Color(0xFF0284C7),
+                        fontWeight: FontWeight.w700,
+                        fontSize: 14,
                       ),
-                      const SizedBox(width: 6),
-                      Text(
-                        watchLabel,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -674,7 +1037,7 @@ class _VideoPreviewCard extends StatelessWidget {
   }
 }
 
-/// Numbered step item with circular blue badge.
+/// Clinical step item with numbered badge.
 class _StepItem extends StatelessWidget {
   const _StepItem({
     required this.number,
@@ -694,17 +1057,17 @@ class _StepItem extends StatelessWidget {
           Container(
             width: 26,
             height: 26,
-            alignment: Alignment.center,
             decoration: const BoxDecoration(
               color: Color(0xFF0284C7),
               shape: BoxShape.circle,
             ),
+            alignment: Alignment.center,
             child: Text(
               '$number',
               style: const TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.w800,
-                fontSize: 12.5,
+                fontSize: 13,
               ),
             ),
           ),
@@ -713,7 +1076,7 @@ class _StepItem extends StatelessWidget {
             child: Text(
               text,
               style: const TextStyle(
-                fontSize: 14,
+                fontSize: 13.5,
                 color: Color(0xFF1E293B),
                 height: 1.45,
               ),
@@ -725,7 +1088,7 @@ class _StepItem extends StatelessWidget {
   }
 }
 
-/// Bullet point item with styled bold title and body.
+/// Bullet item for clinical counseling modalities.
 class _BulletItem extends StatelessWidget {
   const _BulletItem({
     required this.title,
@@ -740,37 +1103,32 @@ class _BulletItem extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          margin: const EdgeInsets.only(top: 6),
-          width: 7,
-          height: 7,
-          decoration: const BoxDecoration(
+        const Padding(
+          padding: EdgeInsets.only(top: 6),
+          child: Icon(
+            Icons.circle,
+            size: 7,
             color: Color(0xFF0284C7),
-            shape: BoxShape.circle,
           ),
         ),
         const SizedBox(width: 10),
         Expanded(
-          child: Text.rich(
-            TextSpan(
+          child: RichText(
+            text: TextSpan(
+              style: const TextStyle(
+                fontSize: 13.5,
+                color: Color(0xFF334155),
+                height: 1.5,
+              ),
               children: [
                 TextSpan(
                   text: title,
                   style: const TextStyle(
                     fontWeight: FontWeight.w700,
-                    color: Color(0xFF08264A),
-                    fontSize: 14,
-                    height: 1.5,
+                    color: Color(0xFF0F172A),
                   ),
                 ),
-                TextSpan(
-                  text: body,
-                  style: const TextStyle(
-                    color: Color(0xFF334155),
-                    fontSize: 14,
-                    height: 1.5,
-                  ),
-                ),
+                TextSpan(text: body),
               ],
             ),
           ),

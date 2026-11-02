@@ -629,6 +629,81 @@ class AppLocalizationsEn extends AppLocalizations {
   String get completedStatus => 'Completed';
 
   @override
+  String get hivHeroDesc =>
+      'HIV/AIDS is a virus that weakens the immune system, spreads mainly through unsafe sex, blood, and mother-to-child, but can be prevented with safe practices and managed effectively with early testing and treatment (ART).';
+
+  @override
+  String get hivNoteTitle => 'Note';
+
+  @override
+  String get hivNoteContent =>
+      'HIV can be prevented and managed—practice safe behaviors, get tested early, and start treatment (ART) to live a healthy life and protect others.';
+
+  @override
+  String get learningSectionsTitle => 'Learning Sections';
+
+  @override
+  String readSectionsCount(int count, int total) {
+    return '$count / $total read';
+  }
+
+  @override
+  String get hivDefinitionTitle => 'Defination';
+
+  @override
+  String get hivDefinitionSubtitle =>
+      'What is HIV/AIDS and how it affects the immune system';
+
+  @override
+  String get hivDefinitionDesc1 =>
+      'HIV (Human Immunodeficiency Virus) is a virus that attacks the body’s immune system, specifically the CD4 white blood cells (T cells) that fight off infections.';
+
+  @override
+  String get hivDefinitionDesc2 =>
+      'Without treatment, HIV can gradually destroy CD4 cells over time and advance to AIDS (Acquired Immunodeficiency Syndrome), which is the most advanced clinical stage of HIV infection.';
+
+  @override
+  String get hivDefinitionDesc3 =>
+      'With modern antiretroviral therapy (ART), people living with HIV suppress the virus to undetectable levels (Undetectable = Untransmittable or U=U), stay healthy, and live long, normal lives.';
+
+  @override
+  String get hivTransmissionTitle => 'Mode of transmission';
+
+  @override
+  String get hivTransmissionSubtitle =>
+      'How the virus spreads and debunking common myths';
+
+  @override
+  String get hivTransmissionIntro =>
+      'HIV is transmitted through contact with specific body fluids from someone with a detectable viral load:';
+
+  @override
+  String get hivTransmissionItem1 =>
+      'Unprotected sexual intercourse (vaginal or anal sex without condoms).';
+
+  @override
+  String get hivTransmissionItem2 =>
+      'Sharing contaminated needles, syringes, tattoo needles, or sharp piercing instruments.';
+
+  @override
+  String get hivTransmissionItem3 =>
+      'Mother-to-child transmission during pregnancy, childbirth, or breastfeeding (largely preventable through PMTCT care).';
+
+  @override
+  String get hivTransmissionItem4 =>
+      'Transfusion of unscreened blood (extremely rare due to universal laboratory screening).';
+
+  @override
+  String get hivNotTransmittedTitle => 'How HIV is NOT transmitted:';
+
+  @override
+  String get hivNotTransmittedDesc =>
+      'HIV cannot survive outside the human body. It is NOT spread through shaking hands, hugging, coughing, sneezing, sharing food or toilets, swimming pools, or mosquito/insect bites.';
+
+  @override
+  String get hivPreventionTitle => 'HIV-Prevention';
+
+  @override
   String get moduleComingSoon =>
       'Full module content and interactive quizzes will be configured in the next step.';
 

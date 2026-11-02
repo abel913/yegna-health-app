@@ -1,5 +1,21 @@
 # Handoff
 
+## HIV/AIDS Detail Learning Module Experience Rebuild (2026-11-02)
+
+- Rebuilt the dedicated HIV/AIDS learning module detail page in `lib/src/learning/hiv_module_page.dart` matching user reference screenshots:
+  - Top Hero Card featuring `assets/images/learning/module_07_hiv.png`, title "Human immune virus (HIV)/AIDS", and clinical overview summary.
+  - Note Section with light-blue card container, lightbulb icon, and core prevention/ART guidance.
+  - Learning Sections Header with vertical blue indicator bar and dynamic reading count badge (`5 / 5 read`).
+  - 5 interactive accordion cards with checkmark indicators and smooth expanding transitions:
+    1. **Defination**: CD4 cell targets, HIV vs. AIDS stages, and U=U viral suppression.
+    2. **Mode of transmission**: Body fluid transmission paths and myth-busting highlight card.
+    3. **HIV-Prevention**: PEP 72-hour emergency protocol, 10-step condom guide, and educational video preview cards with modals.
+    4. **HIV testing**: PITC and VCT testing modalities.
+    5. **Treatment for HIV positive client**: ART regimens, early initiation, and clinic access.
+  - Bilingual localization in `lib/l10n/app_en.arb` and `lib/l10n/app_am.arb`, regenerated via `flutter gen-l10n`.
+  - Comprehensive unit and widget tests in `test/hiv_module_page_test.dart` (39/39 passing).
+
+
 ## Peer Mentors & Youth Counselors Discovery Experience (2026-11-01)
 
 - Delivered full-featured, glassmorphic Peer Mentors discovery destination matching the approved plan:
