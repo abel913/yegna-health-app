@@ -1,5 +1,19 @@
 # Handoff
 
+## Self-Assessment Tool & Edge Function Gemini 3.5 Integration (2026-11-03)
+
+- **Completed Self-Assessment Workflow**:
+  - `lib/src/assessment/self_assessment_models.dart`: Questions, categories, options, and scoring tier logic.
+  - `lib/src/assessment/self_assessment_page.dart`: Interactive 12-question screening questionnaire, responsive question flow, segmented progress indicators, immediate educational rationale, and risk results view with direct mentor and facility referrals.
+  - Fixed horizontal RenderFlex overflows on smaller mobile screens in the bottom action bar and risk score headers.
+  - Connected from Home page action card (`Self-Assessment`).
+- **Edge Function Upgraded**:
+  - `supabase/functions/ask-assistant/index.ts` migrated to `gemini-3.5-flash-lite` for instantaneous responses without latency or timeout issues.
+- **Verification**:
+  - `dart format lib test` passed cleanly.
+  - `flutter analyze --no-pub` reported 0 issues.
+  - `flutter test --no-pub` ran 94 tests with 100% pass rate.
+
 ## Conversational AI Health Chatbot & Curriculum Knowledge Engine (2026-11-02)
 
 - Delivered the complete Yegna Health Conversational AI Chatbot:

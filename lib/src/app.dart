@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 import '../l10n/app_localizations.dart';
+import 'assessment/self_assessment_page.dart';
 import 'auth/auth_controller.dart';
 import 'auth/auth_pages.dart';
 import 'discovery/directory_pages.dart';
@@ -149,6 +150,22 @@ class _AppShellState extends State<AppShell> {
     ));
   }
 
+  void _openSelfAssessment() {
+    Navigator.of(context).push<void>(MaterialPageRoute<void>(
+      builder: (_) => SelfAssessmentPage(
+        onOpenMentors: () {
+          _onDestinationSelected(2);
+        },
+        onOpenFacilities: () {
+          _onDestinationSelected(1);
+        },
+        onOpenLearning: () {
+          _onDestinationSelected(3);
+        },
+      ),
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -164,6 +181,7 @@ class _AppShellState extends State<AppShell> {
         onOpenFacilities: () => _onDestinationSelected(1),
         onOpenAccount: _openAccount,
         onOpenArticle: _openArticle,
+        onOpenSelfAssessment: _openSelfAssessment,
       ),
       FacilitiesPage(
         facilityRepository: widget.facilityRepository,

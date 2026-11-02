@@ -1,5 +1,26 @@
 # Phase status
 
+## Self-Assessment Tool & Edge Function Gemini 3.5 Integration (2026-11-03)
+
+**Status: Completed & 100% Verified.**
+- **Self-Assessment Workflow (`SelfAssessmentPage`)**:
+  - Implemented 12-question clinical risk screening questionnaire based on MOH Ethiopia youth SRH guidelines.
+  - Multi-category evaluation: Partners & Relationships, Protection & Safe Sex, Symptoms & Exposures, Substance & Environment.
+  - Custom segmented progress indicator, animated question cards, and immediate guidance for why each question matters.
+  - Stratified risk evaluation engine (`SelfAssessmentEvaluation`) calculating lower, moderate, and higher exposure tiers.
+  - Comprehensive results presentation: visual score gauge, categorized action recommendations, key educational message, and direct quick-action cards to call a mentor or navigate to youth-friendly clinics.
+  - Responsive layout fixes preventing RenderFlex horizontal overflows across compact screens.
+- **Home Integration**:
+  - Wired Self-Assessment card in the Home tab 2x2 grid to open `SelfAssessmentPage`.
+- **Ask-Assistant Edge Function (`supabase/functions/ask-assistant`)**:
+  - Switched model to `gemini-3.5-flash-lite` for zero-latency, thinking-overhead-free streaming.
+  - Added 25-second AbortSignal timeout to prevent worker freezes.
+  - Grounded system instruction strictly on Ethiopian adolescent reproductive health guidelines.
+- **Verification**:
+  - `dart format lib test` passed (0 unformatted files).
+  - `flutter analyze --no-pub` passed (**0 issues found**).
+  - `flutter test --no-pub` passed (**all 94 tests passing**, 100% success rate).
+
 ## Conversational AI Health Chatbot & Curriculum Knowledge Engine (2026-11-02)
 
 **Status: Completed & 100% Verified.**

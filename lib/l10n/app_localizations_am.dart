@@ -360,7 +360,7 @@ class AppLocalizationsAm extends AppLocalizations {
   String get clearHistoryAction => 'ታሪክን አጥፋ';
 
   @override
-  String get cancelAction => 'ሰርዝ';
+  String get cancelAction => 'ተመለስ';
 
   @override
   String get syncedHistoryCleared => 'የተመሳሰለው የትምህርት ታሪክ ተጠፍቷል።';
@@ -3016,4 +3016,248 @@ class AppLocalizationsAm extends AppLocalizations {
 
   @override
   String get askYegnaFabLabel => 'AI ጠይቅ';
+
+  @override
+  String get selfAssessmentHeading => 'የራስ-ምርመራ';
+
+  @override
+  String selfAssessmentQuestionProgress(int current, int total) {
+    return 'ጥያቄ $current ከ $total';
+  }
+
+  @override
+  String get yesOption => 'አዎ';
+
+  @override
+  String get noOption => 'አይደለም';
+
+  @override
+  String get nextQuestionAction => 'ቀጣይ';
+
+  @override
+  String get viewResultsAction => 'ውጤቱን ይመልከቱ';
+
+  @override
+  String get retakeAssessmentAction => 'ምርመራውን እንደገና ጀምር';
+
+  @override
+  String get selectAnswerPrompt => 'እባክዎ ለመቀጠል አዎ ወይም አይደለም የሚለውን ይምረጡ';
+
+  @override
+  String get assessmentResultHeader => 'የምርመራው ውጤት';
+
+  @override
+  String get higherRiskTitle => 'ለኤች.አይ.ቪ ኢንፌክሽን ከፍተኛ ተጋላጭነት';
+
+  @override
+  String get moderateRiskTitle => 'መካከለኛ የተጋላጭነት ደረጃ';
+
+  @override
+  String get lowerRiskTitle => 'ዝቅተኛ የተጋላጭነት ደረጃ';
+
+  @override
+  String get recommendedActionsHeader => 'የሚመከሩ እርምጃዎች';
+
+  @override
+  String get keyMessageHeader => 'ዋና መልዕክት';
+
+  @override
+  String get highRiskKeyMessage =>
+      'ከፍተኛ ውጤት ማግኘት በኤች.አይ.ቪ ተይዘዋል ማለት አይደለም። ሆኖም ግን፣ አደገኛ ሁኔታዎች ከቀጠሉ በቫይረሱ የመያዝ እድል ይኖራል። ስለዚህ የተጋላጭነትዎን ደረጃ ለመቀነስ ጠንካራ ጥረት ያድርጉ።';
+
+  @override
+  String get moderateRiskKeyMessage =>
+      'መካከለኛ የተጋላጭነት ውጤት አንዳንድ ሁኔታዎች ለኤች.አይ.ቪ ወይም ለአባለዘር በሽታዎች ሊያጋልጡ እንደሚችሉ ያሳያል። እንደ መደበኛ ምርመራ እና ኮንዶም አጠቃቀም ያሉ መከላከያዎችን መተግበር ጤናዎን ይጠብቃል።';
+
+  @override
+  String get lowerRiskKeyMessage =>
+      'መልሶችዎ ዝቅተኛ የተጋላጭነት ደረጃን ያሳያሉ። እራስዎን እና አጋርዎን ለመጠበቅ ጥንቃቄዎችን፣ ትምህርታዊ መረጃዎችን እና መደበኛ የጤና ምርመራዎችን ይቀጥሉ።';
+
+  @override
+  String get talkToMentorAction => 'ከአማካሪ ጋር ይወያዩ';
+
+  @override
+  String get talkToMentorSubtitle => 'ከሰለጠኑ የወጣቶች አቻ አማካሪዎች ጋር በምስጢር ይገናኙ';
+
+  @override
+  String get getServiceAction => 'አገልግሎት ያግኙ';
+
+  @override
+  String get getServiceSubtitle => 'የተረጋገጡ የወጣቶች ተስማሚ የጤና ተቋማትን ያግኙ';
+
+  @override
+  String get assessmentEducationalDisclaimer =>
+      'ይህ የትምህርት እና የግንዛቤ ማስጨበጫ የራስ-ግምገማ ብቻ እንጂ የህክምና ምርመራ አይደለም። ለክሊኒካዊ ምርመራ እና ህክምና የተረጋገጠ ክሊኒክ ይጎብኙ።';
+
+  @override
+  String get restartAssessmentDialogTitle => 'ምርመራውን እንደገና ይጀምሩ?';
+
+  @override
+  String get restartAssessmentDialogBody =>
+      'እስካሁን የመለሷቸው መልሶች ይሰረዛሉ። ከጅምሩ እንደገና መጀመር ይፈልጋሉ?';
+
+  @override
+  String get restartAction => 'እንደገና ጀምር';
+
+  @override
+  String get whyThisMattersLabel => 'ይህ ለምን አስፈለገ?';
+
+  @override
+  String riskScoreLabel(int score, int maxScore) {
+    return 'የተጋላጭነት ነጥብ: $score / $maxScore';
+  }
+
+  @override
+  String get categoryPartnersRelationships => 'ግንኙነቶች እና አጋሮች';
+
+  @override
+  String get categoryProtectionPractices => 'የመከላከያ ዘዴዎች';
+
+  @override
+  String get categoryClinicalSymptoms => 'የጤና ምልክቶች';
+
+  @override
+  String get categoryHealthHistory => 'የጤና ታሪክ';
+
+  @override
+  String get categoryBloodSafety => 'የደም እና ስለታም መሳሪያዎች ደህንነት';
+
+  @override
+  String get categorySubstanceRisk => 'የእጽ እና የባህሪ ተጋላጭነት';
+
+  @override
+  String get categorySafetySupport => 'ደህንነት እና ድጋፍ';
+
+  @override
+  String get categoryTestingPrevention => 'ምርመራ እና መከላከል';
+
+  @override
+  String get assessmentQ1Text =>
+      'ባለፉት 12 ወራት ውስጥ ከአንድ በላይ የግብረ-ስጋ ግንኙነት አጋር ነበረዎት?';
+
+  @override
+  String get assessmentQ1Why =>
+      'ከአንድ በላይ አጋር መኖር፣ በተለይም ጥበቃ ካልተደረገ፣ ለኤች.አይ.ቪ እና ለአባለዘር በሽታዎች የመጋለጥ እድልን ይጨምራል።';
+
+  @override
+  String get assessmentQ2Text =>
+      'ባለፉት 12 ወራት ውስጥ በገንዘብ፣ በስጦታ፣ በመጠለያ ወይም በሌሎች ጥቅሞች ምትክ የግብረ-ስጋ ግንኙነት ፈጽመዋል?';
+
+  @override
+  String get assessmentQ2Why =>
+      'ጥቅምን መሰረት ያደረጉ ግንኙነቶች ውስጥ ኮንዶምን የመጠቀም ድርድርን አስቸጋሪ ሊያደርጉ ስለሚችሉ የተጋላጭነት ደረጃን ከፍ ያደርጋሉ።';
+
+  @override
+  String get assessmentQ3Text =>
+      'ባለፉት 6 ወራት ውስጥ ኮንዶምን ከመጀመሪያ እስከ መጨረሻ በትክክል ሳይጠቀሙ የግብረ-ስጋ ግንኙነት ፈጽመዋል?';
+
+  @override
+  String get assessmentQ3Why =>
+      'ኮንዶምን በትክክልና ሳያቋርጡ መጠቀም ከኤች.አይ.ቪ ከ95% በላይ የሚከላከል ሲሆን የአባለዘር በሽታዎችንም በእጅጉ ይቀንሳል።';
+
+  @override
+  String get assessmentQ4Text =>
+      'የኤች.አይ.ቪ ሁኔታቸው የማይታወቅ ወይም በቫይረሱ የተያዙ ነገር ግን መድሃኒት (ART) በአግባቡ የማይወስዱ አጋር ጋር ግንኙነት ፈጽመዋል?';
+
+  @override
+  String get assessmentQ4Why =>
+      'የአጋርን የጤና ሁኔታ ማወቅ ወሳኝ ነው። መድሃኒት በአግባቡ የሚወስዱ ሰዎች ቫይረሱን የማያስተላልፉ (U=U) ቢሆንም፣ ሁኔታቸው ያልታወቁ አጋሮች ከፍተኛ ስጋት አላቸው።';
+
+  @override
+  String get assessmentQ5Text =>
+      'ባለፉት 6 ወራት ውስጥ ያልተለመደ የብልት ፈሳሽ፣ ቁስለት፣ በሽንት ጊዜ ማቃጠል ወይም የብልት ማሳከክ ምልክቶች አጋጥመውዎታል?';
+
+  @override
+  String get assessmentQ5Why =>
+      'ያልታከሙ የአባለዘር በሽታዎች የብልት አካል ላይ ቁስለት በማስከተል በኤች.አይ.ቪ የመያዝ እድልን ከ3 እስከ 5 እጥፍ ይጨምራሉ።';
+
+  @override
+  String get assessmentQ6Text =>
+      'እርስዎ ወይም አጋርዎ በአባለዘር በሽታ (ለምሳሌ ጨብጥ፣ ቂጥኝ፣ ክላሚዲያ ወይም ሄርፒስ) ታመው ወይም ታክመው ያውቃሉ?';
+
+  @override
+  String get assessmentQ6Why =>
+      'የቀድሞ የአባለዘር በሽታ ታሪክ አጋሮች በጋራ ካልታከሙ ተመልሶ የመያዝ እና ለኤች.አይ.ቪ የመጋለጥ እድልን ያሳያል።';
+
+  @override
+  String get assessmentQ7Text =>
+      'ንፅህናቸው ባልተረጋገጠ ወይም በድጋሚ ጥቅም ላይ በዋሉ ስለታም መሳሪያዎች ንቅሳት፣ ጆሮ/አፍንጫ መበሳት ወይም ባህላዊ ምልክት አድርገዋል?';
+
+  @override
+  String get assessmentQ7Why =>
+      'ንጽህናቸው ያልተጠበቀ ስለታም መሳሪያዎች በቀጥታ ደም-ከደም ጋር በሚደረግ ንክኪ ሄፓታይተስ እና ኤች.አይ.ቪን ሊያስተላልፉ ይችላሉ።';
+
+  @override
+  String get assessmentQ8Text =>
+      'የሚወጉ እጾችን ተጠቅመዋል ወይም መርፌ፣ ሲሪንጅ እና መወጊያ ቁሳቁሶችን ከሌላ ሰው ጋር ተጋርተው ያውቃሉ?';
+
+  @override
+  String get assessmentQ8Why =>
+      'የመርፌ መወጊያ ቁሳቁሶችን መጋራት ለኤች.አይ.ቪ እና ሄፓታይተስ ሲ በቀላሉ ለመጋለጥ እጅግ ከፍተኛ አደጋ አለው።';
+
+  @override
+  String get assessmentQ9Text =>
+      'ከግብረ-ስጋ ግንኙነት በፊት ወይም በወቅቱ በተደጋጋሚ አልኮል፣ ጫት ወይም ሌሎች እጾችን በመጠቀም ኮንዶም የመጠቀም ውሳኔዎ ተስተጓጉሎ ያውቃል?';
+
+  @override
+  String get assessmentQ9Why =>
+      'አልኮል እና አደንዛዥ እጾች ትክክለኛ ውሳኔ የማድረግ አቅምን በማዳከም ካላሰቡት ጥንቃቄ የጎደለው ግንኙነት ውስጥ ሊጥሉ ይችላሉ።';
+
+  @override
+  String get assessmentQ10Text =>
+      'ያለእርስዎ ፈቃድ፣ በግዳጅ ወይም በስልጣን ተጽዕኖ የተፈጸመ የግብረ-ስጋ ጥቃት ወይም ጫና ደርሶብዎታል?';
+
+  @override
+  String get assessmentQ10Why =>
+      'ያለፈቃድ የሚፈጸም ጥቃት ከፍተኛ የጤና ጉዳት የሚያስከትል ሲሆን በጥቃቱ በ72 ሰዓታት ውስጥ ድንገተኛ መከላከያ (PEP) እና ድጋፍ ማግኘት ይቻላል።';
+
+  @override
+  String get assessmentQ11Text =>
+      'ለሳምንታት የቆየ ያልታወቀ ትኩሳት፣ ከፍተኛ ድካም፣ ከፍተኛ የሌሊት ላብ ወይም የክብደት መቀነስ ምልክቶች አጋጥመውዎታል?';
+
+  @override
+  String get assessmentQ11Why =>
+      'እነዚህ ያልተለመዱ የህመም ምልክቶች እንደ ቲቢ፣ ተጓዳኝ ኢንፌክሽኖች ወይም ኤች.አይ.ቪ ያሉ ሁኔታዎችን በክሊኒክ በአፋጣኝ መመርመርን ይጠይቃሉ።';
+
+  @override
+  String get assessmentQ12Text =>
+      'የግብረ-ስጋ ግንኙነት እያደረጉ የኤች.አይ.ቪ ምርመራ ካደረጉ ከ6 ወራት በላይ አልፎዎታል (ወይም በጭራሽ ተመርምረው አያውቁም)?';
+
+  @override
+  String get assessmentQ12Why =>
+      'ኤች.አይ.ቪ ለዓመታት ምንም አይነት ምልክት ላያሳይ ይችላል። በየ3 እስከ 6 ወሩ መመርመር ጤናዎን ለመጠበቅ እና ቀድሞ ህክምና ለመጀመር ቁልፍ ነው።';
+
+  @override
+  String get highRiskAction1 =>
+      'በወጣቶች ተስማሚ ክሊኒክ ፈጣን የኤች.አይ.ቪ እና አባለዘር ምርመራ በአስቸኳይ ያድርጉ።';
+
+  @override
+  String get highRiskAction2 => 'ኮንዶምን ዘወትር እና በትክክል በእያንዳንዱ ግንኙነት ይጠቀሙ።';
+
+  @override
+  String get highRiskAction3 =>
+      'በሁሉም የአቻ ትምህርት ክፍለ-ጊዜዎች በንቃት ይሳተፉ እና ከአማካሪ ጋር ይወያዩ።';
+
+  @override
+  String get highRiskAction4 =>
+      'የጤና ባለሙያን ስለ ቅድመ-ተጋላጭነት መከላከያ (PrEP) መድሃኒት ያማክሩ።';
+
+  @override
+  String get modRiskAction1 => 'በቅርቡ መደበኛ የኤች.አይ.ቪ እና የአባለዘር ምርመራ ያድርጉ።';
+
+  @override
+  String get modRiskAction2 => 'በሁሉም ግንኙነቶች ውስጥ የማያቋርጥ ጥበቃ (ኮንዶም) ያረጋግጡ።';
+
+  @override
+  String get modRiskAction3 =>
+      'የትምህርት ክፍሎቻችንን ያንብቡ እና ከአጋርዎ ጋር ስለ ምርመራ በግልጽ ይወያዩ።';
+
+  @override
+  String get lowRiskAction1 => 'ደህንነታቸው የተጠበቁ ልምዶችን እና ግልጽ ውይይትን ይቀጥሉ።';
+
+  @override
+  String get lowRiskAction2 => 'ዓመታዊ ወይም የግማሽ ዓመት መደበኛ የጤና ምርመራዎችን ያድርጉ።';
+
+  @override
+  String get lowRiskAction3 => 'ትክክለኛ የጤና መረጃዎችን ለአቻዎችዎ በማጋራት እውቀትዎን ያጋሩ።';
 }

@@ -3,6 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:yegna_health_app/l10n/app_localizations.dart';
+import 'package:yegna_health_app/src/assessment/self_assessment_page.dart';
 import 'package:yegna_health_app/src/auth/auth_controller.dart';
 import 'package:yegna_health_app/src/auth/auth_models.dart';
 import 'package:yegna_health_app/src/home/home_page.dart';
@@ -208,5 +209,25 @@ void main() {
 
     // Verify no RenderFlex overflow error occurs
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('tapping Self-Assessment card opens SelfAssessmentPage',
+      (WidgetTester tester) async {
+    tester.view.physicalSize = const Size(800, 2000);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(() {
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
+
+    await tester.pumpWidget(_buildTestHomePage());
+    await tester.pumpAndSettle();
+
+    final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+    await tester.tap(find.text(l10n.selfAssessmentTitle));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(SelfAssessmentPage), findsOneWidget);
+    expect(find.text('Question 1 of 12'), findsOneWidget);
   });
 }

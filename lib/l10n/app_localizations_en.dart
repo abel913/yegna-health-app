@@ -3079,4 +3079,256 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get askYegnaFabLabel => 'Ask AI';
+
+  @override
+  String get selfAssessmentHeading => 'Self-Assessment';
+
+  @override
+  String selfAssessmentQuestionProgress(int current, int total) {
+    return 'Question $current of $total';
+  }
+
+  @override
+  String get yesOption => 'Yes';
+
+  @override
+  String get noOption => 'No';
+
+  @override
+  String get nextQuestionAction => 'Next';
+
+  @override
+  String get viewResultsAction => 'View Results';
+
+  @override
+  String get retakeAssessmentAction => 'Retake Assessment';
+
+  @override
+  String get selectAnswerPrompt => 'Please select Yes or No to proceed';
+
+  @override
+  String get assessmentResultHeader => 'Assessment Result';
+
+  @override
+  String get higherRiskTitle => 'Higher Risk for HIV Infection';
+
+  @override
+  String get moderateRiskTitle => 'Moderate Risk for Exposure';
+
+  @override
+  String get lowerRiskTitle => 'Lower Risk Profile';
+
+  @override
+  String get recommendedActionsHeader => 'Recommended actions';
+
+  @override
+  String get keyMessageHeader => 'Key message';
+
+  @override
+  String get highRiskKeyMessage =>
+      'Having a high-risk score does not mean that you are infected with HIV. However, if risky behaviors continue, there is a possibility of acquiring HIV infection. Therefore, make strong efforts to reduce your level of HIV exposure risk.';
+
+  @override
+  String get moderateRiskKeyMessage =>
+      'Having moderate risk factors indicates that certain behaviors or situations may expose you to HIV or STIs. Adopting preventive practices like regular testing and consistent condom use protects your health.';
+
+  @override
+  String get lowerRiskKeyMessage =>
+      'Your responses indicate lower exposure risk. Continue practicing protective behaviors, staying informed, and taking routine health checkups to keep yourself and your partner safe.';
+
+  @override
+  String get talkToMentorAction => 'Talk to Mentor';
+
+  @override
+  String get talkToMentorSubtitle =>
+      'Connect confidentially with a certified youth mentor';
+
+  @override
+  String get getServiceAction => 'Get Service';
+
+  @override
+  String get getServiceSubtitle =>
+      'Find verified youth-friendly health facilities';
+
+  @override
+  String get assessmentEducationalDisclaimer =>
+      'Educational self-assessment only. Not a medical diagnosis. For clinical testing and professional care, visit a verified youth clinic.';
+
+  @override
+  String get restartAssessmentDialogTitle => 'Restart Assessment?';
+
+  @override
+  String get restartAssessmentDialogBody =>
+      'Your current responses will be reset. Are you sure you want to start from the beginning?';
+
+  @override
+  String get restartAction => 'Restart';
+
+  @override
+  String get whyThisMattersLabel => 'Why this matters';
+
+  @override
+  String riskScoreLabel(int score, int maxScore) {
+    return 'Risk Score: $score / $maxScore';
+  }
+
+  @override
+  String get categoryPartnersRelationships => 'Partners & Relationships';
+
+  @override
+  String get categoryProtectionPractices => 'Protection Practices';
+
+  @override
+  String get categoryClinicalSymptoms => 'Clinical Symptoms';
+
+  @override
+  String get categoryHealthHistory => 'Health History';
+
+  @override
+  String get categoryBloodSafety => 'Blood & Instrument Safety';
+
+  @override
+  String get categorySubstanceRisk => 'Substance & Behavioral Risk';
+
+  @override
+  String get categorySafetySupport => 'Safety & Support';
+
+  @override
+  String get categoryTestingPrevention => 'Testing & Prevention';
+
+  @override
+  String get assessmentQ1Text =>
+      'Have you had more than one sexual partner in the last 12 months?';
+
+  @override
+  String get assessmentQ1Why =>
+      'Multiple partners without consistent barrier protection increases exposure to asymptomatic viral transmission.';
+
+  @override
+  String get assessmentQ2Text =>
+      'Have you engaged in sexual activity in exchange for money, gifts, housing, or other benefits (transactional sex) in the last 12 months?';
+
+  @override
+  String get assessmentQ2Why =>
+      'Transactional encounters often involve power imbalances that can make negotiating consistent condom use difficult.';
+
+  @override
+  String get assessmentQ3Text =>
+      'Have you had sexual intercourse without using a condom consistently and correctly in the last 6 months?';
+
+  @override
+  String get assessmentQ3Why =>
+      'Consistent and correct latex condom usage provides over 95% protection against HIV and substantially reduces other STIs.';
+
+  @override
+  String get assessmentQ4Text =>
+      'Have you had sexual intercourse with a partner whose HIV status was unknown to you, or who has unsuppressed viral levels?';
+
+  @override
+  String get assessmentQ4Why =>
+      'Knowing partner status is essential. Effective ART suppresses HIV (U=U), but unsuppressed or unknown statuses carry transmission risk.';
+
+  @override
+  String get assessmentQ5Text =>
+      'In the past 6 months, have you noticed unusual genital discharge, sores, burning during urination, or pelvic pain?';
+
+  @override
+  String get assessmentQ5Why =>
+      'Untreated STIs cause mucosal ulcerations, increasing biological susceptibility to HIV transmission by 3 to 5 times.';
+
+  @override
+  String get assessmentQ6Text =>
+      'Have you or any of your partners ever been diagnosed with or treated for a sexually transmitted infection (STI)?';
+
+  @override
+  String get assessmentQ6Why =>
+      'A past STI indicates previous unprotected exposure and potential risk of reinfection if both partners were not treated simultaneously.';
+
+  @override
+  String get assessmentQ7Text =>
+      'Have you received tattoos, body piercings, or traditional skin cuts using equipment that might not have been sterile?';
+
+  @override
+  String get assessmentQ7Why =>
+      'Direct blood contact via non-sterile instruments can transmit bloodborne viruses including Hepatitis B, C, and HIV.';
+
+  @override
+  String get assessmentQ8Text =>
+      'Have you ever shared needles, syringes, or injection equipment with another person?';
+
+  @override
+  String get assessmentQ8Why =>
+      'Sharing injection equipment carries one of the highest direct risks for rapid HIV and Hepatitis transmission.';
+
+  @override
+  String get assessmentQ9Text =>
+      'Do you frequently consume alcohol, khat, or substances before sex, making condom use harder to remember or negotiate?';
+
+  @override
+  String get assessmentQ9Why =>
+      'Substances impair decision-making and are the primary behavioral factor in unplanned condomless sexual activity.';
+
+  @override
+  String get assessmentQ10Text =>
+      'Have you ever experienced forced sexual contact, coercion, or non-consensual sexual activity?';
+
+  @override
+  String get assessmentQ10Why =>
+      'Non-consensual encounters carry high trauma and exposure risk. Emergency PEP is available within 72 hours alongside crisis counseling.';
+
+  @override
+  String get assessmentQ11Text =>
+      'Have you experienced chronic unexplained fever, severe fatigue, drenching night sweats, or rapid weight loss?';
+
+  @override
+  String get assessmentQ11Why =>
+      'These systemic warning symptoms require prompt professional evaluation to check for infections, tuberculosis, or HIV.';
+
+  @override
+  String get assessmentQ12Text =>
+      'Has it been more than 6 months since your last HIV and sexual health test (or have you never been tested)?';
+
+  @override
+  String get assessmentQ12Why =>
+      'HIV can be asymptomatic for years. Routine testing every 3 to 6 months provides peace of mind and early life-saving care.';
+
+  @override
+  String get highRiskAction1 =>
+      'Get tested for HIV immediately at a youth-friendly clinic.';
+
+  @override
+  String get highRiskAction2 =>
+      'Use condoms consistently and correctly every time.';
+
+  @override
+  String get highRiskAction3 =>
+      'Actively participate in all peer learning sessions and talk to a mentor.';
+
+  @override
+  String get highRiskAction4 =>
+      'Ask a clinician about PrEP (Pre-Exposure Prophylaxis) for ongoing protection.';
+
+  @override
+  String get modRiskAction1 =>
+      'Schedule a routine HIV and STI screening test soon.';
+
+  @override
+  String get modRiskAction2 =>
+      'Ensure consistent barrier protection (condoms) in all sexual encounters.';
+
+  @override
+  String get modRiskAction3 =>
+      'Explore our learning modules and discuss testing with your partner.';
+
+  @override
+  String get lowRiskAction1 =>
+      'Continue practicing safe behaviors and mutual open communication.';
+
+  @override
+  String get lowRiskAction2 =>
+      'Maintain annual or bi-annual routine health checkups.';
+
+  @override
+  String get lowRiskAction3 =>
+      'Share reliable health facts with friends and peers in your community.';
 }

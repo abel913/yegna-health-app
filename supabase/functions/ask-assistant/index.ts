@@ -82,7 +82,7 @@ Critical Safety Rules:
 - Be warm, encouraging, respectful, and culturally appropriate.`;
 
   try {
-    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${geminiApiKey}`;
+    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent?key=${geminiApiKey}`;
 
     const contents = [
       ...(body.history || []).map((h) => ({
@@ -98,6 +98,7 @@ Critical Safety Rules:
     const geminiResponse = await fetch(geminiUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      signal: AbortSignal.timeout(25000),
       body: JSON.stringify({
         system_instruction: {
           parts: [{ text: systemInstruction }],

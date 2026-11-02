@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../l10n/app_localizations.dart';
+import '../assessment/self_assessment_page.dart';
 import '../auth/auth_controller.dart';
 import '../learning/assessment_repository.dart';
 import '../learning/education_repository.dart';
@@ -19,6 +20,7 @@ class HomePage extends StatefulWidget {
     required this.onOpenFacilities,
     required this.onOpenAccount,
     required this.onOpenArticle,
+    this.onOpenSelfAssessment,
     this.authController,
     this.progressController,
     this.assessmentRepository,
@@ -32,6 +34,7 @@ class HomePage extends StatefulWidget {
   final VoidCallback onOpenFacilities;
   final VoidCallback onOpenAccount;
   final ValueChanged<String> onOpenArticle;
+  final VoidCallback? onOpenSelfAssessment;
   final AuthController? authController;
   final LearningProgressController? progressController;
   final AssessmentRepository? assessmentRepository;
@@ -389,7 +392,18 @@ class _HomePageState extends State<HomePage> {
                           ],
                           title: l10n.selfAssessmentTitle,
                           description: l10n.selfAssessmentDesc,
-                          onTap: widget.onOpenLearning,
+                          onTap: widget.onOpenSelfAssessment ??
+                              () {
+                                Navigator.of(context).push<void>(
+                                  MaterialPageRoute<void>(
+                                    builder: (_) => SelfAssessmentPage(
+                                      onOpenMentors: widget.onOpenMentors,
+                                      onOpenFacilities: widget.onOpenFacilities,
+                                      onOpenLearning: widget.onOpenLearning,
+                                    ),
+                                  ),
+                                );
+                              },
                         ),
                         _DeepGlassActionCard(
                           icon: Icons.menu_book_rounded,

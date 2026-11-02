@@ -5335,6 +5335,420 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Ask AI'**
   String get askYegnaFabLabel;
+
+  /// No description provided for @selfAssessmentHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Self-Assessment'**
+  String get selfAssessmentHeading;
+
+  /// No description provided for @selfAssessmentQuestionProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Question {current} of {total}'**
+  String selfAssessmentQuestionProgress(int current, int total);
+
+  /// No description provided for @yesOption.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes'**
+  String get yesOption;
+
+  /// No description provided for @noOption.
+  ///
+  /// In en, this message translates to:
+  /// **'No'**
+  String get noOption;
+
+  /// No description provided for @nextQuestionAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get nextQuestionAction;
+
+  /// No description provided for @viewResultsAction.
+  ///
+  /// In en, this message translates to:
+  /// **'View Results'**
+  String get viewResultsAction;
+
+  /// No description provided for @retakeAssessmentAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Retake Assessment'**
+  String get retakeAssessmentAction;
+
+  /// No description provided for @selectAnswerPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select Yes or No to proceed'**
+  String get selectAnswerPrompt;
+
+  /// No description provided for @assessmentResultHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Assessment Result'**
+  String get assessmentResultHeader;
+
+  /// No description provided for @higherRiskTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Higher Risk for HIV Infection'**
+  String get higherRiskTitle;
+
+  /// No description provided for @moderateRiskTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Moderate Risk for Exposure'**
+  String get moderateRiskTitle;
+
+  /// No description provided for @lowerRiskTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Lower Risk Profile'**
+  String get lowerRiskTitle;
+
+  /// No description provided for @recommendedActionsHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended actions'**
+  String get recommendedActionsHeader;
+
+  /// No description provided for @keyMessageHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Key message'**
+  String get keyMessageHeader;
+
+  /// No description provided for @highRiskKeyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Having a high-risk score does not mean that you are infected with HIV. However, if risky behaviors continue, there is a possibility of acquiring HIV infection. Therefore, make strong efforts to reduce your level of HIV exposure risk.'**
+  String get highRiskKeyMessage;
+
+  /// No description provided for @moderateRiskKeyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Having moderate risk factors indicates that certain behaviors or situations may expose you to HIV or STIs. Adopting preventive practices like regular testing and consistent condom use protects your health.'**
+  String get moderateRiskKeyMessage;
+
+  /// No description provided for @lowerRiskKeyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your responses indicate lower exposure risk. Continue practicing protective behaviors, staying informed, and taking routine health checkups to keep yourself and your partner safe.'**
+  String get lowerRiskKeyMessage;
+
+  /// No description provided for @talkToMentorAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Talk to Mentor'**
+  String get talkToMentorAction;
+
+  /// No description provided for @talkToMentorSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect confidentially with a certified youth mentor'**
+  String get talkToMentorSubtitle;
+
+  /// No description provided for @getServiceAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Get Service'**
+  String get getServiceAction;
+
+  /// No description provided for @getServiceSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Find verified youth-friendly health facilities'**
+  String get getServiceSubtitle;
+
+  /// No description provided for @assessmentEducationalDisclaimer.
+  ///
+  /// In en, this message translates to:
+  /// **'Educational self-assessment only. Not a medical diagnosis. For clinical testing and professional care, visit a verified youth clinic.'**
+  String get assessmentEducationalDisclaimer;
+
+  /// No description provided for @restartAssessmentDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Restart Assessment?'**
+  String get restartAssessmentDialogTitle;
+
+  /// No description provided for @restartAssessmentDialogBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your current responses will be reset. Are you sure you want to start from the beginning?'**
+  String get restartAssessmentDialogBody;
+
+  /// No description provided for @restartAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Restart'**
+  String get restartAction;
+
+  /// No description provided for @whyThisMattersLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Why this matters'**
+  String get whyThisMattersLabel;
+
+  /// No description provided for @riskScoreLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Risk Score: {score} / {maxScore}'**
+  String riskScoreLabel(int score, int maxScore);
+
+  /// No description provided for @categoryPartnersRelationships.
+  ///
+  /// In en, this message translates to:
+  /// **'Partners & Relationships'**
+  String get categoryPartnersRelationships;
+
+  /// No description provided for @categoryProtectionPractices.
+  ///
+  /// In en, this message translates to:
+  /// **'Protection Practices'**
+  String get categoryProtectionPractices;
+
+  /// No description provided for @categoryClinicalSymptoms.
+  ///
+  /// In en, this message translates to:
+  /// **'Clinical Symptoms'**
+  String get categoryClinicalSymptoms;
+
+  /// No description provided for @categoryHealthHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Health History'**
+  String get categoryHealthHistory;
+
+  /// No description provided for @categoryBloodSafety.
+  ///
+  /// In en, this message translates to:
+  /// **'Blood & Instrument Safety'**
+  String get categoryBloodSafety;
+
+  /// No description provided for @categorySubstanceRisk.
+  ///
+  /// In en, this message translates to:
+  /// **'Substance & Behavioral Risk'**
+  String get categorySubstanceRisk;
+
+  /// No description provided for @categorySafetySupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Safety & Support'**
+  String get categorySafetySupport;
+
+  /// No description provided for @categoryTestingPrevention.
+  ///
+  /// In en, this message translates to:
+  /// **'Testing & Prevention'**
+  String get categoryTestingPrevention;
+
+  /// No description provided for @assessmentQ1Text.
+  ///
+  /// In en, this message translates to:
+  /// **'Have you had more than one sexual partner in the last 12 months?'**
+  String get assessmentQ1Text;
+
+  /// No description provided for @assessmentQ1Why.
+  ///
+  /// In en, this message translates to:
+  /// **'Multiple partners without consistent barrier protection increases exposure to asymptomatic viral transmission.'**
+  String get assessmentQ1Why;
+
+  /// No description provided for @assessmentQ2Text.
+  ///
+  /// In en, this message translates to:
+  /// **'Have you engaged in sexual activity in exchange for money, gifts, housing, or other benefits (transactional sex) in the last 12 months?'**
+  String get assessmentQ2Text;
+
+  /// No description provided for @assessmentQ2Why.
+  ///
+  /// In en, this message translates to:
+  /// **'Transactional encounters often involve power imbalances that can make negotiating consistent condom use difficult.'**
+  String get assessmentQ2Why;
+
+  /// No description provided for @assessmentQ3Text.
+  ///
+  /// In en, this message translates to:
+  /// **'Have you had sexual intercourse without using a condom consistently and correctly in the last 6 months?'**
+  String get assessmentQ3Text;
+
+  /// No description provided for @assessmentQ3Why.
+  ///
+  /// In en, this message translates to:
+  /// **'Consistent and correct latex condom usage provides over 95% protection against HIV and substantially reduces other STIs.'**
+  String get assessmentQ3Why;
+
+  /// No description provided for @assessmentQ4Text.
+  ///
+  /// In en, this message translates to:
+  /// **'Have you had sexual intercourse with a partner whose HIV status was unknown to you, or who has unsuppressed viral levels?'**
+  String get assessmentQ4Text;
+
+  /// No description provided for @assessmentQ4Why.
+  ///
+  /// In en, this message translates to:
+  /// **'Knowing partner status is essential. Effective ART suppresses HIV (U=U), but unsuppressed or unknown statuses carry transmission risk.'**
+  String get assessmentQ4Why;
+
+  /// No description provided for @assessmentQ5Text.
+  ///
+  /// In en, this message translates to:
+  /// **'In the past 6 months, have you noticed unusual genital discharge, sores, burning during urination, or pelvic pain?'**
+  String get assessmentQ5Text;
+
+  /// No description provided for @assessmentQ5Why.
+  ///
+  /// In en, this message translates to:
+  /// **'Untreated STIs cause mucosal ulcerations, increasing biological susceptibility to HIV transmission by 3 to 5 times.'**
+  String get assessmentQ5Why;
+
+  /// No description provided for @assessmentQ6Text.
+  ///
+  /// In en, this message translates to:
+  /// **'Have you or any of your partners ever been diagnosed with or treated for a sexually transmitted infection (STI)?'**
+  String get assessmentQ6Text;
+
+  /// No description provided for @assessmentQ6Why.
+  ///
+  /// In en, this message translates to:
+  /// **'A past STI indicates previous unprotected exposure and potential risk of reinfection if both partners were not treated simultaneously.'**
+  String get assessmentQ6Why;
+
+  /// No description provided for @assessmentQ7Text.
+  ///
+  /// In en, this message translates to:
+  /// **'Have you received tattoos, body piercings, or traditional skin cuts using equipment that might not have been sterile?'**
+  String get assessmentQ7Text;
+
+  /// No description provided for @assessmentQ7Why.
+  ///
+  /// In en, this message translates to:
+  /// **'Direct blood contact via non-sterile instruments can transmit bloodborne viruses including Hepatitis B, C, and HIV.'**
+  String get assessmentQ7Why;
+
+  /// No description provided for @assessmentQ8Text.
+  ///
+  /// In en, this message translates to:
+  /// **'Have you ever shared needles, syringes, or injection equipment with another person?'**
+  String get assessmentQ8Text;
+
+  /// No description provided for @assessmentQ8Why.
+  ///
+  /// In en, this message translates to:
+  /// **'Sharing injection equipment carries one of the highest direct risks for rapid HIV and Hepatitis transmission.'**
+  String get assessmentQ8Why;
+
+  /// No description provided for @assessmentQ9Text.
+  ///
+  /// In en, this message translates to:
+  /// **'Do you frequently consume alcohol, khat, or substances before sex, making condom use harder to remember or negotiate?'**
+  String get assessmentQ9Text;
+
+  /// No description provided for @assessmentQ9Why.
+  ///
+  /// In en, this message translates to:
+  /// **'Substances impair decision-making and are the primary behavioral factor in unplanned condomless sexual activity.'**
+  String get assessmentQ9Why;
+
+  /// No description provided for @assessmentQ10Text.
+  ///
+  /// In en, this message translates to:
+  /// **'Have you ever experienced forced sexual contact, coercion, or non-consensual sexual activity?'**
+  String get assessmentQ10Text;
+
+  /// No description provided for @assessmentQ10Why.
+  ///
+  /// In en, this message translates to:
+  /// **'Non-consensual encounters carry high trauma and exposure risk. Emergency PEP is available within 72 hours alongside crisis counseling.'**
+  String get assessmentQ10Why;
+
+  /// No description provided for @assessmentQ11Text.
+  ///
+  /// In en, this message translates to:
+  /// **'Have you experienced chronic unexplained fever, severe fatigue, drenching night sweats, or rapid weight loss?'**
+  String get assessmentQ11Text;
+
+  /// No description provided for @assessmentQ11Why.
+  ///
+  /// In en, this message translates to:
+  /// **'These systemic warning symptoms require prompt professional evaluation to check for infections, tuberculosis, or HIV.'**
+  String get assessmentQ11Why;
+
+  /// No description provided for @assessmentQ12Text.
+  ///
+  /// In en, this message translates to:
+  /// **'Has it been more than 6 months since your last HIV and sexual health test (or have you never been tested)?'**
+  String get assessmentQ12Text;
+
+  /// No description provided for @assessmentQ12Why.
+  ///
+  /// In en, this message translates to:
+  /// **'HIV can be asymptomatic for years. Routine testing every 3 to 6 months provides peace of mind and early life-saving care.'**
+  String get assessmentQ12Why;
+
+  /// No description provided for @highRiskAction1.
+  ///
+  /// In en, this message translates to:
+  /// **'Get tested for HIV immediately at a youth-friendly clinic.'**
+  String get highRiskAction1;
+
+  /// No description provided for @highRiskAction2.
+  ///
+  /// In en, this message translates to:
+  /// **'Use condoms consistently and correctly every time.'**
+  String get highRiskAction2;
+
+  /// No description provided for @highRiskAction3.
+  ///
+  /// In en, this message translates to:
+  /// **'Actively participate in all peer learning sessions and talk to a mentor.'**
+  String get highRiskAction3;
+
+  /// No description provided for @highRiskAction4.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask a clinician about PrEP (Pre-Exposure Prophylaxis) for ongoing protection.'**
+  String get highRiskAction4;
+
+  /// No description provided for @modRiskAction1.
+  ///
+  /// In en, this message translates to:
+  /// **'Schedule a routine HIV and STI screening test soon.'**
+  String get modRiskAction1;
+
+  /// No description provided for @modRiskAction2.
+  ///
+  /// In en, this message translates to:
+  /// **'Ensure consistent barrier protection (condoms) in all sexual encounters.'**
+  String get modRiskAction2;
+
+  /// No description provided for @modRiskAction3.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore our learning modules and discuss testing with your partner.'**
+  String get modRiskAction3;
+
+  /// No description provided for @lowRiskAction1.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue practicing safe behaviors and mutual open communication.'**
+  String get lowRiskAction1;
+
+  /// No description provided for @lowRiskAction2.
+  ///
+  /// In en, this message translates to:
+  /// **'Maintain annual or bi-annual routine health checkups.'**
+  String get lowRiskAction2;
+
+  /// No description provided for @lowRiskAction3.
+  ///
+  /// In en, this message translates to:
+  /// **'Share reliable health facts with friends and peers in your community.'**
+  String get lowRiskAction3;
 }
 
 class _AppLocalizationsDelegate
