@@ -1,4 +1,19 @@
-﻿# Technical decisions
+# Technical decisions
+
+## 2026-11-02 — Mentors direct calling, Telegram contact channels, and package visibility
+
+- Direct Contact Integration:
+  - Phone calling: Configured `tel:<normalized_phone>` via `url_launcher` with `LaunchMode.externalApplication` to open the platform's native phone dialer directly without intermediary mock dialogs.
+  - SMS messaging: Added `sms:<normalized_phone>` launcher option allowing users who prefer text or asynchronous messaging to reach mentors via SMS.
+  - Telegram chat: Integrated `https://t.me/<handle>` with external application launch mode, providing seamless handoff to the Telegram application or web client for real-time peer chat.
+  - Clipboard fallback: If URL launching fails or is unsupported on the host platform, the app copies the phone number or handle to the clipboard and displays a localized floating snackbar.
+- Android 11+ Package Visibility (`<queries>`):
+  - In Android 11+ (API level 30+), apps cannot query whether external dialer or SMS handlers are installed without explicit `<queries>` declarations in `AndroidManifest.xml`.
+  - Added intent query declarations for `android.intent.action.DIAL` with scheme `tel` and `android.intent.action.VIEW` with scheme `sms`.
+- Safeguarding and Crisis Management:
+  - Peer counselors provide guidance and support, not emergency medical intervention.
+  - Added working hours badges to set clear availability boundaries.
+  - Replaced static hotlines in the disclaimer with interactive, 1-tap dialer buttons for national emergency hotlines `952` and `8335`.
 
 ## 2026-10-29 â€” Standard Flutter localization
 

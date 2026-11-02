@@ -54,6 +54,11 @@ class LocalVerifiedMentorRepository implements MentorRepository {
       experienceYears: 3,
       initials: 'ST',
       avatarColor: Color(0xFF0284C7),
+      phoneNumber: '+251911234567',
+      displayPhoneNumber: '+251 91 123 4567',
+      telegramHandle: 'selam_tya_peer',
+      workingHoursEn: 'Mon – Fri: 8:30 AM – 5:30 PM',
+      workingHoursAm: 'ከሰኞ – ዓርብ፡ 2:30 – 11:30',
     ),
     Mentor(
       id: 'dawit_haile',
@@ -80,6 +85,11 @@ class LocalVerifiedMentorRepository implements MentorRepository {
       experienceYears: 2,
       initials: 'DH',
       avatarColor: Color(0xFF059669),
+      phoneNumber: '+251922345678',
+      displayPhoneNumber: '+251 92 234 5678',
+      telegramHandle: 'dawit_redcross_youth',
+      workingHoursEn: 'Mon – Sat: 9:00 AM – 6:00 PM',
+      workingHoursAm: 'ከሰኞ – ቅዳሜ፡ 3:00 – 12:00',
     ),
     Mentor(
       id: 'hana_girma',
@@ -106,6 +116,11 @@ class LocalVerifiedMentorRepository implements MentorRepository {
       experienceYears: 4,
       initials: 'HG',
       avatarColor: Color(0xFF7C3AED),
+      phoneNumber: '+251933456789',
+      displayPhoneNumber: '+251 93 345 6789',
+      telegramHandle: 'hana_aau_peer',
+      workingHoursEn: 'Mon – Fri: 8:00 AM – 5:00 PM',
+      workingHoursAm: 'ከሰኞ – ዓርብ፡ 2:00 – 11:00',
     ),
     Mentor(
       id: 'yohannes_bekele',
@@ -131,6 +146,11 @@ class LocalVerifiedMentorRepository implements MentorRepository {
       experienceYears: 2,
       initials: 'YB',
       avatarColor: Color(0xFFD97706),
+      phoneNumber: '+251944567890',
+      displayPhoneNumber: '+251 94 456 7890',
+      telegramHandle: 'yohannes_mhe_peer',
+      workingHoursEn: 'Mon – Fri: 9:00 AM – 5:30 PM',
+      workingHoursAm: 'ከሰኞ – ዓርብ፡ 3:00 – 11:30',
     ),
     Mentor(
       id: 'bethelhem_alemu',
@@ -158,6 +178,11 @@ class LocalVerifiedMentorRepository implements MentorRepository {
       experienceYears: 3,
       initials: 'BA',
       avatarColor: Color(0xFF0D9488),
+      phoneNumber: '+251955678901',
+      displayPhoneNumber: '+251 95 567 8901',
+      telegramHandle: 'betty_dkt_ambassador',
+      workingHoursEn: 'Mon – Sat: 8:30 AM – 5:00 PM',
+      workingHoursAm: 'ከሰኞ – ቅዳሜ፡ 2:30 – 11:00',
     ),
   ];
 
@@ -188,6 +213,9 @@ class LocalVerifiedMentorRepository implements MentorRepository {
         final matchEn = m.nameEn.toLowerCase().contains(clean) ||
             m.organizationEn.toLowerCase().contains(clean) ||
             m.bioEn.toLowerCase().contains(clean) ||
+            m.telegramHandle.toLowerCase().contains(clean) ||
+            m.phoneNumber.contains(clean) ||
+            m.displayPhoneNumber.contains(clean) ||
             m.languages.any((l) => l.toLowerCase().contains(clean));
         final matchAm = m.nameAm.contains(clean) ||
             m.organizationAm.contains(clean) ||

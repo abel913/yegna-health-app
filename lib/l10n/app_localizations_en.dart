@@ -487,7 +487,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get mentorsIntroduction =>
-      'Find peer support when verified profiles become available.';
+      'Connect confidentially with certified youth peer counselors for free guidance.';
 
   @override
   String get searchMentors => 'Search mentors';
@@ -2990,4 +2990,39 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get calculatingDistance => 'Determining your location...';
+
+  @override
+  String get callMentorAction => 'Call Mentor';
+
+  @override
+  String get telegramChatAction => 'Chat on Telegram';
+
+  @override
+  String get directContactsHeading => 'Direct Contact Channels';
+
+  @override
+  String workingHoursLabel(String hours) {
+    return 'Available Hours: $hours';
+  }
+
+  @override
+  String get copyHandleSuccess => 'Telegram username copied to clipboard';
+
+  @override
+  String get copyPhoneSuccess => 'Phone number copied to clipboard';
+
+  @override
+  String get sendSmsAction => 'Send SMS';
+
+  @override
+  String get phoneCallUnavailable =>
+      'Unable to launch phone dialer on this device';
+
+  @override
+  String get telegramUnavailable => 'Unable to open Telegram link';
+
+  @override
+  String callHotlineAction(String number) {
+    return 'Call $number';
+  }
 }

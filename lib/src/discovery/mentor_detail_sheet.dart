@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../l10n/app_localizations.dart';
+import 'mentor_card.dart';
 import 'mentor_model.dart';
 
 class MentorDetailSheet extends StatelessWidget {
@@ -206,29 +209,298 @@ class MentorDetailSheet extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
 
-                  // Action Button: Chat Confidential
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      _showChatInitiatedDialog(context, l10n, isAmharic);
-                    },
-                    icon: const Icon(Icons.chat_bubble_outline_rounded,
-                        size: 18, color: Colors.white),
-                    label: Text(
-                      l10n.chatConfidentialAction,
-                      style: const TextStyle(
-                        fontFamily: 'PlusJakartaSans',
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
+                  // Direct Contacts & Communication Card
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: const Color(0xFFBAE6FD),
+                        width: 1.2,
                       ),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Color(0x0C0284C7),
+                          blurRadius: 14,
+                          offset: Offset(0, 4),
+                        ),
+                      ],
                     ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF0284C7),
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      elevation: 0,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(7),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFE0F2FE),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: const Icon(
+                                Icons.connect_without_contact_rounded,
+                                color: Color(0xFF0284C7),
+                                size: 20,
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    l10n.directContactsHeading,
+                                    style: const TextStyle(
+                                      fontFamily: 'PlusJakartaSans',
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w800,
+                                      color: Color(0xFF08264A),
+                                    ),
+                                  ),
+                                  Text(
+                                    l10n.workingHoursLabel(mentor
+                                        .localizedWorkingHours(isAmharic)),
+                                    style: const TextStyle(
+                                      fontFamily: 'PlusJakartaSans',
+                                      fontSize: 11.5,
+                                      color: Color(0xFF64748B),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 14),
+
+                        // Channel 1: Telegram Direct Chat
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF0FDF4),
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(
+                              color: const Color(0xFFBBF7D0),
+                              width: 1,
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 36,
+                                height: 36,
+                                decoration: const BoxDecoration(
+                                  color: Color(0xFF16A34A),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(
+                                  Icons.send_rounded,
+                                  color: Colors.white,
+                                  size: 16,
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      'Telegram Chat',
+                                      style: TextStyle(
+                                        fontFamily: 'PlusJakartaSans',
+                                        fontSize: 12.5,
+                                        fontWeight: FontWeight.w700,
+                                        color: Color(0xFF14532D),
+                                      ),
+                                    ),
+                                    Text(
+                                      '@${mentor.telegramHandle}',
+                                      style: const TextStyle(
+                                        fontFamily: 'PlusJakartaSans',
+                                        fontSize: 11.5,
+                                        fontWeight: FontWeight.w600,
+                                        color: Color(0xFF16A34A),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              IconButton(
+                                tooltip: l10n.copyHandleSuccess,
+                                icon: const Icon(Icons.copy_rounded,
+                                    size: 17, color: Color(0xFF16A34A)),
+                                onPressed: () {
+                                  Clipboard.setData(ClipboardData(
+                                      text: '@${mentor.telegramHandle}'));
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                          '${l10n.copyHandleSuccess} (@${mentor.telegramHandle})'),
+                                      behavior: SnackBarBehavior.floating,
+                                    ),
+                                  );
+                                },
+                              ),
+                              ElevatedButton(
+                                onPressed: () => MentorCard.launchTelegram(
+                                    context, mentor.telegramHandle, l10n),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFF16A34A),
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 8),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  elevation: 0,
+                                ),
+                                child: Text(
+                                  l10n.telegramChatAction,
+                                  style: const TextStyle(
+                                    fontFamily: 'PlusJakartaSans',
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+
+                        // Channel 2: Direct Phone Call & SMS
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFEFF6FF),
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(
+                              color: const Color(0xFFBFDBFE),
+                              width: 1,
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 36,
+                                height: 36,
+                                decoration: const BoxDecoration(
+                                  color: Color(0xFF0284C7),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(
+                                  Icons.phone_rounded,
+                                  color: Colors.white,
+                                  size: 16,
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      isAmharic ? 'የስልክ ጥሪ' : 'Voice Call',
+                                      style: const TextStyle(
+                                        fontFamily: 'PlusJakartaSans',
+                                        fontSize: 12.5,
+                                        fontWeight: FontWeight.w700,
+                                        color: Color(0xFF1E3A8A),
+                                      ),
+                                    ),
+                                    Text(
+                                      mentor.displayPhoneNumber,
+                                      style: const TextStyle(
+                                        fontFamily: 'PlusJakartaSans',
+                                        fontSize: 11.5,
+                                        fontWeight: FontWeight.w600,
+                                        color: Color(0xFF0284C7),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              IconButton(
+                                tooltip: l10n.copyPhoneSuccess,
+                                icon: const Icon(Icons.copy_rounded,
+                                    size: 17, color: Color(0xFF0284C7)),
+                                onPressed: () {
+                                  Clipboard.setData(
+                                      ClipboardData(text: mentor.phoneNumber));
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                          '${l10n.copyPhoneSuccess} (${mentor.phoneNumber})'),
+                                      behavior: SnackBarBehavior.floating,
+                                    ),
+                                  );
+                                },
+                              ),
+                              IconButton(
+                                tooltip: l10n.sendSmsAction,
+                                icon: const Icon(Icons.sms_rounded,
+                                    size: 17, color: Color(0xFF0284C7)),
+                                onPressed: () => _launchSms(
+                                    context, mentor.phoneNumber, l10n),
+                              ),
+                              ElevatedButton(
+                                onPressed: () => MentorCard.launchCall(
+                                    context, mentor.phoneNumber, l10n),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFF0284C7),
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 8),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  elevation: 0,
+                                ),
+                                child: Text(
+                                  l10n.callMentorAction,
+                                  style: const TextStyle(
+                                    fontFamily: 'PlusJakartaSans',
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+
+                        // Confidentiality Guarantee Footer
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF8FAFC),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.lock_outline_rounded,
+                                  size: 13, color: Color(0xFF64748B)),
+                              const SizedBox(width: 6),
+                              Expanded(
+                                child: Text(
+                                  isAmharic
+                                      ? 'ውይይትዎ 100% ሚስጥራዊ እና በወጣቶች ደህንነት መመሪያ የተጠበቀ ነው።'
+                                      : 'All communications are 100% private & youth-safeguarded.',
+                                  style: const TextStyle(
+                                    fontFamily: 'PlusJakartaSans',
+                                    fontSize: 11,
+                                    color: Color(0xFF64748B),
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(height: 18),
@@ -361,22 +633,66 @@ class MentorDetailSheet extends StatelessWidget {
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(color: const Color(0xFFFDE68A)),
                     ),
-                    child: Row(
+                    child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Icon(Icons.info_outline_rounded,
-                            size: 18, color: Color(0xFFD97706)),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Text(
-                            l10n.emergencyDisclaimer,
-                            style: const TextStyle(
-                              fontFamily: 'PlusJakartaSans',
-                              fontSize: 12,
-                              color: Color(0xFF92400E),
-                              height: 1.35,
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Icon(Icons.info_outline_rounded,
+                                size: 18, color: Color(0xFFD97706)),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Text(
+                                l10n.emergencyDisclaimer,
+                                style: const TextStyle(
+                                  fontFamily: 'PlusJakartaSans',
+                                  fontSize: 12,
+                                  color: Color(0xFF92400E),
+                                  height: 1.35,
+                                ),
+                              ),
                             ),
-                          ),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 6,
+                          children: [
+                            ActionChip(
+                              avatar: const Icon(Icons.phone_in_talk_rounded,
+                                  size: 14, color: Color(0xFFB45309)),
+                              label: Text(l10n.callHotlineAction('952')),
+                              onPressed: () =>
+                                  MentorCard.launchCall(context, '952', l10n),
+                              backgroundColor: const Color(0xFFFEF3C7),
+                              side: const BorderSide(
+                                  color: Color(0xFFFCD34D), width: 1),
+                              labelStyle: const TextStyle(
+                                fontFamily: 'PlusJakartaSans',
+                                fontSize: 11.5,
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xFF92400E),
+                              ),
+                            ),
+                            ActionChip(
+                              avatar: const Icon(Icons.phone_in_talk_rounded,
+                                  size: 14, color: Color(0xFFB45309)),
+                              label: Text(l10n.callHotlineAction('8335')),
+                              onPressed: () =>
+                                  MentorCard.launchCall(context, '8335', l10n),
+                              backgroundColor: const Color(0xFFFEF3C7),
+                              side: const BorderSide(
+                                  color: Color(0xFFFCD34D), width: 1),
+                              labelStyle: const TextStyle(
+                                fontFamily: 'PlusJakartaSans',
+                                fontSize: 11.5,
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xFF92400E),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -390,100 +706,32 @@ class MentorDetailSheet extends StatelessWidget {
     );
   }
 
-  void _showChatInitiatedDialog(
-      BuildContext context, AppLocalizations l10n, bool isAmharic) {
-    showDialog<void>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(22),
-        ),
-        title: Row(
-          children: [
-            const Icon(Icons.lock_outline_rounded,
-                color: Color(0xFF0284C7), size: 22),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Text(
-                l10n.chatConfidentialAction,
-                style: const TextStyle(
-                  fontFamily: 'PlusJakartaSans',
-                  fontSize: 17,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              l10n.startChatPrompt(mentor.localizedName(isAmharic)),
-              style: const TextStyle(
-                fontFamily: 'PlusJakartaSans',
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: Color(0xFF08264A),
-              ),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              l10n.peerChatComingSoon,
-              style: const TextStyle(
-                fontFamily: 'PlusJakartaSans',
-                fontSize: 13,
-                color: Color(0xFF475569),
-                height: 1.4,
-              ),
-            ),
-            const SizedBox(height: 14),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: const Color(0xFFF0FDF4),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: const Color(0xFFBBF7D0)),
-              ),
-              child: Row(
-                children: [
-                  const Icon(Icons.verified_user_rounded,
-                      size: 16, color: Color(0xFF16A34A)),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      isAmharic
-                          ? 'ውይይትዎ ሙሉ በሙሉ ስም-አልባ እና ሚስጥራዊ ነው'
-                          : 'Your conversation is 100% anonymous & encrypted',
-                      style: const TextStyle(
-                        fontFamily: 'PlusJakartaSans',
-                        fontSize: 11.5,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF166534),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          ElevatedButton(
-            onPressed: () => Navigator.pop(ctx),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF0284C7),
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            child: const Text('OK'),
+  static Future<void> _launchSms(
+      BuildContext context, String phone, AppLocalizations l10n) async {
+    final cleanPhone = phone.replaceAll(RegExp(r'[^0-9+]'), '');
+    final uri = Uri.parse('sms:$cleanPhone');
+    final messenger = ScaffoldMessenger.maybeOf(context);
+    try {
+      final launched =
+          await launchUrl(uri, mode: LaunchMode.externalApplication);
+      if (!launched) {
+        await Clipboard.setData(ClipboardData(text: cleanPhone));
+        messenger?.showSnackBar(
+          SnackBar(
+            content: Text('${l10n.copyPhoneSuccess} ($cleanPhone)'),
+            behavior: SnackBarBehavior.floating,
           ),
-        ],
-      ),
-    );
+        );
+      }
+    } catch (_) {
+      await Clipboard.setData(ClipboardData(text: cleanPhone));
+      messenger?.showSnackBar(
+        SnackBar(
+          content: Text('${l10n.copyPhoneSuccess} ($cleanPhone)'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
   }
 }
 

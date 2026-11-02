@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../l10n/app_localizations.dart';
 import 'mentor_detail_sheet.dart';
@@ -13,6 +15,62 @@ class MentorCard extends StatelessWidget {
 
   final Mentor mentor;
   final VoidCallback? onTap;
+
+  static Future<void> launchCall(
+      BuildContext context, String phone, AppLocalizations l10n) async {
+    final cleanPhone = phone.replaceAll(RegExp(r'[^0-9+]'), '');
+    final uri = Uri.parse('tel:$cleanPhone');
+    final messenger = ScaffoldMessenger.maybeOf(context);
+    try {
+      final launched =
+          await launchUrl(uri, mode: LaunchMode.externalApplication);
+      if (!launched) {
+        await Clipboard.setData(ClipboardData(text: cleanPhone));
+        messenger?.showSnackBar(
+          SnackBar(
+            content: Text('${l10n.copyPhoneSuccess} ($cleanPhone)'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } catch (_) {
+      await Clipboard.setData(ClipboardData(text: cleanPhone));
+      messenger?.showSnackBar(
+        SnackBar(
+          content: Text('${l10n.copyPhoneSuccess} ($cleanPhone)'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
+  }
+
+  static Future<void> launchTelegram(
+      BuildContext context, String handle, AppLocalizations l10n) async {
+    final cleanHandle = handle.replaceAll('@', '').trim();
+    final uri = Uri.parse('https://t.me/$cleanHandle');
+    final messenger = ScaffoldMessenger.maybeOf(context);
+    try {
+      final launched =
+          await launchUrl(uri, mode: LaunchMode.externalApplication);
+      if (!launched) {
+        await Clipboard.setData(ClipboardData(text: '@$cleanHandle'));
+        messenger?.showSnackBar(
+          SnackBar(
+            content: Text('${l10n.copyHandleSuccess} (@$cleanHandle)'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } catch (_) {
+      await Clipboard.setData(ClipboardData(text: '@$cleanHandle'));
+      messenger?.showSnackBar(
+        SnackBar(
+          content: Text('${l10n.copyHandleSuccess} (@$cleanHandle)'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -251,6 +309,82 @@ class MentorCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
 
+                // Contact Pill Row (Phone + Telegram)
+                Row(
+                  children: [
+                    InkWell(
+                      onTap: () =>
+                          launchCall(context, mentor.phoneNumber, l10n),
+                      borderRadius: BorderRadius.circular(8),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFEFF6FF),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: const Color(0xFFBAE6FD),
+                            width: 1,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.phone_rounded,
+                                size: 12, color: Color(0xFF0284C7)),
+                            const SizedBox(width: 4),
+                            Text(
+                              mentor.displayPhoneNumber,
+                              style: const TextStyle(
+                                fontFamily: 'PlusJakartaSans',
+                                fontSize: 11.5,
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xFF0284C7),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    InkWell(
+                      onTap: () =>
+                          launchTelegram(context, mentor.telegramHandle, l10n),
+                      borderRadius: BorderRadius.circular(8),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF0FDF4),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: const Color(0xFF86EFAC),
+                            width: 1,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.send_rounded,
+                                size: 11, color: Color(0xFF16A34A)),
+                            const SizedBox(width: 4),
+                            Text(
+                              '@${mentor.telegramHandle}',
+                              style: const TextStyle(
+                                fontFamily: 'PlusJakartaSans',
+                                fontSize: 11.5,
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xFF166534),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+
                 // Topic Tags
                 Wrap(
                   spacing: 6,
@@ -262,10 +396,11 @@ class MentorCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
 
-                // Action Bar
+                // Action Bar: View Profile, Call Mentor, Telegram Chat
                 Row(
                   children: [
                     Expanded(
+                      flex: 4,
                       child: OutlinedButton.icon(
                         onPressed: onTap ??
                             () => MentorDetailSheet.show(context, mentor),
@@ -279,11 +414,14 @@ class MentorCard extends StatelessWidget {
                             fontWeight: FontWeight.w700,
                             color: Color(0xFF0284C7),
                           ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                         style: OutlinedButton.styleFrom(
                           side: const BorderSide(
                               color: Color(0xFFBAE6FD), width: 1.2),
-                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 8, horizontal: 6),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
@@ -293,27 +431,46 @@ class MentorCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     Expanded(
+                      flex: 4,
                       child: ElevatedButton.icon(
                         onPressed: () =>
-                            MentorDetailSheet.show(context, mentor),
-                        icon: const Icon(Icons.chat_bubble_outline_rounded,
+                            launchCall(context, mentor.phoneNumber, l10n),
+                        icon: const Icon(Icons.phone_rounded,
                             size: 15, color: Colors.white),
                         label: Text(
-                          l10n.chatConfidentialAction,
+                          l10n.callMentorAction,
                           style: const TextStyle(
                             fontFamily: 'PlusJakartaSans',
                             fontSize: 12,
                             fontWeight: FontWeight.w700,
                             color: Colors.white,
                           ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF0284C7),
-                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 8, horizontal: 6),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
                           elevation: 0,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    IconButton.filledTonal(
+                      tooltip: l10n.telegramChatAction,
+                      onPressed: () =>
+                          launchTelegram(context, mentor.telegramHandle, l10n),
+                      icon: const Icon(Icons.send_rounded,
+                          size: 16, color: Color(0xFF0284C7)),
+                      style: IconButton.styleFrom(
+                        backgroundColor: const Color(0xFFE0F2FE),
+                        padding: const EdgeInsets.all(8),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
                         ),
                       ),
                     ),

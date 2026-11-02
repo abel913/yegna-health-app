@@ -947,7 +947,7 @@ abstract class AppLocalizations {
   /// No description provided for @mentorsIntroduction.
   ///
   /// In en, this message translates to:
-  /// **'Find peer support when verified profiles become available.'**
+  /// **'Connect confidentially with certified youth peer counselors for free guidance.'**
   String get mentorsIntroduction;
 
   /// No description provided for @searchMentors.
@@ -5173,6 +5173,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Determining your location...'**
   String get calculatingDistance;
+
+  /// No description provided for @callMentorAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Call Mentor'**
+  String get callMentorAction;
+
+  /// No description provided for @telegramChatAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat on Telegram'**
+  String get telegramChatAction;
+
+  /// No description provided for @directContactsHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Direct Contact Channels'**
+  String get directContactsHeading;
+
+  /// No description provided for @workingHoursLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Available Hours: {hours}'**
+  String workingHoursLabel(String hours);
+
+  /// No description provided for @copyHandleSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Telegram username copied to clipboard'**
+  String get copyHandleSuccess;
+
+  /// No description provided for @copyPhoneSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone number copied to clipboard'**
+  String get copyPhoneSuccess;
+
+  /// No description provided for @sendSmsAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Send SMS'**
+  String get sendSmsAction;
+
+  /// No description provided for @phoneCallUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to launch phone dialer on this device'**
+  String get phoneCallUnavailable;
+
+  /// No description provided for @telegramUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to open Telegram link'**
+  String get telegramUnavailable;
+
+  /// No description provided for @callHotlineAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Call {number}'**
+  String callHotlineAction(String number);
 }
 
 class _AppLocalizationsDelegate

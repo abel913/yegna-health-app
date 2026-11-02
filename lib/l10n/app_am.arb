@@ -150,7 +150,7 @@
   "facilitiesNotAvailableBody": "የተቋማት መረጃ ገና የለም። እስኪረጋገጡ ድረስ አገልግሎት ሰጪዎችን ወይም የመገኛ መረጃን አናሳይም።",
   "mapPreviewTitle": "ካርታ",
   "mapNotAvailableBody": "የተረጋገጠ የተቋማት ዝርዝር ሲኖር ካርታ ይቀርባል።",
-  "mentorsIntroduction": "የተረጋገጡ መገለጫዎች ሲኖሩ የእኩዮች ድጋፍ ያግኙ።",
+  "mentorsIntroduction": "ስለ ጤና፣ ግንኙነት እና ስሜታዊ ደህንነት ከሰለጠኑ የወጣቶች አቻ አማካሪዎች ጋር በሚስጥር ይገናኙ እና ነፃ ምክር ያግኙ።",
   "searchMentors": "አማካሪዎችን ይፈልጉ",
   "allMentors": "ሁሉም አማካሪዎች",
   "languageFilter": "ቋንቋ",
@@ -901,6 +901,16 @@
   "srhQ4Insight": "የቤተሰብ ምጣኔ ሴቶችን ያበረታል፣ የእናቶች ሞትን ይቀንሳል እንዲሁም ለልጆች ጤናማ እድገት አስተዋጽኦ ያደርጋል።",
   "locationPermissionDenied": "ትክክለኛውን ርቀት ለማስላት እና በአቅራቢያ ያሉ ተቋማትን ለማሳየት የመገኛ ፍቃድ ያስፈልጋል።",
   "locationDisabled": "በዚህ መሳሪያ ላይ የመገኛ አገልግሎት (GPS) ጠፍቷል። እባክዎ ያብሩት።",
-  "calculatingDistance": "የእርስዎን መገኛ በማስላት ላይ..."
+  "calculatingDistance": "የእርስዎን መገኛ በማስላት ላይ...",
+  "callMentorAction": "ለአማካሪው ይደውሉ",
+  "telegramChatAction": "በቴሌግራም ያውሩ",
+  "directContactsHeading": "ቀጥታ የመገናኛ መንገዶች",
+  "workingHoursLabel": "የስራ ሰዓታት፡ {hours}",
+  "copyHandleSuccess": "የቴሌግራም መለያ ተቀድቷል",
+  "copyPhoneSuccess": "ስልክ ቁጥር ተቀድቷል",
+  "sendSmsAction": "የጽሑፍ መልዕክት",
+  "phoneCallUnavailable": "በዚህ መሳሪያ ላይ ስልክ መደወል አልተቻለም",
+  "telegramUnavailable": "ቴሌግራም መክፈት አልተቻለም",
+  "callHotlineAction": "{number} ይደውሉ"
 }
 

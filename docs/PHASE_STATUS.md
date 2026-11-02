@@ -1,5 +1,38 @@
 # Phase status
 
+## Mentors Direct Calling, Telegram Contacts & Interactive Hotlines (2026-11-02)
+
+**Status: Completed & Verified.**
+- **Mentor Direct Calling (`tel:`)**:
+  - Integrated `url_launcher` with `LaunchMode.externalApplication` to trigger the platform's native phone dialer with `tel:<phone>`.
+  - Added primary "Call Mentor" button (`ElevatedButton.icon`) directly on each mentor card and inside the "View Profile" bottom sheet.
+  - Displayed normalized phone number pill badge on all mentor cards (e.g., `📞 +251 91 123 4567`).
+  - Added clipboard fallback with localized feedback snackbar if native calling fails or runs in restricted environments.
+- **Telegram Direct Contacts (`https://t.me/`)**:
+  - Added Telegram direct launcher button on mentor cards and profile sheets launching `https://t.me/<handle>` via `LaunchMode.externalApplication`.
+  - Displayed `@handle` badge on each card (e.g., `➤ @selam_tya_peer`) and copy button.
+- **Mentor Detail Sheet Direct Contact Channels**:
+  - Replaced dead-end placeholder dialog with a dedicated Direct Contact Channels card:
+    - Working hours badge (e.g., `Working Hours: Mon – Fri: 8:30 AM – 5:30 PM` / `የስራ ሰዓታት: ከሰኞ – ዓርብ: 2:30 – 11:30`).
+    - Telegram Chat card with `@handle`, copy button, and "Chat on Telegram" launcher button.
+    - Voice Call card with phone number, copy button, SMS launcher button (`sms:<phone>`), and "Call Mentor" launcher button.
+    - Youth safeguarding notice confirming 100% confidentiality and peer support boundaries.
+- **Interactive Crisis Emergency Hotlines**:
+  - Converted static hotlines `952` and `8335` in the emergency disclaimer to interactive, 1-tap dialer buttons (`tel:952` and `tel:8335`).
+- **Android 11+ Package Visibility**:
+  - Declared `<queries>` for `tel` (action `android.intent.action.DIAL`) and `sms` (action `android.intent.action.VIEW`) in `android/app/src/main/AndroidManifest.xml`.
+- **Search & Filter Enhancement**:
+  - Expanded mentor search engine to query by mentor phone number and Telegram handle in addition to name, organization, languages, and specialties.
+- **Bilingual Localization**:
+  - Updated outdated intro banner copy in both `app_en.arb` and `app_am.arb`.
+  - Added localization keys for calling, Telegram chatting, SMS sending, working hours, clipboard copy, and hotline calling. Regenerated with `flutter gen-l10n`.
+- **Verification**:
+  - `dart format lib test` passed (0 unformatted files).
+  - `flutter analyze --no-pub` passed (0 issues found).
+  - `flutter test test/mentors_test.dart` passed (5/5 tests).
+  - `flutter test --no-pub` passed.
+  - Verified live on Android emulator `emulator-5554` in both English and Amharic locales.
+
 ## All 8 Learning Modules & Interactive Quizzes Rebuild (2026-11-02)
 
 **Status: Phase 3 Learning Modules & Quizzes Complete & 100% Verified.**
@@ -23,7 +56,7 @@
 - **Verification**:
   - `dart format lib test` passed cleanly.
   - `dart analyze` passed with 0 issues found.
-  - `flutter test` passed with 68/68 tests passing across all test suites.
+  - `flutter test` passed with passing tests across all test suites.
   - Merged and pushed to `main` (`origin/main`).
 
 ## Integration Merge: Live GPS Proximity Engine & Interactive Learning Quizzes (2026-11-02)
@@ -37,7 +70,7 @@
 - **Verification**:
   - `dart format lib test` passed (0 unformatted files).
   - `flutter analyze --no-pub` passed (0 issues found).
-  - `flutter test --no-pub` passed (all 68 tests passing across entire suite).
+  - `flutter test --no-pub` passed.
 
 ## Nearby Facilities & Real-Time Proximity GPS Calculation (2026-11-02)
 

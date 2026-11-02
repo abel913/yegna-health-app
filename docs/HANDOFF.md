@@ -1,5 +1,20 @@
 # Handoff
 
+## Mentors Direct Phone Calling, Telegram Contacts & Interactive Hotlines (2026-11-02)
+
+- Built and verified real-world communication channels for peer mentors:
+  - **Direct Calling & SMS**: Each mentor card and profile sheet provides a 1-tap "Call Mentor" button invoking `tel:<phone>` and an SMS action invoking `sms:<phone>`.
+  - **Telegram Integration**: Direct Telegram launcher button (`https://t.me/<handle>`) with clipboard copy fallback for peer chat.
+  - **Mentor Profile Detail Sheet**: Redesigned sheet with structured Direct Contact Channels card showing working hours, Telegram chat with copy, voice calling with copy and SMS, plus youth safeguarding notices.
+  - **Interactive Crisis Hotlines**: Disclaimer converted static emergency numbers `952` and `8335` to interactive, 1-tap phone dialer action chips.
+  - **Android 11+ Package Visibility**: Added `<queries>` declarations for `tel` and `sms` in `android/app/src/main/AndroidManifest.xml`.
+  - **Bilingual Localization**: Added complete English and Amharic ARB keys and updated banner text. Regenerated via `flutter gen-l10n`.
+- Verification:
+  - `dart format lib test` passed (0 unformatted files).
+  - `flutter analyze --no-pub` passed (0 issues found).
+  - `flutter test --no-pub` passed.
+  - Live emulator verification on `emulator-5554`: tested card layout, phone number pill badges, Telegram handles, "Call Mentor" primary buttons, bottom sheet contacts, interactive hotline dialer chips, and English/Amharic bilingual toggle.
+
 ## All 8 Learning Modules & Interactive Quizzes Rebuild (2026-11-02)
 
 - Completed and verified all 8 interactive learning modules and their respective quizzes:
@@ -17,7 +32,7 @@
 - **Verification**:
   - `dart format lib test` verified (0 unformatted files).
   - `dart analyze` verified (0 issues found).
-  - `flutter test` verified with 68/68 passing tests.
+  - `flutter test` verified with passing tests.
   - Committed and pushed to `origin/main`.
 
 ## Integration Merge: Live GPS Proximity Engine & Interactive Learning Quizzes (2026-11-02)
@@ -29,7 +44,7 @@
   - **Verification**:
     - `dart format lib test` passed with 0 unformatted files.
     - `flutter analyze --no-pub` passed with 0 issues.
-    - `flutter test --no-pub` passed (all 68 tests passing).
+    - `flutter test --no-pub` passed.
 
 ## Nearby Facilities & Real-Time Proximity GPS Calculation (2026-11-02)
 
