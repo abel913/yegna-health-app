@@ -1,5 +1,16 @@
 # Handoff
 
+## Integration Merge: Live GPS Proximity Engine & Interactive Learning Quizzes (2026-11-02)
+
+- Reconciled and merged latest remote `origin/main` (commit `43f3d13` by `abel`) with local learning module enhancements and quizzes (`34c33aa`):
+  - **GPS Proximity Integration**: Preserved full `LocationService`, `GeolocatorLocationService`, dynamic nearby sorting, and animated user location marker on `FacilityMapView`.
+  - **Learning Quizzes Integration**: Preserved full quiz pages (`PubertyQuizPage`, `StiQuizPage`, `SrhQuizPage`, `HepatitisQuizPage`, `GbvQuizPage`) and lesson modules.
+  - **Localization Merged**: Preserved both the location-related strings (`locationPermissionDenied`, `locationDisabled`, `calculatingDistance`) and all learning module/quiz ARB strings in English and Amharic.
+  - **Verification**:
+    - `dart format lib test` passed with 0 unformatted files.
+    - `flutter analyze --no-pub` passed with 0 issues.
+    - `flutter test --no-pub` passed (all 68 tests passing).
+
 ## Nearby Facilities & Real-Time Proximity GPS Calculation (2026-11-02)
 
 - Delivered real-time GPS proximity distance engine and dynamic facility sorting:
