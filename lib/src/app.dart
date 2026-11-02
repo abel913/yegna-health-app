@@ -150,6 +150,9 @@ class _AppShellState extends State<AppShell> {
     final pages = [
       HomePage(
         educationRepository: widget.educationRepository,
+        authController: widget.authController,
+        progressController: widget.progressController,
+        assessmentRepository: widget.assessmentRepository,
         locale: Localizations.localeOf(context),
         onOpenLearning: () => _onDestinationSelected(3),
         onOpenMentors: () => _onDestinationSelected(2),

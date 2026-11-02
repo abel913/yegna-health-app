@@ -4189,6 +4189,138 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'All Languages'**
   String get languageAll;
+
+  /// No description provided for @greetingMorning.
+  ///
+  /// In en, this message translates to:
+  /// **'Good morning'**
+  String get greetingMorning;
+
+  /// No description provided for @greetingAfternoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Good afternoon'**
+  String get greetingAfternoon;
+
+  /// No description provided for @greetingEvening.
+  ///
+  /// In en, this message translates to:
+  /// **'Good evening'**
+  String get greetingEvening;
+
+  /// No description provided for @guestGreetingSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your safe space for confidential youth health'**
+  String get guestGreetingSubtitle;
+
+  /// No description provided for @guestUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Guest Explorer'**
+  String get guestUser;
+
+  /// No description provided for @dailyTipBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Insight'**
+  String get dailyTipBadge;
+
+  /// No description provided for @dailyTipMythFact.
+  ///
+  /// In en, this message translates to:
+  /// **'Myth vs Fact'**
+  String get dailyTipMythFact;
+
+  /// No description provided for @dailyTipTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Hormonal changes during puberty'**
+  String get dailyTipTitle;
+
+  /// No description provided for @dailyTipBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Acne and mood shifts are normal bodily adjustments during growth, not signs of poor hygiene.'**
+  String get dailyTipBody;
+
+  /// No description provided for @readArticleAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore Article'**
+  String get readArticleAction;
+
+  /// No description provided for @emergencyHelplineTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'24/7 Confidential Helplines'**
+  String get emergencyHelplineTitle;
+
+  /// No description provided for @emergencyHelplineSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Toll-free: 952 (Health) / 8335 (Youth Line)'**
+  String get emergencyHelplineSubtitle;
+
+  /// No description provided for @emergencyHelplineAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Call / Help'**
+  String get emergencyHelplineAction;
+
+  /// No description provided for @emergencySheetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Urgent Help & Support'**
+  String get emergencySheetTitle;
+
+  /// No description provided for @emergencySheetDisclaimer.
+  ///
+  /// In en, this message translates to:
+  /// **'For immediate clinical emergencies or acute crisis, call toll-free numbers anytime.'**
+  String get emergencySheetDisclaimer;
+
+  /// No description provided for @emergencyHotline952Name.
+  ///
+  /// In en, this message translates to:
+  /// **'National Health Emergency Hotline'**
+  String get emergencyHotline952Name;
+
+  /// No description provided for @emergencyHotline952Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Ministry of Health 24/7 free hotline for acute health concerns'**
+  String get emergencyHotline952Desc;
+
+  /// No description provided for @emergencyHotline8335Name.
+  ///
+  /// In en, this message translates to:
+  /// **'National Youth & Mental Health Line'**
+  String get emergencyHotline8335Name;
+
+  /// No description provided for @emergencyHotline8335Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Confidential counseling for reproductive health and emotional distress'**
+  String get emergencyHotline8335Desc;
+
+  /// No description provided for @exploreServicesHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore Services'**
+  String get exploreServicesHeading;
+
+  /// No description provided for @exploreServicesSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Private tools, peer support, and verified clinics'**
+  String get exploreServicesSubtitle;
+
+  /// No description provided for @callNowAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Call Now'**
+  String get callNowAction;
 }
 
 class _AppLocalizationsDelegate

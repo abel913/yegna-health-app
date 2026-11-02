@@ -2403,4 +2403,77 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get languageAll => 'All Languages';
+
+  @override
+  String get greetingMorning => 'Good morning';
+
+  @override
+  String get greetingAfternoon => 'Good afternoon';
+
+  @override
+  String get greetingEvening => 'Good evening';
+
+  @override
+  String get guestGreetingSubtitle =>
+      'Your safe space for confidential youth health';
+
+  @override
+  String get guestUser => 'Guest Explorer';
+
+  @override
+  String get dailyTipBadge => 'Daily Insight';
+
+  @override
+  String get dailyTipMythFact => 'Myth vs Fact';
+
+  @override
+  String get dailyTipTitle => 'Hormonal changes during puberty';
+
+  @override
+  String get dailyTipBody =>
+      'Acne and mood shifts are normal bodily adjustments during growth, not signs of poor hygiene.';
+
+  @override
+  String get readArticleAction => 'Explore Article';
+
+  @override
+  String get emergencyHelplineTitle => '24/7 Confidential Helplines';
+
+  @override
+  String get emergencyHelplineSubtitle =>
+      'Toll-free: 952 (Health) / 8335 (Youth Line)';
+
+  @override
+  String get emergencyHelplineAction => 'Call / Help';
+
+  @override
+  String get emergencySheetTitle => 'Urgent Help & Support';
+
+  @override
+  String get emergencySheetDisclaimer =>
+      'For immediate clinical emergencies or acute crisis, call toll-free numbers anytime.';
+
+  @override
+  String get emergencyHotline952Name => 'National Health Emergency Hotline';
+
+  @override
+  String get emergencyHotline952Desc =>
+      'Ministry of Health 24/7 free hotline for acute health concerns';
+
+  @override
+  String get emergencyHotline8335Name => 'National Youth & Mental Health Line';
+
+  @override
+  String get emergencyHotline8335Desc =>
+      'Confidential counseling for reproductive health and emotional distress';
+
+  @override
+  String get exploreServicesHeading => 'Explore Services';
+
+  @override
+  String get exploreServicesSubtitle =>
+      'Private tools, peer support, and verified clinics';
+
+  @override
+  String get callNowAction => 'Call Now';
 }

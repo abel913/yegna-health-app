@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:yegna_health_app/l10n/app_localizations.dart';
 import 'package:yegna_health_app/src/discovery/facilities_page.dart';
 import 'package:yegna_health_app/src/discovery/facility_detail_sheet.dart';
+import 'package:yegna_health_app/src/discovery/facility_map_view.dart';
 import 'package:yegna_health_app/src/discovery/facility_model.dart';
 import 'package:yegna_health_app/src/discovery/facility_repository.dart';
 
@@ -82,7 +84,18 @@ void main() {
       await tester.tap(find.byIcon(Icons.map_outlined));
       await tester.pumpAndSettle();
 
-      expect(find.byType(CustomPaint), findsWidgets);
+      expect(find.byType(FlutterMap), findsOneWidget);
+      expect(find.byType(FacilityMapView), findsOneWidget);
+      expect(find.byIcon(Icons.add_rounded), findsOneWidget);
+      expect(find.byIcon(Icons.remove_rounded), findsOneWidget);
+      expect(find.byIcon(Icons.my_location_rounded), findsOneWidget);
+      expect(find.text(en.directionsAction), findsOneWidget);
+
+      // Tap Zoom In and Zoom Out
+      await tester.tap(find.byIcon(Icons.add_rounded));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byIcon(Icons.remove_rounded));
+      await tester.pumpAndSettle();
 
       // Switch back to List View
       await tester.tap(find.byIcon(Icons.view_agenda_outlined));
