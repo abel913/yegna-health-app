@@ -2,17 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../l10n/app_localizations.dart';
 import 'assessment_repository.dart';
+import 'in_app_video_embed.dart';
 import 'learning_progress_controller.dart';
 
+const String kHivVideo1Id = 'EdSq2HB7jqU';
+const String kHivVideo2Id = 'ii8ezLev2PU';
 const String kHivVideo1Url = 'https://youtu.be/EdSq2HB7jqU?si=TkGVTHA3TmYIXI-S';
 const String kHivVideo2Url = 'https://youtu.be/ii8ezLev2PU?si=QRNmr68hzDcRZZD6';
 
 /// Detailed learning page for Module 07 (Human immune virus - HIV/AIDS).
 ///
-/// Features authentic optical glass styling and 5 clinical accordion sections:
+/// Features authentic optical glass styling, in-app cinema video playback, and 5 clinical accordion sections:
 /// 1. Defination (Definition & immune impact)
 /// 2. Mode of transmission (Body fluids & dispelling myths)
-/// 3. HIV-Prevention (A-F prevention methods, PrEP/PEP, 10-step condom usage, YouTube videos)
+/// 3. HIV-Prevention (A-F prevention methods, PrEP/PEP, 10-step condom usage, in-app YouTube videos)
 /// 4. HIV testing (PITC and VCT modalities)
 /// 5. Treatment for HIV positive client (ART regimen, access, and viral suppression)
 class HivModuleDetailPage extends StatefulWidget {
@@ -71,152 +74,202 @@ class _HivModuleDetailPageState extends State<HivModuleDetailPage> {
     );
   }
 
-  void _showVideoModal({
+  void _showCinemaPlayerModal({
     required BuildContext context,
-    required String imageAsset,
+    required String videoId,
     required String videoUrl,
     required String title,
     required String description,
     required AppLocalizations l10n,
   }) {
-    showModalBottomSheet<void>(
+    showGeneralDialog<void>(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (ctx) {
-        return Container(
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      barrierDismissible: true,
+      barrierLabel: 'Dismiss video',
+      barrierColor: const Color(0xE0050E1F),
+      transitionDuration: const Duration(milliseconds: 280),
+      transitionBuilder: (ctx, anim, secondaryAnim, child) {
+        return FadeTransition(
+          opacity: CurvedAnimation(parent: anim, curve: Curves.easeOut),
+          child: ScaleTransition(
+            scale: Tween<double>(begin: 0.94, end: 1.0).animate(
+              CurvedAnimation(parent: anim, curve: Curves.easeOutCubic),
+            ),
+            child: child,
           ),
-          padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Container(
-                  width: 44,
-                  height: 5,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFCBD5E1),
-                    borderRadius: BorderRadius.circular(3),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 18),
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w800,
-                  color: Color(0xFF08264A),
-                ),
-              ),
-              const SizedBox(height: 14),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: InkWell(
-                  onTap: () {
-                    Navigator.of(ctx).pop();
-                    _launchVideoUrl(videoUrl);
-                  },
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Image.asset(
-                        imageAsset,
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        height: 190,
+        );
+      },
+      pageBuilder: (dialogCtx, _, __) {
+        return SafeArea(
+          child: Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 24),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 680),
+                child: Material(
+                  color: Colors.transparent,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF0F172A),
+                      borderRadius: BorderRadius.circular(24),
+                      border: Border.all(
+                        color: const Color(0xFF0284C7).withValues(alpha: 0.45),
+                        width: 1.5,
                       ),
-                      Container(
-                        height: 190,
-                        color: Colors.black.withValues(alpha: 0.25),
-                      ),
-                      Container(
-                        width: 58,
-                        height: 58,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.95),
-                          shape: BoxShape.circle,
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Colors.black26,
-                              blurRadius: 10,
-                              offset: Offset(0, 4),
+                      boxShadow: [
+                        BoxShadow(
+                          color:
+                              const Color(0xFF0284C7).withValues(alpha: 0.25),
+                          blurRadius: 32,
+                          spreadRadius: 4,
+                        ),
+                      ],
+                    ),
+                    padding: const EdgeInsets.fromLTRB(20, 16, 20, 22),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Top Header Bar
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 5),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF0284C7)
+                                    .withValues(alpha: 0.2),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: const Color(0xFF38BDF8),
+                                  width: 1,
+                                ),
+                              ),
+                              child: const Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(Icons.ondemand_video_rounded,
+                                      color: Color(0xFF38BDF8), size: 15),
+                                  SizedBox(width: 6),
+                                  Text(
+                                    '1080P HD • CLINICAL VIDEO',
+                                    style: TextStyle(
+                                      color: Color(0xFFE0F2FE),
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w800,
+                                      letterSpacing: 0.5,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const Spacer(),
+                            IconButton(
+                              icon: const Icon(Icons.close_rounded,
+                                  color: Colors.white, size: 24),
+                              onPressed: () => Navigator.of(dialogCtx).pop(),
                             ),
                           ],
                         ),
-                        child: const Icon(
-                          Icons.play_arrow_rounded,
-                          size: 38,
-                          color: Color(0xFFEF4444),
+                        const SizedBox(height: 12),
+
+                        // Large In-App Video Embed (16:9 widescreen)
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(16),
+                          child: AspectRatio(
+                            aspectRatio: 16 / 9,
+                            child: createInAppVideoEmbed(
+                              videoId: videoId,
+                            ),
+                          ),
                         ),
-                      ),
-                    ],
+                        const SizedBox(height: 16),
+
+                        // Title
+                        Text(
+                          title,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w800,
+                            color: Colors.white,
+                            letterSpacing: -0.2,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+
+                        // Description Box
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(14),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF1E293B),
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(
+                              color: const Color(0xFF334155),
+                              width: 1,
+                            ),
+                          ),
+                          child: Text(
+                            description,
+                            style: const TextStyle(
+                              fontSize: 13.5,
+                              color: Color(0xFFE2E8F0),
+                              height: 1.5,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 18),
+
+                        // Action Buttons
+                        Row(
+                          children: [
+                            Expanded(
+                              child: FilledButton.icon(
+                                style: FilledButton.styleFrom(
+                                  backgroundColor: const Color(0xFF0284C7),
+                                  foregroundColor: Colors.white,
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 13),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                                icon: const Icon(Icons.check_rounded, size: 18),
+                                label: Text(
+                                  l10n.returnToLesson,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                                onPressed: () => Navigator.of(dialogCtx).pop(),
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            IconButton.filledTonal(
+                              style: IconButton.styleFrom(
+                                backgroundColor: const Color(0xFF1E293B),
+                                foregroundColor: const Color(0xFFEF4444),
+                                padding: const EdgeInsets.all(12),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  side: const BorderSide(
+                                      color: Color(0xFFEF4444), width: 1.2),
+                                ),
+                              ),
+                              tooltip: l10n.watchOnYouTube,
+                              icon: const Icon(Icons.open_in_new_rounded,
+                                  size: 20),
+                              onPressed: () => _launchVideoUrl(videoUrl),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
-              Text(
-                description,
-                style: const TextStyle(
-                  fontSize: 14,
-                  height: 1.55,
-                  color: Color(0xFF334155),
-                ),
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: double.infinity,
-                child: FilledButton.icon(
-                  style: FilledButton.styleFrom(
-                    backgroundColor: const Color(0xFFEF4444),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                  ),
-                  icon:
-                      const Icon(Icons.play_arrow_rounded, color: Colors.white),
-                  label: Text(
-                    l10n.watchOnYouTube,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 15,
-                      color: Colors.white,
-                    ),
-                  ),
-                  onPressed: () {
-                    Navigator.of(ctx).pop();
-                    _launchVideoUrl(videoUrl);
-                  },
-                ),
-              ),
-              const SizedBox(height: 10),
-              SizedBox(
-                width: double.infinity,
-                child: OutlinedButton(
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: const Color(0xFF475569),
-                    side: const BorderSide(color: Color(0xFFCBD5E1)),
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                  ),
-                  onPressed: () => Navigator.of(ctx).pop(),
-                  child: Text(
-                    l10n.closeButton,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14.5,
-                    ),
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
         );
       },
@@ -592,7 +645,7 @@ class _HivModuleDetailPageState extends State<HivModuleDetailPage> {
                   ],
                 ),
 
-                // Section 3: HIV-Prevention (with A-F badges, PrEP/PEP, and YouTube videos)
+                // Section 3: HIV-Prevention (with A-F badges, PrEP/PEP, and In-App YouTube videos)
                 _AccordionCard(
                   title: l10n.hivPreventionTitle,
                   isExpanded: _expandedSections.contains(2),
@@ -696,17 +749,22 @@ class _HivModuleDetailPageState extends State<HivModuleDetailPage> {
                     ),
                     const SizedBox(height: 14),
 
-                    // Video 1: Condom Lubricants Warning Demonstration (YouTube linked)
+                    // Video 1: Condom Lubricants Warning Demonstration (In-App Player + Cinema Mode)
                     _VideoPreviewCard(
                       imageAsset:
                           'assets/images/learning/hiv_video_lubricants.png',
+                      videoId: kHivVideo1Id,
                       videoUrl: kHivVideo1Url,
+                      title: l10n.videoDialogTitle,
+                      description: l10n.lubricantsVideoDesc,
                       watchLabel: l10n.watchVideo,
-                      onTap: () {
-                        _showVideoModal(
+                      cinemaLabel: l10n.cinemaMode,
+                      playingInAppLabel: l10n.playingInApp,
+                      closePlayerLabel: l10n.closePlayer,
+                      onOpenCinema: () {
+                        _showCinemaPlayerModal(
                           context: context,
-                          imageAsset:
-                              'assets/images/learning/hiv_video_lubricants.png',
+                          videoId: kHivVideo1Id,
                           videoUrl: kHivVideo1Url,
                           title: l10n.videoDialogTitle,
                           description: l10n.lubricantsVideoDesc,
@@ -729,17 +787,22 @@ class _HivModuleDetailPageState extends State<HivModuleDetailPage> {
                     _StepItem(number: 10, text: l10n.condomStep10),
                     const SizedBox(height: 14),
 
-                    // Video 2: Condom Counselling Demonstration (YouTube linked)
+                    // Video 2: Condom Counselling Demonstration (In-App Player + Cinema Mode)
                     _VideoPreviewCard(
                       imageAsset:
                           'assets/images/learning/hiv_video_counselling.png',
+                      videoId: kHivVideo2Id,
                       videoUrl: kHivVideo2Url,
+                      title: l10n.videoDialogTitle,
+                      description: l10n.counsellingVideoDesc,
                       watchLabel: l10n.watchVideo,
-                      onTap: () {
-                        _showVideoModal(
+                      cinemaLabel: l10n.cinemaMode,
+                      playingInAppLabel: l10n.playingInApp,
+                      closePlayerLabel: l10n.closePlayer,
+                      onOpenCinema: () {
+                        _showCinemaPlayerModal(
                           context: context,
-                          imageAsset:
-                              'assets/images/learning/hiv_video_counselling.png',
+                          videoId: kHivVideo2Id,
                           videoUrl: kHivVideo2Url,
                           title: l10n.videoDialogTitle,
                           description: l10n.counsellingVideoDesc,
@@ -1090,116 +1153,226 @@ class _AlphaBadgeItem extends StatelessWidget {
   }
 }
 
-/// Interactive video preview container matching the reference card design with YouTube launch.
-class _VideoPreviewCard extends StatelessWidget {
+/// Interactive video card featuring instant in-app playback and cinema mode.
+class _VideoPreviewCard extends StatefulWidget {
   const _VideoPreviewCard({
     required this.imageAsset,
+    required this.videoId,
     required this.videoUrl,
+    required this.title,
+    required this.description,
     required this.watchLabel,
-    required this.onTap,
+    required this.cinemaLabel,
+    required this.playingInAppLabel,
+    required this.closePlayerLabel,
+    required this.onOpenCinema,
   });
 
   final String imageAsset;
+  final String videoId;
   final String videoUrl;
+  final String title;
+  final String description;
   final String watchLabel;
-  final VoidCallback onTap;
+  final String cinemaLabel;
+  final String playingInAppLabel;
+  final String closePlayerLabel;
+  final VoidCallback onOpenCinema;
+
+  @override
+  State<_VideoPreviewCard> createState() => _VideoPreviewCardState();
+}
+
+class _VideoPreviewCardState extends State<_VideoPreviewCard> {
+  bool _isPlayingInline = false;
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: const Color(0xFFD6E4F0),
-              width: 1.2,
-            ),
-            boxShadow: const [
-              BoxShadow(
-                color: Color(0x06000000),
-                blurRadius: 8,
-                offset: Offset(0, 3),
-              ),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ClipRRect(
-                borderRadius:
-                    const BorderRadius.vertical(top: Radius.circular(15)),
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Image.asset(
-                      imageAsset,
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                      height: 160,
-                    ),
-                    Container(
-                      height: 160,
-                      color: Colors.black.withValues(alpha: 0.2),
-                    ),
-                    Container(
-                      width: 50,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.95),
-                        shape: BoxShape.circle,
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.black26,
-                            blurRadius: 8,
-                            offset: Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      child: const Icon(
-                        Icons.play_arrow_rounded,
-                        size: 32,
-                        color: Color(0xFFEF4444),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                child: Row(
-                  children: [
-                    const Icon(
-                      Icons.play_circle_outline_rounded,
-                      color: Color(0xFFEF4444),
-                      size: 20,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      watchLabel,
-                      style: const TextStyle(
-                        color: Color(0xFFEF4444),
-                        fontWeight: FontWeight.w700,
-                        fontSize: 14,
-                      ),
-                    ),
-                    const Spacer(),
-                    const Icon(
-                      Icons.open_in_new_rounded,
-                      color: Color(0xFF94A3B8),
-                      size: 16,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: _isPlayingInline
+              ? const Color(0xFF0284C7)
+              : const Color(0xFFD6E4F0),
+          width: _isPlayingInline ? 1.8 : 1.2,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: _isPlayingInline
+                ? const Color(0x200284C7)
+                : const Color(0x06000000),
+            blurRadius: _isPlayingInline ? 16 : 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (_isPlayingInline) ...[
+            // Inline Video Header
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              decoration: const BoxDecoration(
+                color: Color(0xFF0F172A),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    width: 8,
+                    height: 8,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFFEF4444),
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    widget.playingInAppLabel,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const Spacer(),
+                  IconButton(
+                    icon: const Icon(Icons.open_in_full_rounded,
+                        color: Color(0xFF38BDF8), size: 18),
+                    tooltip: widget.cinemaLabel,
+                    onPressed: widget.onOpenCinema,
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close_rounded,
+                        color: Colors.white70, size: 20),
+                    tooltip: widget.closePlayerLabel,
+                    onPressed: () {
+                      setState(() {
+                        _isPlayingInline = false;
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ),
+            // In-app Video Embed
+            createInAppVideoEmbed(
+              videoId: widget.videoId,
+              height: 220,
+            ),
+          ] else ...[
+            // Image Thumbnail with Play Overlay
+            Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () {
+                  setState(() {
+                    _isPlayingInline = true;
+                  });
+                },
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(19)),
+                child: ClipRRect(
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(19)),
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Image.asset(
+                        widget.imageAsset,
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: 170,
+                      ),
+                      Container(
+                        height: 170,
+                        color: Colors.black.withValues(alpha: 0.25),
+                      ),
+                      Container(
+                        width: 54,
+                        height: 54,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.95),
+                          shape: BoxShape.circle,
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.black26,
+                              blurRadius: 10,
+                              offset: Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: const Icon(
+                          Icons.play_arrow_rounded,
+                          size: 36,
+                          color: Color(0xFFEF4444),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+          // Bottom Action Bar
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            child: Row(
+              children: [
+                if (!_isPlayingInline)
+                  FilledButton.icon(
+                    style: FilledButton.styleFrom(
+                      backgroundColor: const Color(0xFFEF4444),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 14, vertical: 10),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    icon: const Icon(Icons.play_arrow_rounded, size: 18),
+                    label: Text(
+                      widget.watchLabel,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 13,
+                      ),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _isPlayingInline = true;
+                      });
+                    },
+                  ),
+                const SizedBox(width: 8),
+                OutlinedButton.icon(
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: const Color(0xFF005A71),
+                    side:
+                        const BorderSide(color: Color(0xFF005A71), width: 1.2),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 12, vertical: 10),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  icon: const Icon(Icons.open_in_full_rounded, size: 15),
+                  label: Text(
+                    widget.cinemaLabel,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 13,
+                    ),
+                  ),
+                  onPressed: widget.onOpenCinema,
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

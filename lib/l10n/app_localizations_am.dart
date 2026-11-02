@@ -716,6 +716,21 @@ class AppLocalizationsAm extends AppLocalizations {
   String get watchOnYouTube => 'በዩቲዩብ ይመልከቱ';
 
   @override
+  String get cinemaMode => 'ሲኒማ እይታ';
+
+  @override
+  String get playInline => 'በመተግበሪያው ውስጥ ይመልከቱ';
+
+  @override
+  String get closePlayer => 'ቪዲዮውን ዝጋ';
+
+  @override
+  String get playingInApp => 'በመተግበሪያው ውስጥ እየተጫወተ ነው';
+
+  @override
+  String get returnToLesson => 'ወደ ትምህርቱ ተመለስ';
+
+  @override
   String get moduleComingSoon => 'ሙሉ የትምህርት ክፍሎች እና ፈተናዎች ለቀጣዩ ደረጃ እየተዘጋጁ ነው።';
 
   @override

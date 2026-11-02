@@ -743,6 +743,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get watchOnYouTube => 'Watch on YouTube';
 
   @override
+  String get cinemaMode => 'Cinema View';
+
+  @override
+  String get playInline => 'Play in App';
+
+  @override
+  String get closePlayer => 'Close Player';
+
+  @override
+  String get playingInApp => 'Playing in App';
+
+  @override
+  String get returnToLesson => 'Return to Lesson';
+
+  @override
   String get moduleComingSoon =>
       'Full module content and interactive quizzes will be configured in the next step.';
 

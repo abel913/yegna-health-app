@@ -1376,6 +1376,36 @@ abstract class AppLocalizations {
   /// **'Watch on YouTube'**
   String get watchOnYouTube;
 
+  /// No description provided for @cinemaMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Cinema View'**
+  String get cinemaMode;
+
+  /// No description provided for @playInline.
+  ///
+  /// In en, this message translates to:
+  /// **'Play in App'**
+  String get playInline;
+
+  /// No description provided for @closePlayer.
+  ///
+  /// In en, this message translates to:
+  /// **'Close Player'**
+  String get closePlayer;
+
+  /// No description provided for @playingInApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Playing in App'**
+  String get playingInApp;
+
+  /// No description provided for @returnToLesson.
+  ///
+  /// In en, this message translates to:
+  /// **'Return to Lesson'**
+  String get returnToLesson;
+
   /// No description provided for @moduleComingSoon.
   ///
   /// In en, this message translates to:

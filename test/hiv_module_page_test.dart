@@ -95,6 +95,24 @@ void main() {
     expect(
         find.textContaining('How to use a condom in 10 steps'), findsOneWidget);
 
+    // Verify In-App Video Playback and Cinema Mode
+    final watchVideoFinders = find.text('Watch video');
+    expect(watchVideoFinders, findsWidgets);
+    await tester.ensureVisible(watchVideoFinders.first);
+    await tester.tap(watchVideoFinders.first);
+    await tester.pumpAndSettle();
+    expect(find.text('Playing in App'), findsOneWidget);
+
+    final cinemaFinder = find.text('Cinema View');
+    expect(cinemaFinder, findsWidgets);
+    await tester.tap(cinemaFinder.first);
+    await tester.pumpAndSettle();
+    expect(find.text('1080P HD • CLINICAL VIDEO'), findsOneWidget);
+
+    final returnBtn = find.text('Return to Lesson');
+    await tester.tap(returnBtn);
+    await tester.pumpAndSettle();
+
     // Tap HIV testing: should expand and show PITC & VCT
     final hivTestingFinder = find.text('HIV testing');
     await tester.ensureVisible(hivTestingFinder);
