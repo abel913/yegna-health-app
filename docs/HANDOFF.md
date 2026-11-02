@@ -1,5 +1,25 @@
 # Handoff
 
+## All 8 Learning Modules & Interactive Quizzes Rebuild (2026-11-02)
+
+- Completed and verified all 8 interactive learning modules and their respective quizzes:
+  - **Module 01: Adolescent Health & Puberty**: `PubertyDetailPage` and `PubertyQuizPage` covering biological transitions, male/female physical changes, emotional development, and adolescent self-care/hygiene.
+  - **Module 02: STIs**: `StiModuleDetailPage` and `StiQuizPage` covering common infections, transmission, dual protection, asymptomatic cases, and screening.
+  - **Module 03: Hepatitis**: `HepatitisDetailPage` and `HepatitisQuizPage` covering viral hepatitis (A, B, C), routes of infection, liver health, diagnosis, DAAs, and vaccination.
+  - **Module 04: Gender-Based Violence (GBV)**: `GenderBasedViolenceDetailPage` and `GbvQuizPage` with full 4-section architecture, authentic 3-column consequences table (physical, psychological, social/economic), 3-part prevention & management framework, and emergency helplines.
+  - **Module 05: Sexual & Reproductive Health (SRH)**: `SrhDetailPage` and `SrhQuizPage` covering reproductive anatomy, family planning methods, dual protection, bodily autonomy, and affirmative consent.
+  - **Module 06: Mental Health & Wellbeing**: `MentalHealthDetailPage` and `MentalHealthQuizPage` covering stress management, stigma reduction, and mental health support.
+  - **Module 07: HIV & AIDS**: `HivModuleDetailPage` and `HivQuizPage` covering HIV biology, viral load, transmission routes, ART adherence, and stigma combat.
+  - **Module 08: Substance Abuse**: `SubstanceAbuseDetailPage` and `SubstanceAbuseQuizPage` covering substance definitions, depressants/stimulants/hallucinogens, tolerance/dependency signs, and recovery pathways.
+- **UI Enhancements**:
+  - Removed redundant "Return to lesson" buttons from all module detail screens, leaving only "Mark as Completed" and "Take Quiz" (users use the top-left back button).
+  - Preserved "Return to Lesson" on quiz celebration screens to guide the user back to the module upon quiz completion.
+- **Verification**:
+  - `dart format lib test` verified (0 unformatted files).
+  - `dart analyze` verified (0 issues found).
+  - `flutter test` verified with 68/68 passing tests.
+  - Committed and pushed to `origin/main`.
+
 ## Integration Merge: Live GPS Proximity Engine & Interactive Learning Quizzes (2026-11-02)
 
 - Reconciled and merged latest remote `origin/main` (commit `43f3d13` by `abel`) with local learning module enhancements and quizzes (`34c33aa`):
