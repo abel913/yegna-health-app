@@ -1496,6 +1496,180 @@ abstract class AppLocalizations {
   /// **'Avoid alcohol and substance abuse: Intoxication impairs judgment and significantly reduces the use of protection.'**
   String get stiPreventionItem6;
 
+  /// No description provided for @substanceHeroDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Substance abuse is the harmful use of drugs or alcohol that affects health, behavior, and relationships, leading to physical and mental problems, dependency, and serious life consequences if not addressed early.'**
+  String get substanceHeroDesc;
+
+  /// No description provided for @substanceNoteContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Substance abuse is preventable and treatable—recognizing early signs and seeking help can protect your health, relationships, and future.'**
+  String get substanceNoteContent;
+
+  /// No description provided for @substanceDefTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Definition of substance abuse'**
+  String get substanceDefTitle;
+
+  /// No description provided for @substanceDefDesc1.
+  ///
+  /// In en, this message translates to:
+  /// **'Substance abuse refers to the harmful or hazardous use of psychoactive substances, including alcohol and illicit drugs, characterized by a compulsive pattern of consumption. This behavior often leads to significant adverse consequences in various aspects of an individual\'s life, such as health, relationships, and social responsibilities. It can result in physical and psychological dependence, tolerance, and withdrawal symptoms.'**
+  String get substanceDefDesc1;
+
+  /// No description provided for @substanceDefDesc2.
+  ///
+  /// In en, this message translates to:
+  /// **'Psychoactive substance is a drug or other substance that affects how the brain works and causes changes in mood, awareness, thoughts, feelings, or behavior. The commonly used psychoactive substances include alcohol, caffeine, nicotine, marijuana, and certain pain medicines.'**
+  String get substanceDefDesc2;
+
+  /// No description provided for @substanceDefDesc3.
+  ///
+  /// In en, this message translates to:
+  /// **'Substance use disorder (SUD) is a mental disorder that affects a person\'s brain and behavior, leading to a person\'s inability to control their use of substances such as legal or illegal drugs, alcohol, or medications. A substance use disorder involves using too much alcohol, tobacco or other drugs.'**
+  String get substanceDefDesc3;
+
+  /// No description provided for @substanceTypesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Types of drugs/Substances'**
+  String get substanceTypesTitle;
+
+  /// No description provided for @substanceTypeDepressants.
+  ///
+  /// In en, this message translates to:
+  /// **'Depressants: - the most commonly found types of drugs in society are depressants. Alcohol, Sedatives/hypnotics.'**
+  String get substanceTypeDepressants;
+
+  /// No description provided for @substanceTypeStimulants.
+  ///
+  /// In en, this message translates to:
+  /// **'Stimulants: - Increase energy, alertness, and wakefulness. Such as Nicotine, Cocaine, Amphetamines and Caffeine.'**
+  String get substanceTypeStimulants;
+
+  /// No description provided for @substanceTypeOpioids.
+  ///
+  /// In en, this message translates to:
+  /// **'Opioids: - These are pain-killing drugs that increase feelings of happiness or euphoria and create a tranquilizing effect. Heroin, morphine, opium, buprenorphine, methadone, pethidine and Cough syrup with codeine.'**
+  String get substanceTypeOpioids;
+
+  /// No description provided for @substanceTypeHallucinogens.
+  ///
+  /// In en, this message translates to:
+  /// **'Hallucinogens: - They can also cause a person to perceive time differently, feel detached from their surroundings, or feel deeply insightful.'**
+  String get substanceTypeHallucinogens;
+
+  /// No description provided for @substanceEffectsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Effects of substance abuse'**
+  String get substanceEffectsTitle;
+
+  /// No description provided for @substanceEffectsIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Substance abuse refers to a pattern of using drugs or alcohol that leads to significant problems or distress in an individual\'s life. This can manifest in various ways, including:'**
+  String get substanceEffectsIntro;
+
+  /// No description provided for @substanceEffect1.
+  ///
+  /// In en, this message translates to:
+  /// **'Increased risk of disease (Liver diseases, heart diseases, respiratory problems, HIV)'**
+  String get substanceEffect1;
+
+  /// No description provided for @substanceEffect2.
+  ///
+  /// In en, this message translates to:
+  /// **'Mental health disorder increased risk of anxiety, depression etc.'**
+  String get substanceEffect2;
+
+  /// No description provided for @substanceEffect3.
+  ///
+  /// In en, this message translates to:
+  /// **'Missing work or school due to substance use.'**
+  String get substanceEffect3;
+
+  /// No description provided for @substanceEffect4.
+  ///
+  /// In en, this message translates to:
+  /// **'Engaging in dangerous activities while under the influence, such as driving.'**
+  String get substanceEffect4;
+
+  /// No description provided for @substanceEffect5.
+  ///
+  /// In en, this message translates to:
+  /// **'Experiencing legal issues related to substance use.'**
+  String get substanceEffect5;
+
+  /// No description provided for @substanceEffect6.
+  ///
+  /// In en, this message translates to:
+  /// **'Strained relationships with family and friends due to ongoing substance use.'**
+  String get substanceEffect6;
+
+  /// No description provided for @substanceEffect7.
+  ///
+  /// In en, this message translates to:
+  /// **'Substance abuse can involve both illegal drugs (like heroin, cocaine, and methamphetamine) and the misuse of prescription drugs or legal substances.'**
+  String get substanceEffect7;
+
+  /// No description provided for @substanceSignsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Signs of a Substance Use Problem'**
+  String get substanceSignsTitle;
+
+  /// No description provided for @substanceSignsIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Recognizing early behavioral and physical indicators helps individuals get timely care before severe complications arise:'**
+  String get substanceSignsIntro;
+
+  /// No description provided for @substanceSign1.
+  ///
+  /// In en, this message translates to:
+  /// **'Compulsive cravings: Intense urges to consume the substance daily or multiple times a day.'**
+  String get substanceSign1;
+
+  /// No description provided for @substanceSign2.
+  ///
+  /// In en, this message translates to:
+  /// **'Developing tolerance: Needing larger amounts over time to produce the initial desired effect.'**
+  String get substanceSign2;
+
+  /// No description provided for @substanceSign3.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdrawal symptoms: Experiencing restlessness, tremors, sweating, anxiety, or nausea when attempting to stop.'**
+  String get substanceSign3;
+
+  /// No description provided for @substanceSign4.
+  ///
+  /// In en, this message translates to:
+  /// **'Neglecting responsibilities: Falling behind in school performance, missing work shifts, or ignoring family duties.'**
+  String get substanceSign4;
+
+  /// No description provided for @substanceSign5.
+  ///
+  /// In en, this message translates to:
+  /// **'Abandoning interests: Giving up sports, creative hobbies, and social activities once enjoyed.'**
+  String get substanceSign5;
+
+  /// No description provided for @substanceSign6.
+  ///
+  /// In en, this message translates to:
+  /// **'Social withdrawal and secretive behavior: Withdrawing from family gatherings, hiding substance use, or drastic personality shifts.'**
+  String get substanceSign6;
+
+  /// No description provided for @substanceSignsHelpAlert.
+  ///
+  /// In en, this message translates to:
+  /// **'Substance use disorder is a treatable health condition, not a sign of moral weakness. Youth mentors, counseling facilities, and national toll-free hotlines (952 or 8335) provide confidential, compassionate assistance.'**
+  String get substanceSignsHelpAlert;
+
   /// No description provided for @learningSectionsTitle.
   ///
   /// In en, this message translates to:

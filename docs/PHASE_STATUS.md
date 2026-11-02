@@ -1,5 +1,22 @@
 # Phase status
 
+## Substance Abuse Detail Learning Module Rebuild (2026-11-02)
+
+**Status: Phase 3 Learning Module UI Rebuild Complete & Verified.**
+- Implemented `SubstanceAbuseDetailPage` (`lib/src/learning/substance_abuse_page.dart`) for Module 08 matching user reference screenshots:
+  - **Top Hero Card**: Rounded container with authentic healthy lifestyles poster illustration (`assets/images/learning/module_08_substance_abuse.png`), title `Substance Abuse`, and high-contrast educational synopsis.
+  - **Note Section**: Light-blue card with lightbulb icon highlighting that substance abuse is preventable and treatable through early awareness and support.
+  - **Learning Sections Header**: Vertical azure indicator bar and dynamic reading count badge (`X / 4 read`).
+  - **4 Interactive Accordion Sections with Dynamic Badging**:
+    - Unread sections display their numerical indicator (`1`, `2`, `3`, `4`) in a bold circular azure badge; read sections display a white checkmark icon (`✔`).
+    1. **Definition of substance abuse**: Harmful/hazardous psychoactive substance usage, physical/psychological dependence, tolerance, withdrawal, and Substance Use Disorder (SUD) mental health definition.
+    2. **Types of drugs/Substances**: 4 numbered category cards (1: Depressants [alcohol, sedatives], 2: Stimulants [nicotine, cocaine, amphetamines, caffeine], 3: Opioids [heroin, morphine, codeine], 4: Hallucinogens).
+    3. **Effects of substance abuse**: Disease risk (liver, cardiovascular, respiratory, HIV), mental health disorders (anxiety/depression), academic/occupational absence, reckless driving, legal consequences, strained family relations, and illicit vs. prescription abuse.
+    4. **Signs of a Substance Use Problem**: Daily compulsive cravings, escalating tolerance, physical/psychological withdrawal symptoms, neglected duties, abandoned interests, secretive behaviors, and free confidential national support hotline callouts (952 / 8335).
+  - **Progress Integration**: Connected to `LearningProgressController` with completion state persistence for `module-08`.
+  - **Bilingual Localization**: Added complete English and Amharic ARB resources in `lib/l10n/app_en.arb` and `lib/l10n/app_am.arb`, cleanly regenerated via `flutter gen-l10n`.
+  - **Test Suite**: Created `test/substance_abuse_page_test.dart` testing 4-accordion layout, numerical-to-checkmark badge transitions, expansion, completion persistence, and Amharic translation. All 45 tests passing.
+
 ## Sexually Transmitted Infections (STI) Detail Learning Module Rebuild (2026-11-02)
 
 **Status: Phase 3 Learning Module UI Rebuild Complete & Verified.**

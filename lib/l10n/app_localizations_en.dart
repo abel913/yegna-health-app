@@ -822,6 +822,117 @@ class AppLocalizationsEn extends AppLocalizations {
       'Avoid alcohol and substance abuse: Intoxication impairs judgment and significantly reduces the use of protection.';
 
   @override
+  String get substanceHeroDesc =>
+      'Substance abuse is the harmful use of drugs or alcohol that affects health, behavior, and relationships, leading to physical and mental problems, dependency, and serious life consequences if not addressed early.';
+
+  @override
+  String get substanceNoteContent =>
+      'Substance abuse is preventable and treatable—recognizing early signs and seeking help can protect your health, relationships, and future.';
+
+  @override
+  String get substanceDefTitle => 'Definition of substance abuse';
+
+  @override
+  String get substanceDefDesc1 =>
+      'Substance abuse refers to the harmful or hazardous use of psychoactive substances, including alcohol and illicit drugs, characterized by a compulsive pattern of consumption. This behavior often leads to significant adverse consequences in various aspects of an individual\'s life, such as health, relationships, and social responsibilities. It can result in physical and psychological dependence, tolerance, and withdrawal symptoms.';
+
+  @override
+  String get substanceDefDesc2 =>
+      'Psychoactive substance is a drug or other substance that affects how the brain works and causes changes in mood, awareness, thoughts, feelings, or behavior. The commonly used psychoactive substances include alcohol, caffeine, nicotine, marijuana, and certain pain medicines.';
+
+  @override
+  String get substanceDefDesc3 =>
+      'Substance use disorder (SUD) is a mental disorder that affects a person\'s brain and behavior, leading to a person\'s inability to control their use of substances such as legal or illegal drugs, alcohol, or medications. A substance use disorder involves using too much alcohol, tobacco or other drugs.';
+
+  @override
+  String get substanceTypesTitle => 'Types of drugs/Substances';
+
+  @override
+  String get substanceTypeDepressants =>
+      'Depressants: - the most commonly found types of drugs in society are depressants. Alcohol, Sedatives/hypnotics.';
+
+  @override
+  String get substanceTypeStimulants =>
+      'Stimulants: - Increase energy, alertness, and wakefulness. Such as Nicotine, Cocaine, Amphetamines and Caffeine.';
+
+  @override
+  String get substanceTypeOpioids =>
+      'Opioids: - These are pain-killing drugs that increase feelings of happiness or euphoria and create a tranquilizing effect. Heroin, morphine, opium, buprenorphine, methadone, pethidine and Cough syrup with codeine.';
+
+  @override
+  String get substanceTypeHallucinogens =>
+      'Hallucinogens: - They can also cause a person to perceive time differently, feel detached from their surroundings, or feel deeply insightful.';
+
+  @override
+  String get substanceEffectsTitle => 'Effects of substance abuse';
+
+  @override
+  String get substanceEffectsIntro =>
+      'Substance abuse refers to a pattern of using drugs or alcohol that leads to significant problems or distress in an individual\'s life. This can manifest in various ways, including:';
+
+  @override
+  String get substanceEffect1 =>
+      'Increased risk of disease (Liver diseases, heart diseases, respiratory problems, HIV)';
+
+  @override
+  String get substanceEffect2 =>
+      'Mental health disorder increased risk of anxiety, depression etc.';
+
+  @override
+  String get substanceEffect3 => 'Missing work or school due to substance use.';
+
+  @override
+  String get substanceEffect4 =>
+      'Engaging in dangerous activities while under the influence, such as driving.';
+
+  @override
+  String get substanceEffect5 =>
+      'Experiencing legal issues related to substance use.';
+
+  @override
+  String get substanceEffect6 =>
+      'Strained relationships with family and friends due to ongoing substance use.';
+
+  @override
+  String get substanceEffect7 =>
+      'Substance abuse can involve both illegal drugs (like heroin, cocaine, and methamphetamine) and the misuse of prescription drugs or legal substances.';
+
+  @override
+  String get substanceSignsTitle => 'Signs of a Substance Use Problem';
+
+  @override
+  String get substanceSignsIntro =>
+      'Recognizing early behavioral and physical indicators helps individuals get timely care before severe complications arise:';
+
+  @override
+  String get substanceSign1 =>
+      'Compulsive cravings: Intense urges to consume the substance daily or multiple times a day.';
+
+  @override
+  String get substanceSign2 =>
+      'Developing tolerance: Needing larger amounts over time to produce the initial desired effect.';
+
+  @override
+  String get substanceSign3 =>
+      'Withdrawal symptoms: Experiencing restlessness, tremors, sweating, anxiety, or nausea when attempting to stop.';
+
+  @override
+  String get substanceSign4 =>
+      'Neglecting responsibilities: Falling behind in school performance, missing work shifts, or ignoring family duties.';
+
+  @override
+  String get substanceSign5 =>
+      'Abandoning interests: Giving up sports, creative hobbies, and social activities once enjoyed.';
+
+  @override
+  String get substanceSign6 =>
+      'Social withdrawal and secretive behavior: Withdrawing from family gatherings, hiding substance use, or drastic personality shifts.';
+
+  @override
+  String get substanceSignsHelpAlert =>
+      'Substance use disorder is a treatable health condition, not a sign of moral weakness. Youth mentors, counseling facilities, and national toll-free hotlines (952 or 8335) provide confidential, compassionate assistance.';
+
+  @override
   String get learningSectionsTitle => 'Learning Sections';
 
   @override

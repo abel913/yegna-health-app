@@ -1,5 +1,20 @@
 # Handoff
 
+## Substance Abuse Detail Learning Module Rebuild (2026-11-02)
+
+- Built and verified the dedicated learning module screen `SubstanceAbuseDetailPage` (`lib/src/learning/substance_abuse_page.dart`) for Module 08 matching user reference screenshots:
+  - Top Hero Card featuring `assets/images/learning/module_08_substance_abuse.png`, title "Substance Abuse", and educational overview summary.
+  - Note Section with light-blue card container, lightbulb icon, and early prevention/intervention message.
+  - Learning Sections Header with dynamic reading count badge (`X / 4 read`).
+  - 4 interactive accordion sections with dynamic indicator badges (numerical badge when unread, white checkmark when read):
+    1. **Definition of substance abuse**: Psychoactive substances, compulsive patterns, tolerance, withdrawal, and Substance Use Disorder (SUD).
+    2. **Types of drugs/Substances**: 4 numbered category cards (Depressants, Stimulants, Opioids, Hallucinogens).
+    3. **Effects of substance abuse**: Physical health consequences, mental health impacts, academic/work absence, dangerous behaviors, and legal issues.
+    4. **Signs of a Substance Use Problem**: Tolerance, compulsive cravings, withdrawal, social withdrawal, and free confidential national hotlines (952 / 8335).
+  - Linked to `LearnPage` carousel when selecting Module 08.
+  - Added full English and Amharic ARB resources.
+  - Widget and unit tests in `test/substance_abuse_page_test.dart` (45/45 tests passing across the app).
+
 ## Sexually Transmitted Infections (STI) Detail Learning Module Rebuild (2026-11-02)
 
 - Built and verified the dedicated learning module screen `StiModuleDetailPage` (`lib/src/learning/sti_module_page.dart`) for Module 02 matching reference screenshots:

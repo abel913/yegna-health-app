@@ -793,6 +793,115 @@ class AppLocalizationsAm extends AppLocalizations {
       'ከአልኮል እና ከአደንዛዥ ዕፅ መራቅ፦ ስካር ውሳኔ የመስጠት አቅምን ስለሚያዳክም ጥንቃቄ የጎደለው ግንኙነት ውስጥ የመግባት እድልን ይጨምራል።';
 
   @override
+  String get substanceHeroDesc =>
+      'የዕፅ ሱስ ማለት ጤናን፣ ባህሪን እና ማህበራዊ ግንኙነቶችን የሚጎዳ ጎጂ የመድሃኒት ወይም የአልኮል አጠቃቀም ሲሆን ወደ አካላዊ እና አእምሯዊ ችግሮች፣ ጥገኝነት እና በወቅቱ ካልተፈታ ወደ ከባድ የህይወት አደጋዎች ይመራል።';
+
+  @override
+  String get substanceNoteContent =>
+      'የዕፅ ሱስ መከላከል እና መታከም የሚችል ነው—ቀደምት ምልክቶችን መገንዘብ እና እርዳታ መፈለግ ጤናዎን፣ ግንኙነትዎን እና የወደፊት ህይወትዎን ሊጠብቅ ይችላል።';
+
+  @override
+  String get substanceDefTitle => 'የዕፅ ሱስ ምንነት እና ትርጓሜ';
+
+  @override
+  String get substanceDefDesc1 =>
+      'የዕፅ ሱስ ማለት አልኮልን እና ህገ-ወጥ እፆችን ጨምሮ በአእምሮ ላይ ተፅዕኖ የሚያሳድሩ ንጥረ ነገሮችን ከመጠን በላይ እና ጎጂ በሆነ መንገድ በግዴታ የመጠቀም ልምድ ነው። ይህ ባህሪ በግለሰብ ጤና፣ ማህበራዊ ግንኙነት እና ሀላፊነቶች ላይ ከፍተኛ አሉታዊ ተፅዕኖ ያሳድራል። ወደ አካላዊ እና ስነ-ልቦናዊ ጥገኝነት፣ የመላመድ እና መድሃኒቱን ሲያቆሙ ወደሚከሰቱ የህመም ስሜቶች ይመራል።';
+
+  @override
+  String get substanceDefDesc2 =>
+      'በአእምሮ ላይ ተፅዕኖ የሚያሳድሩ ንጥረ ነገሮች (ሳይኮአክቲቭ) የአእምሮን አሰራር በመቀየር በስሜት፣ በንቃት፣ በአስተሳሰብ ወይም በባህሪ ላይ ለውጥ የሚያመጡ ናቸው። በብዛት ጥቅም ላይ የሚውሉት አልኮል፣ ካፌይን፣ ኒኮቲን፣ ማሪዋና (ካናቢስ) እና የተወሰኑ የህመም ማስታገሻ መድሃኒቶችን ያካትታሉ።';
+
+  @override
+  String get substanceDefDesc3 =>
+      'የዕፅ አጠቃቀም ችግር (SUD) የአንድን ሰው አእምሮ እና ባህሪ የሚጎዳ የአእምሮ ጤና እክል ሲሆን ይህም ሰውዬው ህጋዊ ወይም ህገ-ወጥ እፆችን፣ አልኮልን ወይም መድሃኒቶችን እንዳይቆጣጠር ያደርገዋል።';
+
+  @override
+  String get substanceTypesTitle => 'የእፅ እና ንጥረ ነገሮች ዓይነቶች';
+
+  @override
+  String get substanceTypeDepressants =>
+      'አእምሮን የሚያዘገዩ (ዲፕሬሰንትስ)፦ በማህበረሰቡ ውስጥ በብዛት የሚገኙት ዲፕሬሰንትስ ናቸው። አልኮል፣ ማስታገሻዎች እና እንቅልፍ አምጪ መድሃኒቶች።';
+
+  @override
+  String get substanceTypeStimulants =>
+      'አነቃቂዎች (ስቲሙላንትስ)፦ ጉልበትን፣ ንቃትን እና እንቅልፍ ማጣትን ይጨምራሉ። እንደ ኒኮቲን (ሲጋራ)፣ ኮኬይን፣ አምፌታሚን እና ካፌይን።';
+
+  @override
+  String get substanceTypeOpioids =>
+      'ኦፒዮይድስ (ህመም ማስታገሻዎች)፦ የደስታ ወይም የርካታ ስሜትን የሚፈጥሩ እና ከፍተኛ የህመም ማስታገሻ ውጤት ያላቸው ናቸው። ሄሮይን፣ ሞርፊን፣ ኦፒየም፣ ሜታዶን እና ኮዲን ያለበት የሳል ሽሮፕ።';
+
+  @override
+  String get substanceTypeHallucinogens =>
+      'ቅዠት አምጪዎች (ሃሉሲኖጅንስ)፦ አንድ ሰው ጊዜን በተለየ መንገድ እንዲገነዘብ፣ ከአካባቢው የተነጠለ ስሜት እንዲሰማው ወይም ምናባዊ ነገሮችን እንዲያይ ያደርጋሉ።';
+
+  @override
+  String get substanceEffectsTitle => 'የዕፅ ሱስ የሚያስከትላቸው ጉዳቶች';
+
+  @override
+  String get substanceEffectsIntro =>
+      'የዕፅ ሱስ በአንድ ሰው ህይወት ውስጥ ወደ ከባድ ችግሮች ወይም ጭንቀት የሚመራ የእፅ ወይም የአልኮል አጠቃቀም ልምድ ነው። ይህም በተለያዩ መንገዶች ይገለጻል፦';
+
+  @override
+  String get substanceEffect1 =>
+      'ለበሽታዎች የመጋለጥ እድል መጨመር (የጉበት በሽታ፣ የልብ ህመም፣ የመተንፈሻ አካላት ችግር፣ ኤችአይቪ)';
+
+  @override
+  String get substanceEffect2 => 'የአእምሮ ጤና መታወክ፣ ለጭንቀት እና ድብርት የመጋለጥ እድል መጨመር።';
+
+  @override
+  String get substanceEffect3 => 'በእፅ አጠቃቀም ምክንያት ትምህርት ወይም ስራ መቅረት።';
+
+  @override
+  String get substanceEffect4 =>
+      'በእፅ ተፅዕኖ ስር ሆነው አደገኛ እንቅስቃሴዎች ውስጥ መሳተፍ (ለምሳሌ መኪና መንዳት)።';
+
+  @override
+  String get substanceEffect5 => 'ከእፅ አጠቃቀም ጋር የተያያዙ ህጋዊ ችግሮች እና ቅጣቶች ማጋጠም።';
+
+  @override
+  String get substanceEffect6 =>
+      'ከቤተሰብ እና ከጓደኞች ጋር የሚኖር ግንኙነት መበላሸት እና አለመግባባት።';
+
+  @override
+  String get substanceEffect7 =>
+      'የዕፅ ሱስ ህገ-ወጥ እፆችን (እንደ ሄሮይን፣ ኮኬይን) እንዲሁም የታዘዙ መድሃኒቶችን አላግባብ መጠቀምን ያካትታል።';
+
+  @override
+  String get substanceSignsTitle => 'የዕፅ ሱስ ችግር መኖሩን የሚያሳዩ ምልክቶች';
+
+  @override
+  String get substanceSignsIntro =>
+      'የባህሪ እና የአካላዊ ለውጦችን ቀድሞ መገንዘብ ግለሰቦች ከባድ ችግሮች ከመከሰታቸው በፊት ወቅታዊ እርዳታ እንዲያገኙ ይረዳል፦';
+
+  @override
+  String get substanceSign1 =>
+      'የግዴታ ፍላጎት፦ ንጥረ ነገሩን በየቀኑ ወይም በቀን ውስጥ ብዙ ጊዜ ለመጠቀም የሚሰማ ከፍተኛ ጉጉት።';
+
+  @override
+  String get substanceSign2 =>
+      'የመላመድ ሁኔታ፦ መጀመሪያ የተገኘውን ስሜት ለማግኘት ከጊዜ ወደ ጊዜ መጠኑን መጨመር ማስፈለግ።';
+
+  @override
+  String get substanceSign3 =>
+      'መድሃኒቱን ሲያቆሙ የሚከሰት ህመም፦ እፁን ለማቆም ሲሞክሩ መንቀጥቀጥ፣ ላብ፣ ጭንቀት ወይም ማቅለሽለሽ ማጋጠም።';
+
+  @override
+  String get substanceSign4 =>
+      'ሀላፊነትን መዘንጋት፦ በትምህርት፣ በስራ ወይም በቤተሰብ ውስጥ ያሉ ሀላፊነቶችን መወጣት አለመቻል።';
+
+  @override
+  String get substanceSign5 =>
+      'ፍላጎቶችን መተው፦ ቀደም ሲል ያስደስቱ የነበሩ ስፖርቶችን፣ የትርፍ ጊዜ ማሳለፊያዎችን እና ማህበራዊ ግንኙነቶችን መተው።';
+
+  @override
+  String get substanceSign6 =>
+      'ማህበራዊ መገለል እና ድብቅነት፦ ከቤተሰብ መራቅ፣ እፅን በሚስጥር መጠቀም እና ድንገተኛ የስሜት መለዋወጥ ማሳየት።';
+
+  @override
+  String get substanceSignsHelpAlert =>
+      'የዕፅ አጠቃቀም ችግር የሚታከም የጤና ሁኔታ እንጂ የሞራል ድክመት አይደለም። የወጣቶች አማካሪዎች፣ የጤና ማዕከላት እና ነፃ የስልክ መስመሮች (952 ወይም 8335) ሚስጥራዊ እና ሩህሩህ ድጋፍ ይሰጣሉ።';
+
+  @override
   String get learningSectionsTitle => 'የትምህርት ክፍሎች';
 
   @override
