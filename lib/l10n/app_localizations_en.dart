@@ -1755,11 +1755,74 @@ class AppLocalizationsEn extends AppLocalizations {
   String get gbvSec4Sub2ETitle => 'Education and Awareness';
 
   @override
-  String get gbvSec4Sub2E1Title => 'Human rights education:';
+  String get gbvSec4Sub2E1Title => 'School curricula:';
 
   @override
   String get gbvSec4Sub2E1Body =>
-      'Integrating comprehensive human rights, bodily autonomy, and non-violent communication into community workshops and youth platforms.';
+      'Educating young people about consent, respectful relationships, and healthy sexuality.';
+
+  @override
+  String get gbvSec4Sub2E2Title => 'Workplace training:';
+
+  @override
+  String get gbvSec4Sub2E2Body =>
+      'Developing policies and training programs to prevent sexual harassment and abuse in the workplace, ensuring there are clear reporting channels.';
+
+  @override
+  String get gbvSec4Sub2E3Title => 'Public campaigns:';
+
+  @override
+  String get gbvSec4Sub2E3Body =>
+      'Using media to raise awareness about GBV and challenge harmful norms related to gender and violence.';
+
+  @override
+  String get gbvSec4Main3Title =>
+      'Long-Term Strategies: Changing Structural and Cultural Factors';
+
+  @override
+  String get gbvSec4Main3Intro =>
+      'Long-term efforts are required to address the underlying social, cultural, and economic factors that sustain GBV.';
+
+  @override
+  String get gbvSec4Sub3ATitle => 'Addressing Gender Inequality';
+
+  @override
+  String get gbvSec4Sub3A1Title => 'Promote gender equality:';
+
+  @override
+  String get gbvSec4Sub3A1Body =>
+      'Ensure equal rights for all genders in areas such as education, employment, healthcare, and political participation.';
+
+  @override
+  String get gbvSec4Sub3A2Title => 'Strengthen women\'s rights:';
+
+  @override
+  String get gbvSec4Sub3A2Body =>
+      'Advocate for women\'s legal and social rights, including property rights, inheritance, and access to public services.';
+
+  @override
+  String get gbvSec4Sub3A3Title => 'End discriminatory practices:';
+
+  @override
+  String get gbvSec4Sub3A3Body =>
+      'Combat harmful traditional practices like child marriage, dowry-related violence, and FGM, often rooted in patriarchal social structures.';
+
+  @override
+  String get gbvSec4Sub3BTitle => 'Engaging Men and Boys';
+
+  @override
+  String get gbvSec4Sub3B1Title => 'Positive masculinity:';
+
+  @override
+  String get gbvSec4Sub3B1Body =>
+      'Promote a model of masculinity that is non-violent, respectful, and supportive of gender equality.';
+
+  @override
+  String get gbvSec4Sub3B2Title => 'Anti-violence programs:';
+
+  @override
+  String get gbvSec4Sub3B2Body =>
+      'Educate boys and men about the harmful effects of violence and the importance of being allies in the fight against GBV.';
 
   @override
   String get gbvSection4HelpAlert =>

@@ -15,9 +15,10 @@
        - 5: **Harmful Traditional Practices** (Female genital mutilation/cutting [FGM/C], Early or forced marriage, Honor killings).
     2. **Sex and Gender**: Biological definitions (chromosomes, anatomy) vs. social construct of gender and power imbalances.
     3. **Consequences of gender-based violence**: 5 detailed clinical bullet points and the authentic 3-column structured comparative table (`_GbvConsequencesTable`) covering Physical health, Psychological health, and Social & Economic consequences with a "GENDER BASED VIOLENCE" label badge.
-    4. **Management and Prevention of Gender-Based Violence (GBV)**: Complete 2-part framework with numbered circular badges and alphabetical sub-badges:
+    4. **Management and Prevention of Gender-Based Violence (GBV)**: Complete 3-part framework with numbered circular badges and alphabetical sub-badges:
        - 1: Immediate Response: Management of GBV (A: Providing Safety and Protection, B: Comprehensive Support Services).
        - 2: Preventing GBV (A: Changing Social Norms and Attitudes, B: Legal and Policy Reform, C: Empowering Women and Gender Minorities, D: Community-based Approaches, E: Education and Awareness).
+       - 3: Long-Term Strategies: Changing Structural and Cultural Factors (A: Addressing Gender Inequality, B: Engaging Men and Boys).
        - 24/7 confidential emergency helpline callout (952 / 8335 / 7711).
   - Streamlined bottom action: `Mark as Completed` button (or green `Completed` banner); no redundant "Return to Lesson" button.
   - Linked to `LearnPage` carousel when selecting Module 04.

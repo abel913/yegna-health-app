@@ -3059,14 +3059,122 @@ abstract class AppLocalizations {
   /// No description provided for @gbvSec4Sub2E1Title.
   ///
   /// In en, this message translates to:
-  /// **'Human rights education:'**
+  /// **'School curricula:'**
   String get gbvSec4Sub2E1Title;
 
   /// No description provided for @gbvSec4Sub2E1Body.
   ///
   /// In en, this message translates to:
-  /// **'Integrating comprehensive human rights, bodily autonomy, and non-violent communication into community workshops and youth platforms.'**
+  /// **'Educating young people about consent, respectful relationships, and healthy sexuality.'**
   String get gbvSec4Sub2E1Body;
+
+  /// No description provided for @gbvSec4Sub2E2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Workplace training:'**
+  String get gbvSec4Sub2E2Title;
+
+  /// No description provided for @gbvSec4Sub2E2Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Developing policies and training programs to prevent sexual harassment and abuse in the workplace, ensuring there are clear reporting channels.'**
+  String get gbvSec4Sub2E2Body;
+
+  /// No description provided for @gbvSec4Sub2E3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Public campaigns:'**
+  String get gbvSec4Sub2E3Title;
+
+  /// No description provided for @gbvSec4Sub2E3Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Using media to raise awareness about GBV and challenge harmful norms related to gender and violence.'**
+  String get gbvSec4Sub2E3Body;
+
+  /// No description provided for @gbvSec4Main3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Long-Term Strategies: Changing Structural and Cultural Factors'**
+  String get gbvSec4Main3Title;
+
+  /// No description provided for @gbvSec4Main3Intro.
+  ///
+  /// In en, this message translates to:
+  /// **'Long-term efforts are required to address the underlying social, cultural, and economic factors that sustain GBV.'**
+  String get gbvSec4Main3Intro;
+
+  /// No description provided for @gbvSec4Sub3ATitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Addressing Gender Inequality'**
+  String get gbvSec4Sub3ATitle;
+
+  /// No description provided for @gbvSec4Sub3A1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Promote gender equality:'**
+  String get gbvSec4Sub3A1Title;
+
+  /// No description provided for @gbvSec4Sub3A1Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Ensure equal rights for all genders in areas such as education, employment, healthcare, and political participation.'**
+  String get gbvSec4Sub3A1Body;
+
+  /// No description provided for @gbvSec4Sub3A2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Strengthen women\'s rights:'**
+  String get gbvSec4Sub3A2Title;
+
+  /// No description provided for @gbvSec4Sub3A2Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Advocate for women\'s legal and social rights, including property rights, inheritance, and access to public services.'**
+  String get gbvSec4Sub3A2Body;
+
+  /// No description provided for @gbvSec4Sub3A3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'End discriminatory practices:'**
+  String get gbvSec4Sub3A3Title;
+
+  /// No description provided for @gbvSec4Sub3A3Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Combat harmful traditional practices like child marriage, dowry-related violence, and FGM, often rooted in patriarchal social structures.'**
+  String get gbvSec4Sub3A3Body;
+
+  /// No description provided for @gbvSec4Sub3BTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Engaging Men and Boys'**
+  String get gbvSec4Sub3BTitle;
+
+  /// No description provided for @gbvSec4Sub3B1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Positive masculinity:'**
+  String get gbvSec4Sub3B1Title;
+
+  /// No description provided for @gbvSec4Sub3B1Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Promote a model of masculinity that is non-violent, respectful, and supportive of gender equality.'**
+  String get gbvSec4Sub3B1Body;
+
+  /// No description provided for @gbvSec4Sub3B2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Anti-violence programs:'**
+  String get gbvSec4Sub3B2Title;
+
+  /// No description provided for @gbvSec4Sub3B2Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Educate boys and men about the harmful effects of violence and the importance of being allies in the fight against GBV.'**
+  String get gbvSec4Sub3B2Body;
 
   /// No description provided for @gbvSection4HelpAlert.
   ///

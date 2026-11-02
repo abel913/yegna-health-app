@@ -1715,11 +1715,73 @@ class AppLocalizationsAm extends AppLocalizations {
   String get gbvSec4Sub2ETitle => 'ትምህርት እና ግንዛቤ';
 
   @override
-  String get gbvSec4Sub2E1Title => 'የሰብዓዊ መብቶች ትምህርት፡';
+  String get gbvSec4Sub2E1Title => 'የትምህርት ቤት ሥርዓተ-ትምህርቶች፡';
 
   @override
   String get gbvSec4Sub2E1Body =>
-      'ሁሉን አቀፍ የሰብዓዊ መብቶችን፣ የአካል ሉዓላዊነትን እና ሰላማዊ የግንኙነት ክህሎቶችን በማህበረሰብ ስልጠናዎች እና የወጣቶች መድረኮች ማካተት።';
+      'ስለ ፈቃደኝነት፣ ስለ አክብሮት የተሞላበት ግንኙነት እና ስለ ጤናማ ፆታዊነት ወጣቶችን ማስተማር።';
+
+  @override
+  String get gbvSec4Sub2E2Title => 'የስራ ቦታ ስልጠና፡';
+
+  @override
+  String get gbvSec4Sub2E2Body =>
+      'በስራ ቦታ ላይ የሚደርስ ፆታዊ ትንኮሳን እና በደልን ለመከላከል ፖሊሲዎችን እና የስልጠና ፕሮግራሞችን ማዘጋጀት፣ ግልጽ የሪፖርት ማድረጊያ መንገዶች መኖራቸውን ማረጋገጥ።';
+
+  @override
+  String get gbvSec4Sub2E3Title => 'የህዝብ ዘመቻዎች፡';
+
+  @override
+  String get gbvSec4Sub2E3Body =>
+      'ስለ GBV ግንዛቤን ለማሳደግ እና ከፆታ እና ጥቃት ጋር የተያያዙ ጎጂ ልማዶችን ለመፈታተን ሚዲያን መጠቀም።';
+
+  @override
+  String get gbvSec4Main3Title => 'የረጅም ጊዜ ስልቶች፡ መዋቅራዊ እና ባህላዊ ሁኔታዎችን መለወጥ';
+
+  @override
+  String get gbvSec4Main3Intro =>
+      'የሥርዓተ-ፆታ ጥቃትን የሚያስቀጥሉ ማህበራዊ፣ ባህላዊ እና ኢኮኖሚያዊ ምክንያቶችን ለመፍታት የረጅም ጊዜ ጥረቶች ያስፈልጋሉ።';
+
+  @override
+  String get gbvSec4Sub3ATitle => 'የፆታ እኩልነት ጉድለትን መፍታት';
+
+  @override
+  String get gbvSec4Sub3A1Title => 'የፆታ እኩልነትን ማሳደግ፡';
+
+  @override
+  String get gbvSec4Sub3A1Body =>
+      'በትምህርት፣ በስራ፣ በጤና አጠባበቅ እና በፖለቲካ ተሳትፎ ላሉ መስኮች ለሁሉም ፆታዎች እኩል መብቶችን ማረጋገጥ።';
+
+  @override
+  String get gbvSec4Sub3A2Title => 'የሴቶችን መብት ማጠናከር፡';
+
+  @override
+  String get gbvSec4Sub3A2Body =>
+      'የንብረት ባለቤትነት፣ ውርስ እና የህዝብ አገልግሎቶችን የማግኘት መብትን ጨምሮ ለሴቶች ህጋዊ እና ማህበራዊ መብቶች መሟገት።';
+
+  @override
+  String get gbvSec4Sub3A3Title => 'አድሏዊ አሰራሮችን ማስቆም፡';
+
+  @override
+  String get gbvSec4Sub3A3Body =>
+      'በአባቶች የበላይነት ማህበራዊ መዋቅር ውስጥ የተመሰረቱ እንደ ያለዕድሜ ጋብቻ፣ ከጥሎሽ ጋር የተያያዙ ጥቃቶች እና የሴቶች ግርዛት የመሳሰሉ ጎጂ ልማዶችን መዋጋት።';
+
+  @override
+  String get gbvSec4Sub3BTitle => 'ወንዶችን እና ወንድ ልጆችን ማሳተፍ';
+
+  @override
+  String get gbvSec4Sub3B1Title => 'አዎንታዊ የወንድነት ባህሪ፡';
+
+  @override
+  String get gbvSec4Sub3B1Body =>
+      'ጥቃት አልባ፣ አክብሮት የተሞላበት እና የፆታ እኩልነትን የሚደግፍ የወንድነት ሞዴልን ማስተዋወቅ።';
+
+  @override
+  String get gbvSec4Sub3B2Title => 'የጥቃት መከላከያ ፕሮግራሞች፡';
+
+  @override
+  String get gbvSec4Sub3B2Body =>
+      'ወንዶችንና ወንዶች ልጆችን ስለ ጥቃቱ ጎጂነት እና በGBV ትግል ውስጥ ደጋፊ አጋር የመሆንን አስፈላጊነት ማስተማር።';
 
   @override
   String get gbvSection4HelpAlert =>

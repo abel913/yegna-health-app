@@ -17,7 +17,7 @@
       - 5: **Harmful Traditional Practices** (Female genital mutilation/cutting [FGM/C], Early or forced marriage, Honor killings).
     - 2. **Sex and Gender**: Biological characteristics (chromosomes, hormones, anatomy) vs. socially constructed roles, and patriarchal power imbalances.
     - 3. **Consequences of gender-based violence**: 5 detailed clinical bullet points (Physical injury/disability/chronic illness, Psychological trauma/depression/substance use, Economic/social stigma, Family/dependents disruption, Emotional low self-esteem) and an authentic 3-column structured comparative table (`_GbvConsequencesTable`) detailing Physical health consequences (7 items: Injury, HIV, STIs, Unwanted pregnancy, Unsafe abortion, Fistula, Death), Psychological health consequences (6 items: Depression, Fear, Self-blame, Anxiety, Mental illness, Suicidal thoughts/actions), and Social & Economic consequences (7 items: Victim-blaming, Stigmatisation, Rejection, Isolation, Decreased earning, Increased poverty, Re-victimization).
-    - 4. **Management and Prevention of Gender-Based Violence (GBV)**: Complete 2-part framework matching user screenshots:
+    - 4. **Management and Prevention of Gender-Based Violence (GBV)**: Complete 3-part framework matching user screenshots:
       - Main 1: **Immediate Response: Management of GBV**:
         - Sub A: *Providing Safety and Protection* (Safe spaces, Hotlines & crisis counseling, Protection orders, Medical care).
         - Sub B: *Comprehensive Support Services* (Psychosocial support, Legal aid, Economic support).
@@ -26,7 +26,10 @@
         - Sub B: *Legal and Policy Reform* (Strengthening laws, Supporting survivors' rights, Gender-sensitive law enforcement).
         - Sub C: *Empowering Women and Gender Minorities* (Economic empowerment, Leadership training, Men as allies).
         - Sub D: *Community-based Approaches* (Community mobilization, Self-help groups and peer support).
-        - Sub E: *Education and Awareness* (Human rights education).
+        - Sub E: *Education and Awareness* (School curricula, Workplace training, Public campaigns).
+      - Main 3: **Long-Term Strategies: Changing Structural and Cultural Factors**:
+        - Sub A: *Addressing Gender Inequality* (Promote gender equality, Strengthen women's rights, End discriminatory practices).
+        - Sub B: *Engaging Men and Boys* (Positive masculinity, Anti-violence programs).
       - 24/7 toll-free emergency helpline alert (952 / 8335 / 7711).
   - **Clean Action Bar**: Only `Mark as Completed` (or `Completed` status banner); no redundant "Return to Lesson" button.
   - **Progress Integration**: Connected to `LearningProgressController` with completion state persistence for `module-04`.

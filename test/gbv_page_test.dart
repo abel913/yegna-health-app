@@ -160,6 +160,12 @@ void main() {
     expect(find.text('Preventing GBV'), findsOneWidget);
     expect(find.text('Changing Social Norms and Attitudes'), findsOneWidget);
     expect(find.text('Empowering Women and Gender Minorities'), findsOneWidget);
+    expect(
+        find.text(
+            'Long-Term Strategies: Changing Structural and Cultural Factors'),
+        findsOneWidget);
+    expect(find.text('Addressing Gender Inequality'), findsOneWidget);
+    expect(find.text('Engaging Men and Boys'), findsOneWidget);
     expect(find.textContaining('952, 8335, or 7711'), findsOneWidget);
 
     // Mark as Completed

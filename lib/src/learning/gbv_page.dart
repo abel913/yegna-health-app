@@ -633,6 +633,67 @@ class _GenderBasedViolenceDetailPageState
                               boldPrefix: l10n.gbvSec4Sub2E1Title,
                               body: l10n.gbvSec4Sub2E1Body,
                             ),
+                            _GbvBulletItem(
+                              boldPrefix: l10n.gbvSec4Sub2E2Title,
+                              body: l10n.gbvSec4Sub2E2Body,
+                            ),
+                            _GbvBulletItem(
+                              boldPrefix: l10n.gbvSec4Sub2E3Title,
+                              body: l10n.gbvSec4Sub2E3Body,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+
+                    // Main 3: Long-Term Strategies: Changing Structural and Cultural Factors
+                    _GbvNumberedCategory(
+                      number: 3,
+                      title: l10n.gbvSec4Main3Title,
+                      items: [
+                        Text(
+                          l10n.gbvSec4Main3Intro,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Color(0xFF334155),
+                            height: 1.55,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+
+                        // Sub 3A: Addressing Gender Inequality
+                        _GbvLetterSubcategory(
+                          letter: 'A',
+                          title: l10n.gbvSec4Sub3ATitle,
+                          items: [
+                            _GbvBulletItem(
+                              boldPrefix: l10n.gbvSec4Sub3A1Title,
+                              body: l10n.gbvSec4Sub3A1Body,
+                            ),
+                            _GbvBulletItem(
+                              boldPrefix: l10n.gbvSec4Sub3A2Title,
+                              body: l10n.gbvSec4Sub3A2Body,
+                            ),
+                            _GbvBulletItem(
+                              boldPrefix: l10n.gbvSec4Sub3A3Title,
+                              body: l10n.gbvSec4Sub3A3Body,
+                            ),
+                          ],
+                        ),
+
+                        // Sub 3B: Engaging Men and Boys
+                        _GbvLetterSubcategory(
+                          letter: 'B',
+                          title: l10n.gbvSec4Sub3BTitle,
+                          items: [
+                            _GbvBulletItem(
+                              boldPrefix: l10n.gbvSec4Sub3B1Title,
+                              body: l10n.gbvSec4Sub3B1Body,
+                            ),
+                            _GbvBulletItem(
+                              boldPrefix: l10n.gbvSec4Sub3B2Title,
+                              body: l10n.gbvSec4Sub3B2Body,
+                            ),
                           ],
                         ),
                       ],
