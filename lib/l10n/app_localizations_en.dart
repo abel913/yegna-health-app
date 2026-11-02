@@ -933,6 +933,177 @@ class AppLocalizationsEn extends AppLocalizations {
       'Substance use disorder is a treatable health condition, not a sign of moral weakness. Youth mentors, counseling facilities, and national toll-free hotlines (952 or 8335) provide confidential, compassionate assistance.';
 
   @override
+  String get mentalHealthHeroDesc =>
+      'Mental health is an essential part of overall health, encompassing emotional, psychological, and social wellbeing. It influences how we think, feel, manage stress, connect with others, and make decisions throughout life.';
+
+  @override
+  String get mentalHealthNoteContent =>
+      'Mental health exists on a continuum and can be nurtured and healed—seeking support during tough times is a sign of courage and strength, not weakness.';
+
+  @override
+  String get mentalHealthSection1Title =>
+      'Understanding Mental Health & Wellbeing';
+
+  @override
+  String get mentalHealthSection1Desc1 =>
+      'Mental health includes our emotional, psychological, and social wellbeing. It affects how we handle daily challenges, relate to friends and family, and make healthy lifestyle choices.';
+
+  @override
+  String get mentalHealthSection1Desc2 =>
+      'Good mental health does not mean feeling happy every moment. It means having the emotional resilience to navigate sadness, anger, stress, and joy in balanced, constructive ways.';
+
+  @override
+  String get mentalHealthSection1Alert =>
+      'Mental health is just as important as physical health. The mind and body are deeply interconnected: prolonged physical illness impacts emotional health, and chronic stress directly triggers physical ailments.';
+
+  @override
+  String get mentalHealthSection2Title => 'Common Challenges in Youth';
+
+  @override
+  String get mentalHealthSection2Intro =>
+      'Young people experience intense transitions, biological changes, and social pressures. Common challenges include:';
+
+  @override
+  String get mentalHealthChallenge1 =>
+      'Academic stress and burnout: Overwhelming anxiety about school grades, examinations, and future expectations.';
+
+  @override
+  String get mentalHealthChallenge2 =>
+      'General and social anxiety: Persistent, excessive worry about social situations, fear of judgment, or constant nervousness.';
+
+  @override
+  String get mentalHealthChallenge3 =>
+      'Depressive mood and sadness: Ongoing feelings of hopelessness, emptiness, loss of interest in favorite activities, and low energy.';
+
+  @override
+  String get mentalHealthChallenge4 =>
+      'Peer pressure and cyberbullying: Pressure to conform to unhealthy behaviors, fear of missing out (FOMO), or online harassment.';
+
+  @override
+  String get mentalHealthSection3Title =>
+      'Positive Coping & Self-Care Strategies';
+
+  @override
+  String get mentalHealthSection3Intro =>
+      'Building daily mental wellness practices helps protect against stress and strengthens emotional resilience:';
+
+  @override
+  String get mentalHealthStrategy1 =>
+      'Daily physical movement: 30 minutes of walking, jogging, dancing, or sports naturally releases endorphins that boost mood and reduce tension.';
+
+  @override
+  String get mentalHealthStrategy2 =>
+      'Restful sleep hygiene: Consistent 7–9 hours of sleep per night stabilizes mood, memory, and cognitive focus.';
+
+  @override
+  String get mentalHealthStrategy3 =>
+      'Mindful breathing and relaxation: Deep belly breathing, quiet reflection, and grounding exercises calm the nervous system when overwhelmed.';
+
+  @override
+  String get mentalHealthStrategy4 =>
+      'Expressive outlets: Journaling feelings, creating art, music, or prayer and meditation provide safe emotional release.';
+
+  @override
+  String get mentalHealthStrategy5 =>
+      'Healthy boundaries: Learning to say \'no\' to overwhelming requests and limiting excessive, draining social media use.';
+
+  @override
+  String get mentalHealthSection4Title =>
+      'Recognizing Warning Signs & Seeking Support';
+
+  @override
+  String get mentalHealthSection4Intro =>
+      'It is important to recognize when stress or sadness has crossed into a health challenge that needs outside support:';
+
+  @override
+  String get mentalHealthSign1 =>
+      'Prolonged withdrawal: Isolating completely from friends, family, and social activities for weeks.';
+
+  @override
+  String get mentalHealthSign2 =>
+      'Extreme mood shifts: Sudden, drastic fluctuations in personality, explosive anger, or extreme hopelessness.';
+
+  @override
+  String get mentalHealthSign3 =>
+      'Changes in sleeping or eating: Severe insomnia, sleeping all day, or major appetite and weight changes.';
+
+  @override
+  String get mentalHealthSign4 =>
+      'Turning to substances: Relying on alcohol, khat, or drugs to escape difficult feelings.';
+
+  @override
+  String get mentalHealthSign5 =>
+      'Thoughts of self-harm: Persistent thoughts of wanting to disappear, hurting oneself, or despair.';
+
+  @override
+  String get mentalHealthHelpAlert =>
+      'You never have to carry emotional pain alone. Talking to a verified peer counselor, school counselor, or calling toll-free national health lines (952 or 8335) connects you with compassionate, 100% confidential support.';
+
+  @override
+  String get mentalHealthQuizTitle => 'Mental Health & Wellbeing Quiz';
+
+  @override
+  String get mentalHealthQ1Text =>
+      'Mental health is just as important as physical health, and experiencing emotional struggles is a medical condition, not a sign of personal weakness?';
+
+  @override
+  String get mentalHealthQ1Insight =>
+      'Mental health is a fundamental component of total health. Seeking support for emotional distress is a responsible, courageous step toward wellbeing.';
+
+  @override
+  String get mentalHealthQ2Text =>
+      'Which of the following is a healthy, effective way to manage everyday stress and emotional overwhelm?';
+
+  @override
+  String get mentalHealthQ2OptA =>
+      'Regular physical exercise, mindful breathing, and getting 7–9 hours of sleep';
+
+  @override
+  String get mentalHealthQ2OptB =>
+      'Isolating yourself in your room and avoiding talking to anyone';
+
+  @override
+  String get mentalHealthQ2OptC =>
+      'Using alcohol or drugs to numb difficult emotions';
+
+  @override
+  String get mentalHealthQ2OptD => 'Skipping meals and staying awake all night';
+
+  @override
+  String get mentalHealthQ2Insight =>
+      'Physical activity releases mood-lifting endorphins, while adequate sleep and deep breathing reset the autonomic nervous system.';
+
+  @override
+  String get mentalHealthQ3Text =>
+      'Does good mental health mean you should feel happy and positive every single moment of your life?';
+
+  @override
+  String get mentalHealthQ3Insight =>
+      'Good mental health involves experiencing the full range of human emotions (including sadness, frustration, and grief) and having healthy tools to process them.';
+
+  @override
+  String get mentalHealthQ4Text =>
+      'If you or a friend are feeling overwhelmed by sadness or anxiety for several weeks, what is the best course of action?';
+
+  @override
+  String get mentalHealthQ4OptA =>
+      'Reach out to a trusted counselor, youth mentor, or call toll-free hotlines 952 / 8335';
+
+  @override
+  String get mentalHealthQ4OptB =>
+      'Keep it completely secret and hope it goes away on its own';
+
+  @override
+  String get mentalHealthQ4OptC => 'Criticize the friend for feeling sad';
+
+  @override
+  String get mentalHealthQ4OptD => 'Ignore school and stop eating';
+
+  @override
+  String get mentalHealthQ4Insight =>
+      'Early conversations with peer mentors, counselors, or calling national hotlines (952 or 8335) provide confidential, life-saving support.';
+
+  @override
   String get learningSectionsTitle => 'Learning Sections';
 
   @override

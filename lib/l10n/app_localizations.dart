@@ -1670,6 +1670,270 @@ abstract class AppLocalizations {
   /// **'Substance use disorder is a treatable health condition, not a sign of moral weakness. Youth mentors, counseling facilities, and national toll-free hotlines (952 or 8335) provide confidential, compassionate assistance.'**
   String get substanceSignsHelpAlert;
 
+  /// No description provided for @mentalHealthHeroDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Mental health is an essential part of overall health, encompassing emotional, psychological, and social wellbeing. It influences how we think, feel, manage stress, connect with others, and make decisions throughout life.'**
+  String get mentalHealthHeroDesc;
+
+  /// No description provided for @mentalHealthNoteContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Mental health exists on a continuum and can be nurtured and healed—seeking support during tough times is a sign of courage and strength, not weakness.'**
+  String get mentalHealthNoteContent;
+
+  /// No description provided for @mentalHealthSection1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Understanding Mental Health & Wellbeing'**
+  String get mentalHealthSection1Title;
+
+  /// No description provided for @mentalHealthSection1Desc1.
+  ///
+  /// In en, this message translates to:
+  /// **'Mental health includes our emotional, psychological, and social wellbeing. It affects how we handle daily challenges, relate to friends and family, and make healthy lifestyle choices.'**
+  String get mentalHealthSection1Desc1;
+
+  /// No description provided for @mentalHealthSection1Desc2.
+  ///
+  /// In en, this message translates to:
+  /// **'Good mental health does not mean feeling happy every moment. It means having the emotional resilience to navigate sadness, anger, stress, and joy in balanced, constructive ways.'**
+  String get mentalHealthSection1Desc2;
+
+  /// No description provided for @mentalHealthSection1Alert.
+  ///
+  /// In en, this message translates to:
+  /// **'Mental health is just as important as physical health. The mind and body are deeply interconnected: prolonged physical illness impacts emotional health, and chronic stress directly triggers physical ailments.'**
+  String get mentalHealthSection1Alert;
+
+  /// No description provided for @mentalHealthSection2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Common Challenges in Youth'**
+  String get mentalHealthSection2Title;
+
+  /// No description provided for @mentalHealthSection2Intro.
+  ///
+  /// In en, this message translates to:
+  /// **'Young people experience intense transitions, biological changes, and social pressures. Common challenges include:'**
+  String get mentalHealthSection2Intro;
+
+  /// No description provided for @mentalHealthChallenge1.
+  ///
+  /// In en, this message translates to:
+  /// **'Academic stress and burnout: Overwhelming anxiety about school grades, examinations, and future expectations.'**
+  String get mentalHealthChallenge1;
+
+  /// No description provided for @mentalHealthChallenge2.
+  ///
+  /// In en, this message translates to:
+  /// **'General and social anxiety: Persistent, excessive worry about social situations, fear of judgment, or constant nervousness.'**
+  String get mentalHealthChallenge2;
+
+  /// No description provided for @mentalHealthChallenge3.
+  ///
+  /// In en, this message translates to:
+  /// **'Depressive mood and sadness: Ongoing feelings of hopelessness, emptiness, loss of interest in favorite activities, and low energy.'**
+  String get mentalHealthChallenge3;
+
+  /// No description provided for @mentalHealthChallenge4.
+  ///
+  /// In en, this message translates to:
+  /// **'Peer pressure and cyberbullying: Pressure to conform to unhealthy behaviors, fear of missing out (FOMO), or online harassment.'**
+  String get mentalHealthChallenge4;
+
+  /// No description provided for @mentalHealthSection3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Positive Coping & Self-Care Strategies'**
+  String get mentalHealthSection3Title;
+
+  /// No description provided for @mentalHealthSection3Intro.
+  ///
+  /// In en, this message translates to:
+  /// **'Building daily mental wellness practices helps protect against stress and strengthens emotional resilience:'**
+  String get mentalHealthSection3Intro;
+
+  /// No description provided for @mentalHealthStrategy1.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily physical movement: 30 minutes of walking, jogging, dancing, or sports naturally releases endorphins that boost mood and reduce tension.'**
+  String get mentalHealthStrategy1;
+
+  /// No description provided for @mentalHealthStrategy2.
+  ///
+  /// In en, this message translates to:
+  /// **'Restful sleep hygiene: Consistent 7–9 hours of sleep per night stabilizes mood, memory, and cognitive focus.'**
+  String get mentalHealthStrategy2;
+
+  /// No description provided for @mentalHealthStrategy3.
+  ///
+  /// In en, this message translates to:
+  /// **'Mindful breathing and relaxation: Deep belly breathing, quiet reflection, and grounding exercises calm the nervous system when overwhelmed.'**
+  String get mentalHealthStrategy3;
+
+  /// No description provided for @mentalHealthStrategy4.
+  ///
+  /// In en, this message translates to:
+  /// **'Expressive outlets: Journaling feelings, creating art, music, or prayer and meditation provide safe emotional release.'**
+  String get mentalHealthStrategy4;
+
+  /// No description provided for @mentalHealthStrategy5.
+  ///
+  /// In en, this message translates to:
+  /// **'Healthy boundaries: Learning to say \'no\' to overwhelming requests and limiting excessive, draining social media use.'**
+  String get mentalHealthStrategy5;
+
+  /// No description provided for @mentalHealthSection4Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Recognizing Warning Signs & Seeking Support'**
+  String get mentalHealthSection4Title;
+
+  /// No description provided for @mentalHealthSection4Intro.
+  ///
+  /// In en, this message translates to:
+  /// **'It is important to recognize when stress or sadness has crossed into a health challenge that needs outside support:'**
+  String get mentalHealthSection4Intro;
+
+  /// No description provided for @mentalHealthSign1.
+  ///
+  /// In en, this message translates to:
+  /// **'Prolonged withdrawal: Isolating completely from friends, family, and social activities for weeks.'**
+  String get mentalHealthSign1;
+
+  /// No description provided for @mentalHealthSign2.
+  ///
+  /// In en, this message translates to:
+  /// **'Extreme mood shifts: Sudden, drastic fluctuations in personality, explosive anger, or extreme hopelessness.'**
+  String get mentalHealthSign2;
+
+  /// No description provided for @mentalHealthSign3.
+  ///
+  /// In en, this message translates to:
+  /// **'Changes in sleeping or eating: Severe insomnia, sleeping all day, or major appetite and weight changes.'**
+  String get mentalHealthSign3;
+
+  /// No description provided for @mentalHealthSign4.
+  ///
+  /// In en, this message translates to:
+  /// **'Turning to substances: Relying on alcohol, khat, or drugs to escape difficult feelings.'**
+  String get mentalHealthSign4;
+
+  /// No description provided for @mentalHealthSign5.
+  ///
+  /// In en, this message translates to:
+  /// **'Thoughts of self-harm: Persistent thoughts of wanting to disappear, hurting oneself, or despair.'**
+  String get mentalHealthSign5;
+
+  /// No description provided for @mentalHealthHelpAlert.
+  ///
+  /// In en, this message translates to:
+  /// **'You never have to carry emotional pain alone. Talking to a verified peer counselor, school counselor, or calling toll-free national health lines (952 or 8335) connects you with compassionate, 100% confidential support.'**
+  String get mentalHealthHelpAlert;
+
+  /// No description provided for @mentalHealthQuizTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Mental Health & Wellbeing Quiz'**
+  String get mentalHealthQuizTitle;
+
+  /// No description provided for @mentalHealthQ1Text.
+  ///
+  /// In en, this message translates to:
+  /// **'Mental health is just as important as physical health, and experiencing emotional struggles is a medical condition, not a sign of personal weakness?'**
+  String get mentalHealthQ1Text;
+
+  /// No description provided for @mentalHealthQ1Insight.
+  ///
+  /// In en, this message translates to:
+  /// **'Mental health is a fundamental component of total health. Seeking support for emotional distress is a responsible, courageous step toward wellbeing.'**
+  String get mentalHealthQ1Insight;
+
+  /// No description provided for @mentalHealthQ2Text.
+  ///
+  /// In en, this message translates to:
+  /// **'Which of the following is a healthy, effective way to manage everyday stress and emotional overwhelm?'**
+  String get mentalHealthQ2Text;
+
+  /// No description provided for @mentalHealthQ2OptA.
+  ///
+  /// In en, this message translates to:
+  /// **'Regular physical exercise, mindful breathing, and getting 7–9 hours of sleep'**
+  String get mentalHealthQ2OptA;
+
+  /// No description provided for @mentalHealthQ2OptB.
+  ///
+  /// In en, this message translates to:
+  /// **'Isolating yourself in your room and avoiding talking to anyone'**
+  String get mentalHealthQ2OptB;
+
+  /// No description provided for @mentalHealthQ2OptC.
+  ///
+  /// In en, this message translates to:
+  /// **'Using alcohol or drugs to numb difficult emotions'**
+  String get mentalHealthQ2OptC;
+
+  /// No description provided for @mentalHealthQ2OptD.
+  ///
+  /// In en, this message translates to:
+  /// **'Skipping meals and staying awake all night'**
+  String get mentalHealthQ2OptD;
+
+  /// No description provided for @mentalHealthQ2Insight.
+  ///
+  /// In en, this message translates to:
+  /// **'Physical activity releases mood-lifting endorphins, while adequate sleep and deep breathing reset the autonomic nervous system.'**
+  String get mentalHealthQ2Insight;
+
+  /// No description provided for @mentalHealthQ3Text.
+  ///
+  /// In en, this message translates to:
+  /// **'Does good mental health mean you should feel happy and positive every single moment of your life?'**
+  String get mentalHealthQ3Text;
+
+  /// No description provided for @mentalHealthQ3Insight.
+  ///
+  /// In en, this message translates to:
+  /// **'Good mental health involves experiencing the full range of human emotions (including sadness, frustration, and grief) and having healthy tools to process them.'**
+  String get mentalHealthQ3Insight;
+
+  /// No description provided for @mentalHealthQ4Text.
+  ///
+  /// In en, this message translates to:
+  /// **'If you or a friend are feeling overwhelmed by sadness or anxiety for several weeks, what is the best course of action?'**
+  String get mentalHealthQ4Text;
+
+  /// No description provided for @mentalHealthQ4OptA.
+  ///
+  /// In en, this message translates to:
+  /// **'Reach out to a trusted counselor, youth mentor, or call toll-free hotlines 952 / 8335'**
+  String get mentalHealthQ4OptA;
+
+  /// No description provided for @mentalHealthQ4OptB.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep it completely secret and hope it goes away on its own'**
+  String get mentalHealthQ4OptB;
+
+  /// No description provided for @mentalHealthQ4OptC.
+  ///
+  /// In en, this message translates to:
+  /// **'Criticize the friend for feeling sad'**
+  String get mentalHealthQ4OptC;
+
+  /// No description provided for @mentalHealthQ4OptD.
+  ///
+  /// In en, this message translates to:
+  /// **'Ignore school and stop eating'**
+  String get mentalHealthQ4OptD;
+
+  /// No description provided for @mentalHealthQ4Insight.
+  ///
+  /// In en, this message translates to:
+  /// **'Early conversations with peer mentors, counselors, or calling national hotlines (952 or 8335) provide confidential, life-saving support.'**
+  String get mentalHealthQ4Insight;
+
   /// No description provided for @learningSectionsTitle.
   ///
   /// In en, this message translates to:

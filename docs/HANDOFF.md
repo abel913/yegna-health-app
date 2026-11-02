@@ -1,5 +1,22 @@
 # Handoff
 
+## Mental Health & Wellbeing Detail Learning Module & Interactive Quiz Rebuild (2026-11-02)
+
+- Built and verified the dedicated learning module screen `MentalHealthDetailPage` (`lib/src/learning/mental_health_page.dart`) and interactive quiz `MentalHealthQuizPage` (`lib/src/learning/mental_health_quiz_page.dart`) for Module 06 matching established high-polish UI patterns:
+  - Top Hero Card featuring `assets/images/learning/module_06_mental_health.jpg`, title "Mental health & wellbeing", and comprehensive educational summary.
+  - Note Section with light-blue card container, lightbulb icon, and mental health continuum guidance.
+  - Learning Sections Header with dynamic reading count badge (`X / 4 read`).
+  - 4 interactive accordion sections with dynamic indicator badges (numerical badge when unread, white checkmark when read):
+    1. **Understanding Mental Health & Wellbeing**: Emotional, psychological, and social dimensions; integration with total health.
+    2. **Common Challenges in Youth**: Academic stress, burnout, performance/social anxiety, and depressive symptoms.
+    3. **Positive Coping & Self-Care Strategies**: Physical activity, sleep hygiene, mindful breathing, creative outlets, and screen-time management.
+    4. **Recognizing Warning Signs & Seeking Support**: Signs of distress, open communication, and immediate toll-free hotlines (952 / 8335).
+  - Interactive 4-question quiz (`MentalHealthQuizPage`) with segmented progress bar, question badge, optical glass selection cards, celebration scoring badge (`You scored X out of 4 (100%)`), Answer Review mode with Key Clinical Insights, Retake Quiz, and Return to Lesson.
+  - Linked to `LearnPage` carousel when selecting Module 06 and tapping "Take Quiz".
+  - Added complete English and Amharic ARB resources.
+  - Widget and unit tests in `test/mental_health_page_test.dart` and `test/mental_health_quiz_test.dart` (49/49 tests passing across the app).
+
+
 ## Substance Abuse Detail Learning Module Rebuild (2026-11-02)
 
 - Built and verified the dedicated learning module screen `SubstanceAbuseDetailPage` (`lib/src/learning/substance_abuse_page.dart`) for Module 08 matching user reference screenshots:

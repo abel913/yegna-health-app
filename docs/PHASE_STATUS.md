@@ -1,5 +1,27 @@
 # Phase status
 
+## Mental Health & Wellbeing Detail Learning Module & Interactive Quiz Rebuild (2026-11-02)
+
+**Status: Phase 3 Learning Module & Assessment Rebuild Complete & Verified.**
+- Implemented `MentalHealthDetailPage` (`lib/src/learning/mental_health_page.dart`) and `MentalHealthQuizPage` (`lib/src/learning/mental_health_quiz_page.dart`) for Module 06 matching established high-polish UI patterns:
+  - **Top Hero Card**: Rounded card with authentic youth mental wellbeing illustration (`assets/images/learning/module_06_mental_health.jpg`), title `Mental health & wellbeing`, and high-contrast educational synopsis.
+  - **Note Section**: Light-blue card with lightbulb icon highlighting the mental health continuum and early support.
+  - **Learning Sections Header**: Vertical azure indicator bar and dynamic reading count badge (`X / 4 read`).
+  - **4 Interactive Accordion Sections with Dynamic Badging**:
+    - Unread sections display their numerical indicator (`1`, `2`, `3`, `4`) in a bold circular azure badge; read sections display a white checkmark icon (`✔`).
+    - 1. **Understanding Mental Health & Wellbeing**: Emotional, psychological, and social wellbeing spectrum; total health integration.
+    - 2. **Common Challenges in Youth**: Academic stress and burnout, social and performance anxiety, and depressive symptoms.
+    - 3. **Positive Coping & Self-Care Strategies**: Physical movement & exercise, restorative sleep routine, mindful breathing, creative expression, and boundaries with screen time.
+    - 4. **Recognizing Warning Signs & Seeking Support**: Emotional withdrawal, sudden mood changes, sleep/appetite shifts, and immediate toll-free support hotlines (952 / 8335).
+  - **Interactive 4-Question Quiz (`MentalHealthQuizPage`)**:
+    - Progress segments, question badge (`Question X of 4`), category tag, and optical glass option cards.
+    - Questions covering definition, coping tools, myth-busting, and trusted seeking of support.
+    - Celebratory completion view with scoring badge (`You scored X out of 4 (100%)`), Review Answers mode with key clinical insights, Retake Quiz, and Return to Lesson.
+  - **Progress Integration**: Connected to `LearningProgressController` with completion state persistence for `module-06`.
+  - **Bilingual Localization**: Added complete English and Amharic ARB resources in `lib/l10n/app_en.arb` and `lib/l10n/app_am.arb`, cleanly regenerated via `flutter gen-l10n`.
+  - **Test Suite**: Created `test/mental_health_page_test.dart` and `test/mental_health_quiz_test.dart`. All 49 tests passing across full codebase.
+
+
 ## Substance Abuse Detail Learning Module Rebuild (2026-11-02)
 
 **Status: Phase 3 Learning Module UI Rebuild Complete & Verified.**

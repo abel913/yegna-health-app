@@ -902,6 +902,172 @@ class AppLocalizationsAm extends AppLocalizations {
       'የዕፅ አጠቃቀም ችግር የሚታከም የጤና ሁኔታ እንጂ የሞራል ድክመት አይደለም። የወጣቶች አማካሪዎች፣ የጤና ማዕከላት እና ነፃ የስልክ መስመሮች (952 ወይም 8335) ሚስጥራዊ እና ሩህሩህ ድጋፍ ይሰጣሉ።';
 
   @override
+  String get mentalHealthHeroDesc =>
+      'የአእምሮ ጤና ከአጠቃላይ ጤና ጋር በእጅጉ የተቆራኘ ሲሆን ስሜታዊ፣ ስነ-ልቦናዊ እና ማህበራዊ ደህንነትን ያካትታል። በህይወት ዘመናችን ሁሉ እንዴት እንደምናስብ፣ እንደምንሰማ፣ ውጥረትን እንደምንቆጣጠር፣ ከሌሎች ጋር እንደምንገናኝ እና ውሳኔ እንደምንሰጥ ይወስናል።';
+
+  @override
+  String get mentalHealthNoteContent =>
+      'የአእምሮ ጤና ሊንከባከብ እና ሊድን የሚችል ነው—በአስቸጋሪ ጊዜያት ድጋፍ መፈለግ የጥንካሬ እና የድፍረት ምልክት እንጂ የድክመት ምልክት አይደለም።';
+
+  @override
+  String get mentalHealthSection1Title => 'ስለ አእምሮ ጤና እና ደህንነት መረዳት';
+
+  @override
+  String get mentalHealthSection1Desc1 =>
+      'የአእምሮ ጤና ስሜታዊ፣ ስነ-ልቦናዊ እና ማህበራዊ ደህንነታችንን ያጠቃልላል። የዕለት ተዕለት ፈተናዎችን እንዴት እንደምንወጣ፣ ከቤተሰብ እና ከጓደኞች ጋር ያለንን ግንኙነት እና ጤናማ የአኗኗር ውሳኔዎችን እንዴት እንደምንወስን ይወስናል።';
+
+  @override
+  String get mentalHealthSection1Desc2 =>
+      'ጥሩ የአእምሮ ጤና ማለት ሁልጊዜ ደስተኛ መሆን ማለት አይደለም። ይልቁንም ሀዘንን፣ ንዴትን፣ ጭንቀትን እና ደስታን ሚዛናዊ በሆነ መንገድ የመቋቋም ስሜታዊ ብርታት ማዳበር ማለት ነው።';
+
+  @override
+  String get mentalHealthSection1Alert =>
+      'የአእምሮ ጤና ልክ እንደ አካላዊ ጤና እኩል አስፈላጊ ነው። አእምሮ እና አካል በጥብቅ የተሳሰሩ ናቸው፦ ያልተቋረጠ አካላዊ ህመም ስሜትን ይጎዳል፣ ሥር የሰደደ ውጥረትም በቀጥታ የአካል ህመምን ያስከትላል።';
+
+  @override
+  String get mentalHealthSection2Title => 'በወጣቶች ላይ የሚከሰቱ የተለመዱ የአእምሮ ጤና ፈተናዎች';
+
+  @override
+  String get mentalHealthSection2Intro =>
+      'ወጣቶች በህይወት የሽግግር ወቅት፣ በአካላዊ ለውጦች እና በማህበራዊ ጫናዎች ውስጥ ያልፋሉ። የተለመዱ ፈተናዎች የሚከተሉትን ያካትታሉ፦';
+
+  @override
+  String get mentalHealthChallenge1 =>
+      'የትምህርት ጭንቀት እና ድካም፦ ስለ ውጤት፣ ፈተናዎች እና ስለ ወደፊት ህይወት የሚሰማ ከልክ ያለፈ ፍርሃትና ጭንቀት።';
+
+  @override
+  String get mentalHealthChallenge2 =>
+      'አጠቃላይ እና ማህበራዊ ጭንቀት፦ በማህበራዊ ግንኙነቶች ውስጥ የማያቋርጥ ፍርሃት፣ የሌሎችን ትችት መፍራት እና የማያቋርጥ የፍርሃት ስሜት።';
+
+  @override
+  String get mentalHealthChallenge3 =>
+      'የድብርት ስሜት እና የከፋ ሀዘን፦ ተስፋ የመቁረጥ፣ የባዶነት ስሜት፣ በሚወዷቸው እንቅስቃሴዎች ላይ ፍላጎት ማጣት እና የጉልበት ማነስ።';
+
+  @override
+  String get mentalHealthChallenge4 =>
+      'የእኩዮች ጫና እና የኢንተርኔት ትንኮሳ፦ ወደ ጎጂ ባህሪያት እንዲገቡ የሚደረግ ጫና ወይም በማህበራዊ ሚዲያ የሚደርስ ትንኮሳ።';
+
+  @override
+  String get mentalHealthSection3Title => 'ውጥረትን የመቋቋሚያ እና ራስን የመንከባከቢያ ዘዴዎች';
+
+  @override
+  String get mentalHealthSection3Intro =>
+      'የዕለት ተዕለት ጤናማ ልምዶችን ማዳበር ከአእምሮ ውጥረት ይጠብቃል እንዲሁም ስሜታዊ ጥንካሬን ይገነባል፦';
+
+  @override
+  String get mentalHealthStrategy1 =>
+      'የዕለት ተዕለት አካላዊ እንቅስቃሴ፦ በቀን ለ 30 ደቂቃ በእግር መጓዝ፣ ሩጫ ወይም ስፖርት መስራት ስሜትን የሚያነቃቁ ሆርሞኖችን (ኢንዶርፊን) ያመነጫል።';
+
+  @override
+  String get mentalHealthStrategy2 =>
+      'በቂ እና ጤናማ እንቅልፍ፦ በቀን ከ 7 እስከ 9 ሰዓታት መተኛት ስሜትን፣ ትውስታን እና ትኩረትን ያረጋጋል።';
+
+  @override
+  String get mentalHealthStrategy3 =>
+      'የአተነፋፈስ እና የመረጋጋት ልምምድ፦ በጥልቀት መተንፈስ፣ ጸጥታን መለማመድ እና ማሰላሰል በውጥረት ወቅት የነርቭ ስርዓትን ያረጋጋሉ።';
+
+  @override
+  String get mentalHealthStrategy4 =>
+      'ስሜትን የመግለጫ መንገዶች፦ ስሜትን በማስታወሻ ላይ መጻፍ፣ ስነ-ጥበብ፣ ሙዚቃ ወይም ጸሎት ስሜትን ለማስተንፈስ ይረዳሉ።';
+
+  @override
+  String get mentalHealthStrategy5 =>
+      'ጤናማ ወሰን ማበጀት፦ አቅም በላይ ለሆኑ ጥያቄዎች \'አይሆንም\' ማለት እና አድካሚ የማህበራዊ ሚዲያ አጠቃቀምን መገደብ።';
+
+  @override
+  String get mentalHealthSection4Title => 'የአእምሮ ጭንቀት ምልክቶችን መገንዘብ እና ድጋፍ መፈለግ';
+
+  @override
+  String get mentalHealthSection4Intro =>
+      'ውጥረት ወይም ሀዘን የባለሙያ ድጋፍ የሚያስፈልገው ደረጃ ላይ መድረሱን ማወቅ አስፈላጊ ነው፦';
+
+  @override
+  String get mentalHealthSign1 =>
+      'ከማህበራዊ ህይወት መራቅ፦ ለሳምንታት ከጓደኞች፣ ከቤተሰብ እና ከማህበራዊ እንቅስቃሴዎች ሙሉ በሙሉ መገለል።';
+
+  @override
+  String get mentalHealthSign2 =>
+      'ከፍተኛ የስሜት መለዋወጥ፦ ድንገተኛ የባህሪ ለውጥ፣ ያልተለመደ የቁጣ ፍንዳታ ወይም ከፍተኛ የተስፋ መቁረጥ ስሜት።';
+
+  @override
+  String get mentalHealthSign3 =>
+      'የእንቅልፍ ወይም የምግብ ፍላጎት ለውጥ፦ ከፍተኛ እንቅልፍ ማጣት፣ ቀኑን ሙሉ መተኛት ወይም ከፍተኛ የክብደት ለውጥ።';
+
+  @override
+  String get mentalHealthSign4 =>
+      'ወደ አደንዛዥ እፆች ማዘንበል፦ ከአስቸጋሪ ስሜቶች ለማምለጥ በአልኮል፣ በጫት ወይም በእፆች ላይ ጥገኛ መሆን።';
+
+  @override
+  String get mentalHealthSign5 =>
+      'ራስን የመጉዳት ሀሳቦች፦ የመጥፋት፣ ራስን የመጉዳት ወይም የከፋ የተስፋ መቁረጥ ሀሳቦች ማሰላሰል።';
+
+  @override
+  String get mentalHealthHelpAlert =>
+      'የስሜት ህመምን ብቻዎን መሸከም አይኖርብዎትም። ከተረጋገጡ የወጣቶች አማካሪዎች ጋር መነጋገር ወይም በነፃ የስልክ መስመሮች (952 ወይም 8335) መደወል ፍጹም ሚስጥራዊ እና ሩህሩህ ድጋፍ ይሰጥዎታል።';
+
+  @override
+  String get mentalHealthQuizTitle => 'የአእምሮ ጤና እና ደህንነት ፈተና';
+
+  @override
+  String get mentalHealthQ1Text =>
+      'የአእምሮ ጤና ልክ እንደ አካላዊ ጤና እኩል አስፈላጊ ሲሆን የስሜት ቀውስ ማጋጠም የጤና ሁኔታ እንጂ የግል ድክመት አይደለም?';
+
+  @override
+  String get mentalHealthQ1Insight =>
+      'የአእምሮ ጤና የአጠቃላይ ጤና መሰረት ነው። በስሜት ቀውስ ወቅት ድጋፍ መፈለግ ለጤና የሚወሰድ ሃላፊነት የተሞላበት የጀግንነት እርምጃ ነው።';
+
+  @override
+  String get mentalHealthQ2Text =>
+      'የዕለት ተዕለት ውጥረትን እና የስሜት ጫናን ለመቆጣጠር ጤናማ እና ውጤታማ የሆነው መንገድ የትኛው ነው?';
+
+  @override
+  String get mentalHealthQ2OptA =>
+      'መደበኛ የአካል ብቃት እንቅስቃሴ ማድረግ፣ በጥልቀት መተንፈስ እና ከ 7-9 ሰዓት መተኛት';
+
+  @override
+  String get mentalHealthQ2OptB => 'ክፍል ውስጥ ብቻውን ተዘግቶ መቆየት እና ከማንም ጋር አለመነጋገር';
+
+  @override
+  String get mentalHealthQ2OptC => 'ከስሜት ለማምለጥ አልኮል ወይም እፅ መጠቀም';
+
+  @override
+  String get mentalHealthQ2OptD => 'ምግብ አለመብላት እና ሌሊቱን ሙሉ ባለመተኛት ማሳለፍ';
+
+  @override
+  String get mentalHealthQ2Insight =>
+      'የአካል ብቃት እንቅስቃሴ ስሜትን የሚያሻሽሉ ሆርሞኖችን ያመነጫል፣ በቂ እንቅልፍ እና ጥልቅ አተነፋፈስም የነርቭ ስርዓትን ያረጋጋሉ።';
+
+  @override
+  String get mentalHealthQ3Text =>
+      'ጥሩ የአእምሮ ጤና ማለት በህይወትዎ ውስጥ በሁሉም ቅጽበት ደስተኛ እና ቀናተኛ መሆን አለብዎት ማለት ነው?';
+
+  @override
+  String get mentalHealthQ3Insight =>
+      'ጥሩ የአእምሮ ጤና ሁሉንም የሰው ልጅ ስሜቶች (ሀዘንን፣ ብስጭትን እና ጭንቀትን ጨምሮ) መለማመድ እና እነሱን ለማስተናገድ ጤናማ ዘዴዎች እንዲኖሩን ማድረግ ነው።';
+
+  @override
+  String get mentalHealthQ4Text =>
+      'እርስዎ ወይም ጓደኛዎ ለሳምንታት በከባድ ሀዘን ወይም ጭንቀት ከተዋጡ የተሻለው እርምጃ ምንድነው?';
+
+  @override
+  String get mentalHealthQ4OptA =>
+      'የሚተማመኑትን አማካሪ፣ የወጣቶች አሰልጣኝ ማነጋገር ወይም በነፃ መስመሮች 952 / 8335 መደወል';
+
+  @override
+  String get mentalHealthQ4OptB =>
+      'ሙሉ በሙሉ በሚስጥር መያዝ እና በራሱ ጊዜ ይጠፋል ብሎ ተስፋ ማድረግ';
+
+  @override
+  String get mentalHealthQ4OptC => 'ጓደኛውን በሀዘኑ ማሾፍ እና መተቸት';
+
+  @override
+  String get mentalHealthQ4OptD => 'ትምህርትን መተው እና ምግብ አለመብላት';
+
+  @override
+  String get mentalHealthQ4Insight =>
+      'ከወጣቶች አማካሪዎች ጋር ቀድሞ መነጋገር ወይም በነፃ የስልክ መስመሮች (952 ወይም 8335) መደወል ሚስጥራዊ እና ህይወት አድን ድጋፍ ይሰጣል።';
+
+  @override
   String get learningSectionsTitle => 'የትምህርት ክፍሎች';
 
   @override
