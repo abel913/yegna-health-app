@@ -435,45 +435,28 @@ class _GenderBasedViolenceDetailPageState
                   isRead: _readSections.contains(3),
                   onToggle: () => _toggleSection(3),
                   children: [
-                    Text(
-                      l10n.gbvSection3Intro,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Color(0xFF334155),
-                        height: 1.55,
-                      ),
+                    _GbvBulletItem(
+                      boldPrefix: '',
+                      body: l10n.gbvConsequenceBullet1,
                     ),
-                    const SizedBox(height: 14),
-                    _GbvNumberedCategory(
-                      number: 1,
-                      title: l10n.gbvConsequence1Title,
-                      items: [
-                        _GbvBulletItem(
-                          boldPrefix: '',
-                          body: l10n.gbvConsequence1Body,
-                        ),
-                      ],
+                    _GbvBulletItem(
+                      boldPrefix: '',
+                      body: l10n.gbvConsequenceBullet2,
                     ),
-                    _GbvNumberedCategory(
-                      number: 2,
-                      title: l10n.gbvConsequence2Title,
-                      items: [
-                        _GbvBulletItem(
-                          boldPrefix: '',
-                          body: l10n.gbvConsequence2Body,
-                        ),
-                      ],
+                    _GbvBulletItem(
+                      boldPrefix: '',
+                      body: l10n.gbvConsequenceBullet3,
                     ),
-                    _GbvNumberedCategory(
-                      number: 3,
-                      title: l10n.gbvConsequence3Title,
-                      items: [
-                        _GbvBulletItem(
-                          boldPrefix: '',
-                          body: l10n.gbvConsequence3Body,
-                        ),
-                      ],
+                    _GbvBulletItem(
+                      boldPrefix: '',
+                      body: l10n.gbvConsequenceBullet4,
                     ),
+                    _GbvBulletItem(
+                      boldPrefix: '',
+                      body: l10n.gbvConsequenceBullet5,
+                    ),
+                    const SizedBox(height: 16),
+                    _GbvConsequencesTable(l10n: l10n),
                   ],
                 ),
 
@@ -485,46 +468,176 @@ class _GenderBasedViolenceDetailPageState
                   isRead: _readSections.contains(4),
                   onToggle: () => _toggleSection(4),
                   children: [
-                    Text(
-                      l10n.gbvSection4Intro,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Color(0xFF334155),
-                        height: 1.55,
-                      ),
-                    ),
-                    const SizedBox(height: 14),
+                    // Main 1: Immediate Response: Management of GBV
                     _GbvNumberedCategory(
                       number: 1,
-                      title: l10n.gbvManagement1Title,
+                      title: l10n.gbvSec4Main1Title,
                       items: [
-                        _GbvBulletItem(
-                          boldPrefix: '',
-                          body: l10n.gbvManagement1Body,
+                        Text(
+                          l10n.gbvSec4Main1Intro,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Color(0xFF334155),
+                            height: 1.55,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+
+                        // Sub A: Providing Safety and Protection
+                        _GbvLetterSubcategory(
+                          letter: 'A',
+                          title: l10n.gbvSec4SubATitle,
+                          items: [
+                            _GbvBulletItem(
+                              boldPrefix: l10n.gbvSec4SubA1Title,
+                              body: l10n.gbvSec4SubA1Body,
+                            ),
+                            _GbvBulletItem(
+                              boldPrefix: l10n.gbvSec4SubA2Title,
+                              body: l10n.gbvSec4SubA2Body,
+                            ),
+                            _GbvBulletItem(
+                              boldPrefix: l10n.gbvSec4SubA3Title,
+                              body: l10n.gbvSec4SubA3Body,
+                            ),
+                            _GbvBulletItem(
+                              boldPrefix: l10n.gbvSec4SubA4Title,
+                              body: l10n.gbvSec4SubA4Body,
+                            ),
+                          ],
+                        ),
+
+                        // Sub B: Comprehensive Support Services
+                        _GbvLetterSubcategory(
+                          letter: 'B',
+                          title: l10n.gbvSec4SubBTitle,
+                          items: [
+                            _GbvBulletItem(
+                              boldPrefix: l10n.gbvSec4SubB1Title,
+                              body: l10n.gbvSec4SubB1Body,
+                            ),
+                            _GbvBulletItem(
+                              boldPrefix: l10n.gbvSec4SubB2Title,
+                              body: l10n.gbvSec4SubB2Body,
+                            ),
+                            _GbvBulletItem(
+                              boldPrefix: l10n.gbvSec4SubB3Title,
+                              body: l10n.gbvSec4SubB3Body,
+                            ),
+                          ],
                         ),
                       ],
                     ),
+
+                    // Main 2: Preventing GBV
                     _GbvNumberedCategory(
                       number: 2,
-                      title: l10n.gbvManagement2Title,
+                      title: l10n.gbvSec4Main2Title,
                       items: [
-                        _GbvBulletItem(
-                          boldPrefix: '',
-                          body: l10n.gbvManagement2Body,
+                        Text(
+                          l10n.gbvSec4Main2Intro,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Color(0xFF334155),
+                            height: 1.55,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+
+                        // Sub 2A: Changing Social Norms and Attitudes
+                        _GbvLetterSubcategory(
+                          letter: 'A',
+                          title: l10n.gbvSec4Sub2ATitle,
+                          items: [
+                            _GbvBulletItem(
+                              boldPrefix: l10n.gbvSec4Sub2A1Title,
+                              body: l10n.gbvSec4Sub2A1Body,
+                            ),
+                            _GbvBulletItem(
+                              boldPrefix: l10n.gbvSec4Sub2A2Title,
+                              body: l10n.gbvSec4Sub2A2Body,
+                            ),
+                            _GbvBulletItem(
+                              boldPrefix: l10n.gbvSec4Sub2A3Title,
+                              body: l10n.gbvSec4Sub2A3Body,
+                            ),
+                            _GbvBulletItem(
+                              boldPrefix: l10n.gbvSec4Sub2A4Title,
+                              body: l10n.gbvSec4Sub2A4Body,
+                            ),
+                          ],
+                        ),
+
+                        // Sub 2B: Legal and Policy Reform
+                        _GbvLetterSubcategory(
+                          letter: 'B',
+                          title: l10n.gbvSec4Sub2BTitle,
+                          items: [
+                            _GbvBulletItem(
+                              boldPrefix: l10n.gbvSec4Sub2B1Title,
+                              body: l10n.gbvSec4Sub2B1Body,
+                            ),
+                            _GbvBulletItem(
+                              boldPrefix: l10n.gbvSec4Sub2B2Title,
+                              body: l10n.gbvSec4Sub2B2Body,
+                            ),
+                            _GbvBulletItem(
+                              boldPrefix: l10n.gbvSec4Sub2B3Title,
+                              body: l10n.gbvSec4Sub2B3Body,
+                            ),
+                          ],
+                        ),
+
+                        // Sub 2C: Empowering Women and Gender Minorities
+                        _GbvLetterSubcategory(
+                          letter: 'C',
+                          title: l10n.gbvSec4Sub2CTitle,
+                          items: [
+                            _GbvBulletItem(
+                              boldPrefix: l10n.gbvSec4Sub2C1Title,
+                              body: l10n.gbvSec4Sub2C1Body,
+                            ),
+                            _GbvBulletItem(
+                              boldPrefix: l10n.gbvSec4Sub2C2Title,
+                              body: l10n.gbvSec4Sub2C2Body,
+                            ),
+                            _GbvBulletItem(
+                              boldPrefix: l10n.gbvSec4Sub2C3Title,
+                              body: l10n.gbvSec4Sub2C3Body,
+                            ),
+                          ],
+                        ),
+
+                        // Sub 2D: Community-based Approaches
+                        _GbvLetterSubcategory(
+                          letter: 'D',
+                          title: l10n.gbvSec4Sub2DTitle,
+                          items: [
+                            _GbvBulletItem(
+                              boldPrefix: l10n.gbvSec4Sub2D1Title,
+                              body: l10n.gbvSec4Sub2D1Body,
+                            ),
+                            _GbvBulletItem(
+                              boldPrefix: l10n.gbvSec4Sub2D2Title,
+                              body: l10n.gbvSec4Sub2D2Body,
+                            ),
+                          ],
+                        ),
+
+                        // Sub 2E: Education and Awareness
+                        _GbvLetterSubcategory(
+                          letter: 'E',
+                          title: l10n.gbvSec4Sub2ETitle,
+                          items: [
+                            _GbvBulletItem(
+                              boldPrefix: l10n.gbvSec4Sub2E1Title,
+                              body: l10n.gbvSec4Sub2E1Body,
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                    _GbvNumberedCategory(
-                      number: 3,
-                      title: l10n.gbvManagement3Title,
-                      items: [
-                        _GbvBulletItem(
-                          boldPrefix: '',
-                          body: l10n.gbvManagement3Body,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 14),
+                    const SizedBox(height: 12),
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.all(14),
@@ -846,6 +959,223 @@ class _GbvBulletItem extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Subcategory with letter badge (A, B, C, D, E in solid blue circle).
+class _GbvLetterSubcategory extends StatelessWidget {
+  const _GbvLetterSubcategory({
+    required this.letter,
+    required this.title,
+    required this.items,
+  });
+
+  final String letter;
+  final String title;
+  final List<Widget> items;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 8, bottom: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 24,
+                height: 24,
+                decoration: const BoxDecoration(
+                  color: Color(0xFF0284C7),
+                  shape: BoxShape.circle,
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  letter,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 12.5,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 14.5,
+                    fontWeight: FontWeight.w800,
+                    color: Color(0xFF08264A),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          ...items,
+        ],
+      ),
+    );
+  }
+}
+
+/// Styled consequence table matching the reference poster graphic.
+class _GbvConsequencesTable extends StatelessWidget {
+  const _GbvConsequencesTable({required this.l10n});
+
+  final AppLocalizations l10n;
+
+  @override
+  Widget build(BuildContext context) {
+    final rows = [
+      [l10n.gbvTablePhys1, l10n.gbvTablePsych1, l10n.gbvTableSoc1],
+      [l10n.gbvTablePhys2, l10n.gbvTablePsych2, l10n.gbvTableSoc2],
+      [l10n.gbvTablePhys3, l10n.gbvTablePsych3, l10n.gbvTableSoc3],
+      [l10n.gbvTablePhys4, l10n.gbvTablePsych4, l10n.gbvTableSoc4],
+      [l10n.gbvTablePhys5, l10n.gbvTablePsych5, l10n.gbvTableSoc5],
+      [l10n.gbvTablePhys6, l10n.gbvTablePsych6, l10n.gbvTableSoc6],
+      [l10n.gbvTablePhys7, '—', l10n.gbvTableSoc7],
+    ];
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF9F7F1),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: const Color(0xFFE2D9C8),
+          width: 1.2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          // Table Title
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 6),
+            child: Text(
+              l10n.gbvTableTitle,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w800,
+                color: Color(0xFF1E3A8A),
+                letterSpacing: -0.2,
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+
+          // Structured 3-column table
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: Table(
+              border: TableBorder.all(
+                color: const Color(0xFFCBD5E1),
+                width: 0.9,
+              ),
+              columnWidths: const {
+                0: FlexColumnWidth(1),
+                1: FlexColumnWidth(1),
+                2: FlexColumnWidth(1.15),
+              },
+              children: [
+                // Header Row
+                TableRow(
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF581C87),
+                  ),
+                  children: [
+                    _buildHeaderCell(l10n.gbvTableColPhysical),
+                    _buildHeaderCell(l10n.gbvTableColPsychological),
+                    _buildHeaderCell(l10n.gbvTableColSocial),
+                  ],
+                ),
+                // Data Rows
+                for (var i = 0; i < rows.length; i++)
+                  TableRow(
+                    decoration: BoxDecoration(
+                      color: i.isEven ? Colors.white : const Color(0xFFF8FAFC),
+                    ),
+                    children: [
+                      _buildDataCell(rows[i][0]),
+                      _buildDataCell(rows[i][1]),
+                      _buildDataCell(rows[i][2]),
+                    ],
+                  ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 10),
+
+          // Footer Badge
+          Align(
+            alignment: Alignment.centerRight,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(4),
+                border: Border.all(
+                  color: const Color(0xFF0284C7),
+                  width: 1,
+                ),
+              ),
+              child: const Text(
+                'GENDER BASED VIOLENCE',
+                style: TextStyle(
+                  fontSize: 9.5,
+                  fontWeight: FontWeight.w800,
+                  color: Color(0xFF0284C7),
+                  letterSpacing: 0.5,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeaderCell(String text) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
+      child: Center(
+        child: Text(
+          text,
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            fontSize: 11,
+            fontWeight: FontWeight.w700,
+            color: Colors.white,
+            height: 1.25,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDataCell(String text) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+      child: Text(
+        text,
+        style: const TextStyle(
+          fontSize: 11.5,
+          color: Color(0xFF1E293B),
+          fontWeight: FontWeight.w500,
+          height: 1.3,
+        ),
       ),
     );
   }

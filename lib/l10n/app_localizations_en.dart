@@ -1491,58 +1491,275 @@ class AppLocalizationsEn extends AppLocalizations {
   String get gbvSection3Title => 'Consequences of gender-based violence';
 
   @override
-  String get gbvSection3Intro =>
-      'Gender-based violence impacts every dimension of a survivor\'s life, creating profound consequences for physical, mental, and social wellbeing:';
+  String get gbvConsequenceBullet1 =>
+      'Physical, injury, disability, chronic health problem, sexual and reproductive health problems, death';
 
   @override
-  String get gbvConsequence1Title => 'Physical and Reproductive Health:';
+  String get gbvConsequenceBullet2 =>
+      'Psychological, anxiety, fear, loneliness depression, alcohol or drug use suicide';
 
   @override
-  String get gbvConsequence1Body =>
-      'Severe physical injuries, chronic pain syndromes, unintended pregnancies, complications from unsafe abortions, and increased risk of contracting STIs and HIV.';
+  String get gbvConsequenceBullet3 =>
+      'Economic and social impact, reduced ability to participate in social and economic activities, social stigma at community level, negative impact on women income generating power, increased vulnerability to other types of gender-based violence';
 
   @override
-  String get gbvConsequence2Title => 'Psychological and Emotional Trauma:';
+  String get gbvConsequenceBullet4 =>
+      'The impact on women family and dependents, divorce, or broken families, jeopardize family\'s economic and emotional development, emotional and behavioral disturbances';
 
   @override
-  String get gbvConsequence2Body =>
-      'Depression, post-traumatic stress disorder (PTSD), severe anxiety, panic attacks, sleep disorders, and heightened risk of self-harm or suicide.';
+  String get gbvConsequenceBullet5 =>
+      'Emotional Consequences, Depression stress, low self esteem';
 
   @override
-  String get gbvConsequence3Title => 'Social and Economic Consequences:';
+  String get gbvTableTitle => 'Consequences of GBV';
 
   @override
-  String get gbvConsequence3Body =>
-      'Social stigmatization, isolation from family and community networks, interruption of schooling, job loss, and deepened economic dependence.';
+  String get gbvTableColPhysical => 'Physical health consequences';
+
+  @override
+  String get gbvTableColPsychological => 'Psychological health consequences';
+
+  @override
+  String get gbvTableColSocial => 'Social & Economic consequences';
+
+  @override
+  String get gbvTablePhys1 => 'Physical injury';
+
+  @override
+  String get gbvTablePhys2 => 'HIV/AIDS';
+
+  @override
+  String get gbvTablePhys3 => 'STIs';
+
+  @override
+  String get gbvTablePhys4 => 'Unwanted pregnancy';
+
+  @override
+  String get gbvTablePhys5 => 'Unsafe abortion';
+
+  @override
+  String get gbvTablePhys6 => 'Fistula';
+
+  @override
+  String get gbvTablePhys7 => 'Death';
+
+  @override
+  String get gbvTablePsych1 => 'Depression';
+
+  @override
+  String get gbvTablePsych2 => 'Fear';
+
+  @override
+  String get gbvTablePsych3 => 'Self-blame';
+
+  @override
+  String get gbvTablePsych4 => 'Anxiety';
+
+  @override
+  String get gbvTablePsych5 => 'Mental illness';
+
+  @override
+  String get gbvTablePsych6 => 'Suicidal thoughts/actions';
+
+  @override
+  String get gbvTableSoc1 => 'Victim-blaming';
+
+  @override
+  String get gbvTableSoc2 => 'Stigmatisation';
+
+  @override
+  String get gbvTableSoc3 => 'Rejection';
+
+  @override
+  String get gbvTableSoc4 => 'Isolation';
+
+  @override
+  String get gbvTableSoc5 => 'Decreased earning capacity/contribution';
+
+  @override
+  String get gbvTableSoc6 => 'Increased poverty';
+
+  @override
+  String get gbvTableSoc7 => 'Risk of re-victimization';
 
   @override
   String get gbvSection4Title =>
       'Management and Prevention of Gender-Based Violence (GBV)';
 
   @override
-  String get gbvSection4Intro =>
-      'Addressing GBV requires a survivor-centered approach ensuring safety, confidentiality, respect, and non-discrimination across medical, psychosocial, and legal channels:';
+  String get gbvSec4Main1Title => 'Immediate Response: Management of GBV';
 
   @override
-  String get gbvManagement1Title => 'Emergency Medical Care (Within 72 Hours):';
+  String get gbvSec4Main1Intro =>
+      'When GBV occurs, immediate intervention is necessary to support survivors and address the situation.';
 
   @override
-  String get gbvManagement1Body =>
-      'Survivors of sexual assault require immediate medical care within 72 hours to receive Post-Exposure Prophylaxis (PEP) to prevent HIV infection, emergency contraception to prevent pregnancy, treatment for physical injuries, and prophylactic antibiotics for STIs.';
+  String get gbvSec4SubATitle => 'Providing Safety and Protection';
 
   @override
-  String get gbvManagement2Title => 'Psychosocial Support & Safe Spaces:';
+  String get gbvSec4SubA1Title => 'Safe spaces:';
 
   @override
-  String get gbvManagement2Body =>
-      'Confidential psychological first aid, trauma-informed counseling, and access to secure safe shelters to protect survivors from immediate retaliatory harm.';
+  String get gbvSec4SubA1Body =>
+      'Shelters and crisis centers provide immediate refuge for survivors.';
 
   @override
-  String get gbvManagement3Title => 'Legal Aid & Protection:';
+  String get gbvSec4SubA2Title => 'Hotlines and crisis counseling:';
 
   @override
-  String get gbvManagement3Body =>
-      'Access to justice, police protection orders, forensic documentation, and free legal counsel to hold perpetrators accountable under the law.';
+  String get gbvSec4SubA2Body =>
+      'support services to offer guidance, emotional support, and legal advice.';
+
+  @override
+  String get gbvSec4SubA3Title => 'Protection orders:';
+
+  @override
+  String get gbvSec4SubA3Body =>
+      'Legal measures to prevent abusers from contacting or approaching survivors. In some cases, law enforcement involvement may be necessary to ensure the safety of survivors and hold perpetrators accountable.';
+
+  @override
+  String get gbvSec4SubA4Title => 'Medical care:';
+
+  @override
+  String get gbvSec4SubA4Body =>
+      'Ensuring that survivors receive prompt medical attention, including trauma care and sexual health services.';
+
+  @override
+  String get gbvSec4SubBTitle => 'Comprehensive Support Services';
+
+  @override
+  String get gbvSec4SubB1Title => 'Psychosocial support:';
+
+  @override
+  String get gbvSec4SubB1Body =>
+      'Counseling and therapy to help survivors heal from trauma.';
+
+  @override
+  String get gbvSec4SubB2Title => 'Legal aid:';
+
+  @override
+  String get gbvSec4SubB2Body =>
+      'Support to navigate the legal system, file reports, and pursue justice.';
+
+  @override
+  String get gbvSec4SubB3Title => 'Economic support:';
+
+  @override
+  String get gbvSec4SubB3Body =>
+      'Assistance in rebuilding financial independence, including job training, micro-loans, or cash support.';
+
+  @override
+  String get gbvSec4Main2Title => 'Preventing GBV';
+
+  @override
+  String get gbvSec4Main2Intro =>
+      'Prevention strategies focus on addressing the root causes of violence and working toward a society where GBV is not tolerated.';
+
+  @override
+  String get gbvSec4Sub2ATitle => 'Changing Social Norms and Attitudes';
+
+  @override
+  String get gbvSec4Sub2A1Title => 'Public awareness campaigns:';
+
+  @override
+  String get gbvSec4Sub2A1Body =>
+      'Educating communities on the harmful effects of GBV, promoting gender equality, and challenging stereotypes.';
+
+  @override
+  String get gbvSec4Sub2A2Title => 'Media advocacy:';
+
+  @override
+  String get gbvSec4Sub2A2Body =>
+      'Using films, social media, and other platforms to spread messages about healthy relationships and the importance of respect for all genders.';
+
+  @override
+  String get gbvSec4Sub2A3Title => 'School programs:';
+
+  @override
+  String get gbvSec4Sub2A3Body =>
+      'Implementing educational curricula that promote respect, gender equality, and healthy relationships.';
+
+  @override
+  String get gbvSec4Sub2A4Title => 'Community dialogues:';
+
+  @override
+  String get gbvSec4Sub2A4Body =>
+      'Facilitating conversations between different groups (e.g., community leaders, youth, men, and women) to address the cultural norms that perpetuate violence.';
+
+  @override
+  String get gbvSec4Sub2BTitle => 'Legal and Policy Reform';
+
+  @override
+  String get gbvSec4Sub2B1Title => 'Strengthening laws:';
+
+  @override
+  String get gbvSec4Sub2B1Body =>
+      'Enacting and enforcing laws that specifically address GBV, such as domestic violence laws, sexual harassment regulations, and anti-human trafficking laws.';
+
+  @override
+  String get gbvSec4Sub2B2Title => 'Supporting survivors\' rights:';
+
+  @override
+  String get gbvSec4Sub2B2Body =>
+      'Ensuring that survivors of GBV have access to justice and are not revictimized by legal or societal systems.';
+
+  @override
+  String get gbvSec4Sub2B3Title => 'Gender-sensitive law enforcement:';
+
+  @override
+  String get gbvSec4Sub2B3Body =>
+      'Training police and other law enforcement officers on how to respond appropriately to GBV cases, including sensitivity to gender issues and survivor trauma.';
+
+  @override
+  String get gbvSec4Sub2CTitle => 'Empowering Women and Gender Minorities';
+
+  @override
+  String get gbvSec4Sub2C1Title => 'Economic empowerment:';
+
+  @override
+  String get gbvSec4Sub2C1Body =>
+      'Providing women and marginalized genders with access to education, employment, and financial independence reduces their vulnerability to abuse.';
+
+  @override
+  String get gbvSec4Sub2C2Title => 'Leadership training:';
+
+  @override
+  String get gbvSec4Sub2C2Body =>
+      'Encouraging the participation of women and gender minorities in leadership positions in politics, business, and social spheres to create role models and disrupt patriarchal structures.';
+
+  @override
+  String get gbvSec4Sub2C3Title => 'Men as allies:';
+
+  @override
+  String get gbvSec4Sub2C3Body =>
+      'Engaging men and boys in GBV prevention efforts, emphasizing positive masculinity, healthy relationships, and shared responsibility in addressing violence.';
+
+  @override
+  String get gbvSec4Sub2DTitle => 'Community-based Approaches';
+
+  @override
+  String get gbvSec4Sub2D1Title => 'Community mobilization:';
+
+  @override
+  String get gbvSec4Sub2D1Body =>
+      'Working with community leaders, religious figures, and local organizations to promote zero-tolerance for GBV and to create a supportive environment for survivors.';
+
+  @override
+  String get gbvSec4Sub2D2Title => 'Self-help groups and peer support:';
+
+  @override
+  String get gbvSec4Sub2D2Body =>
+      'Creating spaces where survivors can support each other and share their experiences, empowering individuals to speak out and seek help.';
+
+  @override
+  String get gbvSec4Sub2ETitle => 'Education and Awareness';
+
+  @override
+  String get gbvSec4Sub2E1Title => 'Human rights education:';
+
+  @override
+  String get gbvSec4Sub2E1Body =>
+      'Integrating comprehensive human rights, bodily autonomy, and non-violent communication into community workshops and youth platforms.';
 
   @override
   String get gbvSection4HelpAlert =>

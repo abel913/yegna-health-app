@@ -1453,57 +1453,273 @@ class AppLocalizationsAm extends AppLocalizations {
   String get gbvSection3Title => 'የሥርዓተ-ፆታ ጥቃት የሚያስከትላቸው ጉዳቶች';
 
   @override
-  String get gbvSection3Intro =>
-      'ሥርዓተ-ፆታን መሠረት ያደረገ ጥቃት በተጎጂው ህይወት ላይ ጥልቅ እና የረጅም ጊዜ አካላዊ፣ ስነ-ልቦናዊ እና ማህበራዊ ቀውሶችን ያስከትላል፡-';
+  String get gbvConsequenceBullet1 =>
+      'አካላዊ ጉዳት፣ የአካል ጉዳተኝነት፣ ሥር የሰደደ የጤና እክል፣ የስነ-ተዋልዶ ጤና ችግሮች፣ ሞት';
 
   @override
-  String get gbvConsequence1Title => 'አካላዊ እና የስነ-ተዋልዶ ጤና ጉዳቶች:';
+  String get gbvConsequenceBullet2 =>
+      'ስነ-ልቦናዊ ችግሮች፣ ጭንቀት፣ ፍርሃት፣ የብቸኝነት ስሜት፣ ድብርት፣ የአልኮል ወይም እፅ ሱስ፣ ራስን ማጥፋት';
 
   @override
-  String get gbvConsequence1Body =>
-      'ከባድ የአካል ጉዳቶች፣ የማያቋርጥ ህመም፣ ያልተፈለገ እርግዝና፣ ካልተጠበቀ ውርጃ የሚመጡ ችግሮች፣ እና በግብረ ሥጋ ግንኙነት የሚተላለፉ ኢንፌክሽኖች (STIs) እና የኤች አይ ቪ (HIV) ተጋላጭነት።';
+  String get gbvConsequenceBullet3 =>
+      'ኢኮኖሚያዊ እና ማህበራዊ ተፅእኖ፣ በማህበራዊ እና ኢኮኖሚያዊ እንቅስቃሴዎች ውስጥ የመሳተፍ አቅም መቀነስ፣ በማህበረሰብ ደረጃ የሚደርስ መገለል፣ የሴቶችን የገቢ ማመንጨት አቅም መጉዳት፣ ለሌሎች የጥቃት ዓይነቶች ተጋላጭነት መጨመር';
 
   @override
-  String get gbvConsequence2Title => 'ስነ-ልቦናዊ እና ስሜታዊ ቀውሶች:';
+  String get gbvConsequenceBullet4 =>
+      'በሴቶች ቤተሰብ እና ጥገኞች ላይ የሚደርስ ተፅእኖ፣ ፍቺ ወይም የተበታተኑ ቤተሰቦች፣ የቤተሰብን ኢኮኖሚያዊ እና ስሜታዊ እድገት ማወክ፣ የስሜት እና የባህሪ መታወክ';
 
   @override
-  String get gbvConsequence2Body =>
-      'የመንፈስ ጭንቀት (Depression)፣ ከከባድ ድንጋጤ በኋላ የሚመጣ ጭንቀት (PTSD)፣ ከባድ ፍርሃት፣ የእንቅልፍ መታወክ እና ራስን የመጉዳት ወይም የሞት ሀሳቦች።';
+  String get gbvConsequenceBullet5 => 'ስሜታዊ መዘዞች፣ ድብርት፣ ውጥረት፣ ዝቅተኛ በራስ መተማመን';
 
   @override
-  String get gbvConsequence3Title => 'ማህበራዊ እና ኢኮኖሚያዊ ጉዳቶች:';
+  String get gbvTableTitle => 'የሥርዓተ-ፆታ ጥቃት (GBV) መዘዞች';
 
   @override
-  String get gbvConsequence3Body =>
-      'ማህበራዊ መገለል፣ ከቤተሰብ እና ከማህበረሰብ መራቅ፣ ትምህርትን ማቋረጥ፣ የስራ ማጣት እና ለከፋ የኢኮኖሚ ጥገኝነት መዳረግ።';
+  String get gbvTableColPhysical => 'አካላዊ የጤና መዘዞች';
+
+  @override
+  String get gbvTableColPsychological => 'ስነ-ልቦናዊ የጤና መዘዞች';
+
+  @override
+  String get gbvTableColSocial => 'ማህበራዊ እና ኢኮኖሚያዊ መዘዞች';
+
+  @override
+  String get gbvTablePhys1 => 'አካላዊ ጉዳት';
+
+  @override
+  String get gbvTablePhys2 => 'ኤችአይቪ/ኤድስ';
+
+  @override
+  String get gbvTablePhys3 => 'የአባለዘር በሽታዎች (STIs)';
+
+  @override
+  String get gbvTablePhys4 => 'ያልተፈለገ እርግዝና';
+
+  @override
+  String get gbvTablePhys5 => 'አደገኛ ውርጃ';
+
+  @override
+  String get gbvTablePhys6 => 'የማህፀን ፊስቱላ';
+
+  @override
+  String get gbvTablePhys7 => 'ሞት';
+
+  @override
+  String get gbvTablePsych1 => 'ድብርት (Depression)';
+
+  @override
+  String get gbvTablePsych2 => 'ፍርሃት';
+
+  @override
+  String get gbvTablePsych3 => 'ራስን መውቀስ';
+
+  @override
+  String get gbvTablePsych4 => 'ጭንቀት (Anxiety)';
+
+  @override
+  String get gbvTablePsych5 => 'የአእምሮ ህመም';
+
+  @override
+  String get gbvTablePsych6 => 'ራስን የማጥፋት ሀሳብ/ድርጊት';
+
+  @override
+  String get gbvTableSoc1 => 'ተጎጂውን ተጠያቂ ማድረግ';
+
+  @override
+  String get gbvTableSoc2 => 'መገለል (Stigma)';
+
+  @override
+  String get gbvTableSoc3 => 'መገፋት';
+
+  @override
+  String get gbvTableSoc4 => 'ብቸኝነት';
+
+  @override
+  String get gbvTableSoc5 => 'የገቢ ማመንጨት አቅም መቀነስ';
+
+  @override
+  String get gbvTableSoc6 => 'የድህነት መጨመር';
+
+  @override
+  String get gbvTableSoc7 => 'እንደገና ለጥቃት የመጋለጥ እድል';
 
   @override
   String get gbvSection4Title => 'የሥርዓተ-ፆታ ጥቃት አያያዝ እና መከላከያ መንገዶች';
 
   @override
-  String get gbvSection4Intro =>
-      'ለGBV ምላሽ መስጠት የተጎጂውን ደህንነት፣ ሚስጥራዊነት እና ክብር ባማከለ መልኩ በህክምና፣ ስነ-ልቦናዊ እና ህጋዊ አቅጣጫዎች መስራትን ይጠይቃል፡-';
+  String get gbvSec4Main1Title => 'አፋጣኝ ምላሽ፡ የGBV አያያዝ';
 
   @override
-  String get gbvManagement1Title => 'አስቸኳይ የህክምና እርዳታ (በ72 ሰዓታት ውስጥ):';
+  String get gbvSec4Main1Intro =>
+      'ጥቃት በሚደርስበት ጊዜ ተጎጂዎችን ለመደገፍ እና ሁኔታውን ለመፍታት አፋጣኝ ጣልቃገብነት አስፈላጊ ነው።';
 
   @override
-  String get gbvManagement1Body =>
-      'የፆታዊ ጥቃት ተጎጂዎች የኤች አይ ቪ ስርጭትን ለመከላከል የሚሰጠውን የPEP መድሃኒት፣ ያልተፈለገ እርግዝና መከላከያ፣ የአካል ቁስለት ህክምና እና የSTI መከላከያ ህክምናዎችን ለማግኘት በ72 ሰዓታት ውስጥ በአስቸኳይ ወደ ጤና ተቋም መሄድ አለባቸው።';
+  String get gbvSec4SubATitle => 'ደህንነትን እና ጥበቃን መስጠት';
 
   @override
-  String get gbvManagement2Title => 'ስነ-ልቦናዊ ድጋፍ እና አስተማማኝ መጠለያ:';
+  String get gbvSec4SubA1Title => 'ደህንነታቸው የተጠበቁ ቦታዎች፡';
 
   @override
-  String get gbvManagement2Body =>
-      'ሚስጥራዊ የመጀመሪያ ደረጃ ስነ-ልቦናዊ ድጋፍ፣ የምክር አገልግሎት እና ተጨማሪ አደጋዎችን ለመከላከል ደህንነታቸው የተጠበቀ መጠለያዎችን ማመቻቸት።';
+  String get gbvSec4SubA1Body =>
+      'የአደጋ ጊዜ መጠለያዎች እና ማዕከላት ለተጎጂዎች ፈጣን መጠጊያ ይሰጣሉ።';
 
   @override
-  String get gbvManagement3Title => 'ህጋዊ ድጋፍ እና ጥበቃ:';
+  String get gbvSec4SubA2Title => 'የነጻ የስልክ መስመሮች እና የአደጋ ጊዜ ምክር፡';
 
   @override
-  String get gbvManagement3Body =>
-      'የፍትህ ተደራሽነት፣ የፖሊስ ጥበቃ ትዕዛዞች፣ የህክምና ማስረጃዎች ምዝገባ እና አጥፊዎችን በህግ ፊት ተጠያቂ ለማድረግ የሚሰጥ ነፃ የህግ ድጋፍ።';
+  String get gbvSec4SubA2Body =>
+      'መመሪያን፣ ስሜታዊ ድጋፍን እና የህግ ምክርን የሚሰጡ የድጋፍ አገልግሎቶች።';
+
+  @override
+  String get gbvSec4SubA3Title => 'የጥበቃ ትእዛዝ፡';
+
+  @override
+  String get gbvSec4SubA3Body =>
+      'አጥፊዎች ተጎጂዎችን እንዳያገኙ ወይም እንዳይቀርቡ የሚከለክሉ ህጋዊ እርምጃዎች፤ የተጎጂዎችን ደህንነት ለማረጋገጥ እና አጥፊዎችን ተጠያቂ ለማድረግ የህግ አስከባሪዎች ተሳትፎ።';
+
+  @override
+  String get gbvSec4SubA4Title => 'የህክምና እርዳታ፡';
+
+  @override
+  String get gbvSec4SubA4Body =>
+      'ተጎጂዎች አፋጣኝ የህክምና ክትትል፣ የስነ-ቁስለት ህክምና እና የስነ-ተዋልዶ ጤና አገልግሎቶችን ማግኘታቸውን ማረጋገጥ።';
+
+  @override
+  String get gbvSec4SubBTitle => 'ሁሉን አቀፍ የድጋፍ አገልግሎቶች';
+
+  @override
+  String get gbvSec4SubB1Title => 'ስነ-ልቦናዊ ድጋፍ፡';
+
+  @override
+  String get gbvSec4SubB1Body =>
+      'ተጎጂዎች ከደረሰባቸው ስነ-ልቦናዊ ቀውስ እንዲያገግሙ የሚረዳ የምክር እና የስነ-ልቦና ህክምና።';
+
+  @override
+  String get gbvSec4SubB2Title => 'የህግ ድጋፍ፡';
+
+  @override
+  String get gbvSec4SubB2Body =>
+      'የህግ ስርዓቱን ለመረዳት፣ ሪፖርት ለማድረግ እና ፍትህን ለማግኘት የሚደረግ ድጋፍ።';
+
+  @override
+  String get gbvSec4SubB3Title => 'ኢኮኖሚያዊ ድጋፍ፡';
+
+  @override
+  String get gbvSec4SubB3Body =>
+      'የስራ ስልጠናን፣ አነስተኛ ብድርን ወይም የገንዘብ ድጋፍን ጨምሮ የኢኮኖሚ ነፃነትን እንደገና ለመገንባት የሚደረግ እገዛ።';
+
+  @override
+  String get gbvSec4Main2Title => 'የሥርዓተ-ፆታ ጥቃትን መከላከል';
+
+  @override
+  String get gbvSec4Main2Intro =>
+      'የመከላከያ ስልቶች የሚያተኩሩት የጥቃቱን ዋና መንስኤዎች በማስወገድ ጥቃት የማይታገስበትን ማህበረሰብ ለመፍጠር ነው።';
+
+  @override
+  String get gbvSec4Sub2ATitle => 'ማህበራዊ አመለካከቶችን እና ልማዶችን መለወጥ';
+
+  @override
+  String get gbvSec4Sub2A1Title => 'የህዝብ ግንዛቤ ማስጨበጫ ዘመቻዎች፡';
+
+  @override
+  String get gbvSec4Sub2A1Body =>
+      'ማህበረሰቡን ስለ ጥቃቱ ጎጂነት ማስተማር፣ የፆታ እኩልነትን ማሳደግ እና የተዛቡ አመለካከቶችን መፈታተን።';
+
+  @override
+  String get gbvSec4Sub2A2Title => 'የሚዲያ ቅስቀሳ፡';
+
+  @override
+  String get gbvSec4Sub2A2Body =>
+      'ስለ ጤናማ ግንኙነቶች እና ለሁሉም ፆታዎች አክብሮት ስለመስጠት ፊልሞችን፣ ማህበራዊ ሚዲያዎችን እና ሌሎች መድረኮችን መጠቀም።';
+
+  @override
+  String get gbvSec4Sub2A3Title => 'የትምህርት ቤት ፕሮግራሞች፡';
+
+  @override
+  String get gbvSec4Sub2A3Body =>
+      'አክብሮትን፣ የፆታ እኩልነትን እና ጤናማ ግንኙነቶችን የሚያበረታቱ የትምህርት መርሃ ግብሮችን መተግበር።';
+
+  @override
+  String get gbvSec4Sub2A4Title => 'የማህበረሰብ ውይይቶች፡';
+
+  @override
+  String get gbvSec4Sub2A4Body =>
+      'ጥቃቱን የሚያባብሱ ባህላዊ ልማዶችን ለመፍታት በተለያዩ ቡድኖች (የማህበረሰብ መሪዎች፣ ወጣቶች፣ ወንዶች እና ሴቶች) መካከል ውይይቶችን ማመቻቸት።';
+
+  @override
+  String get gbvSec4Sub2BTitle => 'የህግ እና የፖሊሲ ማሻሻያ';
+
+  @override
+  String get gbvSec4Sub2B1Title => 'ህጎችን ማጠናከር፡';
+
+  @override
+  String get gbvSec4Sub2B1Body =>
+      'በGBV ላይ ያተኮሩ ህጎችን (እንደ የቤት ውስጥ ጥቃት ህጎች፣ የፆታዊ ትንኮሳ ደንቦች እና የሰው ዝውውር መከላከያ ህጎች) ማውጣትና ማስከበር።';
+
+  @override
+  String get gbvSec4Sub2B2Title => 'የተጎጂዎችን መብት መደገፍ፡';
+
+  @override
+  String get gbvSec4Sub2B2Body =>
+      'የጥቃት ሰለባዎች የፍትህ ተደራሽነት እንዲኖራቸው እና በህግ ወይም በማህበረሰብ ስርዓት እንደገና እንዳይበደሉ ማረጋገጥ።';
+
+  @override
+  String get gbvSec4Sub2B3Title => 'ለፆታ ጉዳይ ስሜታዊ የሆነ የህግ አስከባሪ አካል፡';
+
+  @override
+  String get gbvSec4Sub2B3Body =>
+      'ፖሊስ እና ሌሎች የህግ አስከባሪዎች ለGBV ጉዳዮች ተገቢ ምላሽ እንዲሰጡ ማሰልጠን።';
+
+  @override
+  String get gbvSec4Sub2CTitle => 'ሴቶችን እና አናሳ ፆታዎችን ማብቃት';
+
+  @override
+  String get gbvSec4Sub2C1Title => 'የኢኮኖሚ ማብቃት፡';
+
+  @override
+  String get gbvSec4Sub2C1Body =>
+      'ሴቶች የትምህርት፣ የስራ እና የገንዘብ ነፃነት እንዲኖራቸው ማድረግ ለጥቃት ያላቸውን ተጋላጭነት ይቀንሳል።';
+
+  @override
+  String get gbvSec4Sub2C2Title => 'የአመራር ስልጠና፡';
+
+  @override
+  String get gbvSec4Sub2C2Body =>
+      'ሴቶች በፖለቲካ፣ በንግድ እና በማህበራዊ ዘርፎች በአመራር ቦታዎች ላይ እንዲሳተፉ ማበረታታት።';
+
+  @override
+  String get gbvSec4Sub2C3Title => 'ወንዶች እንደ ደጋፊ አጋሮች፡';
+
+  @override
+  String get gbvSec4Sub2C3Body =>
+      'ወንዶች እና ወንዶች ልጆች በGBV መከላከያ ጥረቶች ውስጥ እንዲሳተፉ ማድረግ፣ አዎንታዊ የወንድነት ባህሪን እና የጋራ ኃላፊነትን ማጎልበት።';
+
+  @override
+  String get gbvSec4Sub2DTitle => 'ማህበረሰብ-ተኮር አቀራረቦች';
+
+  @override
+  String get gbvSec4Sub2D1Title => 'የማህበረሰብ ንቅናቄ፡';
+
+  @override
+  String get gbvSec4Sub2D1Body =>
+      'ለጥቃት ዜሮ መቻቻል እንዲኖር እና ለተጎጂዎች ደጋፊ አካባቢ ለመፍጠር ከማህበረሰብ መሪዎች እና የሃይማኖት አባቶች ጋር መስራት።';
+
+  @override
+  String get gbvSec4Sub2D2Title => 'የእርስ በርስ ድጋፍ ቡድኖች፡';
+
+  @override
+  String get gbvSec4Sub2D2Body =>
+      'ተጎጂዎች እርስ በርስ የሚደጋገፉበት እና ልምዳቸውን የሚጋሩበት መድረኮችን መፍጠር።';
+
+  @override
+  String get gbvSec4Sub2ETitle => 'ትምህርት እና ግንዛቤ';
+
+  @override
+  String get gbvSec4Sub2E1Title => 'የሰብዓዊ መብቶች ትምህርት፡';
+
+  @override
+  String get gbvSec4Sub2E1Body =>
+      'ሁሉን አቀፍ የሰብዓዊ መብቶችን፣ የአካል ሉዓላዊነትን እና ሰላማዊ የግንኙነት ክህሎቶችን በማህበረሰብ ስልጠናዎች እና የወጣቶች መድረኮች ማካተት።';
 
   @override
   String get gbvSection4HelpAlert =>

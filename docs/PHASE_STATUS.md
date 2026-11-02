@@ -16,8 +16,18 @@
       - 4: **Economic Violence** (Withholding financial resources, Coercion through financial dependence).
       - 5: **Harmful Traditional Practices** (Female genital mutilation/cutting [FGM/C], Early or forced marriage, Honor killings).
     - 2. **Sex and Gender**: Biological characteristics (chromosomes, hormones, anatomy) vs. socially constructed roles, and patriarchal power imbalances.
-    - 3. **Consequences of gender-based violence**: Physical & reproductive harm, psychological trauma (PTSD, depression), and social/economic disruption.
-    - 4. **Management and Prevention of Gender-Based Violence (GBV)**: Survivor-centered emergency care (72h PEP, emergency contraception, forensic care), psychosocial counseling, safe shelters, legal aid, and 24/7 toll-free helpline callouts (952 / 8335 / 7711).
+    - 3. **Consequences of gender-based violence**: 5 detailed clinical bullet points (Physical injury/disability/chronic illness, Psychological trauma/depression/substance use, Economic/social stigma, Family/dependents disruption, Emotional low self-esteem) and an authentic 3-column structured comparative table (`_GbvConsequencesTable`) detailing Physical health consequences (7 items: Injury, HIV, STIs, Unwanted pregnancy, Unsafe abortion, Fistula, Death), Psychological health consequences (6 items: Depression, Fear, Self-blame, Anxiety, Mental illness, Suicidal thoughts/actions), and Social & Economic consequences (7 items: Victim-blaming, Stigmatisation, Rejection, Isolation, Decreased earning, Increased poverty, Re-victimization).
+    - 4. **Management and Prevention of Gender-Based Violence (GBV)**: Complete 2-part framework matching user screenshots:
+      - Main 1: **Immediate Response: Management of GBV**:
+        - Sub A: *Providing Safety and Protection* (Safe spaces, Hotlines & crisis counseling, Protection orders, Medical care).
+        - Sub B: *Comprehensive Support Services* (Psychosocial support, Legal aid, Economic support).
+      - Main 2: **Preventing GBV**:
+        - Sub A: *Changing Social Norms and Attitudes* (Public awareness campaigns, Media advocacy, School programs, Community dialogues).
+        - Sub B: *Legal and Policy Reform* (Strengthening laws, Supporting survivors' rights, Gender-sensitive law enforcement).
+        - Sub C: *Empowering Women and Gender Minorities* (Economic empowerment, Leadership training, Men as allies).
+        - Sub D: *Community-based Approaches* (Community mobilization, Self-help groups and peer support).
+        - Sub E: *Education and Awareness* (Human rights education).
+      - 24/7 toll-free emergency helpline alert (952 / 8335 / 7711).
   - **Clean Action Bar**: Only `Mark as Completed` (or `Completed` status banner); no redundant "Return to Lesson" button.
   - **Progress Integration**: Connected to `LearningProgressController` with completion state persistence for `module-04`.
   - **Routing Integration**: Wired up in `LearnPage` carousel handler in `lib/src/learning/learn_pages.dart`.

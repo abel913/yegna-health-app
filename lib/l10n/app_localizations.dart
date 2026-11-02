@@ -2582,47 +2582,179 @@ abstract class AppLocalizations {
   /// **'Consequences of gender-based violence'**
   String get gbvSection3Title;
 
-  /// No description provided for @gbvSection3Intro.
+  /// No description provided for @gbvConsequenceBullet1.
   ///
   /// In en, this message translates to:
-  /// **'Gender-based violence impacts every dimension of a survivor\'s life, creating profound consequences for physical, mental, and social wellbeing:'**
-  String get gbvSection3Intro;
+  /// **'Physical, injury, disability, chronic health problem, sexual and reproductive health problems, death'**
+  String get gbvConsequenceBullet1;
 
-  /// No description provided for @gbvConsequence1Title.
+  /// No description provided for @gbvConsequenceBullet2.
   ///
   /// In en, this message translates to:
-  /// **'Physical and Reproductive Health:'**
-  String get gbvConsequence1Title;
+  /// **'Psychological, anxiety, fear, loneliness depression, alcohol or drug use suicide'**
+  String get gbvConsequenceBullet2;
 
-  /// No description provided for @gbvConsequence1Body.
+  /// No description provided for @gbvConsequenceBullet3.
   ///
   /// In en, this message translates to:
-  /// **'Severe physical injuries, chronic pain syndromes, unintended pregnancies, complications from unsafe abortions, and increased risk of contracting STIs and HIV.'**
-  String get gbvConsequence1Body;
+  /// **'Economic and social impact, reduced ability to participate in social and economic activities, social stigma at community level, negative impact on women income generating power, increased vulnerability to other types of gender-based violence'**
+  String get gbvConsequenceBullet3;
 
-  /// No description provided for @gbvConsequence2Title.
+  /// No description provided for @gbvConsequenceBullet4.
   ///
   /// In en, this message translates to:
-  /// **'Psychological and Emotional Trauma:'**
-  String get gbvConsequence2Title;
+  /// **'The impact on women family and dependents, divorce, or broken families, jeopardize family\'s economic and emotional development, emotional and behavioral disturbances'**
+  String get gbvConsequenceBullet4;
 
-  /// No description provided for @gbvConsequence2Body.
+  /// No description provided for @gbvConsequenceBullet5.
   ///
   /// In en, this message translates to:
-  /// **'Depression, post-traumatic stress disorder (PTSD), severe anxiety, panic attacks, sleep disorders, and heightened risk of self-harm or suicide.'**
-  String get gbvConsequence2Body;
+  /// **'Emotional Consequences, Depression stress, low self esteem'**
+  String get gbvConsequenceBullet5;
 
-  /// No description provided for @gbvConsequence3Title.
+  /// No description provided for @gbvTableTitle.
   ///
   /// In en, this message translates to:
-  /// **'Social and Economic Consequences:'**
-  String get gbvConsequence3Title;
+  /// **'Consequences of GBV'**
+  String get gbvTableTitle;
 
-  /// No description provided for @gbvConsequence3Body.
+  /// No description provided for @gbvTableColPhysical.
   ///
   /// In en, this message translates to:
-  /// **'Social stigmatization, isolation from family and community networks, interruption of schooling, job loss, and deepened economic dependence.'**
-  String get gbvConsequence3Body;
+  /// **'Physical health consequences'**
+  String get gbvTableColPhysical;
+
+  /// No description provided for @gbvTableColPsychological.
+  ///
+  /// In en, this message translates to:
+  /// **'Psychological health consequences'**
+  String get gbvTableColPsychological;
+
+  /// No description provided for @gbvTableColSocial.
+  ///
+  /// In en, this message translates to:
+  /// **'Social & Economic consequences'**
+  String get gbvTableColSocial;
+
+  /// No description provided for @gbvTablePhys1.
+  ///
+  /// In en, this message translates to:
+  /// **'Physical injury'**
+  String get gbvTablePhys1;
+
+  /// No description provided for @gbvTablePhys2.
+  ///
+  /// In en, this message translates to:
+  /// **'HIV/AIDS'**
+  String get gbvTablePhys2;
+
+  /// No description provided for @gbvTablePhys3.
+  ///
+  /// In en, this message translates to:
+  /// **'STIs'**
+  String get gbvTablePhys3;
+
+  /// No description provided for @gbvTablePhys4.
+  ///
+  /// In en, this message translates to:
+  /// **'Unwanted pregnancy'**
+  String get gbvTablePhys4;
+
+  /// No description provided for @gbvTablePhys5.
+  ///
+  /// In en, this message translates to:
+  /// **'Unsafe abortion'**
+  String get gbvTablePhys5;
+
+  /// No description provided for @gbvTablePhys6.
+  ///
+  /// In en, this message translates to:
+  /// **'Fistula'**
+  String get gbvTablePhys6;
+
+  /// No description provided for @gbvTablePhys7.
+  ///
+  /// In en, this message translates to:
+  /// **'Death'**
+  String get gbvTablePhys7;
+
+  /// No description provided for @gbvTablePsych1.
+  ///
+  /// In en, this message translates to:
+  /// **'Depression'**
+  String get gbvTablePsych1;
+
+  /// No description provided for @gbvTablePsych2.
+  ///
+  /// In en, this message translates to:
+  /// **'Fear'**
+  String get gbvTablePsych2;
+
+  /// No description provided for @gbvTablePsych3.
+  ///
+  /// In en, this message translates to:
+  /// **'Self-blame'**
+  String get gbvTablePsych3;
+
+  /// No description provided for @gbvTablePsych4.
+  ///
+  /// In en, this message translates to:
+  /// **'Anxiety'**
+  String get gbvTablePsych4;
+
+  /// No description provided for @gbvTablePsych5.
+  ///
+  /// In en, this message translates to:
+  /// **'Mental illness'**
+  String get gbvTablePsych5;
+
+  /// No description provided for @gbvTablePsych6.
+  ///
+  /// In en, this message translates to:
+  /// **'Suicidal thoughts/actions'**
+  String get gbvTablePsych6;
+
+  /// No description provided for @gbvTableSoc1.
+  ///
+  /// In en, this message translates to:
+  /// **'Victim-blaming'**
+  String get gbvTableSoc1;
+
+  /// No description provided for @gbvTableSoc2.
+  ///
+  /// In en, this message translates to:
+  /// **'Stigmatisation'**
+  String get gbvTableSoc2;
+
+  /// No description provided for @gbvTableSoc3.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejection'**
+  String get gbvTableSoc3;
+
+  /// No description provided for @gbvTableSoc4.
+  ///
+  /// In en, this message translates to:
+  /// **'Isolation'**
+  String get gbvTableSoc4;
+
+  /// No description provided for @gbvTableSoc5.
+  ///
+  /// In en, this message translates to:
+  /// **'Decreased earning capacity/contribution'**
+  String get gbvTableSoc5;
+
+  /// No description provided for @gbvTableSoc6.
+  ///
+  /// In en, this message translates to:
+  /// **'Increased poverty'**
+  String get gbvTableSoc6;
+
+  /// No description provided for @gbvTableSoc7.
+  ///
+  /// In en, this message translates to:
+  /// **'Risk of re-victimization'**
+  String get gbvTableSoc7;
 
   /// No description provided for @gbvSection4Title.
   ///
@@ -2630,47 +2762,311 @@ abstract class AppLocalizations {
   /// **'Management and Prevention of Gender-Based Violence (GBV)'**
   String get gbvSection4Title;
 
-  /// No description provided for @gbvSection4Intro.
+  /// No description provided for @gbvSec4Main1Title.
   ///
   /// In en, this message translates to:
-  /// **'Addressing GBV requires a survivor-centered approach ensuring safety, confidentiality, respect, and non-discrimination across medical, psychosocial, and legal channels:'**
-  String get gbvSection4Intro;
+  /// **'Immediate Response: Management of GBV'**
+  String get gbvSec4Main1Title;
 
-  /// No description provided for @gbvManagement1Title.
+  /// No description provided for @gbvSec4Main1Intro.
   ///
   /// In en, this message translates to:
-  /// **'Emergency Medical Care (Within 72 Hours):'**
-  String get gbvManagement1Title;
+  /// **'When GBV occurs, immediate intervention is necessary to support survivors and address the situation.'**
+  String get gbvSec4Main1Intro;
 
-  /// No description provided for @gbvManagement1Body.
+  /// No description provided for @gbvSec4SubATitle.
   ///
   /// In en, this message translates to:
-  /// **'Survivors of sexual assault require immediate medical care within 72 hours to receive Post-Exposure Prophylaxis (PEP) to prevent HIV infection, emergency contraception to prevent pregnancy, treatment for physical injuries, and prophylactic antibiotics for STIs.'**
-  String get gbvManagement1Body;
+  /// **'Providing Safety and Protection'**
+  String get gbvSec4SubATitle;
 
-  /// No description provided for @gbvManagement2Title.
+  /// No description provided for @gbvSec4SubA1Title.
   ///
   /// In en, this message translates to:
-  /// **'Psychosocial Support & Safe Spaces:'**
-  String get gbvManagement2Title;
+  /// **'Safe spaces:'**
+  String get gbvSec4SubA1Title;
 
-  /// No description provided for @gbvManagement2Body.
+  /// No description provided for @gbvSec4SubA1Body.
   ///
   /// In en, this message translates to:
-  /// **'Confidential psychological first aid, trauma-informed counseling, and access to secure safe shelters to protect survivors from immediate retaliatory harm.'**
-  String get gbvManagement2Body;
+  /// **'Shelters and crisis centers provide immediate refuge for survivors.'**
+  String get gbvSec4SubA1Body;
 
-  /// No description provided for @gbvManagement3Title.
+  /// No description provided for @gbvSec4SubA2Title.
   ///
   /// In en, this message translates to:
-  /// **'Legal Aid & Protection:'**
-  String get gbvManagement3Title;
+  /// **'Hotlines and crisis counseling:'**
+  String get gbvSec4SubA2Title;
 
-  /// No description provided for @gbvManagement3Body.
+  /// No description provided for @gbvSec4SubA2Body.
   ///
   /// In en, this message translates to:
-  /// **'Access to justice, police protection orders, forensic documentation, and free legal counsel to hold perpetrators accountable under the law.'**
-  String get gbvManagement3Body;
+  /// **'support services to offer guidance, emotional support, and legal advice.'**
+  String get gbvSec4SubA2Body;
+
+  /// No description provided for @gbvSec4SubA3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Protection orders:'**
+  String get gbvSec4SubA3Title;
+
+  /// No description provided for @gbvSec4SubA3Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal measures to prevent abusers from contacting or approaching survivors. In some cases, law enforcement involvement may be necessary to ensure the safety of survivors and hold perpetrators accountable.'**
+  String get gbvSec4SubA3Body;
+
+  /// No description provided for @gbvSec4SubA4Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Medical care:'**
+  String get gbvSec4SubA4Title;
+
+  /// No description provided for @gbvSec4SubA4Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Ensuring that survivors receive prompt medical attention, including trauma care and sexual health services.'**
+  String get gbvSec4SubA4Body;
+
+  /// No description provided for @gbvSec4SubBTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Comprehensive Support Services'**
+  String get gbvSec4SubBTitle;
+
+  /// No description provided for @gbvSec4SubB1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Psychosocial support:'**
+  String get gbvSec4SubB1Title;
+
+  /// No description provided for @gbvSec4SubB1Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Counseling and therapy to help survivors heal from trauma.'**
+  String get gbvSec4SubB1Body;
+
+  /// No description provided for @gbvSec4SubB2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal aid:'**
+  String get gbvSec4SubB2Title;
+
+  /// No description provided for @gbvSec4SubB2Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Support to navigate the legal system, file reports, and pursue justice.'**
+  String get gbvSec4SubB2Body;
+
+  /// No description provided for @gbvSec4SubB3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Economic support:'**
+  String get gbvSec4SubB3Title;
+
+  /// No description provided for @gbvSec4SubB3Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Assistance in rebuilding financial independence, including job training, micro-loans, or cash support.'**
+  String get gbvSec4SubB3Body;
+
+  /// No description provided for @gbvSec4Main2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Preventing GBV'**
+  String get gbvSec4Main2Title;
+
+  /// No description provided for @gbvSec4Main2Intro.
+  ///
+  /// In en, this message translates to:
+  /// **'Prevention strategies focus on addressing the root causes of violence and working toward a society where GBV is not tolerated.'**
+  String get gbvSec4Main2Intro;
+
+  /// No description provided for @gbvSec4Sub2ATitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Changing Social Norms and Attitudes'**
+  String get gbvSec4Sub2ATitle;
+
+  /// No description provided for @gbvSec4Sub2A1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Public awareness campaigns:'**
+  String get gbvSec4Sub2A1Title;
+
+  /// No description provided for @gbvSec4Sub2A1Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Educating communities on the harmful effects of GBV, promoting gender equality, and challenging stereotypes.'**
+  String get gbvSec4Sub2A1Body;
+
+  /// No description provided for @gbvSec4Sub2A2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Media advocacy:'**
+  String get gbvSec4Sub2A2Title;
+
+  /// No description provided for @gbvSec4Sub2A2Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Using films, social media, and other platforms to spread messages about healthy relationships and the importance of respect for all genders.'**
+  String get gbvSec4Sub2A2Body;
+
+  /// No description provided for @gbvSec4Sub2A3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'School programs:'**
+  String get gbvSec4Sub2A3Title;
+
+  /// No description provided for @gbvSec4Sub2A3Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Implementing educational curricula that promote respect, gender equality, and healthy relationships.'**
+  String get gbvSec4Sub2A3Body;
+
+  /// No description provided for @gbvSec4Sub2A4Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Community dialogues:'**
+  String get gbvSec4Sub2A4Title;
+
+  /// No description provided for @gbvSec4Sub2A4Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Facilitating conversations between different groups (e.g., community leaders, youth, men, and women) to address the cultural norms that perpetuate violence.'**
+  String get gbvSec4Sub2A4Body;
+
+  /// No description provided for @gbvSec4Sub2BTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal and Policy Reform'**
+  String get gbvSec4Sub2BTitle;
+
+  /// No description provided for @gbvSec4Sub2B1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Strengthening laws:'**
+  String get gbvSec4Sub2B1Title;
+
+  /// No description provided for @gbvSec4Sub2B1Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Enacting and enforcing laws that specifically address GBV, such as domestic violence laws, sexual harassment regulations, and anti-human trafficking laws.'**
+  String get gbvSec4Sub2B1Body;
+
+  /// No description provided for @gbvSec4Sub2B2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Supporting survivors\' rights:'**
+  String get gbvSec4Sub2B2Title;
+
+  /// No description provided for @gbvSec4Sub2B2Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Ensuring that survivors of GBV have access to justice and are not revictimized by legal or societal systems.'**
+  String get gbvSec4Sub2B2Body;
+
+  /// No description provided for @gbvSec4Sub2B3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Gender-sensitive law enforcement:'**
+  String get gbvSec4Sub2B3Title;
+
+  /// No description provided for @gbvSec4Sub2B3Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Training police and other law enforcement officers on how to respond appropriately to GBV cases, including sensitivity to gender issues and survivor trauma.'**
+  String get gbvSec4Sub2B3Body;
+
+  /// No description provided for @gbvSec4Sub2CTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Empowering Women and Gender Minorities'**
+  String get gbvSec4Sub2CTitle;
+
+  /// No description provided for @gbvSec4Sub2C1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Economic empowerment:'**
+  String get gbvSec4Sub2C1Title;
+
+  /// No description provided for @gbvSec4Sub2C1Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Providing women and marginalized genders with access to education, employment, and financial independence reduces their vulnerability to abuse.'**
+  String get gbvSec4Sub2C1Body;
+
+  /// No description provided for @gbvSec4Sub2C2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Leadership training:'**
+  String get gbvSec4Sub2C2Title;
+
+  /// No description provided for @gbvSec4Sub2C2Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Encouraging the participation of women and gender minorities in leadership positions in politics, business, and social spheres to create role models and disrupt patriarchal structures.'**
+  String get gbvSec4Sub2C2Body;
+
+  /// No description provided for @gbvSec4Sub2C3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Men as allies:'**
+  String get gbvSec4Sub2C3Title;
+
+  /// No description provided for @gbvSec4Sub2C3Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Engaging men and boys in GBV prevention efforts, emphasizing positive masculinity, healthy relationships, and shared responsibility in addressing violence.'**
+  String get gbvSec4Sub2C3Body;
+
+  /// No description provided for @gbvSec4Sub2DTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Community-based Approaches'**
+  String get gbvSec4Sub2DTitle;
+
+  /// No description provided for @gbvSec4Sub2D1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Community mobilization:'**
+  String get gbvSec4Sub2D1Title;
+
+  /// No description provided for @gbvSec4Sub2D1Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Working with community leaders, religious figures, and local organizations to promote zero-tolerance for GBV and to create a supportive environment for survivors.'**
+  String get gbvSec4Sub2D1Body;
+
+  /// No description provided for @gbvSec4Sub2D2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Self-help groups and peer support:'**
+  String get gbvSec4Sub2D2Title;
+
+  /// No description provided for @gbvSec4Sub2D2Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Creating spaces where survivors can support each other and share their experiences, empowering individuals to speak out and seek help.'**
+  String get gbvSec4Sub2D2Body;
+
+  /// No description provided for @gbvSec4Sub2ETitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Education and Awareness'**
+  String get gbvSec4Sub2ETitle;
+
+  /// No description provided for @gbvSec4Sub2E1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Human rights education:'**
+  String get gbvSec4Sub2E1Title;
+
+  /// No description provided for @gbvSec4Sub2E1Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Integrating comprehensive human rights, bodily autonomy, and non-violent communication into community workshops and youth platforms.'**
+  String get gbvSec4Sub2E1Body;
 
   /// No description provided for @gbvSection4HelpAlert.
   ///

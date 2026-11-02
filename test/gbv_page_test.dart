@@ -104,8 +104,7 @@ void main() {
             findRichText: true),
         findsOneWidget);
     expect(find.text('Psychological/Emotional Violence'), findsOneWidget);
-    expect(
-        find.textContaining('Coercive control:', findRichText: true),
+    expect(find.textContaining('Coercive control:', findRichText: true),
         findsOneWidget);
     expect(find.text('Sexual Violence and Exploitation'), findsOneWidget);
     expect(find.text('Economic Violence'), findsOneWidget);
@@ -136,8 +135,14 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('3 / 4 read'), findsOneWidget);
-    expect(find.text('Physical and Reproductive Health:'), findsOneWidget);
-    expect(find.text('Psychological and Emotional Trauma:'), findsOneWidget);
+    expect(
+        find.textContaining('Physical, injury, disability', findRichText: true),
+        findsOneWidget);
+    expect(find.text('Consequences of GBV'), findsOneWidget);
+    expect(find.text('Physical health consequences'), findsOneWidget);
+    expect(find.text('Psychological health consequences'), findsOneWidget);
+    expect(find.text('Social & Economic consequences'), findsOneWidget);
+    expect(find.text('GENDER BASED VIOLENCE'), findsOneWidget);
 
     // Expand Section 4: Management and Prevention
     final section4Finder =
@@ -148,8 +153,13 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('4 / 4 read'), findsOneWidget);
-    expect(
-        find.text('Emergency Medical Care (Within 72 Hours):'), findsOneWidget);
+    expect(find.text('Immediate Response: Management of GBV'), findsOneWidget);
+    expect(find.text('Providing Safety and Protection'), findsOneWidget);
+    expect(find.textContaining('Safe spaces:', findRichText: true),
+        findsOneWidget);
+    expect(find.text('Preventing GBV'), findsOneWidget);
+    expect(find.text('Changing Social Norms and Attitudes'), findsOneWidget);
+    expect(find.text('Empowering Women and Gender Minorities'), findsOneWidget);
     expect(find.textContaining('952, 8335, or 7711'), findsOneWidget);
 
     // Mark as Completed
