@@ -372,12 +372,12 @@ class _HomePageState extends State<HomePage> {
                     ),
                     const SizedBox(height: 14),
 
-                    // 5. Refined 2x2 Feature Action Cards Grid (Aspect Ratio 1.15)
+                    // 5. Refined 2x2 Feature Action Cards Grid (Aspect Ratio 0.96 for overflow-free layout)
                     GridView.count(
                       crossAxisCount: 2,
                       crossAxisSpacing: 14,
                       mainAxisSpacing: 14,
-                      childAspectRatio: 1.15,
+                      childAspectRatio: 0.96,
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       children: [
@@ -587,7 +587,7 @@ class _DeepGlassGreetingHeader extends StatelessWidget {
 
     return _DeepGlassContainer(
       borderRadius: 28,
-      padding: const EdgeInsets.all(22),
+      padding: const EdgeInsets.all(18),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -598,7 +598,7 @@ class _DeepGlassGreetingHeader extends StatelessWidget {
               // Youth Health Shield Avatar Badge
               Container(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 11, vertical: 5),
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.92),
                   borderRadius: BorderRadius.circular(20),
@@ -622,7 +622,7 @@ class _DeepGlassGreetingHeader extends StatelessWidget {
                       size: 15,
                       color: Color(0xFF0284C7),
                     ),
-                    SizedBox(width: 6),
+                    SizedBox(width: 5),
                     Text(
                       'Yegna Health',
                       style: TextStyle(
@@ -634,47 +634,54 @@ class _DeepGlassGreetingHeader extends StatelessWidget {
                   ],
                 ),
               ),
+              const SizedBox(width: 8),
 
               // Single Account Pill Button (Keeps test finding accountTitle intact)
-              InkWell(
-                onTap: onOpenAccount,
-                borderRadius: BorderRadius.circular(20),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 13,
-                    vertical: 6,
-                  ),
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFF0284C7), Color(0xFF0369A1)],
+              Flexible(
+                child: InkWell(
+                  onTap: onOpenAccount,
+                  borderRadius: BorderRadius.circular(20),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
                     ),
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Color(0x300284C7),
-                        blurRadius: 8,
-                        offset: Offset(0, 2),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF0284C7), Color(0xFF0369A1)],
                       ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        accountTitle,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Color(0x300284C7),
+                          blurRadius: 8,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Flexible(
+                          child: Text(
+                            accountTitle,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        const Icon(
+                          Icons.arrow_forward_rounded,
+                          size: 13,
                           color: Colors.white,
                         ),
-                      ),
-                      const SizedBox(width: 5),
-                      const Icon(
-                        Icons.arrow_forward_rounded,
-                        size: 14,
-                        color: Colors.white,
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -750,7 +757,10 @@ class _DeepGlassDailyTipCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          Wrap(
+            spacing: 8,
+            runSpacing: 6,
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               Container(
                 padding:
@@ -788,7 +798,6 @@ class _DeepGlassDailyTipCard extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(width: 8),
               Container(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -1105,7 +1114,7 @@ class _DeepGlassActionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) => _DeepGlassContainer(
         borderRadius: 24,
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.fromLTRB(14, 14, 14, 12),
         onTap: onTap,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -1114,15 +1123,15 @@ class _DeepGlassActionCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
-                  width: 46,
-                  height: 46,
+                  width: 42,
+                  height: 42,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: iconGradient,
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
-                    borderRadius: BorderRadius.circular(15),
+                    borderRadius: BorderRadius.circular(14),
                     border: Border.all(
                       color: Colors.white.withValues(alpha: 0.5),
                       width: 1.4,
@@ -1135,11 +1144,11 @@ class _DeepGlassActionCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  child: Icon(icon, color: Colors.white, size: 24),
+                  child: Icon(icon, color: Colors.white, size: 22),
                 ),
                 Container(
-                  width: 28,
-                  height: 28,
+                  width: 26,
+                  height: 26,
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.7),
                     shape: BoxShape.circle,
@@ -1149,34 +1158,42 @@ class _DeepGlassActionCard extends StatelessWidget {
                   ),
                   child: const Icon(
                     Icons.arrow_forward_rounded,
-                    size: 15,
+                    size: 14,
                     color: Color(0xFF0284C7),
                   ),
                 ),
               ],
             ),
-            const Spacer(),
-            Text(
-              title,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 15.5,
-                fontWeight: FontWeight.w800,
-                color: Color(0xFF08264A),
-                letterSpacing: -0.2,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              description,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 11.5,
-                height: 1.35,
-                fontWeight: FontWeight.w400,
-                color: Color(0xFF2B445B),
+            const SizedBox(height: 8),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(
+                    title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 14.5,
+                      fontWeight: FontWeight.w800,
+                      color: Color(0xFF08264A),
+                      letterSpacing: -0.2,
+                    ),
+                  ),
+                  const SizedBox(height: 3),
+                  Text(
+                    description,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 11.5,
+                      height: 1.3,
+                      fontWeight: FontWeight.w400,
+                      color: Color(0xFF2B445B),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],

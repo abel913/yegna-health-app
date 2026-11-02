@@ -176,4 +176,37 @@ void main() {
     expect(find.text(amharic.exploreServicesHeading), findsOneWidget);
     expect(find.text(amharic.selfAssessmentTitle), findsOneWidget);
   });
+
+  testWidgets(
+      'Explore Services 2x2 cards render without overflow on compact mobile screen',
+      (WidgetTester tester) async {
+    tester.view.physicalSize = const Size(360, 800);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(() {
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
+
+    await tester.pumpWidget(_buildTestHomePage());
+    await tester.pumpAndSettle();
+
+    final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+
+    // Scroll down to Explore Services
+    await tester.scrollUntilVisible(
+      find.text(l10n.exploreServicesHeading),
+      150,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text(l10n.exploreServicesHeading), findsOneWidget);
+    expect(find.text(l10n.selfAssessmentTitle), findsOneWidget);
+    expect(find.text(l10n.learnTab), findsOneWidget);
+    expect(find.text(l10n.findFacilitiesTitle), findsOneWidget);
+    expect(find.text(l10n.peerMentorTitle), findsOneWidget);
+
+    // Verify no RenderFlex overflow error occurs
+    expect(tester.takeException(), isNull);
+  });
 }
