@@ -902,6 +902,66 @@ class AppLocalizationsAm extends AppLocalizations {
       'የዕፅ አጠቃቀም ችግር የሚታከም የጤና ሁኔታ እንጂ የሞራል ድክመት አይደለም። የወጣቶች አማካሪዎች፣ የጤና ማዕከላት እና ነፃ የስልክ መስመሮች (952 ወይም 8335) ሚስጥራዊ እና ሩህሩህ ድጋፍ ይሰጣሉ።';
 
   @override
+  String get substanceQuizTitle => 'የአደንዛዥ ዕፅ ሱስ ፈተና';
+
+  @override
+  String get substanceQ1Text =>
+      'የዕፅ ሱስ ወይም የአደንዛዥ ዕፅ ሱሰኝነት የፈቃድ ደካማነት ወይም የሞራል ውድቀት ሳይሆን ህክምና የሚደረግለት የአዕምሮ እና የባህሪ የህክምና ሁኔታ ነው?';
+
+  @override
+  String get substanceQ1Insight =>
+      'የዕፅ ሱሰኝነት በአዕምሮ ኬሚስትሪ እና ሽልማት መቀበያ መንገዶች ላይ ለውጥ ያመጣል። በህክምና ባለሙያዎች ዘንድ እውቅና የተሰጠው ሲሆን በህክምና፣ በምክር እና በማህበራዊ ድጋፍ ማገገም ይቻላል።';
+
+  @override
+  String get substanceQ2Text =>
+      'ማዕከላዊ የነርቭ ሥርዓትን፣ የልብ ምትን እና የአዕምሮ እንቅስቃሴን የሚያዘገየው የዕፅ ክፍል የትኛው ነው (እንደ አልኮል እና ማረጋጊያ መድሃኒቶች)?';
+
+  @override
+  String get substanceQ2OptA => 'አዘግይ/አረጋጊዎች (Depressants)';
+
+  @override
+  String get substanceQ2OptB => 'አነቃቂዎች (Stimulants)';
+
+  @override
+  String get substanceQ2OptC => 'ቅዠት አምጪዎች (Hallucinogens)';
+
+  @override
+  String get substanceQ2OptD => 'ቫይታሚኖች (Vitamins)';
+
+  @override
+  String get substanceQ2Insight =>
+      'አዘግይ/አረጋጊዎች የነርቭ መልእክቶችን እና የልብ ምትን በማዘግየት ንቃትን ይቀንሳሉ፤ በተቃራኒው አነቃቂዎች የነርቭ ስርዓትን ያፋጥናሉ።';
+
+  @override
+  String get substanceQ3Text =>
+      'አንድ ሰው አልኮልን ወይም አደንዛዥ ዕፆችን አዘውትሮ ሲጠቀም \"ቶለራንስ (መላመድ)\" ማለት ምን ማለት ነው?';
+
+  @override
+  String get substanceQ3OptA =>
+      'የመጀመሪያውን ስሜት ለማግኘት በጊዜ ሂደት መጠኑን በከፍተኛ ሁኔታ መጨመር ማስፈለጉ';
+
+  @override
+  String get substanceQ3OptB => 'ዕፁ ከአንድ አጠቃቀም በኋላ ከሰውነት ሙሉ በሙሉ መወገዱ';
+
+  @override
+  String get substanceQ3OptC => 'ሰውየው ያለ ምንም ምልክት ወዲያውኑ መጠቀም ማቆም መቻሉ';
+
+  @override
+  String get substanceQ3OptD => 'ለማንኛውም ኬሚካል ተፈጥሯዊ የመከላከል አቅም መኖር';
+
+  @override
+  String get substanceQ3Insight =>
+      'መላመድ (Tolerance) የሚከሰተው የአዕምሮ ህዋሳት ከአደንዛዥ ዕፁ ጋር ሲላመዱ ሲሆን ይህም ተጠቃሚው የቀድሞውን ስሜት ለማግኘት መጠኑን እንዲጨምር ያደርገዋል።';
+
+  @override
+  String get substanceQ4Text =>
+      'የአደንዛዥ ዕፅ ሱስ መከላከል እና ማከም የሚቻል ሲሆን ነፃ የጤና ስልክ መስመሮችን (952 ወይም 8335) መደወል ወጣቶችን ከሚስጥራዊ የባለሙያ ድጋፍ ጋር ያገናኛል?';
+
+  @override
+  String get substanceQ4Insight =>
+      'በጊዜ የሚደረግ ድጋፍ ህይወትን ይታደጋል። ነፃ የጤና ስልክ መስመሮች (952 ወይም 8335) ወጣቶችን ከተቆረቋሪ ባለሙያዎች፣ ከወጣቶች ማዕከላት እና ከማገገሚያ መመሪያዎች ጋር ያገናኛሉ።';
+
+  @override
   String get mentalHealthHeroDesc =>
       'የአእምሮ ጤና ከአጠቃላይ ጤና ጋር በእጅጉ የተቆራኘ ሲሆን ስሜታዊ፣ ስነ-ልቦናዊ እና ማህበራዊ ደህንነትን ያካትታል። በህይወት ዘመናችን ሁሉ እንዴት እንደምናስብ፣ እንደምንሰማ፣ ውጥረትን እንደምንቆጣጠር፣ ከሌሎች ጋር እንደምንገናኝ እና ውሳኔ እንደምንሰጥ ይወስናል።';
 

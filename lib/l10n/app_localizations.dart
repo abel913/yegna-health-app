@@ -1670,6 +1670,108 @@ abstract class AppLocalizations {
   /// **'Substance use disorder is a treatable health condition, not a sign of moral weakness. Youth mentors, counseling facilities, and national toll-free hotlines (952 or 8335) provide confidential, compassionate assistance.'**
   String get substanceSignsHelpAlert;
 
+  /// No description provided for @substanceQuizTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Substance Abuse Quiz'**
+  String get substanceQuizTitle;
+
+  /// No description provided for @substanceQ1Text.
+  ///
+  /// In en, this message translates to:
+  /// **'Is substance use disorder (SUD) a treatable medical condition affecting the brain and behavior, rather than a failure of willpower or personal morality?'**
+  String get substanceQ1Text;
+
+  /// No description provided for @substanceQ1Insight.
+  ///
+  /// In en, this message translates to:
+  /// **'Substance use disorders alter brain chemistry and neural reward pathways. Recognized by medical authorities worldwide, recovery is achievable through evidence-based treatment, counseling, and social support.'**
+  String get substanceQ1Insight;
+
+  /// No description provided for @substanceQ2Text.
+  ///
+  /// In en, this message translates to:
+  /// **'Which category of substances slows down central nervous system function, heart rate, and brain activity (such as alcohol and sedatives)?'**
+  String get substanceQ2Text;
+
+  /// No description provided for @substanceQ2OptA.
+  ///
+  /// In en, this message translates to:
+  /// **'Depressants'**
+  String get substanceQ2OptA;
+
+  /// No description provided for @substanceQ2OptB.
+  ///
+  /// In en, this message translates to:
+  /// **'Stimulants'**
+  String get substanceQ2OptB;
+
+  /// No description provided for @substanceQ2OptC.
+  ///
+  /// In en, this message translates to:
+  /// **'Hallucinogens'**
+  String get substanceQ2OptC;
+
+  /// No description provided for @substanceQ2OptD.
+  ///
+  /// In en, this message translates to:
+  /// **'Vitamins'**
+  String get substanceQ2OptD;
+
+  /// No description provided for @substanceQ2Insight.
+  ///
+  /// In en, this message translates to:
+  /// **'Depressants slow down neural messaging and heart rate, leading to reduced alertness and relaxation. In contrast, stimulants speed up the nervous system.'**
+  String get substanceQ2Insight;
+
+  /// No description provided for @substanceQ3Text.
+  ///
+  /// In en, this message translates to:
+  /// **'What does developing \"tolerance\" mean when someone regularly consumes drugs or alcohol?'**
+  String get substanceQ3Text;
+
+  /// No description provided for @substanceQ3OptA.
+  ///
+  /// In en, this message translates to:
+  /// **'The body needs increasingly larger amounts over time to produce the initial desired effect'**
+  String get substanceQ3OptA;
+
+  /// No description provided for @substanceQ3OptB.
+  ///
+  /// In en, this message translates to:
+  /// **'The substance permanently leaves the body after a single use'**
+  String get substanceQ3OptB;
+
+  /// No description provided for @substanceQ3OptC.
+  ///
+  /// In en, this message translates to:
+  /// **'The person can immediately stop taking the substance with zero symptoms'**
+  String get substanceQ3OptC;
+
+  /// No description provided for @substanceQ3OptD.
+  ///
+  /// In en, this message translates to:
+  /// **'Having a complete natural immunity to all chemicals'**
+  String get substanceQ3OptD;
+
+  /// No description provided for @substanceQ3Insight.
+  ///
+  /// In en, this message translates to:
+  /// **'Tolerance occurs when cells and brain receptors adapt to regular substance exposure, leading people to consume higher doses to feel the original impact.'**
+  String get substanceQ3Insight;
+
+  /// No description provided for @substanceQ4Text.
+  ///
+  /// In en, this message translates to:
+  /// **'Substance abuse is both preventable and treatable, and free national health hotlines (952 or 8335) provide confidential, judgment-free support?'**
+  String get substanceQ4Text;
+
+  /// No description provided for @substanceQ4Insight.
+  ///
+  /// In en, this message translates to:
+  /// **'Early intervention saves lives. Confidential health hotlines (952 or 8335) connect youth with empathetic professionals, referrals to youth-friendly centers, and recovery guidance.'**
+  String get substanceQ4Insight;
+
   /// No description provided for @mentalHealthHeroDesc.
   ///
   /// In en, this message translates to:

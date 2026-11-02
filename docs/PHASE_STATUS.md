@@ -22,10 +22,10 @@
   - **Test Suite**: Created `test/mental_health_page_test.dart` and `test/mental_health_quiz_test.dart`. All 49 tests passing across full codebase.
 
 
-## Substance Abuse Detail Learning Module Rebuild (2026-11-02)
+## Substance Abuse Detail Learning Module & Interactive Quiz Rebuild (2026-11-02)
 
-**Status: Phase 3 Learning Module UI Rebuild Complete & Verified.**
-- Implemented `SubstanceAbuseDetailPage` (`lib/src/learning/substance_abuse_page.dart`) for Module 08 matching user reference screenshots:
+**Status: Phase 3 Learning Module & Assessment Rebuild Complete & Verified.**
+- Implemented `SubstanceAbuseDetailPage` (`lib/src/learning/substance_abuse_page.dart`) and `SubstanceAbuseQuizPage` (`lib/src/learning/substance_abuse_quiz_page.dart`) for Module 08 matching user reference screenshots:
   - **Top Hero Card**: Rounded container with authentic healthy lifestyles poster illustration (`assets/images/learning/module_08_substance_abuse.png`), title `Substance Abuse`, and high-contrast educational synopsis.
   - **Note Section**: Light-blue card with lightbulb icon highlighting that substance abuse is preventable and treatable through early awareness and support.
   - **Learning Sections Header**: Vertical azure indicator bar and dynamic reading count badge (`X / 4 read`).
@@ -35,9 +35,14 @@
     2. **Types of drugs/Substances**: 4 numbered category cards (1: Depressants [alcohol, sedatives], 2: Stimulants [nicotine, cocaine, amphetamines, caffeine], 3: Opioids [heroin, morphine, codeine], 4: Hallucinogens).
     3. **Effects of substance abuse**: Disease risk (liver, cardiovascular, respiratory, HIV), mental health disorders (anxiety/depression), academic/occupational absence, reckless driving, legal consequences, strained family relations, and illicit vs. prescription abuse.
     4. **Signs of a Substance Use Problem**: Daily compulsive cravings, escalating tolerance, physical/psychological withdrawal symptoms, neglected duties, abandoned interests, secretive behaviors, and free confidential national support hotline callouts (952 / 8335).
+  - **Interactive 4-Question Quiz (`SubstanceAbuseQuizPage`)**:
+    - Segmented progress bar (4 segments), question badge (`Question X of 4`), category tag, and optical glass option cards with letter badges (A, B, C, D).
+    - Questions covering SUD medical definition (True/False), CNS depressants classification (Multiple Choice), tolerance mechanisms (Multiple Choice), and support pathways & national hotlines 952/8335 (True/False).
+    - Celebratory completion view with scoring badge (`You scored X out of 4 (100%)`), Review Answers mode with key clinical insights, Retake Quiz, and Return to Lesson.
+  - **Navigation Integration**: Launched directly from `SubstanceAbuseDetailPage` "Take Quiz" action and `LearnPage` carousel quiz trigger.
   - **Progress Integration**: Connected to `LearningProgressController` with completion state persistence for `module-08`.
   - **Bilingual Localization**: Added complete English and Amharic ARB resources in `lib/l10n/app_en.arb` and `lib/l10n/app_am.arb`, cleanly regenerated via `flutter gen-l10n`.
-  - **Test Suite**: Created `test/substance_abuse_page_test.dart` testing 4-accordion layout, numerical-to-checkmark badge transitions, expansion, completion persistence, and Amharic translation. All 45 tests passing.
+  - **Test Suite**: Created `test/substance_abuse_page_test.dart` and `test/substance_abuse_quiz_test.dart`. All 51 tests passing across full codebase.
 
 ## Sexually Transmitted Infections (STI) Detail Learning Module Rebuild (2026-11-02)
 

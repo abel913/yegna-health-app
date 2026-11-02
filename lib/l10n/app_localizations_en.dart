@@ -933,6 +933,69 @@ class AppLocalizationsEn extends AppLocalizations {
       'Substance use disorder is a treatable health condition, not a sign of moral weakness. Youth mentors, counseling facilities, and national toll-free hotlines (952 or 8335) provide confidential, compassionate assistance.';
 
   @override
+  String get substanceQuizTitle => 'Substance Abuse Quiz';
+
+  @override
+  String get substanceQ1Text =>
+      'Is substance use disorder (SUD) a treatable medical condition affecting the brain and behavior, rather than a failure of willpower or personal morality?';
+
+  @override
+  String get substanceQ1Insight =>
+      'Substance use disorders alter brain chemistry and neural reward pathways. Recognized by medical authorities worldwide, recovery is achievable through evidence-based treatment, counseling, and social support.';
+
+  @override
+  String get substanceQ2Text =>
+      'Which category of substances slows down central nervous system function, heart rate, and brain activity (such as alcohol and sedatives)?';
+
+  @override
+  String get substanceQ2OptA => 'Depressants';
+
+  @override
+  String get substanceQ2OptB => 'Stimulants';
+
+  @override
+  String get substanceQ2OptC => 'Hallucinogens';
+
+  @override
+  String get substanceQ2OptD => 'Vitamins';
+
+  @override
+  String get substanceQ2Insight =>
+      'Depressants slow down neural messaging and heart rate, leading to reduced alertness and relaxation. In contrast, stimulants speed up the nervous system.';
+
+  @override
+  String get substanceQ3Text =>
+      'What does developing \"tolerance\" mean when someone regularly consumes drugs or alcohol?';
+
+  @override
+  String get substanceQ3OptA =>
+      'The body needs increasingly larger amounts over time to produce the initial desired effect';
+
+  @override
+  String get substanceQ3OptB =>
+      'The substance permanently leaves the body after a single use';
+
+  @override
+  String get substanceQ3OptC =>
+      'The person can immediately stop taking the substance with zero symptoms';
+
+  @override
+  String get substanceQ3OptD =>
+      'Having a complete natural immunity to all chemicals';
+
+  @override
+  String get substanceQ3Insight =>
+      'Tolerance occurs when cells and brain receptors adapt to regular substance exposure, leading people to consume higher doses to feel the original impact.';
+
+  @override
+  String get substanceQ4Text =>
+      'Substance abuse is both preventable and treatable, and free national health hotlines (952 or 8335) provide confidential, judgment-free support?';
+
+  @override
+  String get substanceQ4Insight =>
+      'Early intervention saves lives. Confidential health hotlines (952 or 8335) connect youth with empathetic professionals, referrals to youth-friendly centers, and recovery guidance.';
+
+  @override
   String get mentalHealthHeroDesc =>
       'Mental health is an essential part of overall health, encompassing emotional, psychological, and social wellbeing. It influences how we think, feel, manage stress, connect with others, and make decisions throughout life.';
 

@@ -17,9 +17,9 @@
   - Widget and unit tests in `test/mental_health_page_test.dart` and `test/mental_health_quiz_test.dart` (49/49 tests passing across the app).
 
 
-## Substance Abuse Detail Learning Module Rebuild (2026-11-02)
+## Substance Abuse Detail Learning Module & Interactive Quiz Rebuild (2026-11-02)
 
-- Built and verified the dedicated learning module screen `SubstanceAbuseDetailPage` (`lib/src/learning/substance_abuse_page.dart`) for Module 08 matching user reference screenshots:
+- Built and verified the dedicated learning module screen `SubstanceAbuseDetailPage` (`lib/src/learning/substance_abuse_page.dart`) and interactive quiz `SubstanceAbuseQuizPage` (`lib/src/learning/substance_abuse_quiz_page.dart`) for Module 08 matching user reference screenshots:
   - Top Hero Card featuring `assets/images/learning/module_08_substance_abuse.png`, title "Substance Abuse", and educational overview summary.
   - Note Section with light-blue card container, lightbulb icon, and early prevention/intervention message.
   - Learning Sections Header with dynamic reading count badge (`X / 4 read`).
@@ -28,9 +28,10 @@
     2. **Types of drugs/Substances**: 4 numbered category cards (Depressants, Stimulants, Opioids, Hallucinogens).
     3. **Effects of substance abuse**: Physical health consequences, mental health impacts, academic/work absence, dangerous behaviors, and legal issues.
     4. **Signs of a Substance Use Problem**: Tolerance, compulsive cravings, withdrawal, social withdrawal, and free confidential national hotlines (952 / 8335).
-  - Linked to `LearnPage` carousel when selecting Module 08.
+  - Interactive 4-question quiz (`SubstanceAbuseQuizPage`) with segmented progress bar, question badge, optical glass selection cards, celebration scoring badge (`You scored X out of 4 (100%)`), Answer Review mode with Key Clinical Insights, Retake Quiz, and Return to Lesson.
+  - Linked to `LearnPage` carousel when selecting Module 08 and tapping "Take Quiz", plus in-page "Take Quiz" trigger inside `SubstanceAbuseDetailPage`.
   - Added full English and Amharic ARB resources.
-  - Widget and unit tests in `test/substance_abuse_page_test.dart` (45/45 tests passing across the app).
+  - Widget and unit tests in `test/substance_abuse_page_test.dart` and `test/substance_abuse_quiz_test.dart` (51/51 tests passing across the app).
 
 ## Sexually Transmitted Infections (STI) Detail Learning Module Rebuild (2026-11-02)
 

@@ -13,6 +13,7 @@ import 'sti_module_page.dart';
 import 'substance_abuse_page.dart';
 import 'mental_health_page.dart';
 import 'mental_health_quiz_page.dart';
+import 'substance_abuse_quiz_page.dart';
 
 class LearnPage extends StatefulWidget {
   const LearnPage({
@@ -333,6 +334,14 @@ class _LearnPageState extends State<LearnPage> {
     if (module.id == 'module-06') {
       Navigator.of(context).push<void>(MaterialPageRoute<void>(
         builder: (_) => MentalHealthQuizPage(
+          progressController: widget.progressController,
+        ),
+      ));
+      return;
+    }
+    if (module.id == 'module-08') {
+      Navigator.of(context).push<void>(MaterialPageRoute<void>(
+        builder: (_) => SubstanceAbuseQuizPage(
           progressController: widget.progressController,
         ),
       ));
