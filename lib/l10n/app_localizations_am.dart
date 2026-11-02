@@ -1315,6 +1315,201 @@ class AppLocalizationsAm extends AppLocalizations {
       'ከወጣቶች አማካሪዎች ጋር ቀድሞ መነጋገር ወይም በነፃ የስልክ መስመሮች (952 ወይም 8335) መደወል ሚስጥራዊ እና ህይወት አድን ድጋፍ ይሰጣል።';
 
   @override
+  String get gbvHeroDesc =>
+      'ሥርዓተ-ፆታን መሠረት ያደረገ ጥቃት በፆታ ላይ ተመስርቶ በሰዎች ላይ የሚደርስ ጎጂ ድርጊት ሲሆን፣ በእኩልነት ጉድለት እና በባህላዊ ልማዶች የሚመጣ፣ ለአካላዊ፣ ስነ-ልቦናዊ፣ ማህበራዊ እና ኢኮኖሚያዊ ጉዳቶች የሚዳርግ ነው፤ ሆኖም በመከላከል፣ በድጋፍ አገልግሎቶች እና በህጋዊ ጥበቃ መፍትሄ ሊያገኝ ይችላል።';
+
+  @override
+  String get gbvNoteContent =>
+      'ሥርዓተ-ፆታን መሠረት ያደረገ ጥቃት መከላከል ይቻላል—አክብሮትን፣ እኩልነትን እና ለተጎጂዎች ፈጣን ድጋፍ መስጠት ደህንነቱ የተጠበቀ ማህበረሰብ ለመገንባት እና የሰውን ክብር ለመጠበቅ ይረዳል።';
+
+  @override
+  String get gbvSection1Title => 'ትርጓሜ';
+
+  @override
+  String get gbvSection1Desc1 =>
+      'ሥርዓተ-ፆታን መሠረት ያደረገ ጥቃት (GBV) በአንድ ግለሰብ ፆታ ላይ ተመስርቶ የሚፈጸም ጎጂ ድርጊትን ያመለክታል። በየትኛውም ሁኔታ ውስጥ ሊከሰት ይችላል፣ ነገር ግን በአብዛኛው ሴቶችን እና ልጃገረዶችን ያጠቃል፣ ምንም እንኳን ወንዶችና ወንዶች ልጆችም ሊያጋጥማቸው ይችላል። GBV የሰብዓዊ መብት ጥሰት እና የፆታ እኩልነትን እንዲሁም ማህበራዊ ፍትህን ለማረጋገጥ ትልቅ እንቅፋት ነው።';
+
+  @override
+  String get gbvSection1Desc2 =>
+      'በሰብዓዊ ቀውሶች ወቅት ለፆታዊ ጥቃት ምላሽ መስጠት ቅድሚያ የሚሰጠው ጉዳይ ሆኖ ቆይቷል፤ ምክንያቱም ከግጭት ጋር የተያያዘ ጥቃት፣ በተለይም አስገድዶ መድፈር እንደ ጦርነት ስልት መጠቀሙ ዓለም አቀፍ ትኩረት አግኝቷል። ይሁን እንጂ በግጭት እና በተፈጥሮ አደጋ የተጎዱ ሰዎች በቀውስና በመፈናቀል ወቅት እንዲሁም ከተመለሱ በኋላ የተለያዩ የGBV ዓይነቶችን እንደሚያጋጥሟቸው ከጊዜ ወደ ጊዜ ግንዛቤው እያደገ መጥቷል። በተለይም በትዳር ወይም በፍቅር አጋር መካከል የሚፈጸም ጥቃት በሰብዓዊ ድጋፍ መስኮች እንደ ወሳኝ አሳሳቢ ጉዳይ እየታየ ነው። ሥርዓተ-ፆታን መሠረት ያደረገ ጥቃት በተለያዩ መንገዶች ሊገለጽ ይችላል፡-';
+
+  @override
+  String get gbvForm1Title => 'አካላዊ ጥቃት';
+
+  @override
+  String get gbvForm1Item1Title => 'የቤት ውስጥ ጥቃት (የአጋር ጥቃት):';
+
+  @override
+  String get gbvForm1Item1Body =>
+      'በትዳር ወይም በፍቅር ግንኙነት ውስጥ የሚፈጸሙ መደብደብ፣ በጥፊ መምታት፣ በእርግጫ መምታት እና ሌሎች አካላዊ ጉዳቶችን ያጠቃልላል።';
+
+  @override
+  String get gbvForm1Item2Title => 'ፆታዊ ጥቃት:';
+
+  @override
+  String get gbvForm1Item2Body =>
+      'አስገድዶ መድፈርን፣ ፆታዊ ትንኮሳን እና ያልተፈለጉ ፆታዊ ድርጊቶችን ያጠቃልላል።';
+
+  @override
+  String get gbvForm2Title => 'ስነ-ልቦናዊ / ስሜታዊ ጥቃት';
+
+  @override
+  String get gbvForm2Item1Title => 'የቃል ስድብ:';
+
+  @override
+  String get gbvForm2Item1Body =>
+      'የተጎጂውን በራስ መተማመን እና ክብር የሚያሳንሱ ስድቦች፣ ማስፈራሪያዎች፣ ማዋረድ እና የመቆጣጠር ባህሪዎች።';
+
+  @override
+  String get gbvForm2Item2Title => 'ማግለል:';
+
+  @override
+  String get gbvForm2Item2Body =>
+      'ተጎጂው ከቤተሰብ እና ከጓደኞች ጋር ያለውን ግንኙነት እንዲያቋርጥ ማስገደድ።';
+
+  @override
+  String get gbvForm2Item3Title => 'አስገዳጅ ቁጥጥር:';
+
+  @override
+  String get gbvForm2Item3Body =>
+      'የአንድን ሰው ነፃነት የሚገድብ የቁጥጥር ስልት፣ ለምሳሌ ምን እንደሚለብሱ፣ የት እንደሚሄዱ ወይም ከማን ጋር እንደሚገናኙ መወሰን።';
+
+  @override
+  String get gbvForm3Title => 'ፆታዊ ጥቃት እና ብዝበዛ';
+
+  @override
+  String get gbvForm3Item1Title => 'አስገድዶ መድፈር:';
+
+  @override
+  String get gbvForm3Item1Body => 'ያለ ፈቃድ የሚፈጸም የግብረ ሥጋ ግንኙነት።';
+
+  @override
+  String get gbvForm3Item2Title => 'ፆታዊ ትንኮሳ:';
+
+  @override
+  String get gbvForm3Item2Body =>
+      'ያልተፈለጉ የፆታ ጥያቄዎች ወይም ባህሪያት፣ ብዙውን ጊዜ በስራ ቦታ፣ በትምህርት ቤት ወይም በህዝባዊ ቦታዎች የሚከሰቱ።';
+
+  @override
+  String get gbvForm3Item3Title => 'የሰዎች ዝውውር:';
+
+  @override
+  String get gbvForm3Item3Body =>
+      'ሰዎችን ለፆታዊ ብዝበዛ ወይም ለግዳጅ ስራ በህገ-ወጥ መንገድ ማዘዋወር።';
+
+  @override
+  String get gbvForm4Title => 'ኢኮኖሚያዊ ጥቃት';
+
+  @override
+  String get gbvForm4Item1Title => 'የገንዘብ ሀብትን መከልከል:';
+
+  @override
+  String get gbvForm4Item1Body =>
+      'አጋር ገንዘብን ወይም ሀብትን እንዳያገኝ መከልከል፣ የኢኮኖሚ ነፃነታቸውን መቆጣጠር።';
+
+  @override
+  String get gbvForm4Item2Title => 'በገንዘብ ጥገኝነት ማስገደድ:';
+
+  @override
+  String get gbvForm4Item2Body =>
+      'በአንድ ሰው ላይ ስልጣንን ወይም ቁጥጥርን ለማስጠበቅ የገንዘብ ቁጥጥርን መጠቀም።';
+
+  @override
+  String get gbvForm5Title => 'ጎጂ ባህላዊ ልማዶች';
+
+  @override
+  String get gbvForm5Item1Title => 'የሴቶች ግርዛት (FGM/C):';
+
+  @override
+  String get gbvForm5Item1Body =>
+      'የሴቶችን የፆታ ስሜት ለመቆጣጠር በሚል የሴቶችን ብልት በከፊል ወይም ሙሉ በሙሉ ያለ ህክምና ምክንያት የማስወገድ ድርጊት።';
+
+  @override
+  String get gbvForm5Item2Title => 'ያለዕድሜ ወይም ያለፈቃድ ጋብቻ:';
+
+  @override
+  String get gbvForm5Item2Body =>
+      'በተለያዩ ባህላዊ ልማዶች ምክንያት ታዳጊ ልጃገረዶችን ወይም ሰዎችን ያለ ፈቃዳቸው ለጋብቻ መዳር።';
+
+  @override
+  String get gbvForm5Item3Title => 'የክብር ግድያ:';
+
+  @override
+  String get gbvForm5Item3Body =>
+      'በቤተሰብ ወይም በማህበረሰብ ላይ ውርደት ወይም ነውር አምጥታለች በሚል ምክንያት በሴቶች ወይም ልጃገረዶች ላይ የሚፈጸም ግድያ።';
+
+  @override
+  String get gbvSection2Title => 'ተፈጥሯዊ ፆታ እና ማህበራዊ ፆታ';
+
+  @override
+  String get gbvSection2Desc1 =>
+      'በተፈጥሯዊ ፆታ (Sex) እና በማህበራዊ ፆታ (Gender) መካከል ያለውን ልዩነት መረዳት የሥርዓተ-ፆታ ጥቃትን ለመከላከል ወሳኝ ነው። ተፈጥሯዊ ፆታ በባዮሎጂያዊ እና አካላዊ መገለጫዎች (ክሮሞሶሞች፣ ሆርሞኖች እና የመራቢያ አካላት) ላይ የተመሰረተ ነው። ማህበራዊ ፆታ ደግሞ ማህበረሰቡ ለወንዶች ወይም ለሴቶች የሰጠውን ሚና፣ ባህሪ እና የሚጠበቁ ተግባራትን ያመለክታል።';
+
+  @override
+  String get gbvSection2Desc2 =>
+      'የማህበራዊ ፆታ ልማዶች ሰዎች በተፈጥሮ ፆታቸው መሰረት እንዴት እርምጃ መውሰድ፣ መናገር እና መልበስ እንዳለባቸው ይወስናሉ። ያልተመጣጠነ የስልጣን ክፍፍል እና አንዱን ወገን ከሌላው የማስበለጥ አመለካከቶች ጥቃትን እና አድሎን ወደ ማጽደቅ ያመራሉ፤ ይህም ለሥርዓተ-ፆታ ጥቃት መከሰት መሰረት ይሆናል።';
+
+  @override
+  String get gbvSection3Title => 'የሥርዓተ-ፆታ ጥቃት የሚያስከትላቸው ጉዳቶች';
+
+  @override
+  String get gbvSection3Intro =>
+      'ሥርዓተ-ፆታን መሠረት ያደረገ ጥቃት በተጎጂው ህይወት ላይ ጥልቅ እና የረጅም ጊዜ አካላዊ፣ ስነ-ልቦናዊ እና ማህበራዊ ቀውሶችን ያስከትላል፡-';
+
+  @override
+  String get gbvConsequence1Title => 'አካላዊ እና የስነ-ተዋልዶ ጤና ጉዳቶች:';
+
+  @override
+  String get gbvConsequence1Body =>
+      'ከባድ የአካል ጉዳቶች፣ የማያቋርጥ ህመም፣ ያልተፈለገ እርግዝና፣ ካልተጠበቀ ውርጃ የሚመጡ ችግሮች፣ እና በግብረ ሥጋ ግንኙነት የሚተላለፉ ኢንፌክሽኖች (STIs) እና የኤች አይ ቪ (HIV) ተጋላጭነት።';
+
+  @override
+  String get gbvConsequence2Title => 'ስነ-ልቦናዊ እና ስሜታዊ ቀውሶች:';
+
+  @override
+  String get gbvConsequence2Body =>
+      'የመንፈስ ጭንቀት (Depression)፣ ከከባድ ድንጋጤ በኋላ የሚመጣ ጭንቀት (PTSD)፣ ከባድ ፍርሃት፣ የእንቅልፍ መታወክ እና ራስን የመጉዳት ወይም የሞት ሀሳቦች።';
+
+  @override
+  String get gbvConsequence3Title => 'ማህበራዊ እና ኢኮኖሚያዊ ጉዳቶች:';
+
+  @override
+  String get gbvConsequence3Body =>
+      'ማህበራዊ መገለል፣ ከቤተሰብ እና ከማህበረሰብ መራቅ፣ ትምህርትን ማቋረጥ፣ የስራ ማጣት እና ለከፋ የኢኮኖሚ ጥገኝነት መዳረግ።';
+
+  @override
+  String get gbvSection4Title => 'የሥርዓተ-ፆታ ጥቃት አያያዝ እና መከላከያ መንገዶች';
+
+  @override
+  String get gbvSection4Intro =>
+      'ለGBV ምላሽ መስጠት የተጎጂውን ደህንነት፣ ሚስጥራዊነት እና ክብር ባማከለ መልኩ በህክምና፣ ስነ-ልቦናዊ እና ህጋዊ አቅጣጫዎች መስራትን ይጠይቃል፡-';
+
+  @override
+  String get gbvManagement1Title => 'አስቸኳይ የህክምና እርዳታ (በ72 ሰዓታት ውስጥ):';
+
+  @override
+  String get gbvManagement1Body =>
+      'የፆታዊ ጥቃት ተጎጂዎች የኤች አይ ቪ ስርጭትን ለመከላከል የሚሰጠውን የPEP መድሃኒት፣ ያልተፈለገ እርግዝና መከላከያ፣ የአካል ቁስለት ህክምና እና የSTI መከላከያ ህክምናዎችን ለማግኘት በ72 ሰዓታት ውስጥ በአስቸኳይ ወደ ጤና ተቋም መሄድ አለባቸው።';
+
+  @override
+  String get gbvManagement2Title => 'ስነ-ልቦናዊ ድጋፍ እና አስተማማኝ መጠለያ:';
+
+  @override
+  String get gbvManagement2Body =>
+      'ሚስጥራዊ የመጀመሪያ ደረጃ ስነ-ልቦናዊ ድጋፍ፣ የምክር አገልግሎት እና ተጨማሪ አደጋዎችን ለመከላከል ደህንነታቸው የተጠበቀ መጠለያዎችን ማመቻቸት።';
+
+  @override
+  String get gbvManagement3Title => 'ህጋዊ ድጋፍ እና ጥበቃ:';
+
+  @override
+  String get gbvManagement3Body =>
+      'የፍትህ ተደራሽነት፣ የፖሊስ ጥበቃ ትዕዛዞች፣ የህክምና ማስረጃዎች ምዝገባ እና አጥፊዎችን በህግ ፊት ተጠያቂ ለማድረግ የሚሰጥ ነፃ የህግ ድጋፍ።';
+
+  @override
+  String get gbvSection4HelpAlert =>
+      'እርስዎ ወይም የሚያውቁት ሰው ጥቃት ወይም በደል እያጋጠመዎት ከሆነ ብቻዎን አይደሉም። ደህንነቱ የተጠበቀ እና ሚስጥራዊ የህክምና እና የህግ ድጋፍ አለ። በነጻ የስልክ መስመሮች 952፣ 8335 ወይም 7711 በመደወል አሁኑኑ ያግኙ።';
+
+  @override
   String get learningSectionsTitle => 'የትምህርት ክፍሎች';
 
   @override

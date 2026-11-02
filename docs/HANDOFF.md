@@ -1,5 +1,26 @@
 # Handoff
 
+## Gender-Based Violence (GBV) Detail Learning Module Rebuild (2026-11-02)
+
+- Built and verified the dedicated learning module screen `GenderBasedViolenceDetailPage` (`lib/src/learning/gbv_page.dart`) for Module 04 matching user reference screenshots:
+  - Top Hero Card featuring `assets/images/learning/module_04_gbv.png`, title "Gender-based violence (GBV)", and clinical overview synopsis.
+  - Note Section with light-blue card container, lightbulb icon, and prevention/dignity guidance.
+  - Learning Sections Header with dynamic reading count badge (`X / 4 read`).
+  - 4 interactive accordion sections with dynamic indicator badges (numerical badge when unread, white checkmark when read):
+    1. **Definition**: Full clinical definition, humanitarian conflict and displacement context, and 5 numbered subcategories:
+       - 1: **Physical Violence** (Domestic violence [intimate partner violence], Sexual violence).
+       - 2: **Psychological/Emotional Violence** (Verbal abuse, Isolation, Coercive control).
+       - 3: **Sexual Violence and Exploitation** (Rape, Sexual harassment, Trafficking).
+       - 4: **Economic Violence** (Withholding financial resources, Coercion through financial dependence).
+       - 5: **Harmful Traditional Practices** (Female genital mutilation/cutting [FGM/C], Early or forced marriage, Honor killings).
+    2. **Sex and Gender**: Biological definitions (chromosomes, anatomy) vs. social construct of gender and power imbalances.
+    3. **Consequences of gender-based violence**: Physical & reproductive health, psychological trauma (PTSD, depression), and social/economic fallout.
+    4. **Management and Prevention of Gender-Based Violence (GBV)**: Survivor-centered emergency care (72h PEP, emergency contraception, injury care), psychosocial support, legal protection, and toll-free emergency hotlines (952 / 8335 / 7711).
+  - Streamlined bottom action: `Mark as Completed` button (or green `Completed` banner); no redundant "Return to Lesson" button.
+  - Linked to `LearnPage` carousel when selecting Module 04.
+  - Added full English and Amharic ARB resources.
+  - Widget and unit tests in `test/gbv_page_test.dart` (55/55 tests passing across the app).
+
 ## Cleaned Module Detail Actions (2026-11-02)
 
 - Removed redundant bottom "Return to Lesson" buttons from all learning module detail screens (`lib/src/learning/substance_abuse_page.dart`, `lib/src/learning/hepatitis_page.dart`, and `lib/src/learning/sti_module_page.dart`).

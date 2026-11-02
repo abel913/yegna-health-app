@@ -1,5 +1,29 @@
 # Phase status
 
+## Gender-Based Violence (GBV) Detail Learning Module Rebuild (2026-11-02)
+
+**Status: Phase 3 Learning Module UI Rebuild Complete & Verified.**
+- Implemented `GenderBasedViolenceDetailPage` (`lib/src/learning/gbv_page.dart`) for Module 04 matching user reference screenshots:
+  - **Top Hero Card**: Rounded card with authentic counselor/survivor support illustration (`assets/images/learning/module_04_gbv.png`), title `Gender-based violence (GBV)`, and high-contrast educational synopsis.
+  - **Note Section**: Light-blue card with lightbulb icon highlighting that GBV is preventable through respect, equality, and early survivor support.
+  - **Learning Sections Header**: Vertical azure indicator bar and dynamic reading count badge (`X / 4 read`).
+  - **4 Interactive Accordion Sections with Dynamic Badging**:
+    - Unread sections display their numerical indicator (`1`, `2`, `3`, `4`) in a bold circular azure badge; read sections display a white checkmark icon (`✔`).
+    - 1. **Definition**: General definition of GBV, humanitarian settings context, and 5 numbered subcategories with circular badges and bullet points:
+      - 1: **Physical Violence** (Domestic violence [intimate partner violence], Sexual violence).
+      - 2: **Psychological/Emotional Violence** (Verbal abuse, Isolation, Coercive control).
+      - 3: **Sexual Violence and Exploitation** (Rape, Sexual harassment, Trafficking).
+      - 4: **Economic Violence** (Withholding financial resources, Coercion through financial dependence).
+      - 5: **Harmful Traditional Practices** (Female genital mutilation/cutting [FGM/C], Early or forced marriage, Honor killings).
+    - 2. **Sex and Gender**: Biological characteristics (chromosomes, hormones, anatomy) vs. socially constructed roles, and patriarchal power imbalances.
+    - 3. **Consequences of gender-based violence**: Physical & reproductive harm, psychological trauma (PTSD, depression), and social/economic disruption.
+    - 4. **Management and Prevention of Gender-Based Violence (GBV)**: Survivor-centered emergency care (72h PEP, emergency contraception, forensic care), psychosocial counseling, safe shelters, legal aid, and 24/7 toll-free helpline callouts (952 / 8335 / 7711).
+  - **Clean Action Bar**: Only `Mark as Completed` (or `Completed` status banner); no redundant "Return to Lesson" button.
+  - **Progress Integration**: Connected to `LearningProgressController` with completion state persistence for `module-04`.
+  - **Routing Integration**: Wired up in `LearnPage` carousel handler in `lib/src/learning/learn_pages.dart`.
+  - **Bilingual Localization**: Added full English and Amharic ARB resources in `lib/l10n/app_en.arb` and `lib/l10n/app_am.arb`, regenerated with `flutter gen-l10n`.
+  - **Test Suite**: Created `test/gbv_page_test.dart` testing 4-accordion layout, section expansion, completion tracking, and Amharic translation. All 55 tests pass across full codebase.
+
 ## Cleaned Module Detail Actions (2026-11-02)
 
 **Status: Completed & Verified.**

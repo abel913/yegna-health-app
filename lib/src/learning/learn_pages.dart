@@ -9,6 +9,7 @@ import 'learning_modules_carousel.dart';
 import 'hiv_module_page.dart';
 import 'hiv_quiz_page.dart';
 import 'hepatitis_page.dart';
+import 'gbv_page.dart';
 import 'learning_progress_controller.dart';
 import 'sti_module_page.dart';
 import 'substance_abuse_page.dart';
@@ -281,6 +282,16 @@ class _LearnPageState extends State<LearnPage> {
     if (module.id == 'module-03') {
       Navigator.of(context).push<void>(MaterialPageRoute<void>(
         builder: (_) => HepatitisDetailPage(
+          progressController: widget.progressController,
+          assessmentRepository: widget.assessmentRepository,
+          onOpenQuiz: () => _handleOpenQuiz(context, module),
+        ),
+      ));
+      return;
+    }
+    if (module.id == 'module-04') {
+      Navigator.of(context).push<void>(MaterialPageRoute<void>(
+        builder: (_) => GenderBasedViolenceDetailPage(
           progressController: widget.progressController,
           assessmentRepository: widget.assessmentRepository,
           onOpenQuiz: () => _handleOpenQuiz(context, module),

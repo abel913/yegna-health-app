@@ -2342,6 +2342,342 @@ abstract class AppLocalizations {
   /// **'Early conversations with peer mentors, counselors, or calling national hotlines (952 or 8335) provide confidential, life-saving support.'**
   String get mentalHealthQ4Insight;
 
+  /// No description provided for @gbvHeroDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Gender-based violence is harmful behavior directed at individuals based on gender, caused by inequality and cultural norms, leading to serious physical, psychological, social, and economic consequences, but it can be addressed through prevention, support services, and legal protection.'**
+  String get gbvHeroDesc;
+
+  /// No description provided for @gbvNoteContent.
+  ///
+  /// In en, this message translates to:
+  /// **'GBV is preventable—promoting respect, equality, and early support for survivors helps build safer communities and protects human dignity.'**
+  String get gbvNoteContent;
+
+  /// No description provided for @gbvSection1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Definition'**
+  String get gbvSection1Title;
+
+  /// No description provided for @gbvSection1Desc1.
+  ///
+  /// In en, this message translates to:
+  /// **'Gender-based violence (GBV) refers to harmful acts directed at an individual based on their gender. It can occur in any context, but it most often affects women and girls, though men and boys can also experience it. GBV is a violation of human rights and a major barrier to achieving gender equality and social justice.'**
+  String get gbvSection1Desc1;
+
+  /// No description provided for @gbvSection1Desc2.
+  ///
+  /// In en, this message translates to:
+  /// **'In humanitarian settings, responding to sexual violence has been a priority because conflict-related violence, in particular rape as a tactic of war, has received international attention. However, there is growing recognition that populations affected by conflict and natural disaster experience various forms of GBV during crisis and displacement, and during and following return. In particular, intimate partner violence is increasingly recognized as a critical concern in humanitarian settings. Gender based violence can manifest in various forms, including:'**
+  String get gbvSection1Desc2;
+
+  /// No description provided for @gbvForm1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Physical Violence'**
+  String get gbvForm1Title;
+
+  /// No description provided for @gbvForm1Item1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Domestic violence (intimate partner violence):'**
+  String get gbvForm1Item1Title;
+
+  /// No description provided for @gbvForm1Item1Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Includes hitting, slapping, kicking, and other forms of physical abuse within intimate relationships.'**
+  String get gbvForm1Item1Body;
+
+  /// No description provided for @gbvForm1Item2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Sexual violence:'**
+  String get gbvForm1Item2Title;
+
+  /// No description provided for @gbvForm1Item2Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Forced or coerced sexual acts, including rape, sexual assault, and harassment.'**
+  String get gbvForm1Item2Body;
+
+  /// No description provided for @gbvForm2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Psychological/Emotional Violence'**
+  String get gbvForm2Title;
+
+  /// No description provided for @gbvForm2Item1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Verbal abuse:'**
+  String get gbvForm2Item1Title;
+
+  /// No description provided for @gbvForm2Item1Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Insults, threats, humiliation, and controlling behaviors that undermine the victim\'s sense of self-worth.'**
+  String get gbvForm2Item1Body;
+
+  /// No description provided for @gbvForm2Item2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Isolation:'**
+  String get gbvForm2Item2Title;
+
+  /// No description provided for @gbvForm2Item2Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Forcing a victim to cut ties with family and friends.'**
+  String get gbvForm2Item2Body;
+
+  /// No description provided for @gbvForm2Item3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Coercive control:'**
+  String get gbvForm2Item3Title;
+
+  /// No description provided for @gbvForm2Item3Body.
+  ///
+  /// In en, this message translates to:
+  /// **'A pattern of controlling behavior that limits a person’s freedom, such as dictating what they wear, where they go, or who they interact with.'**
+  String get gbvForm2Item3Body;
+
+  /// No description provided for @gbvForm3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Sexual Violence and Exploitation'**
+  String get gbvForm3Title;
+
+  /// No description provided for @gbvForm3Item1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Rape:'**
+  String get gbvForm3Item1Title;
+
+  /// No description provided for @gbvForm3Item1Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Non-consensual sexual intercourse.'**
+  String get gbvForm3Item1Body;
+
+  /// No description provided for @gbvForm3Item2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Sexual harassment:'**
+  String get gbvForm3Item2Title;
+
+  /// No description provided for @gbvForm3Item2Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Unwanted sexual advances or behavior, often in the workplace, school, or public spaces.'**
+  String get gbvForm3Item2Body;
+
+  /// No description provided for @gbvForm3Item3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Trafficking:'**
+  String get gbvForm3Item3Title;
+
+  /// No description provided for @gbvForm3Item3Body.
+  ///
+  /// In en, this message translates to:
+  /// **'The illegal trade of people for sexual exploitation or forced labor.'**
+  String get gbvForm3Item3Body;
+
+  /// No description provided for @gbvForm4Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Economic Violence'**
+  String get gbvForm4Title;
+
+  /// No description provided for @gbvForm4Item1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Withholding financial resources:'**
+  String get gbvForm4Item1Title;
+
+  /// No description provided for @gbvForm4Item1Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Preventing a partner from accessing money or resources, controlling their economic independence.'**
+  String get gbvForm4Item1Body;
+
+  /// No description provided for @gbvForm4Item2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Coercion through financial dependence:'**
+  String get gbvForm4Item2Title;
+
+  /// No description provided for @gbvForm4Item2Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Using financial control as a way to maintain power over someone.'**
+  String get gbvForm4Item2Body;
+
+  /// No description provided for @gbvForm5Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Harmful Traditional Practices'**
+  String get gbvForm5Title;
+
+  /// No description provided for @gbvForm5Item1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Female genital mutilation/cutting (FGM/C):'**
+  String get gbvForm5Item1Title;
+
+  /// No description provided for @gbvForm5Item1Body.
+  ///
+  /// In en, this message translates to:
+  /// **'The practice of partially or completely removing the female genitalia for non-medical reasons, often as a means of controlling women\'s sexuality.'**
+  String get gbvForm5Item1Body;
+
+  /// No description provided for @gbvForm5Item2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Early or forced marriage:'**
+  String get gbvForm5Item2Title;
+
+  /// No description provided for @gbvForm5Item2Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Marrying off young girls or individuals without their consent, often as a result of cultural practices.'**
+  String get gbvForm5Item2Body;
+
+  /// No description provided for @gbvForm5Item3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Honor killings:'**
+  String get gbvForm5Item3Title;
+
+  /// No description provided for @gbvForm5Item3Body.
+  ///
+  /// In en, this message translates to:
+  /// **'The killing of a family member, typically a woman or girl, for bringing perceived dishonor or shame upon the family or community.'**
+  String get gbvForm5Item3Body;
+
+  /// No description provided for @gbvSection2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Sex and Gender'**
+  String get gbvSection2Title;
+
+  /// No description provided for @gbvSection2Desc1.
+  ///
+  /// In en, this message translates to:
+  /// **'Understanding the distinction between sex and gender is essential for addressing gender-based violence. Sex refers to biological and physiological characteristics, such as chromosomes, hormones, and reproductive organs. Gender refers to the socially constructed roles, behaviors, expressions, and identities that society considers appropriate for men, women, and gender-diverse individuals.'**
+  String get gbvSection2Desc1;
+
+  /// No description provided for @gbvSection2Desc2.
+  ///
+  /// In en, this message translates to:
+  /// **'Gender norms dictate how individuals are expected to act, speak, dress, and interact based on their assigned sex. When rigid patriarchal expectations grant unequal power, authority, or entitlement to one group over another, it creates a systemic imbalance that justifies or normalizes violence and discrimination.'**
+  String get gbvSection2Desc2;
+
+  /// No description provided for @gbvSection3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Consequences of gender-based violence'**
+  String get gbvSection3Title;
+
+  /// No description provided for @gbvSection3Intro.
+  ///
+  /// In en, this message translates to:
+  /// **'Gender-based violence impacts every dimension of a survivor\'s life, creating profound consequences for physical, mental, and social wellbeing:'**
+  String get gbvSection3Intro;
+
+  /// No description provided for @gbvConsequence1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Physical and Reproductive Health:'**
+  String get gbvConsequence1Title;
+
+  /// No description provided for @gbvConsequence1Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Severe physical injuries, chronic pain syndromes, unintended pregnancies, complications from unsafe abortions, and increased risk of contracting STIs and HIV.'**
+  String get gbvConsequence1Body;
+
+  /// No description provided for @gbvConsequence2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Psychological and Emotional Trauma:'**
+  String get gbvConsequence2Title;
+
+  /// No description provided for @gbvConsequence2Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Depression, post-traumatic stress disorder (PTSD), severe anxiety, panic attacks, sleep disorders, and heightened risk of self-harm or suicide.'**
+  String get gbvConsequence2Body;
+
+  /// No description provided for @gbvConsequence3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Social and Economic Consequences:'**
+  String get gbvConsequence3Title;
+
+  /// No description provided for @gbvConsequence3Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Social stigmatization, isolation from family and community networks, interruption of schooling, job loss, and deepened economic dependence.'**
+  String get gbvConsequence3Body;
+
+  /// No description provided for @gbvSection4Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Management and Prevention of Gender-Based Violence (GBV)'**
+  String get gbvSection4Title;
+
+  /// No description provided for @gbvSection4Intro.
+  ///
+  /// In en, this message translates to:
+  /// **'Addressing GBV requires a survivor-centered approach ensuring safety, confidentiality, respect, and non-discrimination across medical, psychosocial, and legal channels:'**
+  String get gbvSection4Intro;
+
+  /// No description provided for @gbvManagement1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency Medical Care (Within 72 Hours):'**
+  String get gbvManagement1Title;
+
+  /// No description provided for @gbvManagement1Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Survivors of sexual assault require immediate medical care within 72 hours to receive Post-Exposure Prophylaxis (PEP) to prevent HIV infection, emergency contraception to prevent pregnancy, treatment for physical injuries, and prophylactic antibiotics for STIs.'**
+  String get gbvManagement1Body;
+
+  /// No description provided for @gbvManagement2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Psychosocial Support & Safe Spaces:'**
+  String get gbvManagement2Title;
+
+  /// No description provided for @gbvManagement2Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Confidential psychological first aid, trauma-informed counseling, and access to secure safe shelters to protect survivors from immediate retaliatory harm.'**
+  String get gbvManagement2Body;
+
+  /// No description provided for @gbvManagement3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal Aid & Protection:'**
+  String get gbvManagement3Title;
+
+  /// No description provided for @gbvManagement3Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Access to justice, police protection orders, forensic documentation, and free legal counsel to hold perpetrators accountable under the law.'**
+  String get gbvManagement3Body;
+
+  /// No description provided for @gbvSection4HelpAlert.
+  ///
+  /// In en, this message translates to:
+  /// **'If you or someone you know is experiencing violence or abuse, you are not alone. Safe, confidential medical and legal support is available. Call the national toll-free emergency lines 952, 8335, or 7711 immediately.'**
+  String get gbvSection4HelpAlert;
+
   /// No description provided for @learningSectionsTitle.
   ///
   /// In en, this message translates to:

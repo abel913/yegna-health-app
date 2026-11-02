@@ -1352,6 +1352,203 @@ class AppLocalizationsEn extends AppLocalizations {
       'Early conversations with peer mentors, counselors, or calling national hotlines (952 or 8335) provide confidential, life-saving support.';
 
   @override
+  String get gbvHeroDesc =>
+      'Gender-based violence is harmful behavior directed at individuals based on gender, caused by inequality and cultural norms, leading to serious physical, psychological, social, and economic consequences, but it can be addressed through prevention, support services, and legal protection.';
+
+  @override
+  String get gbvNoteContent =>
+      'GBV is preventable—promoting respect, equality, and early support for survivors helps build safer communities and protects human dignity.';
+
+  @override
+  String get gbvSection1Title => 'Definition';
+
+  @override
+  String get gbvSection1Desc1 =>
+      'Gender-based violence (GBV) refers to harmful acts directed at an individual based on their gender. It can occur in any context, but it most often affects women and girls, though men and boys can also experience it. GBV is a violation of human rights and a major barrier to achieving gender equality and social justice.';
+
+  @override
+  String get gbvSection1Desc2 =>
+      'In humanitarian settings, responding to sexual violence has been a priority because conflict-related violence, in particular rape as a tactic of war, has received international attention. However, there is growing recognition that populations affected by conflict and natural disaster experience various forms of GBV during crisis and displacement, and during and following return. In particular, intimate partner violence is increasingly recognized as a critical concern in humanitarian settings. Gender based violence can manifest in various forms, including:';
+
+  @override
+  String get gbvForm1Title => 'Physical Violence';
+
+  @override
+  String get gbvForm1Item1Title =>
+      'Domestic violence (intimate partner violence):';
+
+  @override
+  String get gbvForm1Item1Body =>
+      'Includes hitting, slapping, kicking, and other forms of physical abuse within intimate relationships.';
+
+  @override
+  String get gbvForm1Item2Title => 'Sexual violence:';
+
+  @override
+  String get gbvForm1Item2Body =>
+      'Forced or coerced sexual acts, including rape, sexual assault, and harassment.';
+
+  @override
+  String get gbvForm2Title => 'Psychological/Emotional Violence';
+
+  @override
+  String get gbvForm2Item1Title => 'Verbal abuse:';
+
+  @override
+  String get gbvForm2Item1Body =>
+      'Insults, threats, humiliation, and controlling behaviors that undermine the victim\'s sense of self-worth.';
+
+  @override
+  String get gbvForm2Item2Title => 'Isolation:';
+
+  @override
+  String get gbvForm2Item2Body =>
+      'Forcing a victim to cut ties with family and friends.';
+
+  @override
+  String get gbvForm2Item3Title => 'Coercive control:';
+
+  @override
+  String get gbvForm2Item3Body =>
+      'A pattern of controlling behavior that limits a person’s freedom, such as dictating what they wear, where they go, or who they interact with.';
+
+  @override
+  String get gbvForm3Title => 'Sexual Violence and Exploitation';
+
+  @override
+  String get gbvForm3Item1Title => 'Rape:';
+
+  @override
+  String get gbvForm3Item1Body => 'Non-consensual sexual intercourse.';
+
+  @override
+  String get gbvForm3Item2Title => 'Sexual harassment:';
+
+  @override
+  String get gbvForm3Item2Body =>
+      'Unwanted sexual advances or behavior, often in the workplace, school, or public spaces.';
+
+  @override
+  String get gbvForm3Item3Title => 'Trafficking:';
+
+  @override
+  String get gbvForm3Item3Body =>
+      'The illegal trade of people for sexual exploitation or forced labor.';
+
+  @override
+  String get gbvForm4Title => 'Economic Violence';
+
+  @override
+  String get gbvForm4Item1Title => 'Withholding financial resources:';
+
+  @override
+  String get gbvForm4Item1Body =>
+      'Preventing a partner from accessing money or resources, controlling their economic independence.';
+
+  @override
+  String get gbvForm4Item2Title => 'Coercion through financial dependence:';
+
+  @override
+  String get gbvForm4Item2Body =>
+      'Using financial control as a way to maintain power over someone.';
+
+  @override
+  String get gbvForm5Title => 'Harmful Traditional Practices';
+
+  @override
+  String get gbvForm5Item1Title => 'Female genital mutilation/cutting (FGM/C):';
+
+  @override
+  String get gbvForm5Item1Body =>
+      'The practice of partially or completely removing the female genitalia for non-medical reasons, often as a means of controlling women\'s sexuality.';
+
+  @override
+  String get gbvForm5Item2Title => 'Early or forced marriage:';
+
+  @override
+  String get gbvForm5Item2Body =>
+      'Marrying off young girls or individuals without their consent, often as a result of cultural practices.';
+
+  @override
+  String get gbvForm5Item3Title => 'Honor killings:';
+
+  @override
+  String get gbvForm5Item3Body =>
+      'The killing of a family member, typically a woman or girl, for bringing perceived dishonor or shame upon the family or community.';
+
+  @override
+  String get gbvSection2Title => 'Sex and Gender';
+
+  @override
+  String get gbvSection2Desc1 =>
+      'Understanding the distinction between sex and gender is essential for addressing gender-based violence. Sex refers to biological and physiological characteristics, such as chromosomes, hormones, and reproductive organs. Gender refers to the socially constructed roles, behaviors, expressions, and identities that society considers appropriate for men, women, and gender-diverse individuals.';
+
+  @override
+  String get gbvSection2Desc2 =>
+      'Gender norms dictate how individuals are expected to act, speak, dress, and interact based on their assigned sex. When rigid patriarchal expectations grant unequal power, authority, or entitlement to one group over another, it creates a systemic imbalance that justifies or normalizes violence and discrimination.';
+
+  @override
+  String get gbvSection3Title => 'Consequences of gender-based violence';
+
+  @override
+  String get gbvSection3Intro =>
+      'Gender-based violence impacts every dimension of a survivor\'s life, creating profound consequences for physical, mental, and social wellbeing:';
+
+  @override
+  String get gbvConsequence1Title => 'Physical and Reproductive Health:';
+
+  @override
+  String get gbvConsequence1Body =>
+      'Severe physical injuries, chronic pain syndromes, unintended pregnancies, complications from unsafe abortions, and increased risk of contracting STIs and HIV.';
+
+  @override
+  String get gbvConsequence2Title => 'Psychological and Emotional Trauma:';
+
+  @override
+  String get gbvConsequence2Body =>
+      'Depression, post-traumatic stress disorder (PTSD), severe anxiety, panic attacks, sleep disorders, and heightened risk of self-harm or suicide.';
+
+  @override
+  String get gbvConsequence3Title => 'Social and Economic Consequences:';
+
+  @override
+  String get gbvConsequence3Body =>
+      'Social stigmatization, isolation from family and community networks, interruption of schooling, job loss, and deepened economic dependence.';
+
+  @override
+  String get gbvSection4Title =>
+      'Management and Prevention of Gender-Based Violence (GBV)';
+
+  @override
+  String get gbvSection4Intro =>
+      'Addressing GBV requires a survivor-centered approach ensuring safety, confidentiality, respect, and non-discrimination across medical, psychosocial, and legal channels:';
+
+  @override
+  String get gbvManagement1Title => 'Emergency Medical Care (Within 72 Hours):';
+
+  @override
+  String get gbvManagement1Body =>
+      'Survivors of sexual assault require immediate medical care within 72 hours to receive Post-Exposure Prophylaxis (PEP) to prevent HIV infection, emergency contraception to prevent pregnancy, treatment for physical injuries, and prophylactic antibiotics for STIs.';
+
+  @override
+  String get gbvManagement2Title => 'Psychosocial Support & Safe Spaces:';
+
+  @override
+  String get gbvManagement2Body =>
+      'Confidential psychological first aid, trauma-informed counseling, and access to secure safe shelters to protect survivors from immediate retaliatory harm.';
+
+  @override
+  String get gbvManagement3Title => 'Legal Aid & Protection:';
+
+  @override
+  String get gbvManagement3Body =>
+      'Access to justice, police protection orders, forensic documentation, and free legal counsel to hold perpetrators accountable under the law.';
+
+  @override
+  String get gbvSection4HelpAlert =>
+      'If you or someone you know is experiencing violence or abuse, you are not alone. Safe, confidential medical and legal support is available. Call the national toll-free emergency lines 952, 8335, or 7711 immediately.';
+
+  @override
   String get learningSectionsTitle => 'Learning Sections';
 
   @override
