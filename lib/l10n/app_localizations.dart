@@ -4321,6 +4321,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Call Now'**
   String get callNowAction;
+
+  /// No description provided for @locationPermissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Location permission is required to calculate real-time distance and show nearby facilities.'**
+  String get locationPermissionDenied;
+
+  /// No description provided for @locationDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Location services are turned off on this device. Please turn on GPS.'**
+  String get locationDisabled;
+
+  /// No description provided for @calculatingDistance.
+  ///
+  /// In en, this message translates to:
+  /// **'Determining your location...'**
+  String get calculatingDistance;
 }
 
 class _AppLocalizationsDelegate

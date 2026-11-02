@@ -2424,4 +2424,15 @@ class AppLocalizationsAm extends AppLocalizations {
 
   @override
   String get callNowAction => 'አሁን ይደውሉ';
+
+  @override
+  String get locationPermissionDenied =>
+      'ትክክለኛውን ርቀት ለማስላት እና በአቅራቢያ ያሉ ተቋማትን ለማሳየት የመገኛ ፍቃድ ያስፈልጋል።';
+
+  @override
+  String get locationDisabled =>
+      'በዚህ መሳሪያ ላይ የመገኛ አገልግሎት (GPS) ጠፍቷል። እባክዎ ያብሩት።';
+
+  @override
+  String get calculatingDistance => 'የእርስዎን መገኛ በማስላት ላይ...';
 }

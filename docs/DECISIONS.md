@@ -103,3 +103,18 @@ The Flutter choices are implemented locally. Migrations `20261030174702`, `20261
 - **Real Geographic Coordinates**: Connected verified Addis Ababa youth clinics and university health centers directly to their true GPS coordinates (`LatLng(latitude, longitude)`), rendering custom glassmorphic pin markers with animated scale and selection states.
 - **Camera & Map Interactions**: Integrated `MapController` for smooth animated camera moves on marker taps, zoom in/out button steps, and "Locate Me" centering.
 - **Turn-by-Turn GPS Navigation**: Wired the "Directions" button to launch external navigation apps (Google Maps, Apple Maps, or default system navigation) using `url_launcher` with `geo:` and Google Maps directions URLs.
+
+## 2026-11-02 — Live Proximity Distance Calculation & Real-Time GPS Sorting
+
+- **Package Dependency**: Added `geolocator: ^14.0.2` and configured Android permissions (`android.permission.ACCESS_FINE_LOCATION`, `android.permission.ACCESS_COARSE_LOCATION`).
+- **Privacy & Confidentiality Guarantee**:
+  - Live GPS coordinates are calculated and processed 100% locally on-device using spherical geodesy (`latlong2` `Distance`).
+  - Coordinates and user position are **never** transmitted to Supabase or any external cloud telemetry service, strictly upholding the project's youth privacy and confidentiality guarantees.
+- **Dynamic Proximity Sorting**:
+  - When the user selects the "Nearby" filter (or taps "Locate Me"), the app requests location permissions via `LocationService` (abstracted with `GeolocatorLocationService` for production and `FakeLocationService` for unit/widget tests).
+  - All verified health facilities dynamically receive calculated distances (`facility.copyWith(distanceKm: realDist)`), updating badges (e.g. `1.2 km away` / `1.2 ኪ.ሜ ርቀት`) and sorting from closest to furthest.
+- **Pulsing Live Marker**:
+  - Rendered a pulsing blue core marker on `FacilityMapView` via `_UserLocationMarker` at the user's real GPS coordinates.
+- **Graceful Offline & Permission Degradation**:
+  - If location permissions are denied or GPS is disabled, the app gracefully presents an informative bilingual notice without crashing, falling back to default curated ordering.
+

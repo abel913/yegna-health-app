@@ -69,8 +69,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _refresh() async {
-    setState(() => _articles = _loadArticles());
-    await _articles;
+    final nextArticles = _loadArticles();
+    setState(() {
+      _articles = nextArticles;
+    });
+    await nextArticles;
   }
 
   String _getGreeting(int hour, AppLocalizations l10n) {

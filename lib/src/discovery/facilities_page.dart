@@ -1,20 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart' hide Path;
 
 import '../../l10n/app_localizations.dart';
 import 'facility_card.dart';
 import 'facility_map_view.dart';
 import 'facility_model.dart';
 import 'facility_repository.dart';
+import 'location_service.dart';
 
 enum _ViewMode { list, map }
 
 class FacilitiesPage extends StatefulWidget {
   const FacilitiesPage({
     this.facilityRepository,
+    this.locationService,
+    this.initialLocation,
+    this.tileProvider,
+    this.mapController,
     super.key,
   });
 
   final FacilityRepository? facilityRepository;
+  final LocationService? locationService;
+  final LatLng? initialLocation;
+  final TileProvider? tileProvider;
+  final MapController? mapController;
 
   @override
   State<FacilitiesPage> createState() => _FacilitiesPageState();
@@ -22,18 +33,24 @@ class FacilitiesPage extends StatefulWidget {
 
 class _FacilitiesPageState extends State<FacilitiesPage> {
   late final FacilityRepository _repository;
+  late final LocationService _locationService;
   final TextEditingController _searchController = TextEditingController();
 
   _ViewMode _viewMode = _ViewMode.list;
   FacilityFilterCategory _selectedCategory = FacilityFilterCategory.all;
   List<Facility> _facilities = [];
   bool _isLoading = true;
+  LatLng? _userLocation;
+  bool _isLocating = false;
 
   @override
   void initState() {
     super.initState();
     _repository =
         widget.facilityRepository ?? const LocalVerifiedFacilityRepository();
+    _locationService =
+        widget.locationService ?? const GeolocatorLocationService();
+    _userLocation = widget.initialLocation;
     _searchController.addListener(_onSearchChanged);
     _loadFacilities();
   }
@@ -41,9 +58,16 @@ class _FacilitiesPageState extends State<FacilitiesPage> {
   @override
   void didUpdateWidget(FacilitiesPage oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.facilityRepository != oldWidget.facilityRepository) {
+    if (widget.facilityRepository != oldWidget.facilityRepository ||
+        widget.locationService != oldWidget.locationService ||
+        widget.initialLocation != oldWidget.initialLocation) {
       _repository =
           widget.facilityRepository ?? const LocalVerifiedFacilityRepository();
+      _locationService =
+          widget.locationService ?? const GeolocatorLocationService();
+      if (widget.initialLocation != null) {
+        _userLocation = widget.initialLocation;
+      }
       _loadFacilities();
     }
   }
@@ -61,10 +85,26 @@ class _FacilitiesPageState extends State<FacilitiesPage> {
 
   Future<void> _loadFacilities() async {
     final query = _searchController.text;
-    final results = await _repository.getFacilities(
+    var results = await _repository.getFacilities(
       query: query,
       category: _selectedCategory,
     );
+
+    if (_userLocation != null) {
+      results = results.map((f) {
+        final dist = _locationService.calculateDistanceKm(
+          _userLocation!,
+          LatLng(f.latitude, f.longitude),
+        );
+        final rounded = double.parse(dist.toStringAsFixed(1));
+        return f.copyWith(distanceKm: rounded);
+      }).toList();
+
+      if (_selectedCategory == FacilityFilterCategory.nearby) {
+        results.sort((a, b) => a.distanceKm.compareTo(b.distanceKm));
+      }
+    }
+
     if (mounted) {
       setState(() {
         _facilities = results;
@@ -73,11 +113,78 @@ class _FacilitiesPageState extends State<FacilitiesPage> {
     }
   }
 
-  void _onCategorySelected(FacilityFilterCategory category) {
+  Future<void> _onCategorySelected(FacilityFilterCategory category) async {
     setState(() {
       _selectedCategory = category;
     });
-    _loadFacilities();
+
+    if (category == FacilityFilterCategory.nearby && _userLocation == null) {
+      await _fetchUserLocation(showFeedback: true);
+    } else {
+      _loadFacilities();
+    }
+  }
+
+  Future<LatLng?> _fetchUserLocation({bool showFeedback = false}) async {
+    if (_isLocating) return _userLocation;
+    setState(() {
+      _isLocating = true;
+    });
+
+    try {
+      final loc = await _locationService.getCurrentLocation();
+      if (!mounted) return loc;
+
+      setState(() {
+        _userLocation = loc;
+        _isLocating = false;
+      });
+
+      if (loc != null) {
+        await _loadFacilities();
+        if (showFeedback && mounted) {
+          final isAmharic =
+              Localizations.localeOf(context).languageCode == 'am';
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(isAmharic
+                  ? 'የእርስዎ ወቅታዊ መገኛ ተገኝቷል'
+                  : 'Live GPS location acquired. Facilities sorted by proximity.'),
+              backgroundColor: const Color(0xFF0284C7),
+              duration: const Duration(seconds: 2),
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          );
+        }
+      } else {
+        if (showFeedback && mounted) {
+          final l10n = AppLocalizations.of(context);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(l10n.locationPermissionDenied),
+              backgroundColor: const Color(0xFFE11D48),
+              duration: const Duration(seconds: 3),
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          );
+        }
+        await _loadFacilities();
+      }
+      return loc;
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLocating = false;
+        });
+      }
+      return null;
+    }
   }
 
   void _resetFilters() {
@@ -271,6 +378,33 @@ class _FacilitiesPageState extends State<FacilitiesPage> {
                           ),
                         ],
                       ),
+                      if (_isLocating)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const SizedBox(
+                                width: 14,
+                                height: 14,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Color(0xFF0284C7),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                l10n.calculatingDistance,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: Color(0xFF0284C7),
+                                  fontFamily: 'PlusJakartaSans',
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                     ],
                   ),
                 ),
@@ -300,6 +434,11 @@ class _FacilitiesPageState extends State<FacilitiesPage> {
                                       const EdgeInsets.fromLTRB(20, 6, 20, 20),
                                   child: FacilityMapView(
                                     facilities: _facilities,
+                                    userLocation: _userLocation,
+                                    onLocateMeRequested: () =>
+                                        _fetchUserLocation(showFeedback: true),
+                                    tileProvider: widget.tileProvider,
+                                    mapController: widget.mapController,
                                   ),
                                 ),
                 ),

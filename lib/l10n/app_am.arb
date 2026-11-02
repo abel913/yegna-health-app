@@ -759,5 +759,9 @@
   "emergencyHotline8335Desc": "ሚስጥራዊ የስነ-ተዋልዶ እና የአእምሮ ጤና የምክር አገልግሎት",
   "exploreServicesHeading": "አገልግሎቶችን ያስሱ",
   "exploreServicesSubtitle": "የግል መገምገሚያ፣ የወጣቶች ማዕከላትና የምክር አገልግሎት",
-  "callNowAction": "አሁን ይደውሉ"
+  "callNowAction": "አሁን ይደውሉ",
+  "locationPermissionDenied": "ትክክለኛውን ርቀት ለማስላት እና በአቅራቢያ ያሉ ተቋማትን ለማሳየት የመገኛ ፍቃድ ያስፈልጋል።",
+  "locationDisabled": "በዚህ መሳሪያ ላይ የመገኛ አገልግሎት (GPS) ጠፍቷል። እባክዎ ያብሩት።",
+  "calculatingDistance": "የእርስዎን መገኛ በማስላት ላይ..."
 }
+

@@ -782,5 +782,9 @@
   "emergencyHotline8335Desc": "Confidential counseling for reproductive health and emotional distress",
   "exploreServicesHeading": "Explore Services",
   "exploreServicesSubtitle": "Private tools, peer support, and verified clinics",
-  "callNowAction": "Call Now"
+  "callNowAction": "Call Now",
+  "locationPermissionDenied": "Location permission is required to calculate real-time distance and show nearby facilities.",
+  "locationDisabled": "Location services are turned off on this device. Please turn on GPS.",
+  "calculatingDistance": "Determining your location..."
 }
+

@@ -2476,4 +2476,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get callNowAction => 'Call Now';
+
+  @override
+  String get locationPermissionDenied =>
+      'Location permission is required to calculate real-time distance and show nearby facilities.';
+
+  @override
+  String get locationDisabled =>
+      'Location services are turned off on this device. Please turn on GPS.';
+
+  @override
+  String get calculatingDistance => 'Determining your location...';
 }

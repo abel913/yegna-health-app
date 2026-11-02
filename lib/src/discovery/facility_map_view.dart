@@ -10,12 +10,16 @@ import 'facility_model.dart';
 class FacilityMapView extends StatefulWidget {
   const FacilityMapView({
     required this.facilities,
+    this.userLocation,
+    this.onLocateMeRequested,
     this.tileProvider,
     this.mapController,
     super.key,
   });
 
   final List<Facility> facilities;
+  final LatLng? userLocation;
+  final Future<LatLng?> Function()? onLocateMeRequested;
   final TileProvider? tileProvider;
   final MapController? mapController;
 
@@ -46,6 +50,10 @@ class _FacilityMapViewState extends State<FacilityMapView> {
             !widget.facilities.contains(_selectedFacility))) {
       _selectedFacility = widget.facilities.first;
     }
+    if (widget.userLocation != null &&
+        widget.userLocation != oldWidget.userLocation) {
+      _mapController.move(widget.userLocation!, _mapController.camera.zoom);
+    }
   }
 
   void _onFacilitySelected(Facility facility) {
@@ -70,23 +78,50 @@ class _FacilityMapViewState extends State<FacilityMapView> {
     _mapController.move(_mapController.camera.center, nextZoom);
   }
 
-  void _locateMe(BuildContext context, bool isAmharic) {
+  Future<void> _locateMe(BuildContext context, bool isAmharic) async {
+    LatLng? target = widget.userLocation;
+    if (target == null && widget.onLocateMeRequested != null) {
+      target = await widget.onLocateMeRequested!();
+    }
+
+    if (target != null) {
+      _mapController.move(target, 15.0);
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(isAmharic
+                ? 'የእርስዎ ወቅታዊ መገኛ ተገኝቷል'
+                : 'Centered on your current location'),
+            backgroundColor: const Color(0xFF0284C7),
+            duration: const Duration(seconds: 2),
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        );
+      }
+      return;
+    }
+
     if (widget.facilities.isEmpty) return;
-    final target = widget.facilities.first;
-    _onFacilitySelected(target);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(isAmharic
-            ? 'በአቅራቢያዎ ያሉ የጤና ተቋማት ተገኝተዋል'
-            : 'Showing facilities closest to your location'),
-        backgroundColor: const Color(0xFF0284C7),
-        duration: const Duration(seconds: 2),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+    final targetFacility = widget.facilities.first;
+    _onFacilitySelected(targetFacility);
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(isAmharic
+              ? 'በአቅራቢያዎ ያሉ የጤና ተቋማት ተገኝተዋል'
+              : 'Showing facilities closest to your location'),
+          backgroundColor: const Color(0xFF0284C7),
+          duration: const Duration(seconds: 2),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
-      ),
-    );
+      );
+    }
   }
 
   @override
@@ -126,6 +161,16 @@ class _FacilityMapViewState extends State<FacilityMapView> {
               ),
               MarkerLayer(
                 markers: [
+                  if (widget.userLocation != null)
+                    Marker(
+                      point: widget.userLocation!,
+                      width: 44,
+                      height: 44,
+                      alignment: Alignment.center,
+                      child: const _UserLocationMarker(
+                        key: ValueKey('user_location_marker'),
+                      ),
+                    ),
                   for (final facility in widget.facilities)
                     Marker(
                       point: LatLng(facility.latitude, facility.longitude),
@@ -530,5 +575,82 @@ class _MapFloatingButton extends StatelessWidget {
       return Tooltip(message: tooltip!, child: button);
     }
     return button;
+  }
+}
+
+class _UserLocationMarker extends StatefulWidget {
+  const _UserLocationMarker({super.key});
+
+  @override
+  State<_UserLocationMarker> createState() => _UserLocationMarkerState();
+}
+
+class _UserLocationMarkerState extends State<_UserLocationMarker>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1800),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        final scale = 1.0 + (_controller.value * 0.45);
+        final opacity = (1.0 - _controller.value).clamp(0.0, 0.65);
+        return Stack(
+          alignment: Alignment.center,
+          children: [
+            Transform.scale(
+              scale: scale,
+              child: Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: const Color(0xFF0284C7).withValues(alpha: opacity),
+                ),
+              ),
+            ),
+            Container(
+              width: 20,
+              height: 20,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF0284C7).withValues(alpha: 0.35),
+                    blurRadius: 6,
+                    spreadRadius: 1,
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              width: 14,
+              height: 14,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: Color(0xFF0284C7),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

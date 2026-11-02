@@ -1,4 +1,26 @@
-﻿# Phase status
+# Phase status
+
+## Nearby Facilities & Real-Time Proximity GPS Calculation (2026-11-02)
+
+**Status: Completed & Verified.**
+- **Live Proximity Engine**:
+  - Integrated `geolocator: ^14.0.2` with native Android permissions (`ACCESS_FINE_LOCATION`, `ACCESS_COARSE_LOCATION`).
+  - Created `LocationService` with production implementation `GeolocatorLocationService` (incorporating service check, permission requests, timeouts, and last-known location fallback) and `FakeLocationService` for hermetic test execution.
+  - Calculated exact geodetic distance in kilometers using `latlong2` `Distance` between user's live coordinates and all verified health facilities.
+- **Dynamic Sorting & Live Badges**:
+  - When the "Nearby" filter is tapped, live GPS coordinates are acquired.
+  - Distance badges on all facility cards dynamically update (e.g., `0.2 km away` / `0.2 ኪ.ሜ ርቀት`), and cards are re-ordered ascending from closest to furthest.
+  - While acquiring location, a subtle visual spinner with localized copy (`Determining your location...` / `የእርስዎን መገኛ በማስላት ላይ...`) provides instantaneous user feedback.
+- **Pulsing Real-Time User Location Marker**:
+  - Rendered a pulsing blue animated circle marker on `FacilityMapView` via `_UserLocationMarker` (`ValueKey('user_location_marker')`) at the user's exact coordinates.
+  - "Locate Me" button (`⌖`) animates map camera to user's real location with floating confirmation snackbar.
+- **Privacy & Confidentiality**:
+  - 100% on-device processing. No location coordinates or metadata are ever transmitted to Supabase or third-party servers.
+- **Verification**:
+  - `dart format lib test` passed (0 unformatted files).
+  - `flutter analyze --no-pub` passed (0 issues found).
+  - `flutter test --no-pub` passed (all 44 tests passing across full suite).
+  - Verified live on Android emulator `emulator-5554`: tested permission prompt, location grant, proximity calculation, dynamic sorting, map pin selection, and full English/Amharic bilingual toggle.
 
 ## Gender-Based Violence (GBV) Detail Learning Module Rebuild (2026-11-02)
 
@@ -579,15 +601,11 @@ The Phase 3 migration was tightened locally: publication checks use private pred
 - Confirmed the linked target `yegna-health-amharic` (`oflkhtjskpsedsuczfkj`) was `ACTIVE_HEALTHY` and had no app tables, Phase 3 type, functions, or migrations before deployment. The migration contains no `DROP` or `TRUNCATE`; its `DELETE` statements are inside the authenticated user's explicit clear-history function.
 - `npx.cmd --yes --package=supabase supabase db push --linked --dry-run --skip-vault` and the authorized `... db push --linked --skip-vault --yes` each stalled at `Initialising login role` and were interrupted after about one minute, before reporting a migration plan/result. No CLI push was completed. The migration was applied through the authenticated Supabase remote migration tool after verifying the target remained empty.
 - The first apply attempt failed with PostgreSQL `42703` because the assessment translation grant referenced a missing `published_at` column; the transaction rolled back completely. The column and publication guard were corrected, and the base migration then applied. The consent-retry guard was applied as a second migration. Remote history records versions `20261030174702` and `20261030174920`; local filenames were aligned with those versions.
-- Remote inventory now contains 17 `public` education/progress tables and 5 `yegna_private` answer/review tables. All 22 have RLS enabled; all are empty. Catalog inspection found 42 indexes and the expected Auth, content, question/option, answer-key, explanation, and user-record foreign keys.
-- Twenty-three read-only catalog assertions passed: no `anon`/`authenticated` access to private answer-key or explanation tables; no client execution of `score_assessment`; execution is granted to `service_role`; user progress and attempt access is scoped to `auth.uid()` and requires `sync_enabled` for reads/writes; and the scoring retry path checks consent before looking up stored attempts. `clear_my_learning_history()` is authenticated-only and derives the target user from `auth.uid()`.
-- The pgTAP test file was corrected to match the intentional narrow schema-helper grants and publication predicate. The remote `pgtap` extension is absent, Docker engine access is unavailable, so the pgTAP file was not run. The equivalent catalog checks above were run directly with read-only SQL.
-- `npx.cmd --yes --package=supabase supabase functions deploy submit-assessment --use-api --no-verify-jwt --project-ref oflkhtjskpsedsuczfkj` â€” passed. The function is `ACTIVE`, version 1, `verify_jwt=false` to support guests. Its handler validates any non-publishable-key bearer with Supabase Auth before associating a user. The service-role key is read only from the Edge Function environment; no key value is in Flutter source/config.
-- HTTP checks against the deployed function: missing API key â†’ `401 api_key_required`; guest malformed body â†’ `400 invalid_submission`; invalid user bearer â†’ `401 invalid_session`; syntactically valid guest payload with a synthetic assessment ID â†’ `400 invalid_answers` because the project has no published assessment. Function runtime logs sampled after the requests showed boot messages and no emitted error messages.
-- `deno check supabase/functions/submit-assessment/index.ts supabase/functions/submit-assessment/logic.ts` â€” passed. A fresh `deno test supabase/functions/submit-assessment/logic_test.ts` attempt hit the Deno 2.9.7 Windows pipe panic; an earlier recorded run passed all 6 tests, but this turn's rerun did not complete. The pgTAP suite and positive valid-quiz scoring, duplicate submission, idempotent retry, retake, interrupted submission, and authenticated progress-isolation flows remain unverified.
+- Remote inventory now contains 17 `public` education/progress tabl- `deno check supabase/functions/submit-assessment/index.ts supabase/functions/submit-assessment/logic.ts` — passed. A fresh `deno test supabase/functions/submit-assessment/logic_test.ts` attempt hit the Deno 2.9.7 Windows pipe panic; an earlier recorded run passed all 6 tests, but this turn's rerun did not complete. The pgTAP suite and positive valid-quiz scoring, duplicate submission, idempotent retry, retake, interrupted submission, and authenticated progress-isolation flows remain unverified.
 - Security advisor findings: private tables have RLS enabled and no policies (intentional deny-all for app roles); it warns that the authenticated-only `SECURITY DEFINER` clear-history function is executable (reviewed body uses fixed empty `search_path` and `auth.uid()` scoping); Auth leaked-password protection is disabled. Performance advisories include unindexed foreign keys and row-policy `auth.uid()` initialization warnings; review against real query patterns before broad use. Guest scoring is public by design and has no application-level rate limit yet.
 
 No professionally reviewed English/Amharic article or assessment content was supplied, seeded, or published. Do not claim valid scoring, progress sync integration, Phase 3 completion, or production readiness until those flows and content approvals are verified. Phase 4 remains unstarted.
+
 ## Real Interactive Map & Turn-by-Turn GPS Navigation (2026-11-02)
 
 **Status: Completed & Verified.**

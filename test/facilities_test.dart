@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:latlong2/latlong.dart' hide Path;
 
 import 'package:yegna_health_app/l10n/app_localizations.dart';
 import 'package:yegna_health_app/src/discovery/facilities_page.dart';
@@ -9,9 +10,12 @@ import 'package:yegna_health_app/src/discovery/facility_detail_sheet.dart';
 import 'package:yegna_health_app/src/discovery/facility_map_view.dart';
 import 'package:yegna_health_app/src/discovery/facility_model.dart';
 import 'package:yegna_health_app/src/discovery/facility_repository.dart';
+import 'package:yegna_health_app/src/discovery/location_service.dart';
 
 Widget _buildTestApp({
   required FacilityRepository repository,
+  LocationService? locationService,
+  LatLng? initialLocation,
   Locale locale = const Locale('en'),
 }) =>
     MaterialApp(
@@ -24,7 +28,11 @@ Widget _buildTestApp({
         GlobalCupertinoLocalizations.delegate,
       ],
       home: Scaffold(
-        body: FacilitiesPage(facilityRepository: repository),
+        body: FacilitiesPage(
+          facilityRepository: repository,
+          locationService: locationService,
+          initialLocation: initialLocation,
+        ),
       ),
     );
 
@@ -142,6 +150,71 @@ void main() {
       final am = await AppLocalizations.delegate.load(const Locale('am'));
       expect(find.text(am.facilitiesIntroduction), findsOneWidget);
       expect(find.text('የአራዳ ወጣቶች ተስማሚ ጤና ጣቢያ'), findsOneWidget);
+    });
+
+    testWidgets(
+        'calculates live distances and sorts by proximity on Nearby filter',
+        (tester) async {
+      const repo = LocalVerifiedFacilityRepository();
+      // Fixed user location right next to AAU Sidist Kilo Clinic (9.0478, 38.7618)
+      const sidistKiloCoords = LatLng(9.0478, 38.7618);
+      const fakeLocationService =
+          FakeLocationService(fixedLocation: sidistKiloCoords);
+
+      await tester.pumpWidget(
+        _buildTestApp(
+          repository: repo,
+          locationService: fakeLocationService,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final en = await AppLocalizations.delegate.load(const Locale('en'));
+
+      // Tap "Nearby" filter
+      await tester.tap(find.text(en.nearbyFilter));
+      await tester.pumpAndSettle();
+
+      // AAU Sidist Kilo Clinic should be 0.0 km away and at the top
+      expect(find.text('0.0 km away'), findsOneWidget);
+      expect(
+        find.text(
+            'Live GPS location acquired. Facilities sorted by proximity.'),
+        findsOneWidget,
+      );
+
+      // Switch to Map view and verify pulsing user location marker
+      await tester.tap(find.byIcon(Icons.map_outlined));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
+
+      expect(
+          find.byKey(const ValueKey('user_location_marker')), findsOneWidget);
+    });
+
+    testWidgets('handles location denial gracefully without crashing',
+        (tester) async {
+      const repo = LocalVerifiedFacilityRepository();
+      const fakeLocationService = FakeLocationService(fixedLocation: null);
+
+      await tester.pumpWidget(
+        _buildTestApp(
+          repository: repo,
+          locationService: fakeLocationService,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final en = await AppLocalizations.delegate.load(const Locale('en'));
+
+      // Tap "Nearby" filter
+      await tester.tap(find.text(en.nearbyFilter));
+      await tester.pumpAndSettle();
+
+      // Expect informative snackbar
+      expect(find.text(en.locationPermissionDenied), findsOneWidget);
+      // List still displays verified facilities
+      expect(find.text('Arada Youth-Friendly Health Center'), findsOneWidget);
     });
   });
 }

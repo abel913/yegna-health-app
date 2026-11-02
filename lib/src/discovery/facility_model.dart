@@ -81,4 +81,33 @@ class Facility {
     final hour = now.hour;
     return hour >= openingHour && hour < closingHour;
   }
+
+  Facility copyWith({
+    double? distanceKm,
+  }) =>
+      Facility(
+        id: id,
+        nameEn: nameEn,
+        nameAm: nameAm,
+        subCityEn: subCityEn,
+        subCityAm: subCityAm,
+        addressEn: addressEn,
+        addressAm: addressAm,
+        landmarkEn: landmarkEn,
+        landmarkAm: landmarkAm,
+        phone: phone,
+        type: type,
+        latitude: latitude,
+        longitude: longitude,
+        distanceKm: distanceKm ?? this.distanceKm,
+        isYouthFriendly: isYouthFriendly,
+        isFreeForYouth: isFreeForYouth,
+        openingHour: openingHour,
+        closingHour: closingHour,
+        services: services,
+        campusNameEn: campusNameEn,
+        campusNameAm: campusNameAm,
+        confidentialityPolicyEn: confidentialityPolicyEn,
+        confidentialityPolicyAm: confidentialityPolicyAm,
+      );
 }
