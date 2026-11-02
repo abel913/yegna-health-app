@@ -1214,6 +1214,288 @@ abstract class AppLocalizations {
   /// **'HIV can be prevented and managed—practice safe behaviors, get tested early, and start treatment (ART) to live a healthy life and protect others.'**
   String get hivNoteContent;
 
+  /// No description provided for @stiHeroDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'STIs are infections spread mainly through unprotected sexual contact; they may show no symptoms but can cause serious health complications if untreated, and can be managed effectively with early diagnosis and proper treatment.'**
+  String get stiHeroDesc;
+
+  /// No description provided for @stiNoteContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Protect yourself by practicing safe sex, getting tested regularly, and seeking medical care early knowing your status helps prevent complications and protects others.'**
+  String get stiNoteContent;
+
+  /// No description provided for @stiDefinitionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Definition'**
+  String get stiDefinitionTitle;
+
+  /// No description provided for @stiDefinitionSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What are Sexually Transmitted Infections (STIs)?'**
+  String get stiDefinitionSubtitle;
+
+  /// No description provided for @stiDefinitionDesc1.
+  ///
+  /// In en, this message translates to:
+  /// **'Sexually Transmitted Infections (STIs) are infections passed from person to person primarily through sexual contact (vaginal, oral, or anal intercourse). They are caused by bacteria, viruses, or parasites.'**
+  String get stiDefinitionDesc1;
+
+  /// No description provided for @stiDefinitionDesc2.
+  ///
+  /// In en, this message translates to:
+  /// **'Common bacterial STIs include Chlamydia, Gonorrhea, and Syphilis. Common viral STIs include HPV (Human Papillomavirus), Herpes (HSV), Hepatitis B, and HIV. Common parasitic STIs include Trichomoniasis.'**
+  String get stiDefinitionDesc2;
+
+  /// No description provided for @stiDefinitionDesc3.
+  ///
+  /// In en, this message translates to:
+  /// **'An infection (STI) means a pathogen is present in the body, often without causing symptoms. It becomes a disease (STD) when the infection causes noticeable damage or illness. Many STIs are silent but still contagious.'**
+  String get stiDefinitionDesc3;
+
+  /// No description provided for @stiSymptomsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Signs and Symptoms of STI'**
+  String get stiSymptomsTitle;
+
+  /// No description provided for @stiSymptomsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recognizing common signs and asymptomatic cases'**
+  String get stiSymptomsSubtitle;
+
+  /// No description provided for @stiSymptomsIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Symptoms can vary depending on the specific infection and gender, but commonly include:'**
+  String get stiSymptomsIntro;
+
+  /// No description provided for @stiSymptom1.
+  ///
+  /// In en, this message translates to:
+  /// **'Unusual discharge: Thick, watery, yellow, green, or foul-smelling discharge from the penis, vagina, or anus.'**
+  String get stiSymptom1;
+
+  /// No description provided for @stiSymptom2.
+  ///
+  /// In en, this message translates to:
+  /// **'Pain or burning sensation: Discomfort or burning pain during urination (dysuria) or during sexual intercourse.'**
+  String get stiSymptom2;
+
+  /// No description provided for @stiSymptom3.
+  ///
+  /// In en, this message translates to:
+  /// **'Sores, bumps, or blisters: Painful or painless blisters, ulcers, warts, or lesions on the genitals, groin, mouth, or anus.'**
+  String get stiSymptom3;
+
+  /// No description provided for @stiSymptom4.
+  ///
+  /// In en, this message translates to:
+  /// **'Itching and irritation: Persistent itching, redness, or swelling around the genital and perineal areas.'**
+  String get stiSymptom4;
+
+  /// No description provided for @stiSymptom5.
+  ///
+  /// In en, this message translates to:
+  /// **'Abdominal or pelvic pain: Lower belly pain, unexpected bleeding between menstrual periods, or bleeding after intercourse.'**
+  String get stiSymptom5;
+
+  /// No description provided for @stiSymptomsAsymptomaticAlert.
+  ///
+  /// In en, this message translates to:
+  /// **'Silent infections: Up to 70% of women and many men with STIs like chlamydia or gonorrhea experience NO noticeable symptoms. Regular clinical testing is the only reliable way to confirm status.'**
+  String get stiSymptomsAsymptomaticAlert;
+
+  /// No description provided for @stiDiagnosisTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Diagnosis of STI'**
+  String get stiDiagnosisTitle;
+
+  /// No description provided for @stiDiagnosisSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How healthcare providers detect and evaluate STIs'**
+  String get stiDiagnosisSubtitle;
+
+  /// No description provided for @stiDiagnosisIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Early diagnosis ensures quick cure and prevents irreversible reproductive damage. Healthcare providers use:'**
+  String get stiDiagnosisIntro;
+
+  /// No description provided for @stiDiagnosisItem1.
+  ///
+  /// In en, this message translates to:
+  /// **'Clinical examination: Confidential, private, and respectful physical assessment by a trained health professional.'**
+  String get stiDiagnosisItem1;
+
+  /// No description provided for @stiDiagnosisItem2.
+  ///
+  /// In en, this message translates to:
+  /// **'Laboratory tests: Blood tests (for Syphilis, HIV, Hepatitis B), urine samples, and swabs from fluid or sores.'**
+  String get stiDiagnosisItem2;
+
+  /// No description provided for @stiDiagnosisItem3.
+  ///
+  /// In en, this message translates to:
+  /// **'National syndromic management: In primary health clinics across Ethiopia, healthcare workers follow national guidelines to treat symptoms immediately on the first visit without waiting days for lab results.'**
+  String get stiDiagnosisItem3;
+
+  /// No description provided for @stiDiagnosisYouthFriendly.
+  ///
+  /// In en, this message translates to:
+  /// **'Youth-friendly centers provide completely confidential, stigma-free counseling, tests, and care for adolescents and youth.'**
+  String get stiDiagnosisYouthFriendly;
+
+  /// No description provided for @stiComplicationsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Complications of STI'**
+  String get stiComplicationsTitle;
+
+  /// No description provided for @stiComplicationsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Serious risks of leaving STIs untreated'**
+  String get stiComplicationsSubtitle;
+
+  /// No description provided for @stiComplicationsIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'When left untreated or improperly treated, STIs can lead to severe and lasting health consequences:'**
+  String get stiComplicationsIntro;
+
+  /// No description provided for @stiComplication1.
+  ///
+  /// In en, this message translates to:
+  /// **'Infertility & PID: Untreated chlamydia or gonorrhea can cause Pelvic Inflammatory Disease (PID) in women, leading to scarring of fallopian tubes, chronic pain, life-threatening ectopic pregnancy, or infertility. In men, it can cause painful epididymitis and infertility.'**
+  String get stiComplication1;
+
+  /// No description provided for @stiComplication2.
+  ///
+  /// In en, this message translates to:
+  /// **'Higher HIV risk: Open genital sores and mucosal inflammation from STIs multiply the risk of contracting or transmitting HIV by 3 to 5 times.'**
+  String get stiComplication2;
+
+  /// No description provided for @stiComplication3.
+  ///
+  /// In en, this message translates to:
+  /// **'Mother-to-child transmission: Pregnant mothers with untreated STIs can pass infections to their babies, leading to miscarriage, stillbirth, premature birth, low birth weight, and newborn eye infections.'**
+  String get stiComplication3;
+
+  /// No description provided for @stiComplication4.
+  ///
+  /// In en, this message translates to:
+  /// **'Cervical & other cancers: Persistent infections with high-risk HPV strains are the primary cause of cervical cancer in women.'**
+  String get stiComplication4;
+
+  /// No description provided for @stiTreatmentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Management and treatment of STI'**
+  String get stiTreatmentTitle;
+
+  /// No description provided for @stiTreatmentSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Medical therapies and critical rules for recovery'**
+  String get stiTreatmentSubtitle;
+
+  /// No description provided for @stiTreatmentDesc1.
+  ///
+  /// In en, this message translates to:
+  /// **'Bacterial and parasitic STIs (Chlamydia, Gonorrhea, Syphilis, Trichomoniasis) are fully curable with specific prescription antibiotics or antiparasitics.'**
+  String get stiTreatmentDesc1;
+
+  /// No description provided for @stiTreatmentDesc2.
+  ///
+  /// In en, this message translates to:
+  /// **'Viral STIs (Herpes, HPV, HIV, Hepatitis B) cannot be cured with antibiotics, but modern antiviral medications effectively manage symptoms, reduce recurrences, and prevent complications.'**
+  String get stiTreatmentDesc2;
+
+  /// No description provided for @stiTreatmentRule1.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish all medication: Always complete the full prescribed course, even if symptoms vanish early. Incomplete treatment creates antibiotic-resistant strains.'**
+  String get stiTreatmentRule1;
+
+  /// No description provided for @stiTreatmentRule2.
+  ///
+  /// In en, this message translates to:
+  /// **'Treat sexual partners simultaneously: Both partners must receive treatment at the same time to prevent passing the infection back and forth (ping-pong effect).'**
+  String get stiTreatmentRule2;
+
+  /// No description provided for @stiTreatmentRule3.
+  ///
+  /// In en, this message translates to:
+  /// **'Abstain during treatment: Refrain from all sexual intercourse until both partners finish all medicines and clinical symptoms are completely gone.'**
+  String get stiTreatmentRule3;
+
+  /// No description provided for @stiTreatmentRule4.
+  ///
+  /// In en, this message translates to:
+  /// **'Never self-medicate: Do not take leftover pills or buy random antibiotics from pharmacies without a medical diagnosis, as wrong medications can make infections worse.'**
+  String get stiTreatmentRule4;
+
+  /// No description provided for @stiPreventionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Prevention of STI'**
+  String get stiPreventionTitle;
+
+  /// No description provided for @stiPreventionSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Effective ways to protect yourself and your partner'**
+  String get stiPreventionSubtitle;
+
+  /// No description provided for @stiPreventionIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Protecting yourself from STIs requires practical, consistent safe behaviors:'**
+  String get stiPreventionIntro;
+
+  /// No description provided for @stiPreventionItem1.
+  ///
+  /// In en, this message translates to:
+  /// **'Consistent & correct condom use: Latex and polyurethane male and female condoms provide highly effective barrier protection against most STIs when used properly every single time.'**
+  String get stiPreventionItem1;
+
+  /// No description provided for @stiPreventionItem2.
+  ///
+  /// In en, this message translates to:
+  /// **'Mutual fidelity: Being in a faithful relationship with one uninfected partner after both have been tested.'**
+  String get stiPreventionItem2;
+
+  /// No description provided for @stiPreventionItem3.
+  ///
+  /// In en, this message translates to:
+  /// **'Abstinence: Choosing not to engage in sexual intercourse is the only 100% foolproof way to prevent STIs.'**
+  String get stiPreventionItem3;
+
+  /// No description provided for @stiPreventionItem4.
+  ///
+  /// In en, this message translates to:
+  /// **'Vaccination: Vaccines against HPV (protects against cervical cancer) and Hepatitis B are safe, highly effective, and available.'**
+  String get stiPreventionItem4;
+
+  /// No description provided for @stiPreventionItem5.
+  ///
+  /// In en, this message translates to:
+  /// **'Regular checkups & screening: Getting tested before starting a new sexual relationship and getting screened annually if sexually active.'**
+  String get stiPreventionItem5;
+
+  /// No description provided for @stiPreventionItem6.
+  ///
+  /// In en, this message translates to:
+  /// **'Avoid alcohol and substance abuse: Intoxication impairs judgment and significantly reduces the use of protection.'**
+  String get stiPreventionItem6;
+
   /// No description provided for @learningSectionsTitle.
   ///
   /// In en, this message translates to:

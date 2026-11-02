@@ -615,6 +615,184 @@ class AppLocalizationsAm extends AppLocalizations {
       'ኤችአይቪን መከላከል እና መቆጣጠር ይቻላል—ደህንነታቸው የተጠበቁ ባህሪያትን ይለማመዱ፣ ቀድመው ይመረመሩ፣ እና ጤናማ ሕይወት ለመምራትና ሌሎችን ለመጠበቅ ሕክምና (ART) ይጀምሩ።';
 
   @override
+  String get stiHeroDesc =>
+      'በግብረ ሥጋ ግንኙነት የሚተላለፉ ኢንፌክሽኖች (STIs) በዋነኝነት የሚተላለፉት ጥንቃቄ በጎደለው የግብረ ሥጋ ግንኙነት ሲሆን ምንም ምልክት ላያሳዩ ይችላሉ፤ ነገር ግን ካልታከሙ ከባድ የጤና ጉዳቶችን ሊያስከትሉ ይችላሉ። በቅድመ ምርመራና ተገቢ ሕክምና በብቃት መቆጣጠር ይቻላል።';
+
+  @override
+  String get stiNoteContent =>
+      'ደህንነቱ የተጠበቀ የግብረ ሥጋ ግንኙነት በማድረግ፣ አዘውትረው በመመርመር እና አስቀድመው የህክምና እርዳታ በማግኘት ራስዎን ይጠብቁ፤ የጤና ሁኔታዎን ማወቅ ችግሮችን ለመከላከል እና ሌሎችንም ለመጠበቅ ይረዳል።';
+
+  @override
+  String get stiDefinitionTitle => 'ትርጓሜ';
+
+  @override
+  String get stiDefinitionSubtitle =>
+      'በግብረ ሥጋ ግንኙነት የሚተላለፉ ኢንፌክሽኖች (STIs) ምንድን ናቸው?';
+
+  @override
+  String get stiDefinitionDesc1 =>
+      'በግብረ ሥጋ ግንኙነት የሚተላለፉ ኢንፌክሽኖች (STIs) በዋነኝነት በግብረ ሥጋ ግንኙነት (በሴት ብልት፣ በአፍ ወይም በፊንጢጣ) ከአንድ ሰው ወደ ሌላ ሰው የሚተላለፉ ኢንፌክሽኖች ናቸው። እነዚህም በባክቴሪያ፣ በቫይረስ ወይም በጥገኛ ተውሳኮች የሚከሰቱ ናቸው።';
+
+  @override
+  String get stiDefinitionDesc2 =>
+      'የተለመዱ የባክቴሪያ STIs ክላሚዲያ፣ ጨብጥ (ጎኖርያ) እና ቂጥኝ (ሲፊሊስ) ናቸው። የተለመዱ የቫይረስ STIs ደግሞ የሰው ፓፒሎማቫይረስ (HPV)፣ ሄርፒስ (HSV)፣ ሄፓታይተስ ቢ እና ኤችአይቪ ናቸው። የተለመደው የጥገኛ ተውሳክ ኢንፌክሽን ትሪኮሞኒያሲስ ነው።';
+
+  @override
+  String get stiDefinitionDesc3 =>
+      'ብዙ ሰዎች የኢንፌክሽን እና የበሽታ ልዩነትን ይደባለቃሉ። ኢንፌክሽን (STI) በሽታ አምጪው በሰውነት ውስጥ መኖሩን የሚያመለክት ሲሆን ብዙውን ጊዜ ምንም የሚታይ ምልክት አያሳይም። ኢንፌክሽኑ የሕመም ምልክቶች ወይም የሰውነት ጉዳት ሲያስከትል ወደ በሽታነት (STD) ይቀየራል። ብዙ STIs ድምፅ-አልባ ቢሆኑም ወደ ሌሎች ሊተላለፉ ይችላሉ።';
+
+  @override
+  String get stiSymptomsTitle => 'የ STI ምልክቶች';
+
+  @override
+  String get stiSymptomsSubtitle => 'የተለመዱ ምልክቶች እና ምልክት አልባ ሁኔታዎች';
+
+  @override
+  String get stiSymptomsIntro =>
+      'ምልክቶቹ እንደ ኢንፌክሽኑ ዓይነት እና እንደ ጾታ ሊለያዩ ይችላሉ፣ ነገር ግን በብዛት የሚከተሉትን ያካትታሉ፦';
+
+  @override
+  String get stiSymptom1 =>
+      'ያልተለመደ ፈሳሽ፦ ከብልት ወይም ከፊንጢጣ የሚወጣ ወፍራም፣ ቀጭን፣ ቢጫ፣ አረንጓዴ ወይም መጥፎ ጠረን ያለው ፈሳሽ።';
+
+  @override
+  String get stiSymptom2 =>
+      'የሕመም ወይም የማቃጠል ስሜት፦ በሽንት ወይም በግብረ ሥጋ ግንኙነት ወቅት የሚሰማ የማቃጠል ወይም የሕመም ስሜት።';
+
+  @override
+  String get stiSymptom3 =>
+      'ቁስለት፣ እብጠት ወይም ኪንታሮት፦ በብልት፣ በጉሮሮ፣ በአፍ ወይም በፊንጢጣ ዙሪያ የሚታዩ የሚያሳምሙ ወይም የማያሳምሙ ቁስሎች፣ አረፋዎች ወይም እብጠቶች።';
+
+  @override
+  String get stiSymptom4 =>
+      'ማሳከክ እና መቅላት፦ በብልት እና በዙሪያው አካባቢ የሚሰማ የማያቋርጥ ማሳከክ፣ መቅላት ወይም እብጠት።';
+
+  @override
+  String get stiSymptom5 =>
+      'የሆድ ወይም የወገብ ሕመም፦ የታችኛው የሆድ ክፍል ሕመም፣ የወር አበባ ባልሆነ ጊዜ የሚታይ ደም መፍሰስ፣ ወይም ከግንኙነት በኋላ ደም መፍሰስ።';
+
+  @override
+  String get stiSymptomsAsymptomaticAlert =>
+      'ድምፅ-አልባ ኢንፌክሽኖች፦ እስከ 70% የሚሆኑ ሴቶች እና ብዙ ወንዶች በክላሚዲያ ወይም በጨብጥ ሲያዙ ምንም ዓይነት የሚታይ ምልክት አያሳዩም። ትክክለኛውን ሁኔታ ለማወቅ ክሊኒካዊ ምርመራ ብቸኛው መንገድ ነው።';
+
+  @override
+  String get stiDiagnosisTitle => 'የ STI ምርመራ';
+
+  @override
+  String get stiDiagnosisSubtitle => 'የጤና ባለሙያዎች STIን እንዴት ይመረምራሉ';
+
+  @override
+  String get stiDiagnosisIntro =>
+      'ቀደም ብሎ መመርመር ፈጣን ፈውስን ያረጋግጣል እና ዘላቂ የመራቢያ አካላት ጉዳትን ይከላከላል። የጤና ባለሙያዎች የሚከተሉትን ይጠቀማሉ፦';
+
+  @override
+  String get stiDiagnosisItem1 =>
+      'ክሊኒካዊ የአካል ምርመራ፦ በሰለጠነ የጤና ባለሙያ የሚደረግ ሚስጥራዊ እና አክብሮት የተሞላበት የአካል ምርመራ።';
+
+  @override
+  String get stiDiagnosisItem2 =>
+      'የላቦራቶሪ ምርመራዎች፦ የደም ምርመራ (ለቂጥኝ፣ ኤችአይቪ፣ ሄፓታይተስ ቢ)፣ የሽንት ናሙና፣ እና ከፈሳሽ ወይም ከቁስለት የሚወሰድ ናሙና።';
+
+  @override
+  String get stiDiagnosisItem3 =>
+      'የህመም ምልክት ተኮር አያያዝ (ሲንድሮሚክ ማኔጅመንት)፦ በኢትዮጵያ የመጀመሪያ ደረጃ ጤና ጣቢያዎች የጤና ባለሙያዎች የላቦራቶሪ ውጤቶችን ለቀናት ሳይጠብቁ በምልክቶች ላይ ተመስርተው በመጀመሪያው ቀን ህክምና ይሰጣሉ።';
+
+  @override
+  String get stiDiagnosisYouthFriendly =>
+      'ለወጣቶች ምቹ የሆኑ የጤና ማዕከላት ፍጹም ሚስጥራዊ እና ከስጋት ነጻ የሆነ የምክር፣ የምርመራ እና የእንክብካቤ አገልግሎት ይሰጣሉ።';
+
+  @override
+  String get stiComplicationsTitle => 'የ STI ውስብስብ የጤና ችግሮች';
+
+  @override
+  String get stiComplicationsSubtitle =>
+      'ያልታከሙ የ STI ኢንፌክሽኖች የሚያስከትሉት ከባድ አደጋዎች';
+
+  @override
+  String get stiComplicationsIntro =>
+      'STIs ሳይታከሙ ወይም በአግባቡ ሳይታከሙ ሲቀሩ ከባድ እና ዘላቂ የጤና ችግሮችን ያስከትላሉ፦';
+
+  @override
+  String get stiComplication1 =>
+      'መሃንነት እና የዳሌ እብጠት (PID)፦ ያልታከመ ክላሚዲያ ወይም ጨብጥ በሴቶች ላይ የማህፀን ቱቦ ጠባሳን እና መካንነትን ያስከትላል፤ በወንዶች ላይም የዘር ፍሬ እብጠት እና መካንነት ያመጣል።';
+
+  @override
+  String get stiComplication2 =>
+      'ከፍተኛ የኤችአይቪ ተጋላጭነት፦ በብልት ላይ ያሉ ቁስሎች እና እብጠቶች በኤችአይቪ የመያዝ ወይም የማስተላለፍ እድልን ከ3 እስከ 5 እጥፍ ይጨምራሉ።';
+
+  @override
+  String get stiComplication3 =>
+      'ከእናት ወደ ልጅ መተላለፍ፦ ነፍሰጡር እናቶች ያልታከመ STI ካለባቸው ኢንፌክሽኑን ወደ ልጃቸው ሊያስተላልፉ ይችላሉ፤ ይህም ውርጃ፣ የሞተ ልጅ መወለድ፣ ያለጊዜው መወለድ እና የጨቅላ ሕጻናት የአይን ኢንፌክሽን ሊያስከትል ይችላል።';
+
+  @override
+  String get stiComplication4 =>
+      'የማህፀን በር ካንሰር፦ ከፍተኛ ተጋላጭነት ባላቸው የ HPV ዝርያዎች የሚከሰቱ ዘላቂ ኢንፌክሽኖች ለሴቶች የማህፀን በር ካንሰር ዋነኛ መንስኤ ናቸው።';
+
+  @override
+  String get stiTreatmentTitle => 'የ STI አያያዝ እና ሕክምና';
+
+  @override
+  String get stiTreatmentSubtitle => 'የሕክምና ዘዴዎች እና ለማገገም አስፈላጊ መመሪያዎች';
+
+  @override
+  String get stiTreatmentDesc1 =>
+      'የባክቴሪያ እና የጥገኛ ተውሳክ STIs (ክላሚዲያ፣ ጨብጥ፣ ቂጥኝ፣ ትሪኮሞኒያሲስ) በታዘዙ አንቲባዮቲኮች ሙሉ በሙሉ ይድናሉ።';
+
+  @override
+  String get stiTreatmentDesc2 =>
+      'የቫይረስ STIs (ሄርፒስ፣ HPV፣ ኤችአይቪ፣ ሄፓታይተስ ቢ) በአንቲባዮቲክስ አይድኑም፤ ነገር ግን ዘመናዊ የፀረ-ቫይረስ መድሃኒቶች ምልክቶችን ለመቆጣጠር እና ችግሮችን ለመከላከል ይረዳሉ።';
+
+  @override
+  String get stiTreatmentRule1 =>
+      'ሁሉንም መድሃኒቶች ጨርሰው ይውሰዱ፦ ምልክቶቹ ቀድመው ቢጠፉም እንኳ የታዘዘውን ሙሉ መድሃኒት ይጨርሱ። መድሃኒት አለመጨረስ ባክቴሪያዎች መድሃኒትን እንዲላመዱ ያደርጋል።';
+
+  @override
+  String get stiTreatmentRule2 =>
+      'የፍቅር አጋርዎን አብረው ያሳክሙ፦ በሽታው እርስ በእርስ እንዳይተላለፍ ሁለቱም አጋሮች በአንድ ጊዜ ህክምና ማግኘት አለባቸው።';
+
+  @override
+  String get stiTreatmentRule3 =>
+      'በህክምና ወቅት ግንኙነት አያድርጉ፦ ሁለቱም አጋሮች መድሃኒቱን ጨርሰው ምልክቶች ሙሉ በሙሉ እስኪጠፉ ድረስ ከግብረ ሥጋ ግንኙነት ይቆጠቡ።';
+
+  @override
+  String get stiTreatmentRule4 =>
+      'በራስዎ መድሃኒት አይውሰዱ፦ ያለ ሐኪም ትዕዛዝ ከተለመዱ ፋርማሲዎች መድሃኒት ገዝተው አይውሰዱ፤ የተሳሳተ መድሃኒት በሽታውን ሊያባብሰው ይችላል።';
+
+  @override
+  String get stiPreventionTitle => 'የ STI መከላከያ መንገዶች';
+
+  @override
+  String get stiPreventionSubtitle => 'ራስን እና የፍቅር አጋርን ለመጠበቅ የሚረዱ ተግባራዊ መንገዶች';
+
+  @override
+  String get stiPreventionIntro =>
+      'ከ STIs ራስን ለመጠበቅ ተግባራዊ እና ቀጣይነት ያላቸው ጥንቃቄዎችን ማድረግ ያስፈልጋል፦';
+
+  @override
+  String get stiPreventionItem1 =>
+      'ኮንዶምን ዘወትርና በትክክል መጠቀም፦ የላቴክስ እና የፖሊዩረቴን የወንድ እና የሴት ኮንዶሞች በትክክል ጥቅም ላይ ሲውሉ ከብዙዎቹ STIs ከፍተኛ ጥበቃ ያደርጋሉ።';
+
+  @override
+  String get stiPreventionItem2 =>
+      'የጋራ ታማኝነት፦ ሁለቱም ከተመረመሩ በኋላ ላልተያዘ አንድ የፍቅር አጋር ብቻ ታማኝ መሆን።';
+
+  @override
+  String get stiPreventionItem3 =>
+      'ከግንኙነት መታቀብ፦ ከግብረ ሥጋ ግንኙነት መታቀብ ከ STIs ለመጠበቅ 100% አስተማማኝ ብቸኛው መንገድ ነው።';
+
+  @override
+  String get stiPreventionItem4 =>
+      'ክትባት መከተብ፦ የማህፀን በር ካንሰርን የሚከላከለው የ HPV ክትባት እና የሄፓታይተስ ቢ ክትባቶች ደህንነታቸው የተጠበቀና ውጤታማ ናቸው።';
+
+  @override
+  String get stiPreventionItem5 =>
+      'መደበኛ ምርመራ ማድረግ፦ አዲስ ግንኙነት ከመጀመርዎ በፊት እና በግብረ ሥጋ ግንኙነት ንቁ ከሆኑ በየዓመቱ መመርመር።';
+
+  @override
+  String get stiPreventionItem6 =>
+      'ከአልኮል እና ከአደንዛዥ ዕፅ መራቅ፦ ስካር ውሳኔ የመስጠት አቅምን ስለሚያዳክም ጥንቃቄ የጎደለው ግንኙነት ውስጥ የመግባት እድልን ይጨምራል።';
+
+  @override
   String get learningSectionsTitle => 'የትምህርት ክፍሎች';
 
   @override

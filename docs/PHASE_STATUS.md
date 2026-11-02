@@ -1,5 +1,24 @@
 # Phase status
 
+## Sexually Transmitted Infections (STI) Detail Learning Module Rebuild (2026-11-02)
+
+**Status: Phase 3 Learning Module UI Rebuild Complete & Verified.**
+- Implemented `StiModuleDetailPage` (`lib/src/learning/sti_module_page.dart`) for Module 02 matching user reference screenshots:
+  - **Top Hero Card**: Rounded card with authentic booklet illustration (`assets/images/learning/module_02_sti.png`), bold title ("Sexual transmitted infections (STI)"), and high-contrast clinical synopsis.
+  - **Note Section**: Light-blue card with lightbulb icon highlighting safe sex, routine checkups, and early medical consultation.
+  - **Learning Sections Header**: Vertical azure indicator bar and dynamic reading progress badge (`X / 6 read`).
+  - **6 Interactive Accordion Sections with Dynamic Badging**:
+    - Unread sections display their numerical indicator (`1`, `4`, etc.) in a bold circular azure badge; read sections display a white checkmark icon (`✔`).
+    1. **Definition**: Pathogen types (bacteria, viruses, parasites), distinction between infection (STI) and clinical disease (STD), and high frequency of asymptomatic transmission.
+    2. **Signs and Symptoms of STI**: Unusual discharge, dysuria, ulcers/blisters, itching, pelvic pain, and critical alert regarding silent infections (up to 70% in women).
+    3. **Diagnosis of STI**: Clinical physical examination, laboratory testing modalities (blood, urine, swabs), Ethiopia's national Syndromic Management approach, and confidential youth-friendly services.
+    4. **Complications of STI**: Pelvic Inflammatory Disease (PID), ectopic pregnancy, permanent infertility, 3-5x elevated HIV susceptibility, PMTCT transmission, and oncogenic HPV risks.
+    5. **Management and treatment of STI**: Curable bacterial/parasitic infections vs manageable viral infections, and the 4 golden rules of recovery (completing full antibiotic courses, simultaneous partner notification/treatment, abstinence during recovery, avoiding self-medication).
+    6. **Prevention of STI**: Consistent & correct condom usage, mutual fidelity, abstinence, HPV and Hepatitis B vaccinations, and avoiding substance misuse.
+  - **Progress Integration**: Connected to `LearningProgressController` with completion state persistence for `module-02`.
+  - **Bilingual Localization**: Added complete English and Amharic ARB resources in `lib/l10n/app_en.arb` and `lib/l10n/app_am.arb`, cleanly regenerated via `flutter gen-l10n`.
+  - **Test Suite**: Created `test/sti_module_page_test.dart` testing 6-accordion layout, dynamic badge states, expansion, completion persistence, and Amharic locale. All 43 tests passing.
+
 ## HIV/AIDS Interactive Quiz & Module Experience Rebuild (2026-11-02)
 
 **Status: Phase 3 Learning Module & Assessment Rebuild Complete & Verified.**

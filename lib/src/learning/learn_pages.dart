@@ -9,6 +9,7 @@ import 'learning_modules_carousel.dart';
 import 'hiv_module_page.dart';
 import 'hiv_quiz_page.dart';
 import 'learning_progress_controller.dart';
+import 'sti_module_page.dart';
 
 class LearnPage extends StatefulWidget {
   const LearnPage({
@@ -255,6 +256,16 @@ class _LearnPageState extends State<LearnPage> {
     if (module.id == 'module-07') {
       Navigator.of(context).push<void>(MaterialPageRoute<void>(
         builder: (_) => HivModuleDetailPage(
+          progressController: widget.progressController,
+          assessmentRepository: widget.assessmentRepository,
+          onOpenQuiz: () => _handleOpenQuiz(context, module),
+        ),
+      ));
+      return;
+    }
+    if (module.id == 'module-02') {
+      Navigator.of(context).push<void>(MaterialPageRoute<void>(
+        builder: (_) => StiModuleDetailPage(
           progressController: widget.progressController,
           assessmentRepository: widget.assessmentRepository,
           onOpenQuiz: () => _handleOpenQuiz(context, module),

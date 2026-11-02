@@ -1,5 +1,22 @@
 # Handoff
 
+## Sexually Transmitted Infections (STI) Detail Learning Module Rebuild (2026-11-02)
+
+- Built and verified the dedicated learning module screen `StiModuleDetailPage` (`lib/src/learning/sti_module_page.dart`) for Module 02 matching reference screenshots:
+  - Top Hero Card featuring `assets/images/learning/module_02_sti.png`, title "Sexual transmitted infections (STI)", and clinical overview summary.
+  - Note Section with light-blue card container, lightbulb icon, and safe-sex guidance.
+  - Learning Sections Header with dynamic reading count badge (`X / 6 read`).
+  - 6 interactive accordion sections with dynamic indicator badges (numerical badge when unread, white checkmark when read):
+    1. **Definition**: Pathogens, infection (STI) vs. disease (STD), silent transmission.
+    2. **Signs and Symptoms of STI**: Primary clinical signs and warning on asymptomatic infections.
+    3. **Diagnosis of STI**: Clinical evaluations, laboratory testing, national syndromic management.
+    4. **Complications of STI**: Infertility, PID, elevated HIV transmission, HPV oncogenesis.
+    5. **Management and treatment of STI**: Curable vs manageable infections and the 4 critical rules of treatment.
+    6. **Prevention of STI**: Condom barrier protection, mutual fidelity, abstinence, and vaccinations.
+  - Linked to `LearnPage` carousel when selecting Module 02.
+  - Added full English and Amharic ARB resources.
+  - Widget and unit tests in `test/sti_module_page_test.dart` (43/43 tests passing across the app).
+
 ## HIV/AIDS Interactive Quiz & Module Experience Rebuild (2026-11-02)
 
 - Built and verified the dedicated interactive quiz screen `HivQuizPage` (`lib/src/learning/hiv_quiz_page.dart`) matching the reference screenshots:
