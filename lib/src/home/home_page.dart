@@ -7,7 +7,6 @@ import '../auth/auth_controller.dart';
 import '../learning/assessment_repository.dart';
 import '../learning/education_repository.dart';
 import '../learning/hiv_module_page.dart';
-import '../learning/learning_models.dart';
 import '../learning/learning_modules_carousel.dart';
 import '../learning/learning_progress_controller.dart';
 
@@ -42,35 +41,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late Future<CachedValue<List<ArticlePreview>>> _articles;
-
-  @override
-  void initState() {
-    super.initState();
-    _articles = _loadArticles();
-  }
-
-  @override
-  void didUpdateWidget(covariant HomePage oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.locale != widget.locale ||
-        oldWidget.educationRepository != widget.educationRepository) {
-      _articles = _loadArticles();
-    }
-  }
-
-  Future<CachedValue<List<ArticlePreview>>> _loadArticles() async {
-    try {
-      return await widget.educationRepository
-          .articles(widget.locale.languageCode);
-    } catch (_) {
-      return const CachedValue(value: [], isStale: true);
-    }
-  }
-
   Future<void> _refresh() async {
-    setState(() => _articles = _loadArticles());
-    await _articles;
+    setState(() {});
   }
 
   String _getGreeting(int hour, AppLocalizations l10n) {

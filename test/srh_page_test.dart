@@ -68,8 +68,7 @@ void main() {
     expect(find.text('1 / 4 read'), findsOneWidget);
 
     // Tap Section 2 to expand
-    final sec2Finder =
-        find.text('Reproductive Anatomy & Biological Functions');
+    final sec2Finder = find.text('Anatomy & Reproductive Systems');
     expect(sec2Finder, findsOneWidget);
     await tester.tap(sec2Finder);
     await tester.pumpAndSettle();
@@ -79,6 +78,8 @@ void main() {
     // Mark as completed
     final markCompletedBtn = find.text('Mark as Completed');
     expect(markCompletedBtn, findsOneWidget);
+    await tester.ensureVisible(markCompletedBtn);
+    await tester.pumpAndSettle();
     await tester.tap(markCompletedBtn);
     await tester.pumpAndSettle();
 

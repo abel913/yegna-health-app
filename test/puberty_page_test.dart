@@ -78,6 +78,8 @@ void main() {
     // Mark as completed
     final markCompletedBtn = find.text('Mark as Completed');
     expect(markCompletedBtn, findsOneWidget);
+    await tester.ensureVisible(markCompletedBtn);
+    await tester.pumpAndSettle();
     await tester.tap(markCompletedBtn);
     await tester.pumpAndSettle();
 

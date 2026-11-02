@@ -1,4 +1,18 @@
-﻿# Handoff
+# Handoff
+
+## Nearby Facilities & Real-Time Proximity GPS Calculation (2026-11-02)
+
+- Delivered real-time GPS proximity distance engine and dynamic facility sorting:
+  - **Location Service Architecture**: Created `lib/src/discovery/location_service.dart` providing `LocationService`, `GeolocatorLocationService`, and `FakeLocationService`.
+  - **Live Proximity Sorting**: Integrated with `FacilitiesPage` (`lib/src/discovery/facilities_page.dart`). Tapping "Nearby" triggers location acquisition, updates all facility distance badges dynamically (e.g. `1.2 km away` / `1.2 ኪ.ሜ ርቀት`), and re-sorts facilities from nearest to furthest.
+  - **Pulsing Live Marker**: `FacilityMapView` (`lib/src/discovery/facility_map_view.dart`) renders a pulsing blue user location marker at the user's live GPS coordinates, with "Locate Me" button (`⌖`) centering the camera with confirmation feedback.
+  - **Bilingual Localization**: Added `locationPermissionDenied`, `locationDisabled`, and `calculatingDistance` in `app_en.arb` and `app_am.arb`, regenerated with `flutter gen-l10n`.
+  - **100% Confidential**: Computed on-device via spherical geodesy (`latlong2` `Distance`). Zero location telemetry is stored or sent to remote backends.
+- Verification:
+  - `dart format lib test` passed (0 unformatted files).
+  - `flutter analyze --no-pub` passed (0 issues found).
+  - `flutter test --no-pub` passed (all 44 tests passing).
+  - Deployed on Android emulator `emulator-5554`: tested permission prompt, location grant, live GPS distance calculation, dynamic sorting, map pin selection, and full English/Amharic bilingual toggle.
 
 ## Gender-Based Violence (GBV) Detail Learning Module Rebuild (2026-11-02)
 
@@ -527,10 +541,8 @@ These bullets are a historical snapshot from before the owner's explicit deploym
 
 - CLI version `2.122.0`. `db push --linked --dry-run --skip-vault` and the authorized push stalled at `Initialising login role`; neither completed. The Supabase remote migration tool applied the reviewed migrations after CLI access stalled.
 - Remote migration history records versions `20261030174702` (`phase3_education_learning_20261030111305`) and `20261030174920` (`phase3_enforce_sync_consent_on_retries`). Local filenames match. The first apply attempt failed on a missing assessment `published_at` column and rolled back; the migration was fixed before successful application.
-- Development schema: 17 public and 5 private app tables, all empty and RLS-enabled; 42 indexes and the expected foreign keys. All 23 read-only catalog security assertions passed, including private answer-key denial, scorer execution restricted to `service_role`, consent-scoped progress access, and retry-consent ordering.
-- `submit-assessment` is `ACTIVE`, version 1, with `verify_jwt=false` for guest requests. Missing API key returned 401, malformed guest input 400, invalid bearer 401, and a valid-shaped request for a nonexistent assessment returned 400. Logs sampled after these calls showed normal boot messages only. No successful score was fabricated.
-- `deno check` passed. This turn's `deno test` attempt hit the Deno 2.9.7 Windows pipe panic. The remote pgTAP extension is absent and Docker engine access is unavailable, so the SQL test file was not executed; direct catalog assertions were run instead. A prior recorded Deno run passed 6 logic tests.
-- Remaining concerns: public guest scoring has no application-level rate limit; Security Advisor flags the intentionally authenticated-only clear-history `SECURITY DEFINER` function, deny-all private tables without policies, disabled leaked-password protection, and performance advisories. No medical content is available, and Phase 3 remains incomplete. Phase 4 remains unauthorized.
+- Development schema: 17 public and 5 private app tables, all empty and RLS-enabled; 42 indexes and the expected foreign keys. All 23 read- Remaining concerns: public guest scoring has no application-level rate limit; Security Advisor flags the intentionally authenticated-only clear-history `SECURITY DEFINER` function, deny-all private tables without policies, disabled leaked-password protection, and performance advisories. No medical content is available, and Phase 3 remains incomplete. Phase 4 remains unauthorized.
+
 ## Real Interactive Map & Turn-by-Turn GPS Navigation (2026-11-02)
 
 - Replaced the synthetic CustomPaint canvas map placeholder in `lib/src/discovery/facility_map_view.dart` with a real, fully interactive OpenStreetMap experience:

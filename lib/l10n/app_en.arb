@@ -921,5 +921,9 @@
   "srhQ3Text": "Consent in any healthy relationship must be freely given, enthusiastic, informed, and can be changed or withdrawn at any time.",
   "srhQ3Insight": "True consent requires freedom of choice without pressure or fear. Respecting partner boundaries is fundamental to healthy relationships.",
   "srhQ4Text": "Family planning enables individuals and couples to choose if, when, and how many children to have, supporting maternal and family well-being.",
-  "srhQ4Insight": "Family planning empowers women and families, reduces maternal complications, and supports healthy child development and financial stability."
+  "srhQ4Insight": "Family planning empowers women and families, reduces maternal complications, and supports healthy child development and financial stability.",
+  "locationPermissionDenied": "Location permission is required to calculate real-time distance and show nearby facilities.",
+  "locationDisabled": "Location services are turned off on this device. Please turn on GPS.",
+  "calculatingDistance": "Determining your location..."
 }
+
