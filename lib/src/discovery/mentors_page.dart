@@ -216,6 +216,8 @@ class _MentorsPageState extends State<MentorsPage> {
                       // Filter Carousel
                       SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
+                        physics: const BouncingScrollPhysics(),
+                        padding: const EdgeInsets.symmetric(horizontal: 2),
                         child: Row(
                           children: [
                             _buildFilterChip(

@@ -465,7 +465,8 @@ class AppLocalizationsAm extends AppLocalizations {
   String get mapNotAvailableBody => 'የተረጋገጠ የተቋማት ዝርዝር ሲኖር ካርታ ይቀርባል።';
 
   @override
-  String get mentorsIntroduction => 'የተረጋገጡ መገለጫዎች ሲኖሩ የእኩዮች ድጋፍ ያግኙ።';
+  String get mentorsIntroduction =>
+      'ስለ ጤና፣ ግንኙነት እና ስሜታዊ ደህንነት ከሰለጠኑ የወጣቶች አቻ አማካሪዎች ጋር በሚስጥር ይገናኙ እና ነፃ ምክር ያግኙ።';
 
   @override
   String get searchMentors => 'አማካሪዎችን ይፈልጉ';
@@ -2927,4 +2928,38 @@ class AppLocalizationsAm extends AppLocalizations {
 
   @override
   String get calculatingDistance => 'የእርስዎን መገኛ በማስላት ላይ...';
+
+  @override
+  String get callMentorAction => 'ለአማካሪው ይደውሉ';
+
+  @override
+  String get telegramChatAction => 'በቴሌግራም ያውሩ';
+
+  @override
+  String get directContactsHeading => 'ቀጥታ የመገናኛ መንገዶች';
+
+  @override
+  String workingHoursLabel(String hours) {
+    return 'የስራ ሰዓታት፡ $hours';
+  }
+
+  @override
+  String get copyHandleSuccess => 'የቴሌግራም መለያ ተቀድቷል';
+
+  @override
+  String get copyPhoneSuccess => 'ስልክ ቁጥር ተቀድቷል';
+
+  @override
+  String get sendSmsAction => 'የጽሑፍ መልዕክት';
+
+  @override
+  String get phoneCallUnavailable => 'በዚህ መሳሪያ ላይ ስልክ መደወል አልተቻለም';
+
+  @override
+  String get telegramUnavailable => 'ቴሌግራም መክፈት አልተቻለም';
+
+  @override
+  String callHotlineAction(String number) {
+    return '$number ይደውሉ';
+  }
 }

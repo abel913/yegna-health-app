@@ -150,7 +150,7 @@
   "facilitiesNotAvailableBody": "Facility information is not available yet. No providers or contact details are listed until they can be verified.",
   "mapPreviewTitle": "Map",
   "mapNotAvailableBody": "A map will be available when a verified facility directory is ready.",
-  "mentorsIntroduction": "Find peer support when verified profiles become available.",
+  "mentorsIntroduction": "Connect confidentially with certified youth peer counselors for free guidance.",
   "searchMentors": "Search mentors",
   "allMentors": "All mentors",
   "languageFilter": "Language",
@@ -924,6 +924,30 @@
   "srhQ4Insight": "Family planning empowers women and families, reduces maternal complications, and supports healthy child development and financial stability.",
   "locationPermissionDenied": "Location permission is required to calculate real-time distance and show nearby facilities.",
   "locationDisabled": "Location services are turned off on this device. Please turn on GPS.",
-  "calculatingDistance": "Determining your location..."
+  "calculatingDistance": "Determining your location...",
+  "callMentorAction": "Call Mentor",
+  "telegramChatAction": "Chat on Telegram",
+  "directContactsHeading": "Direct Contact Channels",
+  "workingHoursLabel": "Available Hours: {hours}",
+  "@workingHoursLabel": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      }
+    }
+  },
+  "copyHandleSuccess": "Telegram username copied to clipboard",
+  "copyPhoneSuccess": "Phone number copied to clipboard",
+  "sendSmsAction": "Send SMS",
+  "phoneCallUnavailable": "Unable to launch phone dialer on this device",
+  "telegramUnavailable": "Unable to open Telegram link",
+  "callHotlineAction": "Call {number}",
+  "@callHotlineAction": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  }
 }
 

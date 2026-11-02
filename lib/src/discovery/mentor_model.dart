@@ -29,6 +29,11 @@ class Mentor {
     required this.experienceYears,
     required this.initials,
     required this.avatarColor,
+    this.phoneNumber = '+251911234567',
+    this.displayPhoneNumber = '+251 91 123 4567',
+    this.telegramHandle = 'yegna_youth_support',
+    this.workingHoursEn = 'Mon – Fri: 8:30 AM – 5:30 PM',
+    this.workingHoursAm = 'ከሰኞ – ዓርብ፡ 2:30 – 11:30',
     this.safeguardingPolicyEn =
         'Strictly confidential peer counseling. Peer mentors follow certified national child and youth protection safeguarding guidelines. All conversations remain private and non-judgmental.',
     this.safeguardingPolicyAm =
@@ -54,6 +59,11 @@ class Mentor {
   final int experienceYears;
   final String initials;
   final Color avatarColor;
+  final String phoneNumber;
+  final String displayPhoneNumber;
+  final String telegramHandle;
+  final String workingHoursEn;
+  final String workingHoursAm;
   final String safeguardingPolicyEn;
   final String safeguardingPolicyAm;
 
@@ -66,4 +76,6 @@ class Mentor {
       isAmharic ? nextAvailableSlotAm : nextAvailableSlotEn;
   String localizedPolicy(bool isAmharic) =>
       isAmharic ? safeguardingPolicyAm : safeguardingPolicyEn;
+  String localizedWorkingHours(bool isAmharic) =>
+      isAmharic ? workingHoursAm : workingHoursEn;
 }

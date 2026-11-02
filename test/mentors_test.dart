@@ -28,10 +28,19 @@ Widget _buildTestApp({
 
 void main() {
   group('MentorRepository', () {
-    test('LocalVerifiedMentorRepository returns 5 verified mentors', () async {
+    test(
+        'LocalVerifiedMentorRepository returns 5 verified mentors with contacts',
+        () async {
       const repo = LocalVerifiedMentorRepository();
       final all = await repo.getMentors();
       expect(all.length, 5);
+      expect(
+        all.every((m) =>
+            m.phoneNumber.isNotEmpty &&
+            m.displayPhoneNumber.isNotEmpty &&
+            m.telegramHandle.isNotEmpty),
+        isTrue,
+      );
 
       final onlineOnly = await repo.getMentors(onlineOnly: true);
       expect(onlineOnly.every((m) => m.isOnline), isTrue);
@@ -48,6 +57,14 @@ void main() {
       final searchResult = await repo.getMentors(query: 'Selamawit');
       expect(searchResult.length, 1);
       expect(searchResult.first.id, 'selamawit_tadesse');
+
+      final searchByPhone = await repo.getMentors(query: '911234567');
+      expect(searchByPhone.length, 1);
+      expect(searchByPhone.first.id, 'selamawit_tadesse');
+
+      final searchByTelegram = await repo.getMentors(query: 'selam_tya');
+      expect(searchByTelegram.length, 1);
+      expect(searchByTelegram.first.id, 'selamawit_tadesse');
     });
 
     test('UnconfiguredMentorRepository returns empty list', () async {
@@ -59,7 +76,7 @@ void main() {
 
   group('MentorsPage Widget Tests', () {
     testWidgets(
-        'renders verified mentor cards, topic filtering, and detail sheet',
+        'renders verified mentor cards with phone badges, call buttons, and profile contacts',
         (tester) async {
       const repo = LocalVerifiedMentorRepository();
       await tester.pumpWidget(_buildTestApp(repository: repo));
@@ -71,9 +88,14 @@ void main() {
       expect(find.text(en.mentorsIntroduction), findsOneWidget);
       expect(find.text(en.searchMentors), findsOneWidget);
 
-      // Check mentor presence
+      // Check mentor presence & phone badges
       expect(find.text('Selamawit Tadesse'), findsOneWidget);
       expect(find.text('Dawit Haile'), findsOneWidget);
+      expect(find.text('+251 91 123 4567'), findsOneWidget);
+      expect(find.text('@selam_tya_peer'), findsOneWidget);
+
+      // Check Call Mentor button on card
+      expect(find.text(en.callMentorAction), findsWidgets);
 
       // Filter by Online
       await tester.tap(find.text('🟢 ${en.onlineNowFilter}'));
@@ -87,14 +109,17 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(MentorDetailSheet), findsOneWidget);
+      expect(find.text(en.directContactsHeading), findsOneWidget);
+      expect(find.text(en.telegramChatAction), findsOneWidget);
       expect(find.text(en.sessionsCountLabel), findsOneWidget);
 
       await tester.scrollUntilVisible(
-        find.text(en.specialtiesLabel),
+        find.text(en.callHotlineAction('952')),
         300,
         scrollable: find.byType(Scrollable).last,
       );
-      expect(find.text(en.specialtiesLabel), findsOneWidget);
+      expect(find.text(en.callHotlineAction('952')), findsOneWidget);
+      expect(find.text(en.callHotlineAction('8335')), findsOneWidget);
     });
 
     testWidgets('unconfigured repository displays honest empty state',
@@ -108,7 +133,8 @@ void main() {
       expect(find.text(en.noVerifiedMentorsBody), findsOneWidget);
     });
 
-    testWidgets('renders properly in Amharic locale', (tester) async {
+    testWidgets('renders properly in Amharic locale with Amharic call button',
+        (tester) async {
       const repo = LocalVerifiedMentorRepository();
       await tester.pumpWidget(
         _buildTestApp(repository: repo, locale: const Locale('am')),
@@ -118,6 +144,7 @@ void main() {
       final am = await AppLocalizations.delegate.load(const Locale('am'));
       expect(find.text(am.mentorsIntroduction), findsOneWidget);
       expect(find.text('ሰላማዊት ታደሰ'), findsOneWidget);
+      expect(find.text(am.callMentorAction), findsWidgets);
     });
   });
 }
