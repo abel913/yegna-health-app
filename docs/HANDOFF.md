@@ -1,5 +1,16 @@
 # Handoff
 
+## HIV/AIDS Interactive Quiz & Module Experience Rebuild (2026-11-02)
+
+- Built and verified the dedicated interactive quiz screen `HivQuizPage` (`lib/src/learning/hiv_quiz_page.dart`) matching the reference screenshots:
+  - 4 core clinical questions alternating between True/False and Choices (Definition, Mode of Transmission, PEP Timing, Treatment & U=U).
+  - Authentic segmented progress bar (4 segments) and `Question X of 4` progress badge.
+  - Tactile optical-glass option cards with circular letter badges (A, B, C, D) for both True/False and Multiple Choice options.
+  - Floating bottom navigation with circular back button and stadium pill Next button with embedded arrow badge and dynamic enabled states.
+  - Celebratory score calculation modal (`X / 4 (100%)`), Answer Review mode with educational insights, and Retake Quiz options.
+  - Bilingual English/Amharic resources in `lib/l10n/app_en.arb` and `lib/l10n/app_am.arb`.
+  - Comprehensive unit and widget tests in `test/hiv_quiz_test.dart` (41/41 tests passing across the app).
+
 ## HIV/AIDS Detail Learning Module Experience Rebuild (2026-11-02)
 
 - Rebuilt the dedicated HIV/AIDS learning module detail page in `lib/src/learning/hiv_module_page.dart` matching user reference screenshots:

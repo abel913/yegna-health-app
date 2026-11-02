@@ -758,6 +758,125 @@ class AppLocalizationsEn extends AppLocalizations {
   String get returnToLesson => 'Return to Lesson';
 
   @override
+  String get hivQuizTitle => 'HIV Module Quiz';
+
+  @override
+  String get nextQuestionBtn => 'Next';
+
+  @override
+  String get finishQuizBtn => 'Finish Quiz';
+
+  @override
+  String get retakeQuizBtn => 'Retake Quiz';
+
+  @override
+  String get reviewAnswersBtn => 'Review Answers';
+
+  @override
+  String get quizScoreCelebration => 'Great Job!';
+
+  @override
+  String quizScoreSummary(int score, int total, int percent) {
+    return 'You scored $score out of $total ($percent%)';
+  }
+
+  @override
+  String get selectAnOptionHint => 'Please select an answer to continue';
+
+  @override
+  String get educationalInsight => 'Key Clinical Insight';
+
+  @override
+  String get trueOption => 'True';
+
+  @override
+  String get falseOption => 'False';
+
+  @override
+  String get hivQ1Text =>
+      'HIV infects and destroys cells of human immune system, making it hard to fight other diseases?';
+
+  @override
+  String get hivQ1Insight =>
+      'HIV targets CD4 white blood cells. Without ART treatment, the body loses its natural defenses against opportunistic infections.';
+
+  @override
+  String get hivQ2Text =>
+      'Which of the following is/are correct about mode of HIV transmission?';
+
+  @override
+  String get hivQ2OptA => 'Unprotected sexual practice';
+
+  @override
+  String get hivQ2OptB => 'HIV positive mother to their fetus or child';
+
+  @override
+  String get hivQ2OptC => 'Eating together';
+
+  @override
+  String get hivQ2OptD => 'A & B';
+
+  @override
+  String get hivQ2Insight =>
+      'HIV spreads through specific body fluids (unprotected sex and mother-to-child), but cannot be spread through casual contact like sharing food.';
+
+  @override
+  String get hivQ3Text =>
+      'Can HIV be transmitted through mosquito or insect bites, hugging, or sharing toilet seats?';
+
+  @override
+  String get hivQ3Insight =>
+      'HIV cannot survive outside human fluids or inside insects. Casual social contact is completely safe.';
+
+  @override
+  String get hivQ4Text =>
+      'Within how many hours must Post-Exposure Prophylaxis (PEP) be started after possible exposure to HIV?';
+
+  @override
+  String get hivQ4OptA => 'Within 24 hours only';
+
+  @override
+  String get hivQ4OptB => 'Within 72 hours (3 days)';
+
+  @override
+  String get hivQ4OptC => 'Within 1 month';
+
+  @override
+  String get hivQ4OptD => 'PEP is only taken before exposure';
+
+  @override
+  String get hivQ4Insight =>
+      'PEP is an emergency medication course that must begin strictly within 72 hours of potential exposure to prevent infection.';
+
+  @override
+  String get hivQ5Text =>
+      'Which of the following lubricants are safe to use with latex condoms?';
+
+  @override
+  String get hivQ5OptA => 'Petroleum jelly (Vaseline) and baby oils';
+
+  @override
+  String get hivQ5OptB => 'Body lotions and butter';
+
+  @override
+  String get hivQ5OptC => 'Water-based or silicone-based lubricants only';
+
+  @override
+  String get hivQ5OptD => 'Household cooking oils';
+
+  @override
+  String get hivQ5Insight =>
+      'Oil-based lubricants weaken and tear latex condoms in under a minute. Only water-based or silicone lubricants are safe.';
+
+  @override
+  String get hivQ6Text =>
+      'When a person with HIV takes ART and reaches an undetectable viral load, they cannot transmit the virus sexually (Undetectable = Untransmittable / U=U).';
+
+  @override
+  String get hivQ6Insight =>
+      'Decades of evidence confirm Undetectable = Untransmittable (U=U). Regular ART adherence keeps people healthy and prevents transmission.';
+
+  @override
   String get moduleComingSoon =>
       'Full module content and interactive quizzes will be configured in the next step.';
 

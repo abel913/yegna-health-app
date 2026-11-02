@@ -731,6 +731,124 @@ class AppLocalizationsAm extends AppLocalizations {
   String get returnToLesson => 'ወደ ትምህርቱ ተመለስ';
 
   @override
+  String get hivQuizTitle => 'የኤችአይቪ ትምህርት ፈተና';
+
+  @override
+  String get nextQuestionBtn => 'ቀጣይ';
+
+  @override
+  String get finishQuizBtn => 'ፈተናውን ጨርስ';
+
+  @override
+  String get retakeQuizBtn => 'እንደገና ፈትን';
+
+  @override
+  String get reviewAnswersBtn => 'መልሶችን ከልስ';
+
+  @override
+  String get quizScoreCelebration => 'እጅግ በጣም ጥሩ!';
+
+  @override
+  String quizScoreSummary(int score, int total, int percent) {
+    return 'ከ $total ጥያቄዎች $score በትክክል መልሰዋል ($percent%)';
+  }
+
+  @override
+  String get selectAnOptionHint => 'እባክዎን ለመቀጠል መልስ ይምረጡ';
+
+  @override
+  String get educationalInsight => 'ጠቃሚ የህክምና መረጃ';
+
+  @override
+  String get trueOption => 'እውነት';
+
+  @override
+  String get falseOption => 'ሐሰት';
+
+  @override
+  String get hivQ1Text =>
+      'ኤችአይቪ የሰውነትን በሽታ የመከላከል አቅም (ሲዲ4 ሴሎችን) በማጥቃት ሌሎች ኢንፌክሽኖችን ለመዋጋት አስቸጋሪ ያደርጋል?';
+
+  @override
+  String get hivQ1Insight =>
+      'ኤችአይቪ የሲዲ4 ነጭ የደም ሴሎችን ያጠቃል። ያለ ፀረ-ኤችአይቪ ህክምና ሰውነት ኢንፌክሽኖችን መዋጋት ይሳነዋል።';
+
+  @override
+  String get hivQ2Text => 'ከሚከተሉት ውስጥ ስለ ኤችአይቪ መተላለፊያ መንገዶች ትክክል የሆነው የትኛው ነው?';
+
+  @override
+  String get hivQ2OptA => 'ጥንቃቄ የጎደለው የግብረ-ሥጋ ግንኙነት';
+
+  @override
+  String get hivQ2OptB => 'ኤችአይቪ በደሟ ያለ እናት ወደ ፅንስ ወይም ህፃን';
+
+  @override
+  String get hivQ2OptC => 'አብሮ መመገብ';
+
+  @override
+  String get hivQ2OptD => 'ሀ እና ለ';
+
+  @override
+  String get hivQ2Insight =>
+      'ኤችአይቪ የሚተላለፈው በግብረ-ሥጋ ግንኙነት እና ከእናት ወደ ልጅ ነው፤ ነገር ግን ምግብ በመጋራት ፈጽሞ አይተላለፍም።';
+
+  @override
+  String get hivQ3Text =>
+      'ኤችአይቪ በወባ ትንኝ ንክሻ፣ በማቀፍ ወይም መጸዳጃ ቤቶችን በጋራ በመጠቀም ሊተላለፍ ይችላል?';
+
+  @override
+  String get hivQ3Insight =>
+      'ኤችአይቪ ከሰውነት ፈሳሽ ውጭ ወይም በነፍሳት ውስጥ መኖር አይችልም። ማህበራዊ ግንኙነቶች ፍጹም ደህና ናቸው።';
+
+  @override
+  String get hivQ4Text =>
+      'ለኤችአይቪ ከተጋለጡ በኋላ ድንገተኛ መከላከያ መድሃኒት (PEP) በስንት ሰዓታት ውስጥ መጀመር አለበት?';
+
+  @override
+  String get hivQ4OptA => 'በ24 ሰዓታት ውስጥ ብቻ';
+
+  @override
+  String get hivQ4OptB => 'በ72 ሰዓታት (3 ቀናት) ውስጥ';
+
+  @override
+  String get hivQ4OptC => 'በ1 ወር ውስጥ';
+
+  @override
+  String get hivQ4OptD => 'PEP የሚወሰደው ከመጋለጥ በፊት ብቻ ነው';
+
+  @override
+  String get hivQ4Insight =>
+      'PEP ለቫይረሱ ከተጋለጡ በኋላ በ72 ሰዓታት ውስጥ መጀመር ያለበት የድንገተኛ ጊዜ መድሃኒት ነው።';
+
+  @override
+  String get hivQ5Text =>
+      'ከላቴክስ ኮንዶም ጋር በደህና ጥቅም ላይ ሊውሉ የሚችሉ ማለስለሻዎች የትኞቹ ናቸው?';
+
+  @override
+  String get hivQ5OptA => 'የፔትሮሊየም ቅባት (ቫዝሊን) እና የህጻናት ዘይት';
+
+  @override
+  String get hivQ5OptB => 'የሰውነት ሎሽን እና ቅቤ';
+
+  @override
+  String get hivQ5OptC => 'በውሃ ወይም በሲሊኮን የተሰሩ ማለስለሻዎች ብቻ';
+
+  @override
+  String get hivQ5OptD => 'የማብሰያ ዘይቶች';
+
+  @override
+  String get hivQ5Insight =>
+      'በዘይት የተሰሩ ቅባቶች የላቴክስ ኮንዶምን ስለሚያዳክሙ በውሃ ወይም በሲሊኮን የተሰሩ ማለስለሻዎችን ብቻ ይጠቀሙ።';
+
+  @override
+  String get hivQ6Text =>
+      'ኤችአይቪ በደማቸው ያለባቸው ሰዎች የ ART ህክምና ወስደው የቫይረሱ መጠን እንዳይታወቅ ሲሆን (Undetectable) ቫይረሱ በግብረ-ሥጋ ግንኙነት አይተላለፍም (U=U)።';
+
+  @override
+  String get hivQ6Insight =>
+      'የተረጋገጠ ሳይንሳዊ ማስረጃ እንደሚያሳየው የማይታወቅ = የማይተላለፍ (U=U) ነው። ART መውሰድ ጤናን ከመጠበቅ ባለፈ ቫይረሱ እንዳይተላለፍ ያደርጋል።';
+
+  @override
   String get moduleComingSoon => 'ሙሉ የትምህርት ክፍሎች እና ፈተናዎች ለቀጣዩ ደረጃ እየተዘጋጁ ነው።';
 
   @override

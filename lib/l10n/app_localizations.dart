@@ -1406,6 +1406,216 @@ abstract class AppLocalizations {
   /// **'Return to Lesson'**
   String get returnToLesson;
 
+  /// No description provided for @hivQuizTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'HIV Module Quiz'**
+  String get hivQuizTitle;
+
+  /// No description provided for @nextQuestionBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get nextQuestionBtn;
+
+  /// No description provided for @finishQuizBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish Quiz'**
+  String get finishQuizBtn;
+
+  /// No description provided for @retakeQuizBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Retake Quiz'**
+  String get retakeQuizBtn;
+
+  /// No description provided for @reviewAnswersBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Review Answers'**
+  String get reviewAnswersBtn;
+
+  /// No description provided for @quizScoreCelebration.
+  ///
+  /// In en, this message translates to:
+  /// **'Great Job!'**
+  String get quizScoreCelebration;
+
+  /// No description provided for @quizScoreSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'You scored {score} out of {total} ({percent}%)'**
+  String quizScoreSummary(int score, int total, int percent);
+
+  /// No description provided for @selectAnOptionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select an answer to continue'**
+  String get selectAnOptionHint;
+
+  /// No description provided for @educationalInsight.
+  ///
+  /// In en, this message translates to:
+  /// **'Key Clinical Insight'**
+  String get educationalInsight;
+
+  /// No description provided for @trueOption.
+  ///
+  /// In en, this message translates to:
+  /// **'True'**
+  String get trueOption;
+
+  /// No description provided for @falseOption.
+  ///
+  /// In en, this message translates to:
+  /// **'False'**
+  String get falseOption;
+
+  /// No description provided for @hivQ1Text.
+  ///
+  /// In en, this message translates to:
+  /// **'HIV infects and destroys cells of human immune system, making it hard to fight other diseases?'**
+  String get hivQ1Text;
+
+  /// No description provided for @hivQ1Insight.
+  ///
+  /// In en, this message translates to:
+  /// **'HIV targets CD4 white blood cells. Without ART treatment, the body loses its natural defenses against opportunistic infections.'**
+  String get hivQ1Insight;
+
+  /// No description provided for @hivQ2Text.
+  ///
+  /// In en, this message translates to:
+  /// **'Which of the following is/are correct about mode of HIV transmission?'**
+  String get hivQ2Text;
+
+  /// No description provided for @hivQ2OptA.
+  ///
+  /// In en, this message translates to:
+  /// **'Unprotected sexual practice'**
+  String get hivQ2OptA;
+
+  /// No description provided for @hivQ2OptB.
+  ///
+  /// In en, this message translates to:
+  /// **'HIV positive mother to their fetus or child'**
+  String get hivQ2OptB;
+
+  /// No description provided for @hivQ2OptC.
+  ///
+  /// In en, this message translates to:
+  /// **'Eating together'**
+  String get hivQ2OptC;
+
+  /// No description provided for @hivQ2OptD.
+  ///
+  /// In en, this message translates to:
+  /// **'A & B'**
+  String get hivQ2OptD;
+
+  /// No description provided for @hivQ2Insight.
+  ///
+  /// In en, this message translates to:
+  /// **'HIV spreads through specific body fluids (unprotected sex and mother-to-child), but cannot be spread through casual contact like sharing food.'**
+  String get hivQ2Insight;
+
+  /// No description provided for @hivQ3Text.
+  ///
+  /// In en, this message translates to:
+  /// **'Can HIV be transmitted through mosquito or insect bites, hugging, or sharing toilet seats?'**
+  String get hivQ3Text;
+
+  /// No description provided for @hivQ3Insight.
+  ///
+  /// In en, this message translates to:
+  /// **'HIV cannot survive outside human fluids or inside insects. Casual social contact is completely safe.'**
+  String get hivQ3Insight;
+
+  /// No description provided for @hivQ4Text.
+  ///
+  /// In en, this message translates to:
+  /// **'Within how many hours must Post-Exposure Prophylaxis (PEP) be started after possible exposure to HIV?'**
+  String get hivQ4Text;
+
+  /// No description provided for @hivQ4OptA.
+  ///
+  /// In en, this message translates to:
+  /// **'Within 24 hours only'**
+  String get hivQ4OptA;
+
+  /// No description provided for @hivQ4OptB.
+  ///
+  /// In en, this message translates to:
+  /// **'Within 72 hours (3 days)'**
+  String get hivQ4OptB;
+
+  /// No description provided for @hivQ4OptC.
+  ///
+  /// In en, this message translates to:
+  /// **'Within 1 month'**
+  String get hivQ4OptC;
+
+  /// No description provided for @hivQ4OptD.
+  ///
+  /// In en, this message translates to:
+  /// **'PEP is only taken before exposure'**
+  String get hivQ4OptD;
+
+  /// No description provided for @hivQ4Insight.
+  ///
+  /// In en, this message translates to:
+  /// **'PEP is an emergency medication course that must begin strictly within 72 hours of potential exposure to prevent infection.'**
+  String get hivQ4Insight;
+
+  /// No description provided for @hivQ5Text.
+  ///
+  /// In en, this message translates to:
+  /// **'Which of the following lubricants are safe to use with latex condoms?'**
+  String get hivQ5Text;
+
+  /// No description provided for @hivQ5OptA.
+  ///
+  /// In en, this message translates to:
+  /// **'Petroleum jelly (Vaseline) and baby oils'**
+  String get hivQ5OptA;
+
+  /// No description provided for @hivQ5OptB.
+  ///
+  /// In en, this message translates to:
+  /// **'Body lotions and butter'**
+  String get hivQ5OptB;
+
+  /// No description provided for @hivQ5OptC.
+  ///
+  /// In en, this message translates to:
+  /// **'Water-based or silicone-based lubricants only'**
+  String get hivQ5OptC;
+
+  /// No description provided for @hivQ5OptD.
+  ///
+  /// In en, this message translates to:
+  /// **'Household cooking oils'**
+  String get hivQ5OptD;
+
+  /// No description provided for @hivQ5Insight.
+  ///
+  /// In en, this message translates to:
+  /// **'Oil-based lubricants weaken and tear latex condoms in under a minute. Only water-based or silicone lubricants are safe.'**
+  String get hivQ5Insight;
+
+  /// No description provided for @hivQ6Text.
+  ///
+  /// In en, this message translates to:
+  /// **'When a person with HIV takes ART and reaches an undetectable viral load, they cannot transmit the virus sexually (Undetectable = Untransmittable / U=U).'**
+  String get hivQ6Text;
+
+  /// No description provided for @hivQ6Insight.
+  ///
+  /// In en, this message translates to:
+  /// **'Decades of evidence confirm Undetectable = Untransmittable (U=U). Regular ART adherence keeps people healthy and prevents transmission.'**
+  String get hivQ6Insight;
+
   /// No description provided for @moduleComingSoon.
   ///
   /// In en, this message translates to:

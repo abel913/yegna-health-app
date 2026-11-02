@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../l10n/app_localizations.dart';
 import 'assessment_repository.dart';
+import 'hiv_quiz_page.dart';
 import 'in_app_video_embed.dart';
 import 'learning_progress_controller.dart';
 
@@ -954,34 +955,41 @@ class _HivModuleDetailPageState extends State<HivModuleDetailPage> {
                     ),
                   ),
 
-                if (widget.onOpenQuiz != null) ...[
-                  const SizedBox(height: 12),
-                  SizedBox(
-                    width: double.infinity,
-                    child: OutlinedButton.icon(
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: const Color(0xFF005A71),
-                        side: const BorderSide(
-                          color: Color(0xFF005A71),
-                          width: 1.4,
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
-                        ),
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFF005A71),
+                      side: const BorderSide(
+                        color: Color(0xFF005A71),
+                        width: 1.4,
                       ),
-                      icon: const Icon(Icons.quiz_outlined),
-                      label: Text(
-                        l10n.takeQuizButton,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 15,
-                        ),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
                       ),
-                      onPressed: widget.onOpenQuiz,
                     ),
+                    icon: const Icon(Icons.quiz_outlined),
+                    label: Text(
+                      l10n.takeQuizButton,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 15,
+                      ),
+                    ),
+                    onPressed: widget.onOpenQuiz ??
+                        () {
+                          Navigator.of(context).push<void>(
+                            MaterialPageRoute<void>(
+                              builder: (_) => HivQuizPage(
+                                progressController: widget.progressController,
+                              ),
+                            ),
+                          );
+                        },
                   ),
-                ],
+                ),
               ],
             ),
           );
