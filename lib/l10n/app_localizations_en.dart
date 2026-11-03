@@ -2437,6 +2437,55 @@ class AppLocalizationsEn extends AppLocalizations {
   String get readArticleAction => 'Explore Article';
 
   @override
+  String get doctorDailyArticleBadge => 'Doctor\'s Daily Article';
+
+  @override
+  String get doctorArticleAuthor => 'Yegna Medical Advisory Team';
+
+  @override
+  String get doctorArticleReadTime => '2 min read';
+
+  @override
+  String get doctorArticleDate => 'Today\'s Clinical Note';
+
+  @override
+  String get readFullArticleAction => 'Read Full Article';
+
+  @override
+  String get doctorArticleSheetTitle => 'Doctor\'s Daily Health Note';
+
+  @override
+  String get doctorArticleFullText =>
+      'During puberty, the body experiences significant surges in hormones, particularly androgens like testosterone in boys and estrogens and progesterone in girls. These natural chemical messengers stimulate sebaceous (oil) glands in the skin, leading to increased sebum production. When excess oil mixes with dead skin cells, pores become clogged, resulting in blackheads, whiteheads, and pimples.\n\nIt is essential to understand that acne during adolescence is not caused by poor hygiene, dirty skin, or dietary myths. It is a completely normal biological adaptation as your body matures. At the same time, fluctuations in these hormones can temporarily affect neurotransmitters in the brain, causing unexpected emotional shifts, mood swings, and heightened sensitivity.\n\nTaking care of your skin and mental wellbeing during this period is simple and effective with consistency. Gentle cleansing twice daily, staying well-hydrated, maintaining a balanced diet, and speaking openly with trusted friends or peer counselors can help navigate these changes with comfort and self-confidence.';
+
+  @override
+  String get doctorAdviceSkincareTitle => 'Gentle Daily Skincare';
+
+  @override
+  String get doctorAdviceSkincareDesc =>
+      'Wash your face twice daily with a mild cleanser and lukewarm water. Avoid scrubbing hard or squeezing blemishes to prevent scarring.';
+
+  @override
+  String get doctorAdviceEmotionalTitle => 'Emotional Awareness';
+
+  @override
+  String get doctorAdviceEmotionalDesc =>
+      'Sudden mood shifts are normal hormonal responses. Practice deep breathing, get 8 hours of sleep, and talk through stress with peer mentors.';
+
+  @override
+  String get doctorAdviceClinicalTitle => 'Professional Medical Support';
+
+  @override
+  String get doctorAdviceClinicalDesc =>
+      'If skin breakouts are painful, inflamed, or causing emotional distress, visit a youth-friendly healthcare clinic for specialized guidance.';
+
+  @override
+  String get closeArticleAction => 'Close Article';
+
+  @override
+  String get askMentorAction => 'Talk to a Peer Mentor';
+
+  @override
   String get emergencyHelplineTitle => '24/7 Confidential Helplines';
 
   @override

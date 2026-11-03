@@ -4250,6 +4250,96 @@ abstract class AppLocalizations {
   /// **'Explore Article'**
   String get readArticleAction;
 
+  /// No description provided for @doctorDailyArticleBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Doctor\'s Daily Article'**
+  String get doctorDailyArticleBadge;
+
+  /// No description provided for @doctorArticleAuthor.
+  ///
+  /// In en, this message translates to:
+  /// **'Yegna Medical Advisory Team'**
+  String get doctorArticleAuthor;
+
+  /// No description provided for @doctorArticleReadTime.
+  ///
+  /// In en, this message translates to:
+  /// **'2 min read'**
+  String get doctorArticleReadTime;
+
+  /// No description provided for @doctorArticleDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Clinical Note'**
+  String get doctorArticleDate;
+
+  /// No description provided for @readFullArticleAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Read Full Article'**
+  String get readFullArticleAction;
+
+  /// No description provided for @doctorArticleSheetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Doctor\'s Daily Health Note'**
+  String get doctorArticleSheetTitle;
+
+  /// No description provided for @doctorArticleFullText.
+  ///
+  /// In en, this message translates to:
+  /// **'During puberty, the body experiences significant surges in hormones, particularly androgens like testosterone in boys and estrogens and progesterone in girls. These natural chemical messengers stimulate sebaceous (oil) glands in the skin, leading to increased sebum production. When excess oil mixes with dead skin cells, pores become clogged, resulting in blackheads, whiteheads, and pimples.\n\nIt is essential to understand that acne during adolescence is not caused by poor hygiene, dirty skin, or dietary myths. It is a completely normal biological adaptation as your body matures. At the same time, fluctuations in these hormones can temporarily affect neurotransmitters in the brain, causing unexpected emotional shifts, mood swings, and heightened sensitivity.\n\nTaking care of your skin and mental wellbeing during this period is simple and effective with consistency. Gentle cleansing twice daily, staying well-hydrated, maintaining a balanced diet, and speaking openly with trusted friends or peer counselors can help navigate these changes with comfort and self-confidence.'**
+  String get doctorArticleFullText;
+
+  /// No description provided for @doctorAdviceSkincareTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Gentle Daily Skincare'**
+  String get doctorAdviceSkincareTitle;
+
+  /// No description provided for @doctorAdviceSkincareDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Wash your face twice daily with a mild cleanser and lukewarm water. Avoid scrubbing hard or squeezing blemishes to prevent scarring.'**
+  String get doctorAdviceSkincareDesc;
+
+  /// No description provided for @doctorAdviceEmotionalTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Emotional Awareness'**
+  String get doctorAdviceEmotionalTitle;
+
+  /// No description provided for @doctorAdviceEmotionalDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Sudden mood shifts are normal hormonal responses. Practice deep breathing, get 8 hours of sleep, and talk through stress with peer mentors.'**
+  String get doctorAdviceEmotionalDesc;
+
+  /// No description provided for @doctorAdviceClinicalTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Professional Medical Support'**
+  String get doctorAdviceClinicalTitle;
+
+  /// No description provided for @doctorAdviceClinicalDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'If skin breakouts are painful, inflamed, or causing emotional distress, visit a youth-friendly healthcare clinic for specialized guidance.'**
+  String get doctorAdviceClinicalDesc;
+
+  /// No description provided for @closeArticleAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Close Article'**
+  String get closeArticleAction;
+
+  /// No description provided for @askMentorAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Talk to a Peer Mentor'**
+  String get askMentorAction;
+
   /// No description provided for @emergencyHelplineTitle.
   ///
   /// In en, this message translates to:

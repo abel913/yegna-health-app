@@ -1,6 +1,5 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import '../../l10n/app_localizations.dart';
 import '../assessment/self_assessment_page.dart';
@@ -59,7 +58,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  void _showEmergencyHelplineSheet(
+  void _showDoctorDailyArticleSheet(
       BuildContext context, AppLocalizations l10n) {
     showModalBottomSheet<void>(
       context: context,
@@ -75,7 +74,7 @@ class _HomePageState extends State<HomePage> {
             decoration: BoxDecoration(
               color: isDark
                   ? const Color(0xFF0F172A).withValues(alpha: 0.96)
-                  : Colors.white.withValues(alpha: 0.95),
+                  : Colors.white.withValues(alpha: 0.96),
               borderRadius:
                   const BorderRadius.vertical(top: Radius.circular(30)),
               border: isDark
@@ -89,80 +88,271 @@ class _HomePageState extends State<HomePage> {
                 ),
               ],
             ),
-            padding: const EdgeInsets.fromLTRB(20, 14, 20, 36),
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.of(context).size.height * 0.88,
+            ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Center(
-                  child: Container(
-                    width: 44,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: glass.modalHandle,
-                      borderRadius: BorderRadius.circular(2),
-                    ),
+                // Top drag handle & close button
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 12, 12, 4),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 44,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: glass.modalHandle,
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                      const Spacer(),
+                      IconButton(
+                        icon: const Icon(Icons.close_rounded, size: 22),
+                        color: glass.subtitleText,
+                        onPressed: () => Navigator.of(ctx).pop(),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 18),
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(9),
-                      decoration: BoxDecoration(
-                        color: isDark
-                            ? const Color(0xFF4C0519)
-                            : const Color(0xFFFFE4E6),
-                        borderRadius: BorderRadius.circular(14),
+
+                // Scrollable Article Content
+                Flexible(
+                  child: ListView(
+                    padding: const EdgeInsets.fromLTRB(22, 6, 22, 32),
+                    children: [
+                      // Doctor & Clinical Team Header
+                      Container(
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              glass.accentColor.withValues(alpha: 0.08),
+                              const Color(0xFF0EA5E9).withValues(alpha: 0.03),
+                            ],
+                          ),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: isDark
+                                ? glass.cardBorder
+                                : const Color(0xFFBAE6FD)
+                                    .withValues(alpha: 0.8),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 48,
+                              height: 48,
+                              decoration: const BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Color(0xFF0284C7),
+                                    Color(0xFF0EA5E9)
+                                  ],
+                                ),
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Color(0x250284C7),
+                                    blurRadius: 8,
+                                    offset: Offset(0, 3),
+                                  ),
+                                ],
+                              ),
+                              child: const Icon(
+                                Icons.medical_services_rounded,
+                                color: Colors.white,
+                                size: 24,
+                              ),
+                            ),
+                            const SizedBox(width: 14),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Flexible(
+                                        child: Text(
+                                          l10n.doctorArticleAuthor,
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w800,
+                                            color: glass.titleText,
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 6),
+                                      Icon(
+                                        Icons.verified_rounded,
+                                        size: 16,
+                                        color: glass.accentColor,
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 3),
+                                  Text(
+                                    '${l10n.doctorArticleDate} • ${l10n.doctorArticleReadTime}',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                      color: isDark
+                                          ? const Color(0xFF38BDF8)
+                                          : const Color(0xFF0369A1),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      child: const Icon(
-                        Icons.phone_in_talk_rounded,
-                        color: Color(0xFFE11D48),
-                        size: 24,
+                      const SizedBox(height: 18),
+
+                      // Article Title
+                      Text(
+                        l10n.dailyTipTitle,
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w900,
+                          color: glass.titleText,
+                          height: 1.3,
+                          letterSpacing: -0.3,
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      const SizedBox(height: 14),
+
+                      // Full Article Body
+                      Text(
+                        l10n.doctorArticleFullText,
+                        style: TextStyle(
+                          fontSize: 14,
+                          height: 1.65,
+                          color: isDark
+                              ? const Color(0xFFCBD5E1)
+                              : const Color(0xFF1E3A54),
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                      const SizedBox(height: 22),
+
+                      // Key Doctor Advice Heading
+                      Row(
                         children: [
+                          Container(
+                            width: 4,
+                            height: 18,
+                            decoration: BoxDecoration(
+                              color: glass.accentColor,
+                              borderRadius: BorderRadius.circular(2),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
                           Text(
-                            l10n.emergencySheetTitle,
+                            l10n.doctorArticleSheetTitle,
                             style: TextStyle(
-                              fontSize: 18,
+                              fontSize: 15,
                               fontWeight: FontWeight.w800,
                               color: glass.titleText,
                             ),
                           ),
-                          const SizedBox(height: 3),
-                          Text(
-                            l10n.emergencySheetDisclaimer,
-                            style: TextStyle(
-                              fontSize: 12,
-                              height: 1.4,
-                              color: glass.subtitleText,
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+
+                      // Doctor Advice Card 1: Skincare
+                      _DoctorAdviceTile(
+                        icon: Icons.clean_hands_rounded,
+                        iconColor: const Color(0xFF0D9488),
+                        title: l10n.doctorAdviceSkincareTitle,
+                        description: l10n.doctorAdviceSkincareDesc,
+                      ),
+                      const SizedBox(height: 10),
+
+                      // Doctor Advice Card 2: Emotional Balance
+                      _DoctorAdviceTile(
+                        icon: Icons.spa_rounded,
+                        iconColor: const Color(0xFF6366F1),
+                        title: l10n.doctorAdviceEmotionalTitle,
+                        description: l10n.doctorAdviceEmotionalDesc,
+                      ),
+                      const SizedBox(height: 10),
+
+                      // Doctor Advice Card 3: Clinical Support
+                      _DoctorAdviceTile(
+                        icon: Icons.local_hospital_rounded,
+                        iconColor: const Color(0xFFE11D48),
+                        title: l10n.doctorAdviceClinicalTitle,
+                        description: l10n.doctorAdviceClinicalDesc,
+                      ),
+                      const SizedBox(height: 24),
+
+                      // Action Buttons Row: Ask Mentor & Close
+                      Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton.icon(
+                              onPressed: () {
+                                Navigator.of(ctx).pop();
+                                widget.onOpenMentors();
+                              },
+                              icon: const Icon(Icons.people_alt_rounded,
+                                  size: 18),
+                              label: Text(
+                                l10n.askMentorAction,
+                                style: const TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: glass.accentColor,
+                                side: BorderSide(
+                                    color: isDark
+                                        ? glass.cardBorder
+                                        : const Color(0xFFBAE6FD)),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 13),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: () => Navigator.of(ctx).pop(),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: glass.accentColor,
+                                foregroundColor:
+                                    isDark ? Colors.black : Colors.white,
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 13),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                elevation: 0,
+                              ),
+                              child: Text(
+                                l10n.closeArticleAction,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 14,
+                                ),
+                              ),
                             ),
                           ),
                         ],
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 22),
-                _EmergencyHelplineTile(
-                  number: '952',
-                  name: l10n.emergencyHotline952Name,
-                  description: l10n.emergencyHotline952Desc,
-                  callActionLabel: l10n.callNowAction,
-                  copiedToast: l10n.copiedToClipboard,
-                ),
-                const SizedBox(height: 12),
-                _EmergencyHelplineTile(
-                  number: '8335',
-                  name: l10n.emergencyHotline8335Name,
-                  description: l10n.emergencyHotline8335Desc,
-                  callActionLabel: l10n.callNowAction,
-                  copiedToast: l10n.copiedToClipboard,
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -395,29 +585,9 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     // 1. Dynamic Greeting & Profile Card (Single clean Account CTA)
                     buildGreetingHeader(),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 20),
 
-                    // 2. Interactive Daily Insight Card (Myth vs Fact)
-                    _DeepGlassDailyTipCard(
-                      badgeText: l10n.dailyTipBadge,
-                      mythFactText: l10n.dailyTipMythFact,
-                      titleText: l10n.dailyTipTitle,
-                      bodyText: l10n.dailyTipBody,
-                      actionText: l10n.readArticleAction,
-                      onOpenLearning: widget.onOpenLearning,
-                    ),
-                    const SizedBox(height: 14),
-
-                    // 3. 24/7 Confidential Helpline Quick Bar
-                    _DeepGlassCrisisBar(
-                      title: l10n.emergencyHelplineTitle,
-                      subtitle: l10n.emergencyHelplineSubtitle,
-                      actionLabel: l10n.emergencyHelplineAction,
-                      onTap: () => _showEmergencyHelplineSheet(context, l10n),
-                    ),
-                    const SizedBox(height: 24),
-
-                    // 4. Section Heading: Explore Services
+                    // 2. Section Heading: Explore Services
                     _GlassSectionHeader(
                       title: l10n.exploreServicesHeading,
                       subtitle: l10n.exploreServicesSubtitle,
@@ -508,9 +678,20 @@ class _HomePageState extends State<HomePage> {
                       onOpenLearning: widget.onOpenLearning,
                       onOpenArticle: widget.onOpenArticle,
                     ),
+                    const SizedBox(height: 20),
+
+                    // Doctor's Daily Health Article Card (Positioned at bottom of feed)
+                    _DeepGlassDoctorArticleCard(
+                      badgeText: l10n.doctorDailyArticleBadge,
+                      authorText: l10n.doctorArticleAuthor,
+                      titleText: l10n.dailyTipTitle,
+                      bodyText: l10n.dailyTipBody,
+                      actionText: l10n.readFullArticleAction,
+                      onTap: () => _showDoctorDailyArticleSheet(context, l10n),
+                    ),
                     const SizedBox(height: 22),
 
-                    // 7. Safeguarding Boundary Banner
+                    // Safeguarding Boundary Banner
                     _DeepGlassSafetyBanner(
                       text: l10n.healthEducationBoundary,
                     ),
@@ -831,356 +1012,6 @@ class _DeepGlassGreetingHeader extends StatelessWidget {
                 text: guestReadyText,
               ),
             ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// Interactive Daily Youth Health Insight Card (Myth vs Fact)
-class _DeepGlassDailyTipCard extends StatelessWidget {
-  const _DeepGlassDailyTipCard({
-    required this.onOpenLearning,
-    required this.badgeText,
-    required this.mythFactText,
-    required this.titleText,
-    required this.bodyText,
-    required this.actionText,
-  });
-
-  final VoidCallback onOpenLearning;
-  final String badgeText;
-  final String mythFactText;
-  final String titleText;
-  final String bodyText;
-  final String actionText;
-
-  @override
-  Widget build(BuildContext context) {
-    final glass = context.glassTheme;
-    final isDark = glass.isDark;
-
-    return _DeepGlassContainer(
-      borderRadius: 24,
-      padding: const EdgeInsets.all(18),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Wrap(
-            spacing: 8,
-            runSpacing: 6,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: [
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF0284C7), Color(0xFF0EA5E9)],
-                  ),
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Color(0x250284C7),
-                      blurRadius: 6,
-                      offset: Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(
-                      Icons.lightbulb_rounded,
-                      size: 14,
-                      color: Colors.white,
-                    ),
-                    const SizedBox(width: 5),
-                    Text(
-                      badgeText,
-                      style: const TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w800,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  color: isDark
-                      ? const Color(0xFF0F172A)
-                      : const Color(0xFFE0F2FE),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: isDark
-                        ? const Color(0xFF38BDF8).withValues(alpha: 0.35)
-                        : const Color(0xFFBAE6FD),
-                  ),
-                ),
-                child: Text(
-                  mythFactText,
-                  style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    color: isDark
-                        ? const Color(0xFF38BDF8)
-                        : const Color(0xFF0369A1),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Text(
-            titleText,
-            style: TextStyle(
-              fontSize: 15.5,
-              fontWeight: FontWeight.w800,
-              color: glass.titleText,
-            ),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            bodyText,
-            style: TextStyle(
-              fontSize: 13,
-              height: 1.45,
-              color: glass.subtitleText,
-            ),
-          ),
-          const SizedBox(height: 12),
-          Align(
-            alignment: Alignment.centerRight,
-            child: InkWell(
-              onTap: onOpenLearning,
-              borderRadius: BorderRadius.circular(12),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      actionText,
-                      style: TextStyle(
-                        fontSize: 12.5,
-                        fontWeight: FontWeight.w700,
-                        color: glass.accentColor,
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    Icon(
-                      Icons.arrow_forward_rounded,
-                      size: 14,
-                      color: glass.accentColor,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// 24/7 Toll-Free Emergency Helpline Quick Bar
-class _DeepGlassCrisisBar extends StatelessWidget {
-  const _DeepGlassCrisisBar({
-    required this.title,
-    required this.subtitle,
-    required this.actionLabel,
-    required this.onTap,
-  });
-
-  final String title;
-  final String subtitle;
-  final String actionLabel;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final glass = context.glassTheme;
-    final isDark = glass.isDark;
-
-    return _DeepGlassContainer(
-      borderRadius: 20,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      onTap: onTap,
-      child: Row(
-        children: [
-          Container(
-            width: 42,
-            height: 42,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: const LinearGradient(
-                colors: [Color(0xFFE11D48), Color(0xFFFB7185)],
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xFFE11D48).withValues(alpha: 0.35),
-                  blurRadius: 10,
-                  offset: const Offset(0, 3),
-                ),
-              ],
-            ),
-            child: const Icon(
-              Icons.phone_in_talk_rounded,
-              color: Colors.white,
-              size: 20,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 13.5,
-                    fontWeight: FontWeight.w800,
-                    color: isDark
-                        ? const Color(0xFFFDA4AF)
-                        : const Color(0xFF881337),
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  subtitle,
-                  style: TextStyle(
-                    fontSize: 11.5,
-                    fontWeight: FontWeight.w600,
-                    color: isDark
-                        ? const Color(0xFFFECDD3)
-                        : const Color(0xFF9F1239),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-            decoration: BoxDecoration(
-              color: const Color(0xFFBE123C),
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: Text(
-              actionLabel,
-              style: const TextStyle(
-                fontSize: 11.5,
-                fontWeight: FontWeight.w700,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// Bottom Sheet Emergency Helpline Tile with Telephone Action & Clipboard Feedback
-class _EmergencyHelplineTile extends StatelessWidget {
-  const _EmergencyHelplineTile({
-    required this.number,
-    required this.name,
-    required this.description,
-    required this.callActionLabel,
-    required this.copiedToast,
-  });
-
-  final String number;
-  final String name;
-  final String description;
-  final String callActionLabel;
-  final String copiedToast;
-
-  @override
-  Widget build(BuildContext context) {
-    final glass = context.glassTheme;
-    final isDark = glass.isDark;
-
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1E38) : const Color(0xFFFFF1F2),
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: isDark
-              ? const Color(0xFFE11D48).withValues(alpha: 0.35)
-              : const Color(0xFFFECDD3),
-          width: 1.2,
-        ),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
-              color: const Color(0xFFE11D48),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Text(
-              number,
-              style: const TextStyle(
-                fontSize: 17,
-                fontWeight: FontWeight.w900,
-                color: Colors.white,
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  name,
-                  style: TextStyle(
-                    fontSize: 13.5,
-                    fontWeight: FontWeight.w800,
-                    color: isDark
-                        ? const Color(0xFFFDA4AF)
-                        : const Color(0xFF881337),
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  description,
-                  style: TextStyle(
-                    fontSize: 11.5,
-                    color: isDark
-                        ? const Color(0xFFFECDD3)
-                        : const Color(0xFF9F1239),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          IconButton(
-            onPressed: () {
-              Clipboard.setData(ClipboardData(text: number));
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('$copiedToast: $number'),
-                  duration: const Duration(seconds: 2),
-                  behavior: SnackBarBehavior.floating,
-                ),
-              );
-            },
-            icon: const Icon(
-              Icons.phone_rounded,
-              color: Color(0xFFE11D48),
-            ),
-            tooltip: callActionLabel,
           ),
         ],
       ),
@@ -1893,4 +1724,231 @@ class _DeepGlassSafetyBanner extends StatelessWidget {
           ],
         ),
       );
+}
+
+/// Daily Doctor-Authored Youth Health Article Card
+class _DeepGlassDoctorArticleCard extends StatelessWidget {
+  const _DeepGlassDoctorArticleCard({
+    required this.badgeText,
+    required this.authorText,
+    required this.titleText,
+    required this.bodyText,
+    required this.actionText,
+    required this.onTap,
+  });
+
+  final String badgeText;
+  final String authorText;
+  final String titleText;
+  final String bodyText;
+  final String actionText;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final glass = context.glassTheme;
+    final isDark = glass.isDark;
+
+    return _DeepGlassContainer(
+      borderRadius: 24,
+      padding: const EdgeInsets.all(18),
+      onTap: onTap,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Wrap(
+            spacing: 8,
+            runSpacing: 6,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF0284C7), Color(0xFF0EA5E9)],
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Color(0x250284C7),
+                      blurRadius: 6,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.medical_services_rounded,
+                      size: 13,
+                      color: Colors.white,
+                    ),
+                    const SizedBox(width: 5),
+                    Text(
+                      badgeText,
+                      style: const TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? const Color(0xFF0C4A6E)
+                      : const Color(0xFFE0F2FE),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: isDark
+                        ? const Color(0xFF0284C7)
+                        : const Color(0xFFBAE6FD),
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.verified_rounded,
+                      size: 12,
+                      color: glass.accentColor,
+                    ),
+                    const SizedBox(width: 4),
+                    Flexible(
+                      child: Text(
+                        authorText,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
+                          color: isDark
+                              ? const Color(0xFF38BDF8)
+                              : const Color(0xFF0284C7),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            titleText,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w800,
+              color: glass.titleText,
+              letterSpacing: -0.2,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            bodyText,
+            style: TextStyle(
+              fontSize: 13,
+              height: 1.45,
+              color: glass.subtitleText,
+            ),
+          ),
+          const SizedBox(height: 14),
+          Row(
+            children: [
+              Text(
+                actionText,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                  color: glass.accentColor,
+                ),
+              ),
+              const SizedBox(width: 4),
+              Icon(
+                Icons.arrow_forward_rounded,
+                size: 15,
+                color: glass.accentColor,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DoctorAdviceTile extends StatelessWidget {
+  const _DoctorAdviceTile({
+    required this.icon,
+    required this.iconColor,
+    required this.title,
+    required this.description,
+  });
+
+  final IconData icon;
+  final Color iconColor;
+  final String title;
+  final String description;
+
+  @override
+  Widget build(BuildContext context) {
+    final glass = context.glassTheme;
+    final isDark = glass.isDark;
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF8FAFC),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: isDark ? glass.cardBorder : const Color(0xFFE2E8F0),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: iconColor.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, size: 20, color: iconColor),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 13.5,
+                    fontWeight: FontWeight.w700,
+                    color: glass.titleText,
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  description,
+                  style: TextStyle(
+                    fontSize: 12.5,
+                    height: 1.45,
+                    color: glass.subtitleText,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

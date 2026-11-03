@@ -2387,6 +2387,55 @@ class AppLocalizationsAm extends AppLocalizations {
   String get readArticleAction => 'ጽሑፉን ያንብቡ';
 
   @override
+  String get doctorDailyArticleBadge => 'የሀኪሞች ዕለታዊ ጽሑፍ';
+
+  @override
+  String get doctorArticleAuthor => 'በየኛ ጤና የህክምና ባለሙያዎች የቀረበ';
+
+  @override
+  String get doctorArticleReadTime => 'የ2 ደቂቃ ንባብ';
+
+  @override
+  String get doctorArticleDate => 'የዛሬ የህክምና ማስታወሻ';
+
+  @override
+  String get readFullArticleAction => 'ሙሉውን ጽሑፍ ያንብቡ';
+
+  @override
+  String get doctorArticleSheetTitle => 'የሀኪሞች ዕለታዊ የጤና ማስታወሻ';
+
+  @override
+  String get doctorArticleFullText =>
+      'በጉርምስና ወቅት ሰውነት ከፍተኛ የሆርሞን ለውጦችን ያስተናግዳል፤ በተለይም በወንዶች ላይ እንደ ቴስቶስትሮን እና በሴቶች ላይ እንደ ኢስትሮጅን ያሉ የተፈጥሮ ኬሚካላዊ መልክተኞች በከፍተኛ ሁኔታ ይጨምራሉ። እነዚህ ሆርሞኖች በቆዳ ስር የሚገኙ የስብ አመንጪ ዕጢዎችን በማነቃቃት የቅባት መጠንን ያበዛሉ። ከመጠን በላይ የሆነ ቅባት ከሞቱ የቆዳ ህዋሳት ጋር ሲደባለቅ የቆዳ ቀዳዳዎች ስለሚዘጉ ጥቁር ወይም ነጭ ነጠብጣቦች እና ብጉር እንዲፈጠሩ ያደርጋል።\n\nበጉርምስና ዕድሜ ላይ የሚከሰት ብጉር በቆሻሻ ወይም በግል ንፅህና ጉድለት ምክንያት የሚመጣ እንዳልሆነ መገንዘብ እጅግ አስፈላጊ ነው። ይህ ሰውነትዎ ወደ ጉልምስና ደረጃ በሚሸጋገርበት ጊዜ የሚከሰት ፍጹም ተፈጥሯዊ የሆነ አካላዊ ሂደት ነው። በተመሳሳይ መልኩ፣ የሆርሞኖች መለዋወጥ በአእምሮ ውስጥ ባሉ የነርቭ አስተላላፊዎች ላይ ጊዜያዊ ተጽእኖ ስለሚያሳድር ድንገተኛ የስሜት መለዋወጥ እና ጭንቀትን ሊያስከትል ይችላል።\n\nበዚህ ወቅት ቆዳዎን እና ስሜታዊ ደህንነትዎን መጠበቅ ቀላል እና ውጤታማ ነው። ፊትን በቀን ሁለት ጊዜ ለስላሳ ሳሙና እና ለብ ባለ ውሃ መታጠብ፣ በቂ ውሃ መጠጣት፣ የተመጣጠነ ምግብ መመገብ እና ከታመኑ ጓደኞች ወይም አቻ አማካሪዎች ጋር ግልጽ ውይይት ማድረግ በራስ መተማመንን ለማሳደግ ይረዳል።';
+
+  @override
+  String get doctorAdviceSkincareTitle => 'የተረጋጋ የዕለት ተዕለት ንፅህና';
+
+  @override
+  String get doctorAdviceSkincareDesc =>
+      'ፊትን በቀን ሁለት ጊዜ ለስላሳ ሳሙና እና ለብ ባለ ውሃ ይታጠቡ። ጠባሳ እንዳይፈጠር ፊትን በኃይል ከመታሸት ወይም ብጉርን ከማፍረጥ ይቆጠቡ።';
+
+  @override
+  String get doctorAdviceEmotionalTitle => 'ስሜታዊ መረጋጋት እና ግንዛቤ';
+
+  @override
+  String get doctorAdviceEmotionalDesc =>
+      'ድንገተኛ የስሜት መለዋወጥ የተለመደ የሆርሞን ምላሽ ነው። አየር በጥልቀት ይተንፍሱ፣ በቂ እንቅልፍ ይተኙ እና ጭንቀትን ከአቻ አማካሪዎች ጋር ያጋሩ።';
+
+  @override
+  String get doctorAdviceClinicalTitle => 'የባለሙያ የህክምና ድጋፍ';
+
+  @override
+  String get doctorAdviceClinicalDesc =>
+      'የቆዳ ሽፍታው ከፍተኛ ህመም፣ ማበጥ ወይም የስነ-ልቦና ጭንቀት የሚፈጥር ከሆነ ለተጨማሪ ህክምና የወጣቶች ጤና ክሊኒክ ያማክሩ።';
+
+  @override
+  String get closeArticleAction => 'ጽሑፉን ዝጋ';
+
+  @override
+  String get askMentorAction => 'ከአቻ አማካሪ ጋር ይነጋገሩ';
+
+  @override
   String get emergencyHelplineTitle => '24/7 ነፃ እና ሚስጥራዊ የስልክ መስመሮች';
 
   @override
