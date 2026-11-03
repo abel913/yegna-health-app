@@ -1,5 +1,18 @@
 # Handoff
 
+## Functional Profile Settings, Real Dark Mode, and Dynamic Text Sizing (2026-11-03)
+
+- **Completed Functional Settings Implementation**:
+  - `lib/src/account/app_settings_controller.dart`: State controller managing `themeMode`, `textScale` (`small` [0.88x], `normal` [1.0x], `large` [1.18x]), and persistent notification booleans backed by `SharedPreferences`.
+  - `lib/main.dart`: Wired `_buildDarkTheme()`, injected `AppSettingsController` into root `ListenableBuilder`, and applied global `TextScaler` in `MaterialApp.builder`.
+  - `lib/src/app.dart`: Connected `_showThemeModal`, `_showTextSizeModal`, and `_showNotificationsModal` directly to `AppSettingsController`. Added dynamic tile badges and refactored bottom sheets with `Material` wrappers. Added "Save your learning journey" guest promotional banner on the Profile page.
+  - `lib/l10n/app_en.arb` & `lib/l10n/app_am.arb`: Full bilingual ARB keys for system theme, notification categories, and guest promotional banners.
+- **Verification**:
+  - `test/settings_controller_test.dart`: 5 passing unit tests.
+  - `test/account_page_test.dart`: 4 passing widget tests for settings and profile navigation.
+  - `flutter test --no-pub`: All 114 tests passing (100% pass rate).
+  - `flutter analyze --no-pub`: 0 issues found.
+
 ## Structured ChatGPT / Gemini-Style Chatbot Response Formatting (2026-11-03)
 
 - **Completed Response Formatting Upgrade**:

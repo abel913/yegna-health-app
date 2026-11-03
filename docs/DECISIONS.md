@@ -1,5 +1,20 @@
 # Technical decisions
 
+## 2026-11-03 — Functional Settings: Dark Theme, Global Text Sizing, and Persistent Preferences
+
+- **App Settings Architecture (`AppSettingsController`)**:
+  - Implemented lightweight `ChangeNotifier` to manage user preferences: `ThemeMode` (`system`, `light`, `dark`), `AppTextScale` (`small` [0.88x], `normal` [1.0x], `large` [1.18x]), and persistent notification toggles (`pushAlertsEnabled`, `healthTipsEnabled`, `assessmentRemindersEnabled`).
+  - Stored strictly via existing `SharedPreferences` without introducing unnecessary state management dependencies.
+- **Global Typography Scaling**:
+  - Injected `TextScaler.linear(settingsController.textScaleFactor)` directly into `MaterialApp.builder` wrapping the root `MediaQuery`.
+  - Guarantees seamless text responsiveness across all 8 learning modules, quiz accordions, directory cards, and self-assessment tools without layout clippings or hardcoded font size modifications.
+- **Material 3 Midnight Dark Theme**:
+  - Styled with deep midnight slate tones (`#0B132B`, `#0F172A`, `#1E293B`) and cyan/sky brand accents (`#0284C7`, `#38BDF8`).
+  - Wrapped modal bottom sheets with `Material` clipping to eliminate `DecoratedBox` background conflicts and preserve native ripple feedback.
+- **Guest Mode Promotion & Account Navigation**:
+  - Displayed "Save your learning journey" banner on the Profile page when signed out with immediate "Sign In / Register" action.
+  - Maintained safe redirection to Home upon sign-out.
+
 ## 2026-11-02 — Mentors direct calling, Telegram contact channels, and package visibility
 
 - Direct Contact Integration:

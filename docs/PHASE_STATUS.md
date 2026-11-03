@@ -1,5 +1,28 @@
 # Phase status
 
+## Functional Profile Settings, Real Dark Mode, and Dynamic Text Sizing (2026-11-03)
+
+**Status: Completed & 100% Verified.**
+- **Real Dark Mode & Theme System**:
+  - Implemented 3 theme modes: System Default (auto-follows device schedule), Light Mode, and Dark Mode.
+  - Designed deep midnight slate Material 3 dark palette (`#0B132B`, `#0F172A`, `#1E293B`) with high-contrast text and `#38BDF8` cyan accents.
+  - Interactive radio selector modal with checkmarks and real-time tile badge updates.
+- **Global Typography Scaling (`TextScaler`)**:
+  - Implemented 3 font scale tiers: Small (0.88x), Default (1.0x), and Large (1.18x).
+  - Scaled globally through `MaterialApp.builder` using `MediaQuery.copyWith(textScaler: TextScaler.linear(...))`.
+  - Automatically scales text across learning modules, quizzes, chat bubbles, self-assessment cards, and directories.
+- **Persistent Notification Preferences**:
+  - Wired toggles for Push Alerts, Daily Health Education Tips, and Assessment Reminders.
+  - Persisted asynchronously via `SharedPreferences`.
+- **Guest Mode Promotion & Modern Bottom Sheets**:
+  - Prominent "Save your learning journey" banner when not authenticated with direct action to sign in or create an account.
+  - Refactored modal bottom sheets with `Material` wrappers to eliminate `DecoratedBox` ink warnings and ensure crisp ripple interactions.
+- **Verification**:
+  - `test/settings_controller_test.dart`: 5 unit tests for defaults, loading, theme toggle, text scale, and notification persistence.
+  - `test/account_page_test.dart`: 4 widget tests verifying dark mode selection, text scaling, notifications modal, and authenticated profile display.
+  - `flutter test --no-pub`: **All 114 tests passing (100% pass rate)**.
+  - `flutter analyze --no-pub`: **0 issues found**.
+
 ## Structured ChatGPT / Gemini-Style Chatbot Response Formatting (2026-11-03)
 
 **Status: Completed & 100% Verified.**
