@@ -1,5 +1,20 @@
 # Handoff
 
+## Advanced Dark Glassmorphism Design System & Streamlined Light/Dark Themes (2026-11-03)
+
+- **Completed Advanced Dark Glassmorphism Architecture**:
+  - `lib/src/theme/app_glass_theme.dart`: Centralized `AppGlassTheme` token system and `BuildContext` extensions (`context.glassTheme`, `context.isDark`) for coordinated, high-contrast dark glass visuals.
+  - `lib/src/account/app_settings_controller.dart`: Default theme set to `ThemeMode.light`, removed `ThemeMode.system` logic, providing clean, instant toggling between Light and Dark modes.
+  - `lib/src/app.dart`: Upgraded `AppShell`, `AppBar`, `_ScoopedNotchBarPainter`, floating 3D notch button, `_AccountPage`, and all bottom sheet modals (`_showThemeModal`, `_showLanguageModal`, `_showTextSizeModal`, `_showSupportModal`, `_showPrivacyModal`).
+  - `lib/src/home/home_page.dart`: Upgraded ambient luminous orbs, `_DeepGlassContainer`, `_DeepGlassActionCard` 2x2 grid, `_DeepGlassDailyTipCard`, and emergency hotline bottom sheet with optical dark acrylic styling.
+  - `lib/src/learning/learning_modules_carousel.dart`: Adapted learning carousel module cards to dark frosted acrylic surfaces.
+- **Verification**:
+  - `dart format lib test`: Clean.
+  - `flutter analyze --no-pub`: 0 issues found.
+  - `flutter test test/settings_controller_test.dart --no-pub`: 5 / 5 passed (100%).
+  - `flutter test test/account_page_test.dart --no-pub`: 4 / 4 passed (100%).
+  - `flutter test --no-pub`: All 139 tests passed (100% pass rate).
+
 ## In-App Notification Center & Auth Welcome Feedback System (2026-11-03)
 
 - **Completed In-App Notification Center & Auth Feedback**:

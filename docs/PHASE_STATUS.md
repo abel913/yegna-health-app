@@ -1,5 +1,31 @@
 # Phase status
 
+## Advanced Dark Glassmorphism Design System & Streamlined Light/Dark Themes (2026-11-03)
+
+**Status: Completed & 100% Verified.**
+- **Advanced Dark Glassmorphism Foundation (`lib/src/theme/app_glass_theme.dart`)**:
+  - Centralized glass theme tokens with `AppGlassTheme` providing dynamic styling tokens across light and dark modes.
+  - High-end dark aesthetic:
+    - Canvas: `#070D1E` / `#0B132B` deep obsidian background.
+    - Glass Surfaces: `#131D36` with 78% opacity, frosted blur, and electric cyan borders (`#38BDF8`).
+    - Typography: `#F8FAFC` crisp white headings and `#94A3B8` slate body text.
+    - Glow & Accents: `#38BDF8` cyan highlights, glowing borders, and luminous specular highlights.
+- **Streamlined Theme Picker (Light & Dark Only)**:
+  - Removed "System Default" from `AppSettingsController`, UI modals, and tests, leaving strictly **Light** and **Dark** choices.
+  - Fixed modal styling bug: selected tiles in Dark mode now render with an elegant translucent blue/cyan background (`#0284C7` with 22% alpha) and glowing cyan border (`#38BDF8`), completely eliminating the unreadable white box artifact.
+- **Full App-Wide Dark Glass Adaptation**:
+  - `AppShell` (`lib/src/app.dart`): Dynamic Scaffold background, frosted acrylic AppBar, glowing scoop notch cradle, and dynamic bottom navigation bar icons.
+  - `_AccountPage` (`lib/src/app.dart`): Glass profile avatar with glowing border, dark guest promotional banner, frosted acrylic settings cards, cyan heading, and dark tiles.
+  - Modals (`lib/src/app.dart`): `_showThemeModal`, `_showTextSizeModal`, `_showLanguageModal`, `_showPrivacyModal`, `_showSupportModal`, and `_showNotificationsModal` fully styled with `context.glassTheme`.
+  - `HomePage` (`lib/src/home/home_page.dart`): Ambient mesh orbs with refined dark cyan/indigo glow, optical frosted `_DeepGlassContainer`, glowing service grid action cards, daily insight cards, and emergency sheet.
+  - `LearningModulesCarousel` (`lib/src/learning/learning_modules_carousel.dart`): Carousel cards now adapt seamlessly to dark frosted acrylic surfaces.
+- **Verification**:
+  - `dart format lib test`: Clean.
+  - `flutter analyze --no-pub`: **0 issues found**.
+  - `flutter test test/settings_controller_test.dart --no-pub`: 5 / 5 passed (100%).
+  - `flutter test test/account_page_test.dart --no-pub`: 4 / 4 passed (100%).
+  - `flutter test --no-pub`: **All 139 tests passed (100% pass rate)**.
+
 ## In-App Notification Center & Auth Welcome Feedback System (2026-11-03)
 
 **Status: Completed & 100% Verified.**
