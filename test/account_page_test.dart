@@ -56,8 +56,7 @@ void main() {
   }
 
   group('Account Page & Functional Settings Widget Tests', () {
-    testWidgets(
-        'authenticated user can open theme modal to select dark mode',
+    testWidgets('authenticated user can open theme modal to select dark mode',
         (tester) async {
       await tester.binding.setSurfaceSize(const Size(400, 1600));
       addTearDown(() => tester.binding.setSurfaceSize(null));
@@ -289,6 +288,13 @@ void main() {
 
       expect(find.text('Chala Gemechu'), findsOneWidget);
       expect(find.text(l10n.guestSignInPromoTitle), findsNothing);
+
+      // Sign out and verify user is safely redirected back to Home as a guest
+      authController.signOut();
+      await tester.pumpAndSettle();
+
+      expect(authController.isAuthenticated, isFalse);
+      expect(find.text(l10n.exploreServicesHeading), findsOneWidget);
     });
   });
 }
