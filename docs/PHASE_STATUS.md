@@ -1,5 +1,30 @@
 # Phase status
 
+## Multi-Session Chat History & Slide-Out Navigation Drawer (2026-11-03)
+
+**Status: Completed & 100% Verified.**
+- **ChatGPT / Gemini-Style Multi-Session History**:
+  - Implemented `ChatHistoryDrawer` with slide-out navigation displaying past conversations.
+  - Relative date grouping: "Today", "Yesterday", "Previous 7 Days", and "Older".
+  - Active conversation indicator and preview snippets.
+  - Quick `+ New Chat` button in both the drawer and the AppBar to begin a fresh thread while preserving previous chats.
+  - Deletion options: delete individual threads or clear all history, both backed by confirmation dialogs.
+  - Title generation: conversation sessions automatically named from the user's first query.
+- **Offline-First Persistence**:
+  - `ChatHistoryRepository` abstract interface with `SharedPreferencesChatHistoryRepository` and `InMemoryChatHistoryRepository`.
+  - Non-blocking instant welcome message rendering so the chatbot UI appears immediately without storage delay.
+  - Stored under `yegna_chat_conversations_v1` with JSON serialization.
+- **Modular Chatbot Architecture Documentation**:
+  - Separated all chatbot plans into dedicated `.md` files in `docs/chatbot/`:
+    - `docs/chatbot/01_CHATBOT_FOUNDATION_PLAN.md`
+    - `docs/chatbot/02_CHATBOT_DOMAIN_GUARDRAILS_PLAN.md`
+    - `docs/chatbot/03_CHATBOT_RESPONSE_DESIGN_PLAN.md`
+    - `docs/chatbot/04_CHATBOT_HISTORY_PLAN.md`
+- **Verification**:
+  - `dart format lib test` passed cleanly across all 106 files.
+  - `flutter analyze --no-pub`: **0 issues found**.
+  - `flutter test` across all 6 chatbot test suites: **All 35 chatbot tests passing (100%)**.
+
 ## Functional Profile Settings, Real Dark Mode, and Dynamic Text Sizing (2026-11-03)
 
 **Status: Completed & 100% Verified.**

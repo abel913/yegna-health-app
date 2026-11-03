@@ -1,4 +1,13 @@
-# Yegna Health Conversational AI Chatbot Plan
+# Yegna Health Conversational AI Chatbot Master Plans
+
+This directory contains the complete modular architectural and implementation plans for the Yegna Health AI Assistant:
+
+- **[01. Foundation Plan](chatbot/01_CHATBOT_FOUNDATION_PLAN.md)**: Conversational AI Health Assistant, Gemini API edge function, offline curriculum knowledge engine, and FAB integration.
+- **[02. Domain Guardrails Plan](chatbot/02_CHATBOT_DOMAIN_GUARDRAILS_PLAN.md)**: Strict medical/health domain boundaries, negative refusal directives, and redirection away from non-health topics (physics, math, coding, politics).
+- **[03. Response Design Plan](chatbot/03_CHATBOT_RESPONSE_DESIGN_PLAN.md)**: Structured ChatGPT / Gemini-style response formatting, custom teal bullet dots, numbered badges, vertical accent headers, and asterisk elimination.
+- **[04. Multi-Session Chat History Plan](chatbot/04_CHATBOT_HISTORY_PLAN.md)**: ChatGPT-style multi-session chat history, slide-out drawer, `+ New Chat` workflow, relative date grouping, and local offline persistence.
+
+---
 
 ## Goal Description
 Integrate an empathetic, youth-friendly, confidential conversational chatbot ("Yegna Health Assistant") into the app. The chatbot answers questions regarding reproductive health, the 8 module curricula (HIV/AIDS, STIs, Puberty, SRH & Contraception, Hepatitis, GBV, Substance Abuse, Mental Health), and local youth clinic discovery in Addis Ababa and beyond. It supports both **English and Amharic**, provides one-tap suggested prompt chips, and enforces medical safety guardrails with immediate national helpline triggers (952 / 8335).

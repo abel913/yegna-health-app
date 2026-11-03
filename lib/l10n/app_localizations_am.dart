@@ -3288,4 +3288,50 @@ class AppLocalizationsAm extends AppLocalizations {
 
   @override
   String get responseCopiedMessage => 'መልእክቱ ተቀድቷል';
+
+  @override
+  String get newChatAction => 'አዲስ ውይይት';
+
+  @override
+  String get chatHistoryTitle => 'የውይይት ታሪክ';
+
+  @override
+  String get noChatHistory => 'እስካሁን ምንም ውይይቶች የሉም';
+
+  @override
+  String get noChatHistorySubtitle => 'የጤና ጥያቄዎችዎ እና መመሪያዎችዎ እዚህ ይቀመጣሉ።';
+
+  @override
+  String get deleteChatAction => 'ውይይት ሰርዝ';
+
+  @override
+  String get deleteChatConfirmTitle => 'ውይይቱን ይሰርዙ?';
+
+  @override
+  String get deleteChatConfirmMessage => 'ይህን የውይይት ታሪክ መሰረዝ እርግጠኛ ነዎት?';
+
+  @override
+  String get clearAllChatsAction => 'ሁሉንም ውይይቶች አጽዳ';
+
+  @override
+  String get clearAllChatsConfirmTitle => 'የውይይት ታሪክን ያጽዱ?';
+
+  @override
+  String get clearAllChatsConfirmMessage =>
+      'ይህ ሁሉንም የቀደሙ ውይይቶችዎን እስከመጨረሻው ይሰርዛል።';
+
+  @override
+  String get chatHistoryToday => 'ዛሬ';
+
+  @override
+  String get chatHistoryYesterday => 'ትናንት';
+
+  @override
+  String get chatHistoryPreviousDays => 'ያለፉት 7 ቀናት';
+
+  @override
+  String get chatHistoryOlder => 'የቆዩ';
+
+  @override
+  String get activeChatBadge => 'የአሁኑ';
 }

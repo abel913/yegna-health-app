@@ -4,19 +4,24 @@ import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../l10n/app_localizations.dart';
+import 'chat_history_drawer.dart';
+import 'chat_history_repository.dart';
 import 'chatbot_models.dart';
 import 'chatbot_repository.dart';
 import 'formatted_chat_message.dart';
 
-/// Full-screen conversational AI health assistant screen.
+/// Full-screen conversational AI health assistant screen with multi-session
+/// chat history and ChatGPT / Gemini-style navigation.
 class YegnaChatbotPage extends StatefulWidget {
   const YegnaChatbotPage({
     required this.repository,
+    this.historyRepository,
     this.initialQuery,
     super.key,
   });
 
   final ChatbotRepository repository;
+  final ChatHistoryRepository? historyRepository;
   final String? initialQuery;
 
   @override
@@ -24,6 +29,13 @@ class YegnaChatbotPage extends StatefulWidget {
 }
 
 class _YegnaChatbotPageState extends State<YegnaChatbotPage> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  late final ChatHistoryRepository _historyRepository;
+  List<ChatConversation> _conversations = [];
+  String? _currentSessionId;
+  String? _currentSessionTitle;
+  DateTime? _currentSessionCreatedAt;
+
   final List<ChatMessage> _messages = [];
   final TextEditingController _textController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
@@ -33,13 +45,32 @@ class _YegnaChatbotPageState extends State<YegnaChatbotPage> {
   @override
   void initState() {
     super.initState();
+    _historyRepository =
+        widget.historyRepository ?? SharedPreferencesChatHistoryRepository();
+    _currentSessionId = 'session_${DateTime.now().millisecondsSinceEpoch}';
+    _currentSessionCreatedAt = DateTime.now();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _initializeWelcome();
+      _loadHistory();
       if (widget.initialQuery != null &&
           widget.initialQuery!.trim().isNotEmpty) {
         _handleSubmitted(widget.initialQuery!.trim());
       }
     });
+  }
+
+  Future<void> _loadHistory() async {
+    try {
+      final list = await _historyRepository.loadConversations();
+      if (mounted) {
+        setState(() {
+          _conversations = list;
+        });
+      }
+    } catch (_) {
+      // Graceful fallback
+    }
   }
 
   @override
@@ -69,6 +100,100 @@ class _YegnaChatbotPageState extends State<YegnaChatbotPage> {
     });
   }
 
+  String _generateTitle(String text) {
+    var cleaned = text.replaceAll(RegExp(r'[\r\n]+'), ' ').trim();
+    if (cleaned.length > 36) {
+      cleaned = '${cleaned.substring(0, 36).trim()}...';
+    }
+    return cleaned;
+  }
+
+  Future<void> _persistCurrentSession() async {
+    if (_currentSessionId == null) return;
+    // Don't persist empty welcome-only sessions
+    if (_messages.length <= 1 && !_messages.any((m) => m.isUser)) return;
+
+    final conv = ChatConversation(
+      id: _currentSessionId!,
+      title: _currentSessionTitle ?? 'Health Conversation',
+      createdAt: _currentSessionCreatedAt ?? DateTime.now(),
+      updatedAt: DateTime.now(),
+      messages: List.from(_messages),
+    );
+    await _historyRepository.saveConversation(conv);
+    final updatedList = await _historyRepository.loadConversations();
+    if (mounted) {
+      setState(() {
+        _conversations = updatedList;
+      });
+    }
+  }
+
+  Future<void> _startNewChat({
+    bool saveCurrent = true,
+    bool closeDrawer = true,
+  }) async {
+    if (saveCurrent && _messages.length > 1 && _currentSessionId != null) {
+      await _persistCurrentSession();
+    }
+
+    if (!mounted) return;
+
+    if (closeDrawer && (_scaffoldKey.currentState?.isDrawerOpen ?? false)) {
+      Navigator.of(context).pop();
+    }
+
+    setState(() {
+      _currentSessionId = 'session_${DateTime.now().millisecondsSinceEpoch}';
+      _currentSessionTitle = null;
+      _currentSessionCreatedAt = DateTime.now();
+      _messages.clear();
+      _initializeWelcome();
+    });
+    _scrollToBottom();
+  }
+
+  void _selectConversation(ChatConversation conversation) {
+    if (_scaffoldKey.currentState?.isDrawerOpen ?? false) {
+      Navigator.of(context).pop();
+    }
+
+    setState(() {
+      _currentSessionId = conversation.id;
+      _currentSessionTitle = conversation.title;
+      _currentSessionCreatedAt = conversation.createdAt;
+      _messages.clear();
+      _messages.addAll(conversation.messages);
+      if (_messages.isEmpty) {
+        _initializeWelcome();
+      }
+    });
+    _scrollToBottom();
+  }
+
+  Future<void> _deleteConversation(String id) async {
+    await _historyRepository.deleteConversation(id);
+    final updated = await _historyRepository.loadConversations();
+    if (mounted) {
+      setState(() {
+        _conversations = updated;
+      });
+      if (_currentSessionId == id) {
+        await _startNewChat(saveCurrent: false, closeDrawer: false);
+      }
+    }
+  }
+
+  Future<void> _clearAllHistory() async {
+    await _historyRepository.clearAll();
+    if (mounted) {
+      setState(() {
+        _conversations = [];
+      });
+      await _startNewChat(saveCurrent: false, closeDrawer: false);
+    }
+  }
+
   void _scrollToBottom() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_scrollController.hasClients) {
@@ -94,14 +219,19 @@ class _YegnaChatbotPageState extends State<YegnaChatbotPage> {
       timestamp: DateTime.now(),
     );
 
+    _currentSessionTitle ??= _generateTitle(trimmed);
+    _currentSessionId ??= 'session_${DateTime.now().millisecondsSinceEpoch}';
+
+    final languageCode = Localizations.localeOf(context).languageCode;
+
     setState(() {
       _messages.add(userMessage);
       _isTyping = true;
     });
     _scrollToBottom();
+    await _persistCurrentSession();
 
     try {
-      final languageCode = Localizations.localeOf(context).languageCode;
       final response = await widget.repository.sendMessage(
         trimmed,
         languageCode: languageCode,
@@ -114,6 +244,7 @@ class _YegnaChatbotPageState extends State<YegnaChatbotPage> {
           _isTyping = false;
         });
         _scrollToBottom();
+        await _persistCurrentSession();
       }
     } catch (_) {
       if (mounted) {
@@ -129,6 +260,7 @@ class _YegnaChatbotPageState extends State<YegnaChatbotPage> {
           _isTyping = false;
         });
         _scrollToBottom();
+        await _persistCurrentSession();
       }
     }
   }
@@ -149,6 +281,7 @@ class _YegnaChatbotPageState extends State<YegnaChatbotPage> {
       _messages.clear();
       _initializeWelcome();
     });
+    _persistCurrentSession();
   }
 
   @override
@@ -156,7 +289,16 @@ class _YegnaChatbotPageState extends State<YegnaChatbotPage> {
     final l10n = AppLocalizations.of(context);
 
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: const Color(0xFFF3F8FC),
+      drawer: ChatHistoryDrawer(
+        conversations: _conversations,
+        activeConversationId: _currentSessionId,
+        onSelectConversation: _selectConversation,
+        onNewChat: () => _startNewChat(),
+        onDeleteConversation: _deleteConversation,
+        onClearAll: _clearAllHistory,
+      ),
       appBar: AppBar(
         backgroundColor: Colors.white.withValues(alpha: 0.85),
         elevation: 0,
@@ -180,8 +322,8 @@ class _YegnaChatbotPageState extends State<YegnaChatbotPage> {
               clipBehavior: Clip.none,
               children: [
                 Container(
-                  width: 38,
-                  height: 38,
+                  width: 36,
+                  height: 36,
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
                       colors: [Color(0xFF007A78), Color(0xFF005A71)],
@@ -206,8 +348,8 @@ class _YegnaChatbotPageState extends State<YegnaChatbotPage> {
                   bottom: -1,
                   right: -1,
                   child: Container(
-                    width: 11,
-                    height: 11,
+                    width: 10,
+                    height: 10,
                     decoration: BoxDecoration(
                       color: const Color(0xFF10B981),
                       shape: BoxShape.circle,
@@ -217,15 +359,20 @@ class _YegnaChatbotPageState extends State<YegnaChatbotPage> {
                 ),
               ],
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: 10),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    l10n.chatbotTitle,
+                    _currentSessionTitle != null &&
+                            _currentSessionTitle!.isNotEmpty
+                        ? _currentSessionTitle!
+                        : l10n.chatbotTitle,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
-                      fontSize: 16,
+                      fontSize: 15,
                       fontWeight: FontWeight.w800,
                       color: Color(0xFF08264A),
                       letterSpacing: -0.2,
@@ -248,13 +395,30 @@ class _YegnaChatbotPageState extends State<YegnaChatbotPage> {
           ],
         ),
         actions: [
+          // 1. History Drawer Toggle (ChatGPT Style)
+          IconButton(
+            icon: const Icon(Icons.history_rounded,
+                color: Color(0xFF005A71), size: 23),
+            tooltip: l10n.chatHistoryTitle,
+            onPressed: () => _scaffoldKey.currentState?.openDrawer(),
+          ),
+
+          // 2. Instant "+ New Chat" Button
+          IconButton(
+            icon: const Icon(Icons.add_comment_outlined,
+                color: Color(0xFF007A78), size: 22),
+            tooltip: l10n.newChatAction,
+            onPressed: () => _startNewChat(),
+          ),
+
+          // 3. Clear Current Chat
           IconButton(
             icon: const Icon(Icons.delete_sweep_outlined,
                 color: Color(0xFF5A758E), size: 22),
             tooltip: l10n.chatbotClearChat,
             onPressed: _clearChat,
           ),
-          const SizedBox(width: 6),
+          const SizedBox(width: 4),
         ],
       ),
       body: SafeArea(

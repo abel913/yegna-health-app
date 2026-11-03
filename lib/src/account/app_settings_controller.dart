@@ -35,6 +35,7 @@ class AppSettingsController extends ChangeNotifier {
   bool _assessmentRemindersEnabled = true;
 
   ThemeMode get themeMode => _themeMode;
+  bool get isDark => _themeMode == ThemeMode.dark;
   AppTextScale get textScale => _textScale;
   double get textScaleFactor => _textScale.factor;
   bool get pushAlertsEnabled => _pushAlertsEnabled;

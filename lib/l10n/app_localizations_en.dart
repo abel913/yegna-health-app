@@ -3359,4 +3359,52 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get responseCopiedMessage => 'Response copied to clipboard';
+
+  @override
+  String get newChatAction => 'New chat';
+
+  @override
+  String get chatHistoryTitle => 'Chat History';
+
+  @override
+  String get noChatHistory => 'No conversations yet';
+
+  @override
+  String get noChatHistorySubtitle =>
+      'Your health questions and guidance will be saved here.';
+
+  @override
+  String get deleteChatAction => 'Delete chat';
+
+  @override
+  String get deleteChatConfirmTitle => 'Delete Conversation?';
+
+  @override
+  String get deleteChatConfirmMessage =>
+      'Are you sure you want to delete this chat history?';
+
+  @override
+  String get clearAllChatsAction => 'Clear all chats';
+
+  @override
+  String get clearAllChatsConfirmTitle => 'Clear Chat History?';
+
+  @override
+  String get clearAllChatsConfirmMessage =>
+      'This will permanently delete all your previous conversations.';
+
+  @override
+  String get chatHistoryToday => 'Today';
+
+  @override
+  String get chatHistoryYesterday => 'Yesterday';
+
+  @override
+  String get chatHistoryPreviousDays => 'Previous 7 days';
+
+  @override
+  String get chatHistoryOlder => 'Older';
+
+  @override
+  String get activeChatBadge => 'Active';
 }

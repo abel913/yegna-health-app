@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../l10n/app_localizations.dart';
+import 'chat_history_repository.dart';
 import 'chatbot_repository.dart';
 import 'composite_chatbot_repository.dart';
 import 'yegna_chatbot_page.dart';
@@ -9,16 +10,19 @@ import 'yegna_chatbot_page.dart';
 class YegnaChatbotFab extends StatelessWidget {
   const YegnaChatbotFab({
     this.chatbotRepository,
+    this.chatHistoryRepository,
     super.key,
   });
 
   final ChatbotRepository? chatbotRepository;
+  final ChatHistoryRepository? chatHistoryRepository;
 
   void _openChat(BuildContext context) {
     Navigator.of(context).push<void>(
       MaterialPageRoute<void>(
         builder: (_) => YegnaChatbotPage(
           repository: chatbotRepository ?? CompositeChatbotRepository(),
+          historyRepository: chatHistoryRepository,
         ),
       ),
     );

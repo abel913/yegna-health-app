@@ -19,6 +19,7 @@ import 'chatbot/composite_chatbot_repository.dart';
 import 'chatbot/yegna_chatbot_fab.dart';
 import 'learning/learn_pages.dart';
 import 'learning/learning_progress_controller.dart';
+import 'theme/app_glass_theme.dart';
 
 class AppShell extends StatefulWidget {
   const AppShell({
@@ -209,8 +210,10 @@ class _AppShellState extends State<AppShell> {
         onOpenLearningProgress: _openLearningProgress,
       ),
     ];
+    final glass = context.glassTheme;
+    final isDark = context.isDark;
     return Scaffold(
-      backgroundColor: const Color(0xFFEAF5FD),
+      backgroundColor: glass.scaffoldBackground,
       appBar: AppBar(
         titleSpacing: 20,
         backgroundColor: Colors.transparent,
@@ -221,10 +224,10 @@ class _AppShellState extends State<AppShell> {
             filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.55),
+                color: glass.appBarBackground,
                 border: Border(
                   bottom: BorderSide(
-                    color: Colors.white.withValues(alpha: 0.85),
+                    color: glass.appBarBorder,
                     width: 1.2,
                   ),
                 ),
@@ -234,10 +237,10 @@ class _AppShellState extends State<AppShell> {
         ),
         title: Text(
           _selectedIndex == 4 ? l10n.profile : l10n.appTitle,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w800,
-            color: Color(0xFF08264A),
+            color: glass.appBarTitle,
             letterSpacing: -0.3,
           ),
         ),
@@ -245,7 +248,7 @@ class _AppShellState extends State<AppShell> {
         actions: _selectedIndex == 4
             ? [
                 PopupMenuButton<String>(
-                  icon: const Icon(Icons.more_vert, color: Color(0xFF005A71)),
+                  icon: Icon(Icons.more_vert, color: glass.accentColor),
                   onSelected: (value) {
                     if (value == 'learning') {
                       _openLearningProgress();
@@ -258,8 +261,8 @@ class _AppShellState extends State<AppShell> {
                       value: 'learning',
                       child: Row(
                         children: [
-                          const Icon(Icons.school_outlined,
-                              size: 20, color: Color(0xFF005A71)),
+                          Icon(Icons.school_outlined,
+                              size: 20, color: glass.accentColor),
                           const SizedBox(width: 10),
                           Text(l10n.progressHeading),
                         ],
@@ -358,10 +361,10 @@ class _AppShellState extends State<AppShell> {
                         child: CustomPaint(
                           painter: _ScoopedNotchBarPainter(
                             notchX: notchX,
-                            color: Colors.white.withValues(alpha: 0.88),
-                            borderColor: Colors.white.withValues(alpha: 0.95),
-                            cradleBorderColor: const Color(0xFFBAE6FD),
-                            shadowColor: const Color(0x180284C7),
+                            color: glass.notchBackground,
+                            borderColor: glass.notchBorder,
+                            cradleBorderColor: glass.notchCradle,
+                            shadowColor: glass.notchShadow,
                           ),
                         ),
                       ),
@@ -374,16 +377,16 @@ class _AppShellState extends State<AppShell> {
                             labelTextStyle:
                                 WidgetStateProperty.resolveWith((states) {
                               if (states.contains(WidgetState.selected)) {
-                                return const TextStyle(
+                                return TextStyle(
                                   fontSize: 11.5,
                                   fontWeight: FontWeight.w800,
-                                  color: Color(0xFF0284C7),
+                                  color: glass.navSelectedColor,
                                 );
                               }
-                              return const TextStyle(
+                              return TextStyle(
                                 fontSize: 11.5,
                                 fontWeight: FontWeight.w600,
-                                color: Color(0xFF64748B),
+                                color: glass.navUnselectedColor,
                               );
                             }),
                             iconTheme:
@@ -394,8 +397,8 @@ class _AppShellState extends State<AppShell> {
                                   size: 26,
                                 );
                               }
-                              return const IconThemeData(
-                                color: Color(0xFF64748B),
+                              return IconThemeData(
+                                color: glass.navUnselectedColor,
                                 size: 24,
                               );
                             }),
@@ -454,24 +457,33 @@ class _AppShellState extends State<AppShell> {
                             height: circleSize,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              gradient: const LinearGradient(
+                              gradient: LinearGradient(
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
-                                colors: [
-                                  Color(0xFF0284C7),
-                                  Color(0xFF0369A1),
-                                ],
+                                colors: isDark
+                                    ? const [
+                                        Color(0xFF0284C7),
+                                        Color(0xFF38BDF8),
+                                      ]
+                                    : const [
+                                        Color(0xFF0284C7),
+                                        Color(0xFF0369A1),
+                                      ],
                               ),
                               border: Border.all(
-                                color: Colors.white,
+                                color: isDark
+                                    ? const Color(0xFF070D1E)
+                                    : Colors.white,
                                 width: 2.2,
                               ),
-                              boxShadow: const [
+                              boxShadow: [
                                 BoxShadow(
-                                  color: Color(0x450284C7),
+                                  color: isDark
+                                      ? const Color(0x6038BDF8)
+                                      : const Color(0x450284C7),
                                   blurRadius: 14,
                                   spreadRadius: 1,
-                                  offset: Offset(0, 4),
+                                  offset: const Offset(0, 4),
                                 ),
                               ],
                             ),
@@ -621,6 +633,7 @@ class _NotificationButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = context.isDark;
     return Center(
       child: Stack(
         clipBehavior: Clip.none,
@@ -629,25 +642,33 @@ class _NotificationButton extends StatelessWidget {
             width: 38,
             height: 38,
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.85),
+              color: isDark
+                  ? const Color(0xFF131D36).withValues(alpha: 0.85)
+                  : Colors.white.withValues(alpha: 0.85),
               borderRadius: BorderRadius.circular(14),
               border: Border.all(
-                color: const Color(0xFFBAE6FD).withValues(alpha: 0.9),
+                color: isDark
+                    ? const Color(0xFF38BDF8).withValues(alpha: 0.3)
+                    : const Color(0xFFBAE6FD).withValues(alpha: 0.9),
                 width: 1.2,
               ),
-              boxShadow: const [
+              boxShadow: [
                 BoxShadow(
-                  color: Color(0x100284C7),
+                  color: isDark
+                      ? const Color(0x30000000)
+                      : const Color(0x100284C7),
                   blurRadius: 10,
-                  offset: Offset(0, 3),
+                  offset: const Offset(0, 3),
                 ),
               ],
             ),
             child: IconButton(
-              icon: const Icon(
+              icon: Icon(
                 Icons.notifications_none_rounded,
                 size: 20,
-                color: Color(0xFF005A71),
+                color: isDark
+                    ? const Color(0xFF38BDF8)
+                    : const Color(0xFF005A71),
               ),
               padding: EdgeInsets.zero,
               tooltip: 'Notifications',
@@ -698,6 +719,7 @@ class _LanguageDropdown extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final selected = localeController.locale.languageCode;
+    final isDark = context.isDark;
     return Center(
       child: PopupMenuButton<String>(
         key: const Key('language_dropdown_button'),
@@ -706,12 +728,14 @@ class _LanguageDropdown extends StatelessWidget {
         offset: const Offset(0, 8),
         elevation: 12,
         shadowColor: const Color(0x350284C7),
-        color: Colors.white,
+        color: isDark ? const Color(0xFF0F172A) : Colors.white,
         surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
-          side: const BorderSide(
-            color: Color(0xFFBAE6FD),
+          side: BorderSide(
+            color: isDark
+                ? const Color(0xFF38BDF8).withValues(alpha: 0.3)
+                : const Color(0xFFBAE6FD),
             width: 1.4,
           ),
         ),

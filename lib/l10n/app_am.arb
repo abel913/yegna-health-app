@@ -1019,6 +1019,21 @@
   "guestSignInPromoBody": "የፈተና ውጤቶችን ለማስቀመጥ፣ የምስክር ወረቀት ለማግኘትና በሌሎች ስልኮች ለመጠቀም ይመዝገቡ ወይም ይግቡ።",
   "guestSignInAction": "ይግቡ / ይመዝገቡ",
   "copyResponseAction": "ቅዳ",
-  "responseCopiedMessage": "መልእክቱ ተቀድቷል"
+  "responseCopiedMessage": "መልእክቱ ተቀድቷል",
+  "newChatAction": "አዲስ ውይይት",
+  "chatHistoryTitle": "የውይይት ታሪክ",
+  "noChatHistory": "እስካሁን ምንም ውይይቶች የሉም",
+  "noChatHistorySubtitle": "የጤና ጥያቄዎችዎ እና መመሪያዎችዎ እዚህ ይቀመጣሉ።",
+  "deleteChatAction": "ውይይት ሰርዝ",
+  "deleteChatConfirmTitle": "ውይይቱን ይሰርዙ?",
+  "deleteChatConfirmMessage": "ይህን የውይይት ታሪክ መሰረዝ እርግጠኛ ነዎት?",
+  "clearAllChatsAction": "ሁሉንም ውይይቶች አጽዳ",
+  "clearAllChatsConfirmTitle": "የውይይት ታሪክን ያጽዱ?",
+  "clearAllChatsConfirmMessage": "ይህ ሁሉንም የቀደሙ ውይይቶችዎን እስከመጨረሻው ይሰርዛል።",
+  "chatHistoryToday": "ዛሬ",
+  "chatHistoryYesterday": "ትናንት",
+  "chatHistoryPreviousDays": "ያለፉት 7 ቀናት",
+  "chatHistoryOlder": "የቆዩ",
+  "activeChatBadge": "የአሁኑ"
 }
 

@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:yegna_health_app/l10n/app_localizations.dart';
+import 'package:yegna_health_app/src/chatbot/chat_history_repository.dart';
 import 'package:yegna_health_app/src/chatbot/chatbot_repository.dart';
 import 'package:yegna_health_app/src/chatbot/local_curriculum_chatbot_repository.dart';
 import 'package:yegna_health_app/src/chatbot/yegna_chatbot_page.dart';
 
 Widget _buildTestApp({
   required ChatbotRepository repository,
+  ChatHistoryRepository? historyRepository,
   String? initialQuery,
   Locale locale = const Locale('en'),
 }) {
@@ -22,6 +24,7 @@ Widget _buildTestApp({
     ],
     home: YegnaChatbotPage(
       repository: repository,
+      historyRepository: historyRepository ?? InMemoryChatHistoryRepository(),
       initialQuery: initialQuery,
     ),
   );
@@ -59,8 +62,8 @@ void main() {
     await tester.tap(sendButton);
     await tester.pump();
 
-    // Verify user message appears immediately
-    expect(find.text('How is HIV prevented?'), findsOneWidget);
+    // Verify user message appears in thread and sets title in AppBar
+    expect(find.text('How is HIV prevented?'), findsNWidgets(2));
 
     // Wait for mock delay
     await tester.pump(const Duration(milliseconds: 350));
@@ -82,8 +85,8 @@ void main() {
     await tester.tap(chipFinder);
     await tester.pump();
 
-    // User message appeared in the thread in addition to the chip
-    expect(find.text('How to prevent HIV?'), findsNWidgets(2));
+    // User message appeared in thread, chip, and session title in AppBar
+    expect(find.text('How to prevent HIV?'), findsNWidgets(3));
     await tester.pump(const Duration(milliseconds: 350));
     await tester.pumpAndSettle();
 

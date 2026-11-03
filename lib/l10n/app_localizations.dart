@@ -5803,6 +5803,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Response copied to clipboard'**
   String get responseCopiedMessage;
+
+  /// No description provided for @newChatAction.
+  ///
+  /// In en, this message translates to:
+  /// **'New chat'**
+  String get newChatAction;
+
+  /// No description provided for @chatHistoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat History'**
+  String get chatHistoryTitle;
+
+  /// No description provided for @noChatHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'No conversations yet'**
+  String get noChatHistory;
+
+  /// No description provided for @noChatHistorySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your health questions and guidance will be saved here.'**
+  String get noChatHistorySubtitle;
+
+  /// No description provided for @deleteChatAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete chat'**
+  String get deleteChatAction;
+
+  /// No description provided for @deleteChatConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Conversation?'**
+  String get deleteChatConfirmTitle;
+
+  /// No description provided for @deleteChatConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this chat history?'**
+  String get deleteChatConfirmMessage;
+
+  /// No description provided for @clearAllChatsAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear all chats'**
+  String get clearAllChatsAction;
+
+  /// No description provided for @clearAllChatsConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Chat History?'**
+  String get clearAllChatsConfirmTitle;
+
+  /// No description provided for @clearAllChatsConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This will permanently delete all your previous conversations.'**
+  String get clearAllChatsConfirmMessage;
+
+  /// No description provided for @chatHistoryToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get chatHistoryToday;
+
+  /// No description provided for @chatHistoryYesterday.
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday'**
+  String get chatHistoryYesterday;
+
+  /// No description provided for @chatHistoryPreviousDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous 7 days'**
+  String get chatHistoryPreviousDays;
+
+  /// No description provided for @chatHistoryOlder.
+  ///
+  /// In en, this message translates to:
+  /// **'Older'**
+  String get chatHistoryOlder;
+
+  /// No description provided for @activeChatBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get activeChatBadge;
 }
 
 class _AppLocalizationsDelegate
