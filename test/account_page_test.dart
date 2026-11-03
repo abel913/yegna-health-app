@@ -56,7 +56,9 @@ void main() {
   }
 
   group('Account Page & Functional Settings Widget Tests', () {
-    testWidgets('guest sees promotional banner and can open theme modal to select dark mode', (tester) async {
+    testWidgets(
+        'guest sees promotional banner and can open theme modal to select dark mode',
+        (tester) async {
       await tester.binding.setSurfaceSize(const Size(400, 950));
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
@@ -67,9 +69,13 @@ void main() {
 
       final authController = AuthController(const UnconfiguredAuthRepository());
 
+      final localeController = LocaleController(prefs);
+      await localeController.load();
+
       await tester.pumpWidget(buildTestApp(
         authController: authController,
         settingsController: settingsController,
+        localeController: localeController,
       ));
       await tester.pumpAndSettle();
 
@@ -106,7 +112,8 @@ void main() {
       expect(find.text(l10n.darkTheme), findsOneWidget);
     });
 
-    testWidgets('allows changing text size and updates global scaling', (tester) async {
+    testWidgets('allows changing text size and updates global scaling',
+        (tester) async {
       await tester.binding.setSurfaceSize(const Size(400, 950));
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
@@ -117,9 +124,13 @@ void main() {
 
       final authController = AuthController(const UnconfiguredAuthRepository());
 
+      final localeController = LocaleController(prefs);
+      await localeController.load();
+
       await tester.pumpWidget(buildTestApp(
         authController: authController,
         settingsController: settingsController,
+        localeController: localeController,
       ));
       await tester.pumpAndSettle();
 
@@ -147,7 +158,8 @@ void main() {
       expect(prefs.getString('app_text_scale'), 'large');
     });
 
-    testWidgets('notifications modal allows toggling preferences and persists', (tester) async {
+    testWidgets('notifications modal allows toggling preferences and persists',
+        (tester) async {
       await tester.binding.setSurfaceSize(const Size(400, 950));
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
@@ -158,9 +170,13 @@ void main() {
 
       final authController = AuthController(const UnconfiguredAuthRepository());
 
+      final localeController = LocaleController(prefs);
+      await localeController.load();
+
       await tester.pumpWidget(buildTestApp(
         authController: authController,
         settingsController: settingsController,
+        localeController: localeController,
       ));
       await tester.pumpAndSettle();
 
@@ -195,7 +211,8 @@ void main() {
       expect(find.text(l10n.notificationsModalTitle), findsNothing);
     });
 
-    testWidgets('authenticated user sees display name and no guest banner', (tester) async {
+    testWidgets('authenticated user sees display name and no guest banner',
+        (tester) async {
       await tester.binding.setSurfaceSize(const Size(400, 950));
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
@@ -215,9 +232,13 @@ void main() {
         ),
       ));
 
+      final localeController = LocaleController(prefs);
+      await localeController.load();
+
       await tester.pumpWidget(buildTestApp(
         authController: authController,
         settingsController: settingsController,
+        localeController: localeController,
       ));
       await tester.pumpAndSettle();
 
