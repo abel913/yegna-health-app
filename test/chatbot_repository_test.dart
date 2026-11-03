@@ -124,6 +124,45 @@ void main() {
       expect(response.emergencyHotlines.last.number, '8335');
       expect(response.text, contains('አስቸኳይ እርዳታ'));
     });
+
+    test(
+        'declines non-health query such as physics in English and redirects to health',
+        () async {
+      final response =
+          await repo.sendMessage('What is physics?', languageCode: 'en');
+      expect(response.isUser, isFalse);
+      expect(response.isEmergency, isFalse);
+      expect(
+          response.text,
+          contains(
+              'I am designed specifically as a health, reproductive, and youth wellbeing guide'));
+      expect(
+          response.text,
+          contains(
+              'Please feel free to ask me any question about your health'));
+      expect(response.suggestedPrompts, contains('How to prevent HIV?'));
+    });
+
+    test('declines non-health query in Amharic and redirects to health',
+        () async {
+      final response =
+          await repo.sendMessage('ስለ ፊዚክስ ንገረኝ', languageCode: 'am');
+      expect(response.isUser, isFalse);
+      expect(response.isEmergency, isFalse);
+      expect(response.text,
+          contains('ከጤና፣ ከጉርምስና፣ ከስነ-ተዋልዶ እና ከአእምሮ ደህንነት ውጭ ያሉ'));
+      expect(response.suggestedPrompts, contains('ኤችአይቪን እንዴት መከላከል ይቻላል?'));
+    });
+
+    test('warmly responds to general greeting and invites health inquiries',
+        () async {
+      final response = await repo.sendMessage('Hello', languageCode: 'en');
+      expect(response.isUser, isFalse);
+      expect(
+          response.text,
+          contains(
+              'Hello! I am your Yegna Health Assistant. How can I help you today?'));
+    });
   });
 
   group('CompositeChatbotRepository', () {

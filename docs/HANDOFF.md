@@ -1,5 +1,16 @@
 # Handoff
 
+## Strict Health & Wellbeing Domain Guardrails for Chatbot (2026-11-03)
+
+- **Strict Non-Health Topic Refusal**:
+  - `supabase/functions/ask-assistant/index.ts`: System prompt strictly limits the AI to adolescent health, SRH, puberty, mental health, substance abuse, and Ethiopian clinic services. It explicitly refuses all non-health inquiries (physics, math, coding, politics, sports, entertainment, general trivia, recipes, homework) without answering or defining them.
+  - Redeployed to remote Supabase project `oflkhtjskpsedsuczfkj`.
+  - `lib/src/chatbot/local_curriculum_chatbot_repository.dart`: Updated to differentiate friendly greetings from non-health queries, returning polite refusal and health redirect messages in both English and Amharic.
+- **Verification**:
+  - Tested live against "what is physics" (refused politely with redirection to health) and "What is HIV and how can I prevent it?" (comprehensive grounded guidance).
+  - `flutter test --no-pub`: 98 / 98 tests passing (100%).
+  - `flutter analyze --no-pub`: 0 issues found.
+
 ## Self-Assessment Tool & Edge Function Gemini 3.5 Integration (2026-11-03)
 
 - **Completed Self-Assessment Workflow**:

@@ -1,5 +1,20 @@
 # Phase status
 
+## Strict Health & Wellbeing Domain Guardrails for Chatbot (2026-11-03)
+
+**Status: Completed & 100% Verified.**
+- **Strict Out-of-Scope Refusal (Remote Edge Function & Local Engine)**:
+  - Enforced mandatory domain boundary in `supabase/functions/ask-assistant/index.ts` system prompt: assistant is strictly dedicated to adolescent health, sexual & reproductive health (SRH), puberty, mental wellbeing, hygiene, nutrition, substances, and youth clinic directories in Ethiopia.
+  - Deployed updated Edge Function to Supabase with `--remote=oflkhtjskpsedsuczfkj`.
+  - Configured prompt to strictly decline all out-of-scope queries (physics, mathematics, chemistry, coding, history, politics, sports, entertainment, recipes, general trivia, homework) without answering or defining them.
+  - Added localized refusal and guidance messages in both English and Amharic guiding users back to health topics.
+  - Updated on-device knowledge engine (`LocalCurriculumChatbotRepository`) to distinguish greetings from out-of-scope inquiries and return standardized refusal responses.
+  - Verified live Edge Function against "what is physics" (returned polite refusal), "ስለ ፊዚክስ ንገረኝ" (returned polite Amharic refusal), and "What is HIV?" (returned full clinical education).
+- **Verification**:
+  - `dart format lib test` passed (0 unformatted files).
+  - `flutter analyze --no-pub` passed (**0 issues found**).
+  - `flutter test --no-pub` passed (**all 98 tests passing**, 100% pass rate).
+
 ## Self-Assessment Tool & Edge Function Gemini 3.5 Integration (2026-11-03)
 
 **Status: Completed & 100% Verified.**

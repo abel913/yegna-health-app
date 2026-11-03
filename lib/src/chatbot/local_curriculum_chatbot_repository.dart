@@ -434,24 +434,51 @@ class LocalCurriculumChatbotRepository implements ChatbotRepository {
       );
     }
 
-    // 11. General / Welcome Exploration
+    // 11. Friendly Greetings
+    if (_isGreeting(normalized)) {
+      return ChatMessage(
+        id: messageId,
+        text: isAmharic
+            ? 'ሰላም! እኔ የየኛ ጤና ረዳት ነኝ። በምን ልርዳዎት?\n\n'
+                'የሚከተሉትን ርዕሶች መጠየቅ ይችላሉ፡\n'
+                '• የጉርምስና ወቅት ለውጦች እና ንጽህና\n'
+                '• የኤችአይቪ እና የአባላዘር በሽታዎች መከላከያና ምርመራ\n'
+                '• የስነ-ተዋልዶ ጤና እና የቤተሰብ ምጣኔ ዘዴዎች\n'
+                '• ሄፓታይተስ ቢ እና ሲ መረጃ\n'
+                '• በአዲስ አበባ ያሉ የወጣቶች ክሊኒኮች አድራሻ'
+            : 'Hello! I am your Yegna Health Assistant. How can I help you today?\n\n'
+                'You can ask me about:\n'
+                '• Puberty changes and adolescent hygiene\n'
+                '• HIV/AIDS & STI prevention, symptoms, and testing\n'
+                '• Reproductive health, consent, and family planning methods\n'
+                '• Viral Hepatitis transmission and liver health\n'
+                '• Verified youth-friendly health clinics in Addis Ababa',
+        isUser: false,
+        timestamp: DateTime.now(),
+        suggestedPrompts: isAmharic
+            ? const [
+                'ኤችአይቪን እንዴት መከላከል ይቻላል?',
+                'የጉርምስና ተፈጥሯዊ ለውጦች',
+                'የምርመራ ክሊኒኮች የት ይገኛሉ?',
+                'የአስቸኳይ ጊዜ የወሊድ መከላከያ'
+              ]
+            : const [
+                'How to prevent HIV?',
+                'Normal puberty changes',
+                'Where can I get tested?',
+                'Emergency contraception'
+              ],
+      );
+    }
+
+    // 12. Non-Health / Out-of-Scope Refusal & Health Redirection
     return ChatMessage(
       id: messageId,
       text: isAmharic
-          ? 'እኔ የየኛ ጤና ረዳት ነኝ። በምን ልርዳዎት?\n\n'
-              'የሚከተሉትን ርዕሶች መጠየቅ ይችላሉ፡\n'
-              '• የጉርምስና ወቅት ለውጦች እና ንጽህና\n'
-              '• የኤችአይቪ እና የአባላዘር በሽታዎች መከላከያና ምርመራ\n'
-              '• የስነ-ተዋልዶ ጤና እና የቤተሰብ ምጣኔ ዘዴዎች\n'
-              '• ሄፓታይተስ ቢ እና ሲ መረጃ\n'
-              '• በአዲስ አበባ ያሉ የወጣቶች ክሊኒኮች አድራሻ'
-          : 'I am your Yegna Health Assistant. How can I help you today?\n\n'
-              'You can ask me about:\n'
-              '• Puberty changes and adolescent hygiene\n'
-              '• HIV/AIDS & STI prevention, symptoms, and testing\n'
-              '• Reproductive health, consent, and family planning methods\n'
-              '• Viral Hepatitis transmission and liver health\n'
-              '• Verified youth-friendly health clinics in Addis Ababa',
+          ? 'እኔ የተዘጋጀሁት ለየኛ ጤና (Yegna Health) የጤና፣ የስነ-ተዋልዶ እና የወጣቶች ደህንነት ረዳት ሆኜ ብቻ ነው። ከጤና፣ ከጉርምስና፣ ከስነ-ተዋልዶ እና ከአእምሮ ደህንነት ውጭ ያሉ አጠቃላይ የትምህርት ወይም ሌሎች ጉዳዮችን (እንደ ፊዚክስ፣ ሂሳብ፣ ቴክኖሎጂ ወዘተ) መመለስ አልችልም።\n\n'
+              'ስለ ጤናዎ፣ ስለ ጉርምስና ለውጦች፣ ስለ ኤችአይቪ/አባላዘር በሽታዎች ወይም በአቅራቢያዎ ስላሉ ክሊኒኮች ማንኛውንም ጥያቄ በደስታ መጠየቅ ይችላሉ!'
+          : 'I am designed specifically as a health, reproductive, and youth wellbeing guide for Yegna Health. I can only assist with questions regarding adolescent health, sexual & reproductive health, puberty, mental wellbeing, or youth clinic services.\n\n'
+              'Please feel free to ask me any question about your health and wellbeing!',
       isUser: false,
       timestamp: DateTime.now(),
       suggestedPrompts: isAmharic
@@ -468,6 +495,33 @@ class LocalCurriculumChatbotRepository implements ChatbotRepository {
               'Emergency contraception'
             ],
     );
+  }
+
+  bool _isGreeting(String query) {
+    const greetingWords = [
+      'hi',
+      'hello',
+      'hey',
+      'greetings',
+      'good morning',
+      'good afternoon',
+      'good evening',
+      'start',
+      'help',
+      'how are you',
+      'ሰላም',
+      'እንደምን',
+      'ጤና ይስጥልኝ',
+      'እንደምናት',
+      'እንዴት ነህ',
+      'እንዴት ነሽ',
+      'እርዳኝ',
+    ];
+    return greetingWords.any((g) =>
+        query == g ||
+        query.startsWith('$g ') ||
+        query.endsWith(' $g') ||
+        query.contains(' $g '));
   }
 
   bool _isEmergencyQuery(String query) {
