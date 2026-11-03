@@ -5893,6 +5893,108 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Active'**
   String get activeChatBadge;
+
+  /// No description provided for @notificationsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notificationsTitle;
+
+  /// No description provided for @welcomeBackTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome back!'**
+  String get welcomeBackTitle;
+
+  /// No description provided for @welcomeBackMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome back, {name}! Great to have you with us again.'**
+  String welcomeBackMessage(String name);
+
+  /// No description provided for @welcomeBackNotificationBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Hello {name}, welcome back to Yegna Health! Your health assistant and learning modules are ready.'**
+  String welcomeBackNotificationBody(String name);
+
+  /// No description provided for @accountCreatedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to Yegna Health!'**
+  String get accountCreatedTitle;
+
+  /// No description provided for @accountCreatedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to Yegna Health, {name}! Your account has been created successfully.'**
+  String accountCreatedMessage(String name);
+
+  /// No description provided for @accountCreatedNotificationBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your youth health account is active. Explore confidential guidance, SRH modules, and youth clinics.'**
+  String get accountCreatedNotificationBody;
+
+  /// No description provided for @verificationPendingNotification.
+  ///
+  /// In en, this message translates to:
+  /// **'Account created! Please check your email to complete verification.'**
+  String get verificationPendingNotification;
+
+  /// No description provided for @noNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'No notifications yet'**
+  String get noNotifications;
+
+  /// No description provided for @noNotificationsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re all caught up! Updates, health tips, and reminders will appear here.'**
+  String get noNotificationsSubtitle;
+
+  /// No description provided for @markAllReadAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark all read'**
+  String get markAllReadAction;
+
+  /// No description provided for @clearAllNotificationsAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear all'**
+  String get clearAllNotificationsAction;
+
+  /// No description provided for @notificationSettingsAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification Preferences'**
+  String get notificationSettingsAction;
+
+  /// No description provided for @notificationTimeJustNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Just now'**
+  String get notificationTimeJustNow;
+
+  /// No description provided for @notificationTimeMinutesAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes}m ago'**
+  String notificationTimeMinutesAgo(int minutes);
+
+  /// No description provided for @notificationTimeHoursAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{hours}h ago'**
+  String notificationTimeHoursAgo(int hours);
+
+  /// No description provided for @notificationTimeDaysAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{days}d ago'**
+  String notificationTimeDaysAgo(int days);
 }
 
 class _AppLocalizationsDelegate

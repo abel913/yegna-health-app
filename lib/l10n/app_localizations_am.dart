@@ -3334,4 +3334,70 @@ class AppLocalizationsAm extends AppLocalizations {
 
   @override
   String get activeChatBadge => 'የአሁኑ';
+
+  @override
+  String get notificationsTitle => 'ማሳወቂያዎች';
+
+  @override
+  String get welcomeBackTitle => 'እንኳን ደህና መጡ!';
+
+  @override
+  String welcomeBackMessage(String name) {
+    return 'እንኳን ደህና መጡ፣ $name! እንደገና በማግኘታችን ደስ ብሎናል።';
+  }
+
+  @override
+  String welcomeBackNotificationBody(String name) {
+    return 'ሰላም $name፣ እንደገና ወደ የየኛ ጤና እንኳን ደህና መጡ! የጤና ረዳትዎ እና የትምህርት ክፍሎች ዝግጁ ናቸው።';
+  }
+
+  @override
+  String get accountCreatedTitle => 'እንኳን ወደ የየኛ ጤና በደህና መጡ!';
+
+  @override
+  String accountCreatedMessage(String name) {
+    return 'እንኳን ወደ የየኛ ጤና በደህና መጡ፣ $name! መለያዎ በተሳካ ሁኔታ ተፈጥሯል።';
+  }
+
+  @override
+  String get accountCreatedNotificationBody =>
+      'የወጣቶች ጤና መለያዎ ነቅቷል። ሚስጥራዊ መመሪያዎችን፣ የSRH ትምህርቶችን እና ክሊኒኮችን ያስሱ።';
+
+  @override
+  String get verificationPendingNotification =>
+      'መለያዎ ተፈጥሯል! ማረጋገጫውን ለማጠናቀቅ እባክዎ ኢሜይልዎን ያረጋግጡ።';
+
+  @override
+  String get noNotifications => 'ምንም ማሳወቂያዎች የሉም';
+
+  @override
+  String get noNotificationsSubtitle =>
+      'ሁሉንም አይተዋል! አዳዲስ መረጃዎች፣ የጤና ምክሮች እና ማስታወሻዎች እዚህ ይታያሉ።';
+
+  @override
+  String get markAllReadAction => 'ሁሉንም አንብብ';
+
+  @override
+  String get clearAllNotificationsAction => 'ሁሉንም አጽዳ';
+
+  @override
+  String get notificationSettingsAction => 'የማሳወቂያ ምርጫዎች';
+
+  @override
+  String get notificationTimeJustNow => 'አሁን';
+
+  @override
+  String notificationTimeMinutesAgo(int minutes) {
+    return 'ከ$minutes ደቂቃ በፊት';
+  }
+
+  @override
+  String notificationTimeHoursAgo(int hours) {
+    return 'ከ$hours ሰዓት በፊት';
+  }
+
+  @override
+  String notificationTimeDaysAgo(int days) {
+    return 'ከ$days ቀናት በፊት';
+  }
 }

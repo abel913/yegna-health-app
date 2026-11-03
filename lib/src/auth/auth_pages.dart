@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 import '../../l10n/app_localizations.dart';
+import '../notifications/notification_controller.dart';
 import 'auth_controller.dart';
 import 'auth_models.dart';
 import 'auth_validation.dart';
@@ -18,11 +19,13 @@ enum AuthPageMode {
 class AuthPage extends StatefulWidget {
   const AuthPage({
     required this.controller,
+    this.notificationController,
     this.initialMode = AuthPageMode.signIn,
     super.key,
   });
 
   final AuthController controller;
+  final InAppNotificationController? notificationController;
   final AuthPageMode initialMode;
 
   @override
@@ -76,6 +79,59 @@ class _AuthPageState extends State<AuthPage> {
           password: _password.text,
         );
         if (success && mounted) {
+          final l10n = AppLocalizations.of(context);
+          final rawName = widget.controller.user?.displayName.trim();
+          final name = (rawName != null && rawName.isNotEmpty)
+              ? rawName
+              : (_email.text.trim().contains('@')
+                  ? _email.text.trim().split('@').first
+                  : 'User');
+
+          final isAmharic =
+              Localizations.localeOf(context).languageCode == 'am';
+          widget.notificationController?.addWelcomeBackNotification(
+            name,
+            isAmharic: isAmharic,
+          );
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              behavior: SnackBarBehavior.floating,
+              backgroundColor: const Color(0xFF0F172A),
+              elevation: 6,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+                side: const BorderSide(color: Color(0xFF007A78), width: 1.2),
+              ),
+              content: Row(
+                children: [
+                  Container(
+                    width: 32,
+                    height: 32,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFF007A78),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(Icons.waving_hand_rounded,
+                        color: Colors.white, size: 18),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      l10n.welcomeBackMessage(name),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 13.5,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              duration: const Duration(seconds: 4),
+            ),
+          );
+
           Navigator.of(context).pop();
         }
         return;
@@ -87,9 +143,101 @@ class _AuthPageState extends State<AuthPage> {
           displayName: _displayName.text,
         );
         if (!mounted) return;
+        final l10n = AppLocalizations.of(context);
+        final rawName = _displayName.text.trim().isNotEmpty
+            ? _displayName.text.trim()
+            : (_email.text.trim().contains('@')
+                ? _email.text.trim().split('@').first
+                : 'User');
+        final isAmharic = Localizations.localeOf(context).languageCode == 'am';
+
         if (outcome == RegistrationOutcome.verificationPending) {
+          widget.notificationController?.addAccountCreatedNotification(
+            rawName,
+            isAmharic: isAmharic,
+            verificationPending: true,
+          );
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              behavior: SnackBarBehavior.floating,
+              backgroundColor: const Color(0xFF0F172A),
+              elevation: 6,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+                side: const BorderSide(color: Color(0xFF0284C7), width: 1.2),
+              ),
+              content: Row(
+                children: [
+                  Container(
+                    width: 32,
+                    height: 32,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFF0284C7),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(Icons.mark_email_unread_rounded,
+                        color: Colors.white, size: 18),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      l10n.verificationPendingNotification,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 13.5,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              duration: const Duration(seconds: 4),
+            ),
+          );
           setState(() => _mode = AuthPageMode.verificationPending);
         } else if (outcome == RegistrationOutcome.signedIn) {
+          widget.notificationController?.addAccountCreatedNotification(
+            rawName,
+            isAmharic: isAmharic,
+            verificationPending: false,
+          );
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              behavior: SnackBarBehavior.floating,
+              backgroundColor: const Color(0xFF0F172A),
+              elevation: 6,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+                side: const BorderSide(color: Color(0xFF10B981), width: 1.2),
+              ),
+              content: Row(
+                children: [
+                  Container(
+                    width: 32,
+                    height: 32,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFF10B981),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(Icons.celebration_rounded,
+                        color: Colors.white, size: 18),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      l10n.accountCreatedMessage(rawName),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 13.5,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              duration: const Duration(seconds: 4),
+            ),
+          );
           Navigator.of(context).pop();
         }
         return;
@@ -937,9 +1085,14 @@ class _AuthPageState extends State<AuthPage> {
 }
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({required this.controller, super.key});
+  const ProfilePage({
+    required this.controller,
+    this.notificationController,
+    super.key,
+  });
 
   final AuthController controller;
+  final InAppNotificationController? notificationController;
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
@@ -1099,8 +1252,11 @@ class _ProfilePageState extends State<ProfilePage> {
                                 onPressed: () =>
                                     Navigator.of(context).pushReplacement(
                                   MaterialPageRoute<void>(
-                                    builder: (_) =>
-                                        AuthPage(controller: widget.controller),
+                                    builder: (_) => AuthPage(
+                                      controller: widget.controller,
+                                      notificationController:
+                                          widget.notificationController,
+                                    ),
                                   ),
                                 ),
                                 child: Text(

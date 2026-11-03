@@ -29,28 +29,40 @@ void main() {
           authController: authController,
         );
 
-    return MaterialApp(
-      locale: locale,
-      supportedLocales: AppLocalizations.supportedLocales,
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      builder: (context, child) => MediaQuery(
-        data: MediaQuery.of(context).copyWith(
-          textScaler: TextScaler.linear(settingsController.textScaleFactor),
+    return ListenableBuilder(
+      listenable: settingsController,
+      builder: (context, _) => MaterialApp(
+        locale: locale,
+        supportedLocales: AppLocalizations.supportedLocales,
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        themeMode: settingsController.themeMode,
+        theme: ThemeData(
+          brightness: Brightness.light,
+          cardTheme: const CardThemeData(color: Colors.white),
         ),
-        child: child!,
-      ),
-      home: AppShell(
-        localeController: localeController,
-        authController: authController,
-        settingsController: settingsController,
-        educationRepository: FakeEducationRepository(),
-        assessmentRepository: assessments,
-        progressController: progress,
+        darkTheme: ThemeData(
+          brightness: Brightness.dark,
+          cardTheme: const CardThemeData(color: Color(0xFF1E293B)),
+        ),
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(context).copyWith(
+            textScaler: TextScaler.linear(settingsController.textScaleFactor),
+          ),
+          child: child!,
+        ),
+        home: AppShell(
+          localeController: localeController,
+          authController: authController,
+          settingsController: settingsController,
+          educationRepository: FakeEducationRepository(),
+          assessmentRepository: assessments,
+          progressController: progress,
+        ),
       ),
     );
   }
@@ -100,17 +112,17 @@ void main() {
       expect(find.text('Abebe Bikila'), findsOneWidget);
       expect(find.text(l10n.guestSignInPromoTitle), findsNothing);
 
-      // Verify initial theme badge displays System Default
-      expect(find.text(l10n.systemTheme), findsOneWidget);
+      // Verify initial theme badge displays Light theme
+      expect(find.text(l10n.lightTheme), findsOneWidget);
 
       // Tap App Theme
       await tester.tap(find.text(l10n.appTheme));
       await tester.pumpAndSettle();
 
-      // Modal is visible with 3 theme options
+      // Modal is visible with only 2 theme options (System Default is removed)
       expect(find.text(l10n.themeDialogTitle), findsOneWidget);
-      expect(find.text(l10n.systemTheme), findsWidgets);
-      expect(find.text(l10n.lightTheme), findsOneWidget);
+      expect(find.text(l10n.systemTheme), findsNothing);
+      expect(find.text(l10n.lightTheme), findsWidgets);
       expect(find.text(l10n.darkTheme), findsOneWidget);
 
       // Tap Dark Theme
@@ -119,6 +131,7 @@ void main() {
 
       // Verify ThemeMode changed to dark
       expect(settingsController.themeMode, ThemeMode.dark);
+      expect(settingsController.isDark, isTrue);
       expect(prefs.getString('app_theme_mode'), 'dark');
       expect(find.text(l10n.darkTheme), findsOneWidget);
     });

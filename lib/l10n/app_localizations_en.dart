@@ -3407,4 +3407,70 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get activeChatBadge => 'Active';
+
+  @override
+  String get notificationsTitle => 'Notifications';
+
+  @override
+  String get welcomeBackTitle => 'Welcome back!';
+
+  @override
+  String welcomeBackMessage(String name) {
+    return 'Welcome back, $name! Great to have you with us again.';
+  }
+
+  @override
+  String welcomeBackNotificationBody(String name) {
+    return 'Hello $name, welcome back to Yegna Health! Your health assistant and learning modules are ready.';
+  }
+
+  @override
+  String get accountCreatedTitle => 'Welcome to Yegna Health!';
+
+  @override
+  String accountCreatedMessage(String name) {
+    return 'Welcome to Yegna Health, $name! Your account has been created successfully.';
+  }
+
+  @override
+  String get accountCreatedNotificationBody =>
+      'Your youth health account is active. Explore confidential guidance, SRH modules, and youth clinics.';
+
+  @override
+  String get verificationPendingNotification =>
+      'Account created! Please check your email to complete verification.';
+
+  @override
+  String get noNotifications => 'No notifications yet';
+
+  @override
+  String get noNotificationsSubtitle =>
+      'You\'re all caught up! Updates, health tips, and reminders will appear here.';
+
+  @override
+  String get markAllReadAction => 'Mark all read';
+
+  @override
+  String get clearAllNotificationsAction => 'Clear all';
+
+  @override
+  String get notificationSettingsAction => 'Notification Preferences';
+
+  @override
+  String get notificationTimeJustNow => 'Just now';
+
+  @override
+  String notificationTimeMinutesAgo(int minutes) {
+    return '${minutes}m ago';
+  }
+
+  @override
+  String notificationTimeHoursAgo(int hours) {
+    return '${hours}h ago';
+  }
+
+  @override
+  String notificationTimeDaysAgo(int days) {
+    return '${days}d ago';
+  }
 }

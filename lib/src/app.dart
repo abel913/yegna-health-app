@@ -19,6 +19,8 @@ import 'chatbot/composite_chatbot_repository.dart';
 import 'chatbot/yegna_chatbot_fab.dart';
 import 'learning/learn_pages.dart';
 import 'learning/learning_progress_controller.dart';
+import 'notifications/notification_center_sheet.dart';
+import 'notifications/notification_controller.dart';
 import 'theme/app_glass_theme.dart';
 
 class AppShell extends StatefulWidget {
@@ -29,6 +31,7 @@ class AppShell extends StatefulWidget {
     required this.assessmentRepository,
     required this.progressController,
     this.settingsController,
+    this.notificationController,
     this.facilityRepository,
     this.mentorRepository,
     this.chatbotRepository,
@@ -38,6 +41,7 @@ class AppShell extends StatefulWidget {
   final LocaleController localeController;
   final AuthController authController;
   final AppSettingsController? settingsController;
+  final InAppNotificationController? notificationController;
   final EducationRepository educationRepository;
   final AssessmentRepository assessmentRepository;
   final LearningProgressController progressController;
@@ -50,6 +54,7 @@ class AppShell extends StatefulWidget {
 }
 
 class _AppShellState extends State<AppShell> {
+  late final InAppNotificationController _notificationController;
   int _selectedIndex = 0;
   int _previousIndex = 0;
   bool _accountRouteOpen = false;
@@ -58,6 +63,17 @@ class _AppShellState extends State<AppShell> {
   @override
   void initState() {
     super.initState();
+    _notificationController =
+        widget.notificationController ?? InAppNotificationController();
+    if (!_notificationController.isInitialized) {
+      final isAmharic = widget.localeController.locale.languageCode == 'am';
+      final healthTipsEnabled =
+          widget.settingsController?.healthTipsEnabled ?? true;
+      _notificationController.load(
+        isAmharic: isAmharic,
+        healthTipsEnabled: healthTipsEnabled,
+      );
+    }
     widget.authController.addListener(_handleAuthChange);
     WidgetsBinding.instance.addPostFrameCallback((_) => _handleAuthChange());
   }
@@ -109,6 +125,7 @@ class _AppShellState extends State<AppShell> {
           .push<void>(MaterialPageRoute<void>(
             builder: (_) => AuthPage(
               controller: widget.authController,
+              notificationController: _notificationController,
               initialMode: AuthPageMode.newPassword,
             ),
           ))
@@ -119,8 +136,14 @@ class _AppShellState extends State<AppShell> {
   void _openAccount() {
     _accountRouteOpen = true;
     final page = widget.authController.isAuthenticated
-        ? ProfilePage(controller: widget.authController)
-        : AuthPage(controller: widget.authController);
+        ? ProfilePage(
+            controller: widget.authController,
+            notificationController: _notificationController,
+          )
+        : AuthPage(
+            controller: widget.authController,
+            notificationController: _notificationController,
+          );
     Navigator.of(context)
         .push<void>(MaterialPageRoute<void>(builder: (_) => page))
         .whenComplete(() {
@@ -287,7 +310,25 @@ class _AppShellState extends State<AppShell> {
                 const SizedBox(width: 8),
               ]
             : [
-                const _NotificationButton(),
+                _NotificationButton(
+                  controller: _notificationController,
+                  onOpenSettings: () {
+                    final l10n = AppLocalizations.of(context);
+                    _AccountPage._showNotificationsModal(
+                      context,
+                      l10n,
+                      widget.settingsController ?? AppSettingsController(),
+                    );
+                  },
+                  onNavigate: (route) {
+                    if (route == 'learn') {
+                      setState(() {
+                        _previousIndex = _selectedIndex;
+                        _selectedIndex = 1;
+                      });
+                    }
+                  },
+                ),
                 const SizedBox(width: 8),
                 _LanguageDropdown(localeController: widget.localeController),
                 const SizedBox(width: 14),
@@ -629,85 +670,100 @@ class _ScoopedNotchBarPainter extends CustomPainter {
 }
 
 class _NotificationButton extends StatelessWidget {
-  const _NotificationButton();
+  const _NotificationButton({
+    required this.controller,
+    this.onOpenSettings,
+    this.onNavigate,
+  });
+
+  final InAppNotificationController controller;
+  final VoidCallback? onOpenSettings;
+  final ValueChanged<String>? onNavigate;
 
   @override
   Widget build(BuildContext context) {
     final isDark = context.isDark;
-    return Center(
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          Container(
-            width: 38,
-            height: 38,
-            decoration: BoxDecoration(
-              color: isDark
-                  ? const Color(0xFF131D36).withValues(alpha: 0.85)
-                  : Colors.white.withValues(alpha: 0.85),
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(
-                color: isDark
-                    ? const Color(0xFF38BDF8).withValues(alpha: 0.3)
-                    : const Color(0xFFBAE6FD).withValues(alpha: 0.9),
-                width: 1.2,
-              ),
-              boxShadow: [
-                BoxShadow(
+    return ListenableBuilder(
+      listenable: controller,
+      builder: (context, _) {
+        final unreadCount = controller.unreadCount;
+        return Center(
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Container(
+                width: 38,
+                height: 38,
+                decoration: BoxDecoration(
                   color: isDark
-                      ? const Color(0x30000000)
-                      : const Color(0x100284C7),
-                  blurRadius: 10,
-                  offset: const Offset(0, 3),
-                ),
-              ],
-            ),
-            child: IconButton(
-              icon: Icon(
-                Icons.notifications_none_rounded,
-                size: 20,
-                color: isDark
-                    ? const Color(0xFF38BDF8)
-                    : const Color(0xFF005A71),
-              ),
-              padding: EdgeInsets.zero,
-              tooltip: 'Notifications',
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('2 updates available for learning modules'),
-                    duration: Duration(seconds: 2),
+                      ? const Color(0xFF131D36).withValues(alpha: 0.85)
+                      : Colors.white.withValues(alpha: 0.85),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(
+                    color: isDark
+                        ? const Color(0xFF38BDF8).withValues(alpha: 0.3)
+                        : const Color(0xFFBAE6FD).withValues(alpha: 0.9),
+                    width: 1.2,
                   ),
-                );
-              },
-            ),
-          ),
-          Positioned(
-            top: -2,
-            right: -2,
-            child: Container(
-              padding: const EdgeInsets.all(4),
-              decoration: const BoxDecoration(
-                color: Color(0xFFEF4444),
-                shape: BoxShape.circle,
-              ),
-              constraints: const BoxConstraints(
-                minWidth: 16,
-                minHeight: 16,
-              ),
-              child: const Text(
-                '2',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 10,
-                  fontWeight: FontWeight.bold,
+                  boxShadow: [
+                    BoxShadow(
+                      color: isDark
+                          ? const Color(0x30000000)
+                          : const Color(0x100284C7),
+                      blurRadius: 10,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
                 ),
-                textAlign: TextAlign.center,
+                child: IconButton(
+                  icon: Icon(
+                    Icons.notifications_none_rounded,
+                    size: 20,
+                    color: isDark
+                        ? const Color(0xFF38BDF8)
+                        : const Color(0xFF005A71),
+                  ),
+                  padding: EdgeInsets.zero,
+                  tooltip: 'Notifications',
+                  onPressed: () {
+                    NotificationCenterSheet.show(
+                      context,
+                      controller: controller,
+                      onOpenSettings: onOpenSettings,
+                      onNavigate: onNavigate,
+                    );
+                  },
+                ),
               ),
-            ),
+              if (unreadCount > 0)
+                Positioned(
+                  top: -2,
+                  right: -2,
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: const BoxDecoration(
+                      color: Color(0xFFEF4444),
+                      shape: BoxShape.circle,
+                    ),
+                    constraints: const BoxConstraints(
+                      minWidth: 16,
+                      minHeight: 16,
+                    ),
+                    child: Text(
+                      unreadCount > 9 ? '9+' : '$unreadCount',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
@@ -911,23 +967,34 @@ class _LanguageDropdown extends StatelessWidget {
               height: 38,
               padding: const EdgeInsets.symmetric(horizontal: 11),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.75),
+                color: isDark
+                    ? const Color(0xFF131D36).withValues(alpha: 0.85)
+                    : Colors.white.withValues(alpha: 0.75),
                 gradient: LinearGradient(
-                  colors: [
-                    Colors.white.withValues(alpha: 0.90),
-                    const Color(0xFFEDF8FE).withValues(alpha: 0.55),
-                  ],
+                  colors: isDark
+                      ? [
+                          const Color(0xFF1E293B).withValues(alpha: 0.90),
+                          const Color(0xFF0F172A).withValues(alpha: 0.70),
+                        ]
+                      : [
+                          Colors.white.withValues(alpha: 0.90),
+                          const Color(0xFFEDF8FE).withValues(alpha: 0.55),
+                        ],
                 ),
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.95),
+                  color: isDark
+                      ? const Color(0xFF38BDF8).withValues(alpha: 0.3)
+                      : Colors.white.withValues(alpha: 0.95),
                   width: 1.3,
                 ),
-                boxShadow: const [
+                boxShadow: [
                   BoxShadow(
-                    color: Color(0x180284C7),
+                    color: isDark
+                        ? const Color(0x30000000)
+                        : const Color(0x180284C7),
                     blurRadius: 10,
-                    offset: Offset(0, 3),
+                    offset: const Offset(0, 3),
                   ),
                 ],
               ),
@@ -937,31 +1004,38 @@ class _LanguageDropdown extends StatelessWidget {
                   Container(
                     width: 22,
                     height: 22,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFFE0F2FE),
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? const Color(0xFF0284C7).withValues(alpha: 0.25)
+                          : const Color(0xFFE0F2FE),
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.translate_rounded,
                       size: 13,
-                      color: Color(0xFF0284C7),
+                      color: isDark
+                          ? const Color(0xFF38BDF8)
+                          : const Color(0xFF0284C7),
                     ),
                   ),
                   const SizedBox(width: 7),
                   Text(
                     selected == 'am' ? '🇪🇹 አማ' : '🇺🇸 EN',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 12.5,
                       fontWeight: FontWeight.w800,
-                      color: Color(0xFF0369A1),
-                      letterSpacing: 0.3,
+                      color: isDark
+                          ? const Color(0xFFF8FAFC)
+                          : const Color(0xFF08264A),
                     ),
                   ),
                   const SizedBox(width: 4),
-                  const Icon(
+                  Icon(
                     Icons.keyboard_arrow_down_rounded,
                     size: 18,
-                    color: Color(0xFF0284C7),
+                    color: isDark
+                        ? const Color(0xFF38BDF8)
+                        : const Color(0xFF0284C7),
                   ),
                 ],
               ),
@@ -992,114 +1066,124 @@ class _AccountPage extends StatelessWidget {
   final VoidCallback onOpenAccount;
   final VoidCallback onOpenLearningProgress;
 
-  void _showNotificationsModal(BuildContext context, AppLocalizations l10n,
-      AppSettingsController settings) {
+  static void _showNotificationsModal(BuildContext context,
+      AppLocalizations l10n, AppSettingsController settings) {
     showModalBottomSheet<void>(
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
       builder: (ctx) => ListenableBuilder(
         listenable: settings,
-        builder: (ctx, _) => Material(
-          color: Theme.of(context).cardTheme.color ?? Colors.white,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-          clipBehavior: Clip.antiAlias,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(
-                  child: Container(
-                    width: 44,
-                    height: 5,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFCBD5E1),
-                      borderRadius: BorderRadius.circular(3),
+        builder: (ctx, _) {
+          final glass = context.glassTheme;
+          return Material(
+            color: glass.modalBackground,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+            clipBehavior: Clip.antiAlias,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 44,
+                      height: 5,
+                      decoration: BoxDecoration(
+                        color: glass.modalHandle,
+                        borderRadius: BorderRadius.circular(3),
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 18),
-                Row(
-                  children: [
-                    Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF0284C7).withValues(alpha: 0.12),
-                        borderRadius: BorderRadius.circular(10),
+                  const SizedBox(height: 18),
+                  Row(
+                    children: [
+                      Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color:
+                              const Color(0xFF0284C7).withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Icon(Icons.notifications_active_outlined,
+                            color: Color(0xFF0284C7), size: 22),
                       ),
-                      child: const Icon(Icons.notifications_active_outlined,
-                          color: Color(0xFF0284C7), size: 22),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        l10n.notificationsModalTitle,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w800,
-                          color: Color(0xFF08264A),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          l10n.notificationsModalTitle,
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w800,
+                            color: glass.titleText,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 14),
-                Text(
-                  l10n.notificationsModalBody,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    height: 1.5,
-                    color: Color(0xFF334155),
+                    ],
                   ),
-                ),
-                const SizedBox(height: 16),
-                SwitchListTile.adaptive(
-                  contentPadding: EdgeInsets.zero,
-                  value: settings.pushAlertsEnabled,
-                  onChanged: (val) => settings.setPushAlerts(val),
-                  title: Text(l10n.pushAlertsLabel,
-                      style: const TextStyle(
-                          fontWeight: FontWeight.w600, fontSize: 14.5)),
-                ),
-                SwitchListTile.adaptive(
-                  contentPadding: EdgeInsets.zero,
-                  value: settings.healthTipsEnabled,
-                  onChanged: (val) => settings.setHealthTips(val),
-                  title: Text(l10n.healthTipsLabel,
-                      style: const TextStyle(
-                          fontWeight: FontWeight.w600, fontSize: 14.5)),
-                ),
-                SwitchListTile.adaptive(
-                  contentPadding: EdgeInsets.zero,
-                  value: settings.assessmentRemindersEnabled,
-                  onChanged: (val) => settings.setAssessmentReminders(val),
-                  title: Text(l10n.assessmentRemindersLabel,
-                      style: const TextStyle(
-                          fontWeight: FontWeight.w600, fontSize: 14.5)),
-                ),
-                const SizedBox(height: 18),
-                SizedBox(
-                  width: double.infinity,
-                  child: FilledButton(
-                    style: FilledButton.styleFrom(
-                      backgroundColor: const Color(0xFF0284C7),
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
+                  const SizedBox(height: 14),
+                  Text(
+                    l10n.notificationsModalBody,
+                    style: TextStyle(
+                      fontSize: 14,
+                      height: 1.5,
+                      color: glass.subtitleText,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  SwitchListTile.adaptive(
+                    contentPadding: EdgeInsets.zero,
+                    value: settings.pushAlertsEnabled,
+                    onChanged: (val) => settings.setPushAlerts(val),
+                    title: Text(l10n.pushAlertsLabel,
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14.5,
+                            color: glass.titleText)),
+                  ),
+                  SwitchListTile.adaptive(
+                    contentPadding: EdgeInsets.zero,
+                    value: settings.healthTipsEnabled,
+                    onChanged: (val) => settings.setHealthTips(val),
+                    title: Text(l10n.healthTipsLabel,
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14.5,
+                            color: glass.titleText)),
+                  ),
+                  SwitchListTile.adaptive(
+                    contentPadding: EdgeInsets.zero,
+                    value: settings.assessmentRemindersEnabled,
+                    onChanged: (val) => settings.setAssessmentReminders(val),
+                    title: Text(l10n.assessmentRemindersLabel,
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14.5,
+                            color: glass.titleText)),
+                  ),
+                  const SizedBox(height: 18),
+                  SizedBox(
+                    width: double.infinity,
+                    child: FilledButton(
+                      style: FilledButton.styleFrom(
+                        backgroundColor: const Color(0xFF0284C7),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
                       ),
+                      onPressed: () => Navigator.of(ctx).pop(),
+                      child: Text(l10n.closeButton,
+                          style: const TextStyle(fontWeight: FontWeight.w700)),
                     ),
-                    onPressed: () => Navigator.of(ctx).pop(),
-                    child: Text(l10n.closeButton,
-                        style: const TextStyle(fontWeight: FontWeight.w700)),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }
@@ -1109,112 +1193,16 @@ class _AccountPage extends StatelessWidget {
     showModalBottomSheet<void>(
       context: context,
       backgroundColor: Colors.transparent,
-      builder: (ctx) => Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-        ),
-        padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(
-              child: Container(
-                width: 44,
-                height: 5,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFCBD5E1),
-                  borderRadius: BorderRadius.circular(3),
-                ),
-              ),
-            ),
-            const SizedBox(height: 18),
-            Row(
-              children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF0284C7).withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Icon(Icons.shield_outlined,
-                      color: Color(0xFF0284C7), size: 22),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    l10n.privacyModalTitle,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w800,
-                      color: Color(0xFF08264A),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 14),
-            Text(
-              l10n.privacyModalBody,
-              style: const TextStyle(
-                fontSize: 14,
-                height: 1.5,
-                color: Color(0xFF334155),
-              ),
-            ),
-            const SizedBox(height: 20),
-            if (auth.isAuthenticated)
-              OutlinedButton.icon(
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: const Color(0xFFD32F2F),
-                  side: const BorderSide(color: Color(0xFFD32F2F)),
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                icon: const Icon(Icons.logout_rounded),
-                label: Text(l10n.signOut),
-                onPressed: () {
-                  Navigator.of(ctx).pop();
-                  auth.signOut();
-                },
-              ),
-            const SizedBox(height: 10),
-            SizedBox(
-              width: double.infinity,
-              child: FilledButton(
-                style: FilledButton.styleFrom(
-                  backgroundColor: const Color(0xFF0284C7),
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                ),
-                onPressed: () => Navigator.of(ctx).pop(),
-                child: Text(l10n.closeButton,
-                    style: const TextStyle(fontWeight: FontWeight.w700)),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _showLanguageModal(BuildContext context, AppLocalizations l10n,
-      LocaleController localeCtrl) {
-    final current = localeCtrl.locale.languageCode;
-    showModalBottomSheet<void>(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (ctx) => Material(
-        color: Colors.white,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-        clipBehavior: Clip.antiAlias,
-        child: Padding(
+      builder: (ctx) {
+        final glass = ctx.glassTheme;
+        return Container(
+          decoration: BoxDecoration(
+            color: glass.modalBackground,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+            border: glass.isDark
+                ? Border.all(color: glass.cardBorder, width: 1.2)
+                : null,
+          ),
           padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -1225,67 +1213,112 @@ class _AccountPage extends StatelessWidget {
                   width: 44,
                   height: 5,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFCBD5E1),
+                    color: glass.modalHandle,
                     borderRadius: BorderRadius.circular(3),
                   ),
                 ),
               ),
               const SizedBox(height: 18),
-              Text(
-                l10n.appLanguage,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w800,
-                  color: Color(0xFF08264A),
-                ),
+              Row(
+                children: [
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: glass.isDark
+                          ? glass.badgeBackground
+                          : const Color(0xFF0284C7).withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Icon(Icons.shield_outlined,
+                        color: glass.accentColor, size: 22),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      l10n.privacyModalTitle,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w800,
+                        color: glass.titleText,
+                      ),
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 14),
-              ListTile(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14)),
-                tileColor: current == 'en' ? const Color(0xFFF0F9FF) : null,
-                leading: const Icon(Icons.check_circle_rounded,
-                    color: Color(0xFF0284C7)),
-                title: const Text('English (US)',
-                    style: TextStyle(fontWeight: FontWeight.w700)),
-                onTap: () {
-                  localeCtrl.setLanguage('en');
-                  Navigator.of(ctx).pop();
-                },
+              Text(
+                l10n.privacyModalBody,
+                style: TextStyle(
+                  fontSize: 14,
+                  height: 1.5,
+                  color: glass.subtitleText,
+                ),
               ),
-              const SizedBox(height: 6),
-              ListTile(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14)),
-                tileColor: current == 'am' ? const Color(0xFFF0F9FF) : null,
-                leading: const Icon(Icons.check_circle_rounded,
-                    color: Color(0xFF0284C7)),
-                title: const Text('አማርኛ (Amharic)',
-                    style: TextStyle(fontWeight: FontWeight.w700)),
-                onTap: () {
-                  localeCtrl.setLanguage('am');
-                  Navigator.of(ctx).pop();
-                },
+              const SizedBox(height: 20),
+              if (auth.isAuthenticated)
+                OutlinedButton.icon(
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: const Color(0xFFEF4444),
+                    side: const BorderSide(color: Color(0xFFEF4444)),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  icon: const Icon(Icons.logout_rounded),
+                  label: Text(l10n.signOut),
+                  onPressed: () {
+                    Navigator.of(ctx).pop();
+                    auth.signOut();
+                  },
+                ),
+              const SizedBox(height: 10),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton(
+                  style: FilledButton.styleFrom(
+                    backgroundColor: glass.accentColor,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                  ),
+                  onPressed: () => Navigator.of(ctx).pop(),
+                  child: Text(
+                    l10n.closeButton,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      color: glass.isDark ? Colors.black : Colors.white,
+                    ),
+                  ),
+                ),
               ),
             ],
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
-  void _showThemeModal(BuildContext context, AppLocalizations l10n,
-      AppSettingsController settings) {
+  void _showLanguageModal(BuildContext context, AppLocalizations l10n,
+      LocaleController localeCtrl) {
+    final current = localeCtrl.locale.languageCode;
     showModalBottomSheet<void>(
       context: context,
       backgroundColor: Colors.transparent,
-      builder: (ctx) => ListenableBuilder(
-        listenable: settings,
-        builder: (ctx, _) => Material(
-          color: Theme.of(context).cardTheme.color ?? Colors.white,
+      builder: (ctx) {
+        final glass = ctx.glassTheme;
+        return Material(
+          color: glass.modalBackground,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
           clipBehavior: Clip.antiAlias,
-          child: Padding(
+          child: Container(
+            decoration: BoxDecoration(
+              border: glass.isDark
+                  ? Border.all(color: glass.cardBorder, width: 1.2)
+                  : null,
+            ),
             padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -1296,91 +1329,210 @@ class _AccountPage extends StatelessWidget {
                     width: 44,
                     height: 5,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFCBD5E1),
+                      color: glass.modalHandle,
                       borderRadius: BorderRadius.circular(3),
                     ),
                   ),
                 ),
                 const SizedBox(height: 18),
                 Text(
-                  l10n.themeDialogTitle,
-                  style: const TextStyle(
+                  l10n.appLanguage,
+                  style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w800,
-                    color: Color(0xFF08264A),
+                    color: glass.titleText,
                   ),
                 ),
                 const SizedBox(height: 14),
                 ListTile(
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14)),
-                  tileColor: settings.themeMode == ThemeMode.system
-                      ? const Color(0xFFF0F9FF)
-                      : null,
-                  leading: const Icon(Icons.settings_brightness_rounded,
-                      color: Color(0xFF0284C7)),
-                  title: Text(l10n.systemTheme,
-                      style: TextStyle(
-                        fontWeight: settings.themeMode == ThemeMode.system
-                            ? FontWeight.w700
-                            : FontWeight.w500,
-                      )),
-                  trailing: settings.themeMode == ThemeMode.system
-                      ? const Icon(Icons.check, color: Color(0xFF0284C7))
-                      : null,
+                    borderRadius: BorderRadius.circular(14),
+                    side: current == 'en'
+                        ? BorderSide(
+                            color: glass.isDark
+                                ? const Color(0xFF38BDF8)
+                                : const Color(0xFFBAE6FD),
+                            width: 1.2,
+                          )
+                        : BorderSide.none,
+                  ),
+                  tileColor: current == 'en' ? glass.modalSelectedTile : null,
+                  leading: Icon(
+                    Icons.check_circle_rounded,
+                    color: current == 'en'
+                        ? glass.accentColor
+                        : glass.subtitleText,
+                  ),
+                  title: Text(
+                    'English (US)',
+                    style: TextStyle(
+                      fontWeight:
+                          current == 'en' ? FontWeight.w700 : FontWeight.w500,
+                      color: glass.titleText,
+                    ),
+                  ),
                   onTap: () {
-                    settings.setThemeMode(ThemeMode.system);
+                    localeCtrl.setLanguage('en');
                     Navigator.of(ctx).pop();
                   },
                 ),
+                const SizedBox(height: 6),
                 ListTile(
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14)),
-                  tileColor: settings.themeMode == ThemeMode.light
-                      ? const Color(0xFFF0F9FF)
-                      : null,
-                  leading: const Icon(Icons.wb_sunny_rounded,
-                      color: Color(0xFF0284C7)),
-                  title: Text(l10n.lightTheme,
-                      style: TextStyle(
-                        fontWeight: settings.themeMode == ThemeMode.light
-                            ? FontWeight.w700
-                            : FontWeight.w500,
-                      )),
-                  trailing: settings.themeMode == ThemeMode.light
-                      ? const Icon(Icons.check, color: Color(0xFF0284C7))
-                      : null,
+                    borderRadius: BorderRadius.circular(14),
+                    side: current == 'am'
+                        ? BorderSide(
+                            color: glass.isDark
+                                ? const Color(0xFF38BDF8)
+                                : const Color(0xFFBAE6FD),
+                            width: 1.2,
+                          )
+                        : BorderSide.none,
+                  ),
+                  tileColor: current == 'am' ? glass.modalSelectedTile : null,
+                  leading: Icon(
+                    Icons.check_circle_rounded,
+                    color: current == 'am'
+                        ? glass.accentColor
+                        : glass.subtitleText,
+                  ),
+                  title: Text(
+                    'አማርኛ (Amharic)',
+                    style: TextStyle(
+                      fontWeight:
+                          current == 'am' ? FontWeight.w700 : FontWeight.w500,
+                      color: glass.titleText,
+                    ),
+                  ),
                   onTap: () {
-                    settings.setThemeMode(ThemeMode.light);
-                    Navigator.of(ctx).pop();
-                  },
-                ),
-                ListTile(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14)),
-                  tileColor: settings.themeMode == ThemeMode.dark
-                      ? const Color(0xFFF0F9FF)
-                      : null,
-                  leading: const Icon(Icons.nightlight_round,
-                      color: Color(0xFF64748B)),
-                  title: Text(l10n.darkTheme,
-                      style: TextStyle(
-                        fontWeight: settings.themeMode == ThemeMode.dark
-                            ? FontWeight.w700
-                            : FontWeight.w500,
-                      )),
-                  trailing: settings.themeMode == ThemeMode.dark
-                      ? const Icon(Icons.check, color: Color(0xFF0284C7))
-                      : null,
-                  onTap: () {
-                    settings.setThemeMode(ThemeMode.dark);
+                    localeCtrl.setLanguage('am');
                     Navigator.of(ctx).pop();
                   },
                 ),
               ],
             ),
           ),
-        ),
+        );
+      },
+    );
+  }
+
+  void _showThemeModal(BuildContext context, AppLocalizations l10n,
+      AppSettingsController settings) {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => ListenableBuilder(
+        listenable: settings,
+        builder: (ctx, _) {
+          final glass = ctx.glassTheme;
+          final isLight = settings.themeMode == ThemeMode.light;
+          final isDark = settings.themeMode == ThemeMode.dark;
+
+          return Material(
+            color: glass.modalBackground,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+            clipBehavior: Clip.antiAlias,
+            child: Container(
+              decoration: BoxDecoration(
+                border: glass.isDark
+                    ? Border.all(color: glass.cardBorder, width: 1.2)
+                    : null,
+              ),
+              padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 44,
+                      height: 5,
+                      decoration: BoxDecoration(
+                        color: glass.modalHandle,
+                        borderRadius: BorderRadius.circular(3),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 18),
+                  Text(
+                    l10n.themeDialogTitle,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                      color: glass.titleText,
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  // Only Light and Dark Options (System Default removed per requirement)
+                  ListTile(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      side: isLight
+                          ? BorderSide(
+                              color: glass.isDark
+                                  ? const Color(0xFF38BDF8)
+                                  : const Color(0xFFBAE6FD),
+                              width: 1.2,
+                            )
+                          : BorderSide.none,
+                    ),
+                    tileColor: isLight ? glass.modalSelectedTile : null,
+                    leading: Icon(
+                      Icons.wb_sunny_rounded,
+                      color: isLight ? glass.accentColor : glass.subtitleText,
+                    ),
+                    title: Text(
+                      l10n.lightTheme,
+                      style: TextStyle(
+                        fontWeight: isLight ? FontWeight.w700 : FontWeight.w500,
+                        color: glass.titleText,
+                      ),
+                    ),
+                    trailing: isLight
+                        ? Icon(Icons.check, color: glass.accentColor)
+                        : null,
+                    onTap: () {
+                      settings.setThemeMode(ThemeMode.light);
+                      Navigator.of(ctx).pop();
+                    },
+                  ),
+                  const SizedBox(height: 8),
+                  ListTile(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      side: isDark
+                          ? const BorderSide(
+                              color: Color(0xFF38BDF8),
+                              width: 1.2,
+                            )
+                          : BorderSide.none,
+                    ),
+                    tileColor: isDark ? glass.modalSelectedTile : null,
+                    leading: Icon(
+                      Icons.nightlight_round,
+                      color: isDark ? glass.accentColor : glass.subtitleText,
+                    ),
+                    title: Text(
+                      l10n.darkTheme,
+                      style: TextStyle(
+                        fontWeight: isDark ? FontWeight.w700 : FontWeight.w500,
+                        color: glass.titleText,
+                      ),
+                    ),
+                    trailing: isDark
+                        ? Icon(Icons.check, color: glass.accentColor)
+                        : null,
+                    onTap: () {
+                      settings.setThemeMode(ThemeMode.dark);
+                      Navigator.of(ctx).pop();
+                    },
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -1392,100 +1544,144 @@ class _AccountPage extends StatelessWidget {
       backgroundColor: Colors.transparent,
       builder: (ctx) => ListenableBuilder(
         listenable: settings,
-        builder: (ctx, _) => Material(
-          color: Theme.of(context).cardTheme.color ?? Colors.white,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-          clipBehavior: Clip.antiAlias,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(
-                  child: Container(
-                    width: 44,
-                    height: 5,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFCBD5E1),
-                      borderRadius: BorderRadius.circular(3),
+        builder: (ctx, _) {
+          final glass = ctx.glassTheme;
+          return Material(
+            color: glass.modalBackground,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+            clipBehavior: Clip.antiAlias,
+            child: Container(
+              decoration: BoxDecoration(
+                border: glass.isDark
+                    ? Border.all(color: glass.cardBorder, width: 1.2)
+                    : null,
+              ),
+              padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 44,
+                      height: 5,
+                      decoration: BoxDecoration(
+                        color: glass.modalHandle,
+                        borderRadius: BorderRadius.circular(3),
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 18),
-                Text(
-                  l10n.textSizeDialogTitle,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w800,
-                    color: Color(0xFF08264A),
+                  const SizedBox(height: 18),
+                  Text(
+                    l10n.textSizeDialogTitle,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                      color: glass.titleText,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 14),
-                ListTile(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14)),
-                  tileColor: settings.textScale == AppTextScale.small
-                      ? const Color(0xFFF0F9FF)
-                      : null,
-                  title: Text(l10n.smallTextSize,
+                  const SizedBox(height: 14),
+                  ListTile(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      side: settings.textScale == AppTextScale.small
+                          ? BorderSide(
+                              color: glass.isDark
+                                  ? const Color(0xFF38BDF8)
+                                  : const Color(0xFFBAE6FD),
+                              width: 1.2,
+                            )
+                          : BorderSide.none,
+                    ),
+                    tileColor: settings.textScale == AppTextScale.small
+                        ? glass.modalSelectedTile
+                        : null,
+                    title: Text(
+                      l10n.smallTextSize,
                       style: TextStyle(
                         fontWeight: settings.textScale == AppTextScale.small
                             ? FontWeight.w700
                             : FontWeight.w500,
-                      )),
-                  trailing: settings.textScale == AppTextScale.small
-                      ? const Icon(Icons.check, color: Color(0xFF0284C7))
-                      : null,
-                  onTap: () {
-                    settings.setTextScale(AppTextScale.small);
-                    Navigator.of(ctx).pop();
-                  },
-                ),
-                ListTile(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14)),
-                  tileColor: settings.textScale == AppTextScale.normal
-                      ? const Color(0xFFF0F9FF)
-                      : null,
-                  title: Text(l10n.defaultTextSize,
+                        color: glass.titleText,
+                      ),
+                    ),
+                    trailing: settings.textScale == AppTextScale.small
+                        ? Icon(Icons.check, color: glass.accentColor)
+                        : null,
+                    onTap: () {
+                      settings.setTextScale(AppTextScale.small);
+                      Navigator.of(ctx).pop();
+                    },
+                  ),
+                  ListTile(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      side: settings.textScale == AppTextScale.normal
+                          ? BorderSide(
+                              color: glass.isDark
+                                  ? const Color(0xFF38BDF8)
+                                  : const Color(0xFFBAE6FD),
+                              width: 1.2,
+                            )
+                          : BorderSide.none,
+                    ),
+                    tileColor: settings.textScale == AppTextScale.normal
+                        ? glass.modalSelectedTile
+                        : null,
+                    title: Text(
+                      l10n.defaultTextSize,
                       style: TextStyle(
                         fontWeight: settings.textScale == AppTextScale.normal
                             ? FontWeight.w700
                             : FontWeight.w500,
-                      )),
-                  trailing: settings.textScale == AppTextScale.normal
-                      ? const Icon(Icons.check, color: Color(0xFF0284C7))
-                      : null,
-                  onTap: () {
-                    settings.setTextScale(AppTextScale.normal);
-                    Navigator.of(ctx).pop();
-                  },
-                ),
-                ListTile(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14)),
-                  tileColor: settings.textScale == AppTextScale.large
-                      ? const Color(0xFFF0F9FF)
-                      : null,
-                  title: Text(l10n.largeTextSize,
+                        color: glass.titleText,
+                      ),
+                    ),
+                    trailing: settings.textScale == AppTextScale.normal
+                        ? Icon(Icons.check, color: glass.accentColor)
+                        : null,
+                    onTap: () {
+                      settings.setTextScale(AppTextScale.normal);
+                      Navigator.of(ctx).pop();
+                    },
+                  ),
+                  ListTile(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      side: settings.textScale == AppTextScale.large
+                          ? BorderSide(
+                              color: glass.isDark
+                                  ? const Color(0xFF38BDF8)
+                                  : const Color(0xFFBAE6FD),
+                              width: 1.2,
+                            )
+                          : BorderSide.none,
+                    ),
+                    tileColor: settings.textScale == AppTextScale.large
+                        ? glass.modalSelectedTile
+                        : null,
+                    title: Text(
+                      l10n.largeTextSize,
                       style: TextStyle(
                         fontWeight: settings.textScale == AppTextScale.large
                             ? FontWeight.w700
                             : FontWeight.w500,
-                      )),
-                  trailing: settings.textScale == AppTextScale.large
-                      ? const Icon(Icons.check, color: Color(0xFF0284C7))
-                      : null,
-                  onTap: () {
-                    settings.setTextScale(AppTextScale.large);
-                    Navigator.of(ctx).pop();
-                  },
-                ),
-              ],
+                        color: glass.titleText,
+                      ),
+                    ),
+                    trailing: settings.textScale == AppTextScale.large
+                        ? Icon(Icons.check, color: glass.accentColor)
+                        : null,
+                    onTap: () {
+                      settings.setTextScale(AppTextScale.large);
+                      Navigator.of(ctx).pop();
+                    },
+                  ),
+                ],
+              ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }
@@ -1494,104 +1690,123 @@ class _AccountPage extends StatelessWidget {
     showModalBottomSheet<void>(
       context: context,
       backgroundColor: Colors.transparent,
-      builder: (ctx) => Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-        ),
-        padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(
-              child: Container(
-                width: 44,
-                height: 5,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFCBD5E1),
-                  borderRadius: BorderRadius.circular(3),
-                ),
-              ),
-            ),
-            const SizedBox(height: 18),
-            Row(
-              children: [
-                Container(
-                  width: 40,
-                  height: 40,
+      builder: (ctx) {
+        final glass = ctx.glassTheme;
+        return Container(
+          decoration: BoxDecoration(
+            color: glass.modalBackground,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+            border: glass.isDark
+                ? Border.all(color: glass.cardBorder, width: 1.2)
+                : null,
+          ),
+          padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 44,
+                  height: 5,
                   decoration: BoxDecoration(
-                    color: const Color(0xFF0284C7).withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Icon(Icons.support_agent_rounded,
-                      color: Color(0xFF0284C7), size: 24),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    l10n.supportCenterTitle,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w800,
-                      color: Color(0xFF08264A),
-                    ),
+                    color: glass.modalHandle,
+                    borderRadius: BorderRadius.circular(3),
                   ),
                 ),
-              ],
-            ),
-            const SizedBox(height: 14),
-            Text(
-              l10n.supportCenterBody,
-              style: const TextStyle(
-                fontSize: 14,
-                height: 1.5,
-                color: Color(0xFF334155),
               ),
-            ),
-            const SizedBox(height: 16),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: const Color(0xFFF0F9FF),
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: const Color(0xFFBAE6FD)),
-              ),
-              child: const Row(
+              const SizedBox(height: 18),
+              Row(
                 children: [
-                  Icon(Icons.phone_in_talk_rounded, color: Color(0xFF0284C7)),
-                  SizedBox(width: 12),
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: glass.isDark
+                          ? glass.badgeBackground
+                          : const Color(0xFF0284C7).withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Icon(Icons.support_agent_rounded,
+                        color: glass.accentColor, size: 24),
+                  ),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      'Emergency Hotlines: 952 / 8335 (Toll-Free)',
+                      l10n.supportCenterTitle,
                       style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xFF08264A),
+                        fontSize: 18,
+                        fontWeight: FontWeight.w800,
+                        color: glass.titleText,
                       ),
                     ),
                   ),
                 ],
               ),
-            ),
-            const SizedBox(height: 18),
-            SizedBox(
-              width: double.infinity,
-              child: FilledButton(
-                style: FilledButton.styleFrom(
-                  backgroundColor: const Color(0xFF0284C7),
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
+              const SizedBox(height: 14),
+              Text(
+                l10n.supportCenterBody,
+                style: TextStyle(
+                  fontSize: 14,
+                  height: 1.5,
+                  color: glass.subtitleText,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: glass.isDark
+                      ? const Color(0xFF131D36)
+                      : const Color(0xFFF0F9FF),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(
+                    color: glass.isDark
+                        ? glass.cardBorder
+                        : const Color(0xFFBAE6FD),
                   ),
                 ),
-                onPressed: () => Navigator.of(ctx).pop(),
-                child: Text(l10n.closeButton,
-                    style: const TextStyle(fontWeight: FontWeight.w700)),
+                child: Row(
+                  children: [
+                    Icon(Icons.phone_in_talk_rounded, color: glass.accentColor),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        'Emergency Hotlines: 952 / 8335 (Toll-Free)',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          color: glass.titleText,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
-        ),
-      ),
+              const SizedBox(height: 18),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton(
+                  style: FilledButton.styleFrom(
+                    backgroundColor: glass.accentColor,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                  ),
+                  onPressed: () => Navigator.of(ctx).pop(),
+                  child: Text(
+                    l10n.closeButton,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      color: glass.isDark ? Colors.black : Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -1600,6 +1815,7 @@ class _AccountPage extends StatelessWidget {
     return ListenableBuilder(
       listenable: settingsController,
       builder: (context, _) {
+        final glass = context.glassTheme;
         final l10n = AppLocalizations.of(context);
         final selectedLanguage = localeController.locale.languageCode;
         final user = authController.user;
@@ -1638,23 +1854,31 @@ class _AccountPage extends StatelessWidget {
                   height: 112,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: const Color(0xFFF0F9FF),
+                    color: glass.isDark
+                        ? const Color(0xFF131D36)
+                        : const Color(0xFFF0F9FF),
                     border: Border.all(
-                      color: const Color(0xFF7DD3FC),
+                      color: glass.isDark
+                          ? const Color(0xFF38BDF8)
+                          : const Color(0xFF7DD3FC),
                       width: 3.5,
                     ),
-                    boxShadow: const [
+                    boxShadow: [
                       BoxShadow(
-                        color: Color(0x120284C7),
+                        color: glass.isDark
+                            ? const Color(0x3338BDF8)
+                            : const Color(0x120284C7),
                         blurRadius: 16,
-                        offset: Offset(0, 6),
+                        offset: const Offset(0, 6),
                       ),
                     ],
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.person,
                     size: 58,
-                    color: Color(0xFF0284C7),
+                    color: glass.isDark
+                        ? const Color(0xFF38BDF8)
+                        : const Color(0xFF0284C7),
                   ),
                 ),
               ),
@@ -1662,10 +1886,10 @@ class _AccountPage extends StatelessWidget {
               Center(
                 child: Text(
                   displayName,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.w800,
-                    color: Color(0xFF08264A),
+                    color: glass.titleText,
                     letterSpacing: -0.3,
                   ),
                 ),
@@ -1678,19 +1902,27 @@ class _AccountPage extends StatelessWidget {
                   margin: const EdgeInsets.only(bottom: 20),
                   padding: const EdgeInsets.all(18),
                   decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFFE0F2FE), Color(0xFFF0F9FF)],
+                    gradient: LinearGradient(
+                      colors: glass.isDark
+                          ? const [Color(0xFF0F172A), Color(0xFF1E293B)]
+                          : const [Color(0xFFE0F2FE), Color(0xFFF0F9FF)],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
                     borderRadius: BorderRadius.circular(22),
-                    border:
-                        Border.all(color: const Color(0xFFBAE6FD), width: 1.2),
-                    boxShadow: const [
+                    border: Border.all(
+                      color: glass.isDark
+                          ? glass.cardBorder
+                          : const Color(0xFFBAE6FD),
+                      width: 1.2,
+                    ),
+                    boxShadow: [
                       BoxShadow(
-                        color: Color(0x0C0284C7),
+                        color: glass.isDark
+                            ? const Color(0x33000000)
+                            : const Color(0x0C0284C7),
                         blurRadius: 12,
-                        offset: Offset(0, 4),
+                        offset: const Offset(0, 4),
                       ),
                     ],
                   ),
@@ -1703,7 +1935,9 @@ class _AccountPage extends StatelessWidget {
                             width: 38,
                             height: 38,
                             decoration: BoxDecoration(
-                              color: const Color(0xFF0284C7),
+                              color: glass.isDark
+                                  ? const Color(0xFF0284C7)
+                                  : const Color(0xFF0284C7),
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: const Icon(Icons.cloud_sync_rounded,
@@ -1713,10 +1947,10 @@ class _AccountPage extends StatelessWidget {
                           Expanded(
                             child: Text(
                               l10n.guestSignInPromoTitle,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w800,
-                                color: Color(0xFF08264A),
+                                color: glass.titleText,
                               ),
                             ),
                           ),
@@ -1725,10 +1959,10 @@ class _AccountPage extends StatelessWidget {
                       const SizedBox(height: 10),
                       Text(
                         l10n.guestSignInPromoBody,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 13,
                           height: 1.45,
-                          color: Color(0xFF334155),
+                          color: glass.subtitleText,
                         ),
                       ),
                       const SizedBox(height: 14),
@@ -1736,8 +1970,9 @@ class _AccountPage extends StatelessWidget {
                         width: double.infinity,
                         child: ElevatedButton.icon(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF0284C7),
-                            foregroundColor: Colors.white,
+                            backgroundColor: glass.accentColor,
+                            foregroundColor:
+                                glass.isDark ? Colors.black : Colors.white,
                             padding: const EdgeInsets.symmetric(vertical: 12),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(14),
@@ -1759,17 +1994,10 @@ class _AccountPage extends StatelessWidget {
               // 2. Card 1: View Profile & Notifications
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: glass.cardBackground,
                   borderRadius: BorderRadius.circular(24),
-                  border:
-                      Border.all(color: const Color(0xFFDCEAF5), width: 1.2),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Color(0x0A005A71),
-                      blurRadius: 10,
-                      offset: Offset(0, 4),
-                    ),
-                  ],
+                  border: Border.all(color: glass.cardBorder, width: 1.2),
+                  boxShadow: glass.cardShadow,
                 ),
                 child: Column(
                   children: [
@@ -1779,11 +2007,11 @@ class _AccountPage extends StatelessWidget {
                       subtitle: l10n.viewProfileSubtitle,
                       onTap: onOpenAccount,
                     ),
-                    const Divider(
+                    Divider(
                       height: 1,
                       indent: 72,
                       endIndent: 16,
-                      color: Color(0xFFF1F5F9),
+                      color: glass.divider,
                     ),
                     _AccountTile(
                       icon: Icons.notifications_none_rounded,
@@ -1801,10 +2029,12 @@ class _AccountPage extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(6, 24, 6, 12),
                 child: Text(
                   l10n.accountSettingsHeader,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12.5,
                     fontWeight: FontWeight.w800,
-                    color: Color(0xFF005A71),
+                    color: glass.isDark
+                        ? const Color(0xFF38BDF8)
+                        : const Color(0xFF005A71),
                     letterSpacing: 0.8,
                   ),
                 ),
@@ -1813,17 +2043,10 @@ class _AccountPage extends StatelessWidget {
               // 4. Card 2: Account Settings
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: glass.cardBackground,
                   borderRadius: BorderRadius.circular(24),
-                  border:
-                      Border.all(color: const Color(0xFFDCEAF5), width: 1.2),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Color(0x0A005A71),
-                      blurRadius: 10,
-                      offset: Offset(0, 4),
-                    ),
-                  ],
+                  border: Border.all(color: glass.cardBorder, width: 1.2),
+                  boxShadow: glass.cardShadow,
                 ),
                 child: Column(
                   children: [
@@ -1834,11 +2057,11 @@ class _AccountPage extends StatelessWidget {
                       onTap: () =>
                           _showPrivacyModal(context, l10n, authController),
                     ),
-                    const Divider(
+                    Divider(
                       height: 1,
                       indent: 72,
                       endIndent: 16,
-                      color: Color(0xFFF1F5F9),
+                      color: glass.divider,
                     ),
                     _AccountTile(
                       icon: Icons.language_rounded,
@@ -1850,11 +2073,11 @@ class _AccountPage extends StatelessWidget {
                       onTap: () =>
                           _showLanguageModal(context, l10n, localeController),
                     ),
-                    const Divider(
+                    Divider(
                       height: 1,
                       indent: 72,
                       endIndent: 16,
-                      color: Color(0xFFF1F5F9),
+                      color: glass.divider,
                     ),
                     _AccountTile(
                       icon: Icons.palette_outlined,
@@ -1864,11 +2087,11 @@ class _AccountPage extends StatelessWidget {
                       onTap: () =>
                           _showThemeModal(context, l10n, settingsController),
                     ),
-                    const Divider(
+                    Divider(
                       height: 1,
                       indent: 72,
                       endIndent: 16,
-                      color: Color(0xFFF1F5F9),
+                      color: glass.divider,
                     ),
                     _AccountTile(
                       icon: Icons.text_fields_rounded,
@@ -1878,11 +2101,11 @@ class _AccountPage extends StatelessWidget {
                       onTap: () =>
                           _showTextSizeModal(context, l10n, settingsController),
                     ),
-                    const Divider(
+                    Divider(
                       height: 1,
                       indent: 72,
                       endIndent: 16,
-                      color: Color(0xFFF1F5F9),
+                      color: glass.divider,
                     ),
                     _AccountTile(
                       icon: Icons.help_outline_rounded,
@@ -1900,8 +2123,8 @@ class _AccountPage extends StatelessWidget {
                 child: Center(
                   child: Text(
                     l10n.appVersion,
-                    style: const TextStyle(
-                      color: Color(0xFF94A3B8),
+                    style: TextStyle(
+                      color: glass.subtitleText,
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
                     ),
@@ -1933,6 +2156,7 @@ class _AccountTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final glass = context.glassTheme;
     return Material(
       color: Colors.transparent,
       child: ListTile(
@@ -1941,24 +2165,35 @@ class _AccountTile extends StatelessWidget {
           width: 44,
           height: 44,
           decoration: BoxDecoration(
-            color: const Color(0xFF0284C7),
+            color: glass.isDark
+                ? const Color(0xFF0F172A)
+                : const Color(0xFF0284C7),
             borderRadius: BorderRadius.circular(12),
+            border: glass.isDark
+                ? Border.all(
+                    color: const Color(0xFF38BDF8).withValues(alpha: 0.35),
+                  )
+                : null,
           ),
-          child: Icon(icon, color: Colors.white, size: 24),
+          child: Icon(
+            icon,
+            color: glass.isDark ? const Color(0xFF38BDF8) : Colors.white,
+            size: 24,
+          ),
         ),
         title: Text(
           title,
-          style: const TextStyle(
+          style: TextStyle(
             fontWeight: FontWeight.w700,
             fontSize: 16,
-            color: Color(0xFF08264A),
+            color: glass.titleText,
           ),
         ),
         subtitle: Text(
           subtitle,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 13,
-            color: Color(0xFF64748B),
+            color: glass.subtitleText,
           ),
         ),
         trailing: Row(
@@ -1969,13 +2204,19 @@ class _AccountTile extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF0F6FA),
+                  color: glass.badgeBackground,
                   borderRadius: BorderRadius.circular(16),
+                  border: glass.isDark
+                      ? Border.all(
+                          color:
+                              const Color(0xFF38BDF8).withValues(alpha: 0.25),
+                        )
+                      : null,
                 ),
                 child: Text(
                   badgeText!,
-                  style: const TextStyle(
-                    color: Color(0xFF005A71),
+                  style: TextStyle(
+                    color: glass.badgeText,
                     fontWeight: FontWeight.w700,
                     fontSize: 13,
                   ),
@@ -1986,13 +2227,18 @@ class _AccountTile extends StatelessWidget {
             Container(
               width: 32,
               height: 32,
-              decoration: const BoxDecoration(
-                color: Color(0xFFF0F6FA),
+              decoration: BoxDecoration(
+                color: glass.badgeBackground,
                 shape: BoxShape.circle,
+                border: glass.isDark
+                    ? Border.all(
+                        color: const Color(0xFF38BDF8).withValues(alpha: 0.25),
+                      )
+                    : null,
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.chevron_right_rounded,
-                color: Color(0xFF005A71),
+                color: glass.badgeText,
                 size: 20,
               ),
             ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../l10n/app_localizations.dart';
+import '../theme/app_glass_theme.dart';
 
 class LearningModuleItem {
   const LearningModuleItem({
@@ -211,6 +212,9 @@ class _ModuleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final glass = context.glassTheme;
+    final isDark = glass.isDark;
+
     final titleText = module.title(l10n);
     final descText = module.description(l10n);
 
@@ -222,20 +226,20 @@ class _ModuleCard extends StatelessWidget {
         children: [
           Text(
             l10n.moduleLabel(module.number).toUpperCase(),
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w800,
-              color: Color(0xFF0284C7),
+              color: glass.accentColor,
               letterSpacing: 0.8,
             ),
           ),
           const SizedBox(height: 6),
           Text(
             titleText,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w800,
-              color: Color(0xFF0B2545),
+              color: glass.titleText,
               height: 1.25,
             ),
             maxLines: 2,
@@ -244,10 +248,10 @@ class _ModuleCard extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             descText,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 12.5,
               height: 1.45,
-              color: Color(0xFF475569),
+              color: glass.subtitleText,
             ),
             maxLines: 3,
             overflow: TextOverflow.ellipsis,
@@ -288,8 +292,9 @@ class _ModuleCard extends StatelessWidget {
               ElevatedButton(
                 onPressed: onMore,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF005A71),
-                  foregroundColor: Colors.white,
+                  backgroundColor:
+                      isDark ? glass.accentColor : const Color(0xFF005A71),
+                  foregroundColor: isDark ? Colors.black : Colors.white,
                   elevation: 0,
                   padding:
                       const EdgeInsets.symmetric(horizontal: 22, vertical: 12),
@@ -316,8 +321,12 @@ class _ModuleCard extends StatelessWidget {
               OutlinedButton(
                 onPressed: onQuiz,
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: const Color(0xFF005A71),
-                  side: const BorderSide(color: Color(0xFF005A71), width: 1.4),
+                  foregroundColor:
+                      isDark ? glass.accentColor : const Color(0xFF005A71),
+                  side: BorderSide(
+                    color: isDark ? glass.accentColor : const Color(0xFF005A71),
+                    width: 1.4,
+                  ),
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   shape: RoundedRectangleBorder(
@@ -354,10 +363,10 @@ class _ModuleCard extends StatelessWidget {
             fit: BoxFit.contain,
             width: double.infinity,
             alignment: Alignment.center,
-            errorBuilder: (_, __, ___) => const Icon(
+            errorBuilder: (_, __, ___) => Icon(
               Icons.menu_book_rounded,
               size: 64,
-              color: Color(0xFF0284C7),
+              color: glass.accentColor,
             ),
           ),
         ),
@@ -366,19 +375,17 @@ class _ModuleCard extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark
+            ? const Color(0xFF131D36).withValues(alpha: 0.85)
+            : Colors.white,
         borderRadius: BorderRadius.circular(26),
         border: Border.all(
-          color: const Color(0xFFBAE6FD).withValues(alpha: 0.65),
+          color: isDark
+              ? glass.cardBorder
+              : const Color(0xFFBAE6FD).withValues(alpha: 0.65),
           width: 1.5,
         ),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x120284C7),
-            blurRadius: 18,
-            offset: Offset(0, 6),
-          ),
-        ],
+        boxShadow: glass.cardShadow,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,

@@ -1034,6 +1034,65 @@
   "chatHistoryYesterday": "ትናንት",
   "chatHistoryPreviousDays": "ያለፉት 7 ቀናት",
   "chatHistoryOlder": "የቆዩ",
-  "activeChatBadge": "የአሁኑ"
+  "activeChatBadge": "የአሁኑ",
+  "notificationsTitle": "ማሳወቂያዎች",
+  "welcomeBackTitle": "እንኳን ደህና መጡ!",
+  "welcomeBackMessage": "እንኳን ደህና መጡ፣ {name}! እንደገና በማግኘታችን ደስ ብሎናል።",
+  "@welcomeBackMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "welcomeBackNotificationBody": "ሰላም {name}፣ እንደገና ወደ የየኛ ጤና እንኳን ደህና መጡ! የጤና ረዳትዎ እና የትምህርት ክፍሎች ዝግጁ ናቸው።",
+  "@welcomeBackNotificationBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "accountCreatedTitle": "እንኳን ወደ የየኛ ጤና በደህና መጡ!",
+  "accountCreatedMessage": "እንኳን ወደ የየኛ ጤና በደህና መጡ፣ {name}! መለያዎ በተሳካ ሁኔታ ተፈጥሯል።",
+  "@accountCreatedMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "accountCreatedNotificationBody": "የወጣቶች ጤና መለያዎ ነቅቷል። ሚስጥራዊ መመሪያዎችን፣ የSRH ትምህርቶችን እና ክሊኒኮችን ያስሱ።",
+  "verificationPendingNotification": "መለያዎ ተፈጥሯል! ማረጋገጫውን ለማጠናቀቅ እባክዎ ኢሜይልዎን ያረጋግጡ።",
+  "noNotifications": "ምንም ማሳወቂያዎች የሉም",
+  "noNotificationsSubtitle": "ሁሉንም አይተዋል! አዳዲስ መረጃዎች፣ የጤና ምክሮች እና ማስታወሻዎች እዚህ ይታያሉ።",
+  "markAllReadAction": "ሁሉንም አንብብ",
+  "clearAllNotificationsAction": "ሁሉንም አጽዳ",
+  "notificationSettingsAction": "የማሳወቂያ ምርጫዎች",
+  "notificationTimeJustNow": "አሁን",
+  "notificationTimeMinutesAgo": "ከ{minutes} ደቂቃ በፊት",
+  "@notificationTimeMinutesAgo": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "notificationTimeHoursAgo": "ከ{hours} ሰዓት በፊት",
+  "@notificationTimeHoursAgo": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "notificationTimeDaysAgo": "ከ{days} ቀናት በፊት",
+  "@notificationTimeDaysAgo": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  }
 }
 

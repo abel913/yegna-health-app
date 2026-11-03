@@ -28,7 +28,7 @@ class AppSettingsController extends ChangeNotifier {
 
   final SharedPreferences? _preferences;
 
-  ThemeMode _themeMode = ThemeMode.system;
+  ThemeMode _themeMode = ThemeMode.light;
   AppTextScale _textScale = AppTextScale.normal;
   bool _pushAlertsEnabled = true;
   bool _healthTipsEnabled = true;
@@ -47,12 +47,10 @@ class AppSettingsController extends ChangeNotifier {
     if (prefs == null) return;
 
     final themeStr = prefs.getString(_themeKey);
-    if (themeStr == 'light') {
-      _themeMode = ThemeMode.light;
-    } else if (themeStr == 'dark') {
+    if (themeStr == 'dark') {
       _themeMode = ThemeMode.dark;
     } else {
-      _themeMode = ThemeMode.system;
+      _themeMode = ThemeMode.light;
     }
 
     final scaleStr = prefs.getString(_textScaleKey);
@@ -66,24 +64,17 @@ class AppSettingsController extends ChangeNotifier {
   }
 
   Future<void> setThemeMode(ThemeMode mode) async {
-    if (_themeMode == mode) return;
-    _themeMode = mode;
+    final targetMode =
+        mode == ThemeMode.dark ? ThemeMode.dark : ThemeMode.light;
+    if (_themeMode == targetMode) return;
+    _themeMode = targetMode;
     notifyListeners();
     final prefs = _preferences;
     if (prefs != null) {
-      final String value;
-      switch (mode) {
-        case ThemeMode.light:
-          value = 'light';
-          break;
-        case ThemeMode.dark:
-          value = 'dark';
-          break;
-        case ThemeMode.system:
-          value = 'system';
-          break;
-      }
-      await prefs.setString(_themeKey, value);
+      await prefs.setString(
+        _themeKey,
+        targetMode == ThemeMode.dark ? 'dark' : 'light',
+      );
     }
   }
 

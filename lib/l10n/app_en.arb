@@ -1071,6 +1071,65 @@
   "chatHistoryYesterday": "Yesterday",
   "chatHistoryPreviousDays": "Previous 7 days",
   "chatHistoryOlder": "Older",
-  "activeChatBadge": "Active"
+  "activeChatBadge": "Active",
+  "notificationsTitle": "Notifications",
+  "welcomeBackTitle": "Welcome back!",
+  "welcomeBackMessage": "Welcome back, {name}! Great to have you with us again.",
+  "@welcomeBackMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "welcomeBackNotificationBody": "Hello {name}, welcome back to Yegna Health! Your health assistant and learning modules are ready.",
+  "@welcomeBackNotificationBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "accountCreatedTitle": "Welcome to Yegna Health!",
+  "accountCreatedMessage": "Welcome to Yegna Health, {name}! Your account has been created successfully.",
+  "@accountCreatedMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "accountCreatedNotificationBody": "Your youth health account is active. Explore confidential guidance, SRH modules, and youth clinics.",
+  "verificationPendingNotification": "Account created! Please check your email to complete verification.",
+  "noNotifications": "No notifications yet",
+  "noNotificationsSubtitle": "You're all caught up! Updates, health tips, and reminders will appear here.",
+  "markAllReadAction": "Mark all read",
+  "clearAllNotificationsAction": "Clear all",
+  "notificationSettingsAction": "Notification Preferences",
+  "notificationTimeJustNow": "Just now",
+  "notificationTimeMinutesAgo": "{minutes}m ago",
+  "@notificationTimeMinutesAgo": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "notificationTimeHoursAgo": "{hours}h ago",
+  "@notificationTimeHoursAgo": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "notificationTimeDaysAgo": "{days}d ago",
+  "@notificationTimeDaysAgo": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  }
 }
 

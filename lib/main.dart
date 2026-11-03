@@ -16,6 +16,7 @@ import 'src/chatbot/supabase_gemini_chatbot_repository.dart';
 import 'src/discovery/facility_repository.dart';
 import 'src/discovery/mentor_repository.dart';
 import 'src/locale_controller.dart';
+import 'src/notifications/notification_controller.dart';
 import 'src/learning/assessment_repository.dart';
 import 'src/learning/education_repository.dart';
 import 'src/learning/learning_cache.dart';
@@ -34,6 +35,7 @@ Future<void> main() async {
   await localeController.load();
   final settingsController = AppSettingsController(preferences);
   await settingsController.load();
+  final notificationController = InAppNotificationController(preferences);
 
   final supabaseClient = await _initializeSupabase();
   final authRepository = supabaseClient == null
@@ -49,6 +51,7 @@ Future<void> main() async {
     localeController: localeController,
     authController: authController,
     settingsController: settingsController,
+    notificationController: notificationController,
     chatbotRepository: chatbotRepository,
     educationRepository: supabaseClient == null
         ? const UnconfiguredEducationRepository()
@@ -88,6 +91,7 @@ class YegnaHealthApp extends StatefulWidget {
     required this.localeController,
     required this.authController,
     this.settingsController,
+    this.notificationController,
     this.educationRepository,
     this.assessmentRepository,
     this.progressStore,
@@ -100,6 +104,7 @@ class YegnaHealthApp extends StatefulWidget {
   final LocaleController localeController;
   final AuthController authController;
   final AppSettingsController? settingsController;
+  final InAppNotificationController? notificationController;
   final EducationRepository? educationRepository;
   final AssessmentRepository? assessmentRepository;
   final LearningProgressStore? progressStore;
@@ -113,6 +118,7 @@ class YegnaHealthApp extends StatefulWidget {
 
 class _YegnaHealthAppState extends State<YegnaHealthApp> {
   late final AppSettingsController _settingsController;
+  late final InAppNotificationController _notificationController;
   late final LearningProgressController _progressController;
   late final EducationRepository _educationRepository;
   late final AssessmentRepository _assessmentRepository;
@@ -124,6 +130,8 @@ class _YegnaHealthAppState extends State<YegnaHealthApp> {
   void initState() {
     super.initState();
     _settingsController = widget.settingsController ?? AppSettingsController();
+    _notificationController =
+        widget.notificationController ?? InAppNotificationController();
     _educationRepository =
         widget.educationRepository ?? const UnconfiguredEducationRepository();
     _assessmentRepository =
@@ -402,6 +410,7 @@ class _YegnaHealthAppState extends State<YegnaHealthApp> {
             localeController: widget.localeController,
             authController: widget.authController,
             settingsController: _settingsController,
+            notificationController: _notificationController,
             educationRepository: _educationRepository,
             assessmentRepository: _assessmentRepository,
             progressController: _progressController,

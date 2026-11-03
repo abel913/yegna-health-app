@@ -11,7 +11,8 @@ void main() {
       final controller = AppSettingsController(prefs);
       await controller.load();
 
-      expect(controller.themeMode, ThemeMode.system);
+      expect(controller.themeMode, ThemeMode.light);
+      expect(controller.isDark, isFalse);
       expect(controller.textScale, AppTextScale.normal);
       expect(controller.textScaleFactor, 1.0);
       expect(controller.pushAlertsEnabled, isTrue);
@@ -48,20 +49,20 @@ void main() {
       int notifications = 0;
       controller.addListener(() => notifications++);
 
-      await controller.setThemeMode(ThemeMode.light);
       expect(controller.themeMode, ThemeMode.light);
-      expect(prefs.getString('app_theme_mode'), 'light');
-      expect(notifications, 1);
+      expect(controller.isDark, isFalse);
 
       await controller.setThemeMode(ThemeMode.dark);
       expect(controller.themeMode, ThemeMode.dark);
+      expect(controller.isDark, isTrue);
       expect(prefs.getString('app_theme_mode'), 'dark');
-      expect(notifications, 2);
+      expect(notifications, 1);
 
-      await controller.setThemeMode(ThemeMode.system);
-      expect(controller.themeMode, ThemeMode.system);
-      expect(prefs.getString('app_theme_mode'), 'system');
-      expect(notifications, 3);
+      await controller.setThemeMode(ThemeMode.light);
+      expect(controller.themeMode, ThemeMode.light);
+      expect(controller.isDark, isFalse);
+      expect(prefs.getString('app_theme_mode'), 'light');
+      expect(notifications, 2);
     });
 
     test('updates text scale and notifies listeners', () async {

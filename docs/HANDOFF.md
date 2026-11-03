@@ -1,5 +1,21 @@
 # Handoff
 
+## In-App Notification Center & Auth Welcome Feedback System (2026-11-03)
+
+- **Completed In-App Notification Center & Auth Feedback**:
+  - `lib/src/notifications/notification_models.dart`: Notification models with types (`welcome`, `account`, `learning`, `healthTip`, `system`), timestamps, read states, and JSON serialization.
+  - `lib/src/notifications/notification_controller.dart`: `InAppNotificationController` managing notifications list, dynamic unread badge count, default seed health updates, and `SharedPreferences` persistence.
+  - `lib/src/notifications/notification_center_sheet.dart`: Modal bottom sheet featuring type-specific gradient badges, unread indicators, relative timestamps, "Mark all read" action, swipe-to-delete, clear-all with empty state illustration, and direct settings navigation.
+  - `lib/src/app.dart`: Replaced placeholder static SnackBar on top AppBar with dynamic `_NotificationButton` listening to `notificationController`.
+  - `lib/src/auth/auth_pages.dart`: Added floating welcome banner and notification logging upon successful login ("Welcome back, {Name}!") and registration ("Welcome to Yegna Health, {Name}! Your account has been created successfully.").
+  - `lib/l10n/app_en.arb` & `lib/l10n/app_am.arb`: Full English and Amharic ARB keys.
+- **Verification**:
+  - `test/notification_controller_test.dart`: 11 / 11 passing tests.
+  - `test/notification_ui_test.dart`: 4 / 4 passing tests.
+  - `test/auth_feedback_test.dart`: 3 / 3 passing tests.
+  - `flutter analyze --no-pub`: 0 issues found.
+  - `flutter test --no-pub`: All 139 tests passing (100% pass rate).
+
 ## Multi-Session Chat History & Slide-Out Navigation Drawer (2026-11-03)
 
 - **Completed Multi-Session Chat History**:

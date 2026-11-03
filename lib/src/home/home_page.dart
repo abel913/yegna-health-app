@@ -10,6 +10,7 @@ import '../learning/education_repository.dart';
 import '../learning/hiv_module_page.dart';
 import '../learning/learning_modules_carousel.dart';
 import '../learning/learning_progress_controller.dart';
+import '../theme/app_glass_theme.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -64,97 +65,110 @@ class _HomePageState extends State<HomePage> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (ctx) => BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.95),
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
-            boxShadow: const [
-              BoxShadow(
-                color: Color(0x30000000),
-                blurRadius: 28,
-                offset: Offset(0, -6),
-              ),
-            ],
-          ),
-          padding: const EdgeInsets.fromLTRB(20, 14, 20, 36),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Container(
-                  width: 44,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: Colors.grey.withValues(alpha: 0.35),
-                    borderRadius: BorderRadius.circular(2),
+      builder: (ctx) {
+        final glass = ctx.glassTheme;
+        final isDark = glass.isDark;
+
+        return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+          child: Container(
+            decoration: BoxDecoration(
+              color: isDark
+                  ? const Color(0xFF0F172A).withValues(alpha: 0.96)
+                  : Colors.white.withValues(alpha: 0.95),
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(30)),
+              border: isDark
+                  ? Border.all(color: glass.cardBorder, width: 1.2)
+                  : null,
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x30000000),
+                  blurRadius: 28,
+                  offset: Offset(0, -6),
+                ),
+              ],
+            ),
+            padding: const EdgeInsets.fromLTRB(20, 14, 20, 36),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    width: 44,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: glass.modalHandle,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 18),
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(9),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFFE4E6),
-                      borderRadius: BorderRadius.circular(14),
+                const SizedBox(height: 18),
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(9),
+                      decoration: BoxDecoration(
+                        color: isDark
+                            ? const Color(0xFF4C0519)
+                            : const Color(0xFFFFE4E6),
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: const Icon(
+                        Icons.phone_in_talk_rounded,
+                        color: Color(0xFFE11D48),
+                        size: 24,
+                      ),
                     ),
-                    child: const Icon(
-                      Icons.phone_in_talk_rounded,
-                      color: Color(0xFFE11D48),
-                      size: 24,
-                    ),
-                  ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          l10n.emergencySheetTitle,
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w800,
-                            color: Color(0xFF08264A),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            l10n.emergencySheetTitle,
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w800,
+                              color: glass.titleText,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 3),
-                        Text(
-                          l10n.emergencySheetDisclaimer,
-                          style: const TextStyle(
-                            fontSize: 12,
-                            height: 1.4,
-                            color: Color(0xFF4A6277),
+                          const SizedBox(height: 3),
+                          Text(
+                            l10n.emergencySheetDisclaimer,
+                            style: TextStyle(
+                              fontSize: 12,
+                              height: 1.4,
+                              color: glass.subtitleText,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 22),
-              _EmergencyHelplineTile(
-                number: '952',
-                name: l10n.emergencyHotline952Name,
-                description: l10n.emergencyHotline952Desc,
-                callActionLabel: l10n.callNowAction,
-                copiedToast: l10n.copiedToClipboard,
-              ),
-              const SizedBox(height: 12),
-              _EmergencyHelplineTile(
-                number: '8335',
-                name: l10n.emergencyHotline8335Name,
-                description: l10n.emergencyHotline8335Desc,
-                callActionLabel: l10n.callNowAction,
-                copiedToast: l10n.copiedToClipboard,
-              ),
-            ],
+                  ],
+                ),
+                const SizedBox(height: 22),
+                _EmergencyHelplineTile(
+                  number: '952',
+                  name: l10n.emergencyHotline952Name,
+                  description: l10n.emergencyHotline952Desc,
+                  callActionLabel: l10n.callNowAction,
+                  copiedToast: l10n.copiedToClipboard,
+                ),
+                const SizedBox(height: 12),
+                _EmergencyHelplineTile(
+                  number: '8335',
+                  name: l10n.emergencyHotline8335Name,
+                  description: l10n.emergencyHotline8335Desc,
+                  callActionLabel: l10n.callNowAction,
+                  copiedToast: l10n.copiedToClipboard,
+                ),
+              ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -201,18 +215,15 @@ class _HomePageState extends State<HomePage> {
       );
     }
 
+    final glass = context.glassTheme;
+    final isDark = glass.isDark;
+
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            Color(0xFFD4EDFD),
-            Color(0xFFBAE6FD),
-            Color(0xFFCEE5FD),
-            Color(0xFFE2F0FB),
-            Color(0xFFEBF4FA),
-          ],
+          colors: glass.scaffoldGradientColors,
         ),
       ),
       child: Stack(
@@ -224,14 +235,20 @@ class _HomePageState extends State<HomePage> {
             child: Container(
               width: 360,
               height: 360,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
-                  colors: [
-                    Color(0x950284C7),
-                    Color(0x5038BDF8),
-                    Colors.transparent,
-                  ],
+                  colors: isDark
+                      ? const [
+                          Color(0x350284C7),
+                          Color(0x1838BDF8),
+                          Colors.transparent,
+                        ]
+                      : const [
+                          Color(0x950284C7),
+                          Color(0x5038BDF8),
+                          Colors.transparent,
+                        ],
                 ),
               ),
             ),
@@ -242,14 +259,20 @@ class _HomePageState extends State<HomePage> {
             child: Container(
               width: 380,
               height: 380,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
-                  colors: [
-                    Color(0x8806B6D4),
-                    Color(0x450EA5E9),
-                    Colors.transparent,
-                  ],
+                  colors: isDark
+                      ? const [
+                          Color(0x3006B6D4),
+                          Color(0x150EA5E9),
+                          Colors.transparent,
+                        ]
+                      : const [
+                          Color(0x8806B6D4),
+                          Color(0x450EA5E9),
+                          Colors.transparent,
+                        ],
                 ),
               ),
             ),
@@ -260,14 +283,20 @@ class _HomePageState extends State<HomePage> {
             child: Container(
               width: 340,
               height: 340,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
-                  colors: [
-                    Color(0x806366F1),
-                    Color(0x3538BDF8),
-                    Colors.transparent,
-                  ],
+                  colors: isDark
+                      ? const [
+                          Color(0x286366F1),
+                          Color(0x1238BDF8),
+                          Colors.transparent,
+                        ]
+                      : const [
+                          Color(0x806366F1),
+                          Color(0x3538BDF8),
+                          Colors.transparent,
+                        ],
                 ),
               ),
             ),
@@ -278,14 +307,20 @@ class _HomePageState extends State<HomePage> {
             child: Container(
               width: 340,
               height: 340,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
-                  colors: [
-                    Color(0x750D9488),
-                    Color(0x3514B8A6),
-                    Colors.transparent,
-                  ],
+                  colors: isDark
+                      ? const [
+                          Color(0x250D9488),
+                          Color(0x1014B8A6),
+                          Colors.transparent,
+                        ]
+                      : const [
+                          Color(0x750D9488),
+                          Color(0x3514B8A6),
+                          Colors.transparent,
+                        ],
                 ),
               ),
             ),
@@ -301,14 +336,21 @@ class _HomePageState extends State<HomePage> {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.50),
+                  color: isDark
+                      ? const Color(0xFF38BDF8).withValues(alpha: 0.25)
+                      : Colors.white.withValues(alpha: 0.50),
                   width: 2,
                 ),
                 gradient: RadialGradient(
-                  colors: [
-                    Colors.white.withValues(alpha: 0.35),
-                    Colors.white.withValues(alpha: 0.05),
-                  ],
+                  colors: isDark
+                      ? [
+                          const Color(0xFF38BDF8).withValues(alpha: 0.12),
+                          Colors.transparent,
+                        ]
+                      : [
+                          Colors.white.withValues(alpha: 0.35),
+                          Colors.white.withValues(alpha: 0.05),
+                        ],
                 ),
               ),
             ),
@@ -322,14 +364,21 @@ class _HomePageState extends State<HomePage> {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.45),
+                  color: isDark
+                      ? const Color(0xFF38BDF8).withValues(alpha: 0.25)
+                      : Colors.white.withValues(alpha: 0.45),
                   width: 2,
                 ),
                 gradient: RadialGradient(
-                  colors: [
-                    Colors.white.withValues(alpha: 0.30),
-                    Colors.white.withValues(alpha: 0.05),
-                  ],
+                  colors: isDark
+                      ? [
+                          const Color(0xFF38BDF8).withValues(alpha: 0.12),
+                          Colors.transparent,
+                        ]
+                      : [
+                          Colors.white.withValues(alpha: 0.30),
+                          Colors.white.withValues(alpha: 0.05),
+                        ],
                 ),
               ),
             ),
@@ -492,41 +541,68 @@ class _DeepGlassContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final glass = context.glassTheme;
+    final isDark = glass.isDark;
+
     final glassBody = ClipRRect(
       borderRadius: BorderRadius.circular(borderRadius),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.38),
+            color: isDark
+                ? const Color(0xFF131D36).withValues(alpha: 0.76)
+                : Colors.white.withValues(alpha: 0.38),
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [
-                Colors.white.withValues(alpha: 0.65),
-                Colors.white.withValues(alpha: 0.22),
-                const Color(0xFFBAE6FD).withValues(alpha: 0.16),
-              ],
+              colors: isDark
+                  ? [
+                      const Color(0xFF1E293B).withValues(alpha: 0.85),
+                      const Color(0xFF0F172A).withValues(alpha: 0.70),
+                      const Color(0xFF0284C7).withValues(alpha: 0.16),
+                    ]
+                  : [
+                      Colors.white.withValues(alpha: 0.65),
+                      Colors.white.withValues(alpha: 0.22),
+                      const Color(0xFFBAE6FD).withValues(alpha: 0.16),
+                    ],
               stops: const [0.0, 0.65, 1.0],
             ),
             borderRadius: BorderRadius.circular(borderRadius),
             border: Border.all(
-              color: Colors.white.withValues(alpha: 0.90),
+              color: isDark
+                  ? const Color(0xFF38BDF8).withValues(alpha: 0.24)
+                  : Colors.white.withValues(alpha: 0.90),
               width: 1.5,
             ),
-            boxShadow: [
-              BoxShadow(
-                color: const Color(0xFF0284C7).withValues(alpha: 0.16),
-                blurRadius: 26,
-                offset: const Offset(0, 10),
-                spreadRadius: -2,
-              ),
-              BoxShadow(
-                color: Colors.white.withValues(alpha: 0.75),
-                blurRadius: 8,
-                offset: const Offset(-2, -2),
-              ),
-            ],
+            boxShadow: isDark
+                ? const [
+                    BoxShadow(
+                      color: Color(0x60000000),
+                      blurRadius: 26,
+                      offset: Offset(0, 10),
+                      spreadRadius: -2,
+                    ),
+                    BoxShadow(
+                      color: Color(0x1F38BDF8),
+                      blurRadius: 8,
+                      offset: Offset(-1, -1),
+                    ),
+                  ]
+                : [
+                    BoxShadow(
+                      color: const Color(0xFF0284C7).withValues(alpha: 0.16),
+                      blurRadius: 26,
+                      offset: const Offset(0, 10),
+                      spreadRadius: -2,
+                    ),
+                    BoxShadow(
+                      color: Colors.white.withValues(alpha: 0.75),
+                      blurRadius: 8,
+                      offset: const Offset(-2, -2),
+                    ),
+                  ],
           ),
           child: Stack(
             children: [
@@ -538,11 +614,17 @@ class _DeepGlassContainer extends StatelessWidget {
                   height: 1.4,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [
-                        Colors.white.withValues(alpha: 0.95),
-                        Colors.white.withValues(alpha: 0.30),
-                        Colors.transparent,
-                      ],
+                      colors: isDark
+                          ? [
+                              const Color(0xFF38BDF8).withValues(alpha: 0.50),
+                              const Color(0xFF38BDF8).withValues(alpha: 0.15),
+                              Colors.transparent,
+                            ]
+                          : [
+                              Colors.white.withValues(alpha: 0.95),
+                              Colors.white.withValues(alpha: 0.30),
+                              Colors.transparent,
+                            ],
                     ),
                   ),
                 ),
@@ -595,6 +677,9 @@ class _DeepGlassGreetingHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final glass = context.glassTheme;
+    final isDark = glass.isDark;
+
     final titleText = displayName != null && displayName!.isNotEmpty
         ? '$greeting, $displayName! 👋'
         : '$greeting! 👋';
@@ -614,35 +699,43 @@ class _DeepGlassGreetingHeader extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.92),
+                  color: isDark
+                      ? const Color(0xFF1E293B)
+                      : Colors.white.withValues(alpha: 0.92),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: const Color(0xFFBAE6FD),
+                    color: isDark
+                        ? const Color(0xFF38BDF8).withValues(alpha: 0.3)
+                        : const Color(0xFFBAE6FD),
                     width: 1,
                   ),
-                  boxShadow: const [
+                  boxShadow: [
                     BoxShadow(
-                      color: Color(0x120284C7),
+                      color: isDark
+                          ? const Color(0x33000000)
+                          : const Color(0x120284C7),
                       blurRadius: 8,
-                      offset: Offset(0, 2),
+                      offset: const Offset(0, 2),
                     ),
                   ],
                 ),
-                child: const Row(
+                child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(
                       Icons.shield_rounded,
                       size: 15,
-                      color: Color(0xFF0284C7),
+                      color: glass.accentColor,
                     ),
-                    SizedBox(width: 5),
+                    const SizedBox(width: 5),
                     Text(
                       'Yegna Health',
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w800,
-                        color: Color(0xFF0369A1),
+                        color: isDark
+                            ? const Color(0xFF38BDF8)
+                            : const Color(0xFF0369A1),
                       ),
                     ),
                   ],
@@ -706,18 +799,18 @@ class _DeepGlassGreetingHeader extends StatelessWidget {
             titleText,
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.w900,
-                  color: const Color(0xFF08264A),
+                  color: glass.titleText,
                   letterSpacing: -0.5,
                 ),
           ),
           const SizedBox(height: 8),
           Text(
             subtitle,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13.5,
               height: 1.5,
               fontWeight: FontWeight.w500,
-              color: Color(0xFF1E3A54),
+              color: glass.subtitleText,
             ),
           ),
           const SizedBox(height: 16),
@@ -765,6 +858,9 @@ class _DeepGlassDailyTipCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final glass = context.glassTheme;
+    final isDark = glass.isDark;
+
     return _DeepGlassContainer(
       borderRadius: 24,
       padding: const EdgeInsets.all(18),
@@ -816,16 +912,24 @@ class _DeepGlassDailyTipCard extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFE0F2FE),
+                  color: isDark
+                      ? const Color(0xFF0F172A)
+                      : const Color(0xFFE0F2FE),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: const Color(0xFFBAE6FD)),
+                  border: Border.all(
+                    color: isDark
+                        ? const Color(0xFF38BDF8).withValues(alpha: 0.35)
+                        : const Color(0xFFBAE6FD),
+                  ),
                 ),
                 child: Text(
                   mythFactText,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
-                    color: Color(0xFF0369A1),
+                    color: isDark
+                        ? const Color(0xFF38BDF8)
+                        : const Color(0xFF0369A1),
                   ),
                 ),
               ),
@@ -834,19 +938,19 @@ class _DeepGlassDailyTipCard extends StatelessWidget {
           const SizedBox(height: 12),
           Text(
             titleText,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 15.5,
               fontWeight: FontWeight.w800,
-              color: Color(0xFF08264A),
+              color: glass.titleText,
             ),
           ),
           const SizedBox(height: 6),
           Text(
             bodyText,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
               height: 1.45,
-              color: Color(0xFF1E3A54),
+              color: glass.subtitleText,
             ),
           ),
           const SizedBox(height: 12),
@@ -862,17 +966,17 @@ class _DeepGlassDailyTipCard extends StatelessWidget {
                   children: [
                     Text(
                       actionText,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12.5,
                         fontWeight: FontWeight.w700,
-                        color: Color(0xFF0284C7),
+                        color: glass.accentColor,
                       ),
                     ),
                     const SizedBox(width: 4),
-                    const Icon(
+                    Icon(
                       Icons.arrow_forward_rounded,
                       size: 14,
-                      color: Color(0xFF0284C7),
+                      color: glass.accentColor,
                     ),
                   ],
                 ),
@@ -901,6 +1005,9 @@ class _DeepGlassCrisisBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final glass = context.glassTheme;
+    final isDark = glass.isDark;
+
     return _DeepGlassContainer(
       borderRadius: 20,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -937,19 +1044,23 @@ class _DeepGlassCrisisBar extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 13.5,
                     fontWeight: FontWeight.w800,
-                    color: Color(0xFF881337),
+                    color: isDark
+                        ? const Color(0xFFFDA4AF)
+                        : const Color(0xFF881337),
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   subtitle,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 11.5,
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFF9F1239),
+                    color: isDark
+                        ? const Color(0xFFFECDD3)
+                        : const Color(0xFF9F1239),
                   ),
                 ),
               ],
@@ -994,13 +1105,18 @@ class _EmergencyHelplineTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final glass = context.glassTheme;
+    final isDark = glass.isDark;
+
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFFFFF1F2),
+        color: isDark ? const Color(0xFF1E1E38) : const Color(0xFFFFF1F2),
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
-          color: const Color(0xFFFECDD3),
+          color: isDark
+              ? const Color(0xFFE11D48).withValues(alpha: 0.35)
+              : const Color(0xFFFECDD3),
           width: 1.2,
         ),
       ),
@@ -1028,18 +1144,22 @@ class _EmergencyHelplineTile extends StatelessWidget {
               children: [
                 Text(
                   name,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 13.5,
                     fontWeight: FontWeight.w800,
-                    color: Color(0xFF881337),
+                    color: isDark
+                        ? const Color(0xFFFDA4AF)
+                        : const Color(0xFF881337),
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   description,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 11.5,
-                    color: Color(0xFF9F1239),
+                    color: isDark
+                        ? const Color(0xFFFECDD3)
+                        : const Color(0xFF9F1239),
                   ),
                 ),
               ],
@@ -1074,39 +1194,48 @@ class _GlassFeatureBadge extends StatelessWidget {
   final String text;
 
   @override
-  Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5.5),
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.85),
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(
-            color: Colors.white.withValues(alpha: 0.95),
-            width: 1.2,
+  Widget build(BuildContext context) {
+    final glass = context.glassTheme;
+    final isDark = glass.isDark;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5.5),
+      decoration: BoxDecoration(
+        color: isDark
+            ? const Color(0xFF1E293B)
+            : Colors.white.withValues(alpha: 0.85),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: isDark
+              ? const Color(0xFF38BDF8).withValues(alpha: 0.25)
+              : Colors.white.withValues(alpha: 0.95),
+          width: 1.2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: isDark ? const Color(0x33000000) : const Color(0x100284C7),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
-          boxShadow: const [
-            BoxShadow(
-              color: Color(0x100284C7),
-              blurRadius: 8,
-              offset: Offset(0, 2),
+        ],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: glass.accentColor),
+          const SizedBox(width: 5),
+          Text(
+            text,
+            style: TextStyle(
+              fontSize: 11.5,
+              fontWeight: FontWeight.w700,
+              color: glass.titleText,
             ),
-          ],
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, size: 14, color: const Color(0xFF0284C7)),
-            const SizedBox(width: 5),
-            Text(
-              text,
-              style: const TextStyle(
-                fontSize: 11.5,
-                fontWeight: FontWeight.w700,
-                color: Color(0xFF092542),
-              ),
-            ),
-          ],
-        ),
-      );
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 /// 2x2 Action Cards in Deep Frosted Glass with comfortable aspect ratio (1.15)
@@ -1126,93 +1255,104 @@ class _DeepGlassActionCard extends StatelessWidget {
   final VoidCallback onTap;
 
   @override
-  Widget build(BuildContext context) => _DeepGlassContainer(
-        borderRadius: 24,
-        padding: const EdgeInsets.fromLTRB(14, 14, 14, 12),
-        onTap: onTap,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  width: 42,
-                  height: 42,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: iconGradient,
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.5),
-                      width: 1.4,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: iconGradient.first.withValues(alpha: 0.40),
-                        blurRadius: 12,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
+  Widget build(BuildContext context) {
+    final glass = context.glassTheme;
+    final isDark = glass.isDark;
+
+    return _DeepGlassContainer(
+      borderRadius: 24,
+      padding: const EdgeInsets.fromLTRB(14, 14, 14, 12),
+      onTap: onTap,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                width: 42,
+                height: 42,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: iconGradient,
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
                   ),
-                  child: Icon(icon, color: Colors.white, size: 22),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.5),
+                    width: 1.4,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: iconGradient.first.withValues(alpha: 0.40),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
                 ),
-                Container(
-                  width: 26,
-                  height: 26,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.7),
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.9),
-                    ),
+                child: Icon(icon, color: Colors.white, size: 22),
+              ),
+              Container(
+                width: 26,
+                height: 26,
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? const Color(0xFF1E293B)
+                      : Colors.white.withValues(alpha: 0.7),
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: isDark
+                        ? const Color(0xFF38BDF8).withValues(alpha: 0.3)
+                        : Colors.white.withValues(alpha: 0.9),
                   ),
-                  child: const Icon(
-                    Icons.arrow_forward_rounded,
-                    size: 14,
-                    color: Color(0xFF0284C7),
+                ),
+                child: Icon(
+                  Icons.arrow_forward_rounded,
+                  size: 14,
+                  color: isDark
+                      ? const Color(0xFF38BDF8)
+                      : const Color(0xFF0284C7),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text(
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 14.5,
+                    fontWeight: FontWeight.w800,
+                    color: glass.titleText,
+                    letterSpacing: -0.2,
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  description,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 11.5,
+                    height: 1.3,
+                    fontWeight: FontWeight.w400,
+                    color: glass.subtitleText,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 8),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Text(
-                    title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 14.5,
-                      fontWeight: FontWeight.w800,
-                      color: Color(0xFF08264A),
-                      letterSpacing: -0.2,
-                    ),
-                  ),
-                  const SizedBox(height: 3),
-                  Text(
-                    description,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 11.5,
-                      height: 1.3,
-                      fontWeight: FontWeight.w400,
-                      color: Color(0xFF2B445B),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      );
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 /// Section Heading in Crisp Typography
@@ -1228,38 +1368,42 @@ class _GlassSectionHeader extends StatelessWidget {
   final Widget? action;
 
   @override
-  Widget build(BuildContext context) => Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+  Widget build(BuildContext context) {
+    final glass = context.glassTheme;
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 19,
+                  fontWeight: FontWeight.w800,
+                  color: glass.titleText,
+                  letterSpacing: -0.3,
+                ),
+              ),
+              if (subtitle != null) ...[
+                const SizedBox(height: 2),
                 Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 19,
-                    fontWeight: FontWeight.w800,
-                    color: Color(0xFF08264A),
-                    letterSpacing: -0.3,
+                  subtitle!,
+                  style: TextStyle(
+                    fontSize: 12.5,
+                    color: glass.subtitleText,
                   ),
                 ),
-                if (subtitle != null) ...[
-                  const SizedBox(height: 2),
-                  Text(
-                    subtitle!,
-                    style: const TextStyle(
-                      fontSize: 12.5,
-                      color: Color(0xFF4A6277),
-                    ),
-                  ),
-                ],
               ],
-            ),
+            ],
           ),
-          if (action != null) action!,
-        ],
-      );
+        ),
+        if (action != null) action!,
+      ],
+    );
+  }
 }
 
 /// Featured Health Education Modules Carousel with Real Photos and Progress from Learn Page
@@ -1302,155 +1446,168 @@ class _DeepGlassLearningModulesCarousel extends StatelessWidget {
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
-      builder: (ctx) => BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.96),
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-            boxShadow: const [
-              BoxShadow(
-                color: Color(0x30000000),
-                blurRadius: 28,
-                offset: Offset(0, -6),
-              ),
-            ],
-          ),
-          padding: const EdgeInsets.fromLTRB(20, 14, 20, 32),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Container(
-                  width: 44,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: Colors.grey.withValues(alpha: 0.35),
-                    borderRadius: BorderRadius.circular(2),
-                  ),
+      builder: (ctx) {
+        final glass = ctx.glassTheme;
+        final isDark = glass.isDark;
+
+        return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+          child: Container(
+            decoration: BoxDecoration(
+              color: isDark
+                  ? const Color(0xFF0F172A).withValues(alpha: 0.96)
+                  : Colors.white.withValues(alpha: 0.96),
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(28)),
+              border: isDark
+                  ? Border.all(color: glass.cardBorder, width: 1.2)
+                  : null,
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x30000000),
+                  blurRadius: 28,
+                  offset: Offset(0, -6),
                 ),
-              ),
-              const SizedBox(height: 16),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(18),
-                child: Image.asset(
-                  module.imageAsset,
-                  height: 180,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => Container(
-                    height: 180,
-                    color: const Color(0xFFBAE6FD),
-                    child: const Icon(
-                      Icons.image_not_supported_rounded,
-                      color: Color(0xFF0284C7),
-                      size: 40,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              ],
+            ),
+            padding: const EdgeInsets.fromLTRB(20, 14, 20, 32),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    width: 44,
+                    height: 4,
                     decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF0284C7), Color(0xFF0EA5E9)],
-                      ),
-                      borderRadius: BorderRadius.circular(10),
+                      color: glass.modalHandle,
+                      borderRadius: BorderRadius.circular(2),
                     ),
-                    child: Text(
-                      l10n.moduleLabel(module.number).toUpperCase(),
-                      style: const TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w800,
-                        color: Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(18),
+                  child: Image.asset(
+                    module.imageAsset,
+                    height: 180,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => Container(
+                      height: 180,
+                      color: isDark
+                          ? const Color(0xFF1E293B)
+                          : const Color(0xFFBAE6FD),
+                      child: Icon(
+                        Icons.image_not_supported_rounded,
+                        color: glass.accentColor,
+                        size: 40,
                       ),
                     ),
                   ),
-                  const Spacer(),
-                  if (progressController?.progress?.articles
-                          .any((a) => a.articleId == module.id) ==
-                      true)
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 9, vertical: 4),
+                          horizontal: 10, vertical: 4),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF16A34A),
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFF0284C7), Color(0xFF0EA5E9)],
+                        ),
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(
-                            Icons.check_circle_rounded,
-                            color: Colors.white,
-                            size: 13,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            l10n.completedStatus,
-                            style: const TextStyle(
-                              fontSize: 10.5,
-                              fontWeight: FontWeight.w700,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
+                      child: Text(
+                        l10n.moduleLabel(module.number).toUpperCase(),
+                        style: const TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              Text(
-                module.title(l10n),
-                style: const TextStyle(
-                  fontSize: 19,
-                  fontWeight: FontWeight.w800,
-                  color: Color(0xFF08264A),
+                    const Spacer(),
+                    if (progressController?.progress?.articles
+                            .any((a) => a.articleId == module.id) ==
+                        true)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 9, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF16A34A),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.check_circle_rounded,
+                              color: Colors.white,
+                              size: 13,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              l10n.completedStatus,
+                              style: const TextStyle(
+                                fontSize: 10.5,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                  ],
                 ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                module.description(l10n),
-                style: const TextStyle(
-                  fontSize: 13.5,
-                  height: 1.5,
-                  color: Color(0xFF475569),
-                ),
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    Navigator.pop(ctx);
-                    onOpenLearning();
-                  },
-                  icon: const Icon(Icons.menu_book_rounded, size: 18),
-                  label: Text(
-                    isAmharic ? 'በትምህርት ገጽ ይመልከቱ' : 'Explore in Learn Tab',
-                    style: const TextStyle(
-                        fontWeight: FontWeight.w700, fontSize: 14),
+                const SizedBox(height: 10),
+                Text(
+                  module.title(l10n),
+                  style: TextStyle(
+                    fontSize: 19,
+                    fontWeight: FontWeight.w800,
+                    color: glass.titleText,
                   ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF0284C7),
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  module.description(l10n),
+                  style: TextStyle(
+                    fontSize: 13.5,
+                    height: 1.5,
+                    color: glass.subtitleText,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.pop(ctx);
+                      onOpenLearning();
+                    },
+                    icon: const Icon(Icons.menu_book_rounded, size: 18),
+                    label: Text(
+                      isAmharic ? 'በትምህርት ገጽ ይመልከቱ' : 'Explore in Learn Tab',
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w700, fontSize: 14),
                     ),
-                    elevation: 2,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: glass.accentColor,
+                      foregroundColor: isDark ? Colors.black : Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      elevation: 2,
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 

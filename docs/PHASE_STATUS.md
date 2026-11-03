@@ -1,5 +1,32 @@
 # Phase status
 
+## In-App Notification Center & Auth Welcome Feedback System (2026-11-03)
+
+**Status: Completed & 100% Verified.**
+- **Interactive In-App Notification Center**:
+  - Implemented `InAppNotificationController` managing in-app notifications, unread counters, and offline persistence via `SharedPreferences`.
+  - Replaced the static hardcoded `'2'` SnackBar on the top AppBar with a dynamic, reactive notification bell badge: hides when 0 unread, shows counter when unread.
+  - Built `NotificationCenterSheet`: slide-up modal bottom sheet with categorized notification cards (welcome waving hand, account celebration, learning module updates, daily health tips).
+  - Relative timestamp formatting ("Just now", "5m ago", "2h ago", "Yesterday").
+  - "Mark all as read" button and "Clear all" action with empty-state illustration.
+  - Seamless navigation from notifications directly into learning modules or notification preferences.
+- **Warm, Celebratory Authentication Feedback**:
+  - **Login (`signIn`)**:
+    - Floating Material 3 welcome banner: *"Welcome back, {Name}! Great to have you with us again."* (*"እንኳን ደህና መጡ፣ {Name}! እንደገና በማግኘታችን ደስ ብሎናል።"*).
+    - Automatically records a `welcome` notification in the Notification Center.
+  - **Registration (`register`)**:
+    - Direct sign-in: Celebratory banner: *"Welcome to Yegna Health, {Name}! Your account has been created successfully."* (*"እንኳን ወደ የየኛ ጤና በደህና መጡ፣ {Name}! መለያዎ በተሳካ ሁኔታ ተፈጥሯል።"*).
+    - Verification pending: Informational banner: *"Account created! Please check your email to complete verification."* (*"መለያዎ ተፈጥሯል! ማረጋገጫውን ለማጠናቀቅ እባክዎ ኢሜይልዎን ያረጋግጡ።"*).
+    - Records an `account` notification in the Notification Center.
+- **Bilingual ARB Localization**:
+  - Full English and Amharic resources for all notification titles, bodies, empty states, and authentication banners.
+- **Verification**:
+  - `test/notification_controller_test.dart`: 11 / 11 tests passed (100%).
+  - `test/notification_ui_test.dart`: 4 / 4 tests passed (100%).
+  - `test/auth_feedback_test.dart`: 3 / 3 tests passed (100%).
+  - `flutter analyze --no-pub`: **0 issues found**.
+  - `flutter test --no-pub`: **All 139 tests passing (100% pass rate)**.
+
 ## Multi-Session Chat History & Slide-Out Navigation Drawer (2026-11-03)
 
 **Status: Completed & 100% Verified.**
