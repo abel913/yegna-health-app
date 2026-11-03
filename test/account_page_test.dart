@@ -57,9 +57,9 @@ void main() {
 
   group('Account Page & Functional Settings Widget Tests', () {
     testWidgets(
-        'guest sees promotional banner and can open theme modal to select dark mode',
+        'authenticated user can open theme modal to select dark mode',
         (tester) async {
-      await tester.binding.setSurfaceSize(const Size(400, 950));
+      await tester.binding.setSurfaceSize(const Size(400, 1600));
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
       SharedPreferences.setMockInitialValues({});
@@ -67,7 +67,16 @@ void main() {
       final settingsController = AppSettingsController(prefs);
       await settingsController.load();
 
-      final authController = AuthController(const UnconfiguredAuthRepository());
+      final authController = AuthController(FakeAuthRepository(
+        initialSnapshot: const AuthSnapshot(
+          user: AuthUser(
+            id: 'test_user',
+            email: 'user@example.org',
+            displayName: 'Abebe Bikila',
+            emailVerified: true,
+          ),
+        ),
+      ));
 
       final localeController = LocaleController(prefs);
       await localeController.load();
@@ -82,12 +91,15 @@ void main() {
       final l10n = await AppLocalizations.delegate.load(const Locale('en'));
 
       // Navigate to Account tab (index 4)
-      await tester.tap(find.text(l10n.accountTitle));
+      await tester.tap(find.descendant(
+        of: find.byType(NavigationBar),
+        matching: find.text(l10n.accountTab),
+      ));
       await tester.pumpAndSettle();
 
-      // Guest banner is visible
-      expect(find.text(l10n.guestSignInPromoTitle), findsOneWidget);
-      expect(find.text(l10n.guestSignInAction), findsOneWidget);
+      // Verify user display name is visible and no guest promo banner
+      expect(find.text('Abebe Bikila'), findsOneWidget);
+      expect(find.text(l10n.guestSignInPromoTitle), findsNothing);
 
       // Verify initial theme badge displays System Default
       expect(find.text(l10n.systemTheme), findsOneWidget);
@@ -114,7 +126,7 @@ void main() {
 
     testWidgets('allows changing text size and updates global scaling',
         (tester) async {
-      await tester.binding.setSurfaceSize(const Size(400, 950));
+      await tester.binding.setSurfaceSize(const Size(400, 1600));
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
       SharedPreferences.setMockInitialValues({});
@@ -122,7 +134,16 @@ void main() {
       final settingsController = AppSettingsController(prefs);
       await settingsController.load();
 
-      final authController = AuthController(const UnconfiguredAuthRepository());
+      final authController = AuthController(FakeAuthRepository(
+        initialSnapshot: const AuthSnapshot(
+          user: AuthUser(
+            id: 'test_user',
+            email: 'user@example.org',
+            displayName: 'Abebe Bikila',
+            emailVerified: true,
+          ),
+        ),
+      ));
 
       final localeController = LocaleController(prefs);
       await localeController.load();
@@ -137,7 +158,10 @@ void main() {
       final l10n = await AppLocalizations.delegate.load(const Locale('en'));
 
       // Navigate to Account tab
-      await tester.tap(find.text(l10n.accountTitle));
+      await tester.tap(find.descendant(
+        of: find.byType(NavigationBar),
+        matching: find.text(l10n.accountTab),
+      ));
       await tester.pumpAndSettle();
 
       // Tap Text Size
@@ -160,7 +184,7 @@ void main() {
 
     testWidgets('notifications modal allows toggling preferences and persists',
         (tester) async {
-      await tester.binding.setSurfaceSize(const Size(400, 950));
+      await tester.binding.setSurfaceSize(const Size(400, 1600));
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
       SharedPreferences.setMockInitialValues({});
@@ -168,7 +192,16 @@ void main() {
       final settingsController = AppSettingsController(prefs);
       await settingsController.load();
 
-      final authController = AuthController(const UnconfiguredAuthRepository());
+      final authController = AuthController(FakeAuthRepository(
+        initialSnapshot: const AuthSnapshot(
+          user: AuthUser(
+            id: 'test_user',
+            email: 'user@example.org',
+            displayName: 'Abebe Bikila',
+            emailVerified: true,
+          ),
+        ),
+      ));
 
       final localeController = LocaleController(prefs);
       await localeController.load();
@@ -183,7 +216,10 @@ void main() {
       final l10n = await AppLocalizations.delegate.load(const Locale('en'));
 
       // Navigate to Account tab
-      await tester.tap(find.text(l10n.accountTitle));
+      await tester.tap(find.descendant(
+        of: find.byType(NavigationBar),
+        matching: find.text(l10n.accountTab),
+      ));
       await tester.pumpAndSettle();
 
       // Tap Notifications
@@ -213,7 +249,7 @@ void main() {
 
     testWidgets('authenticated user sees display name and no guest banner',
         (tester) async {
-      await tester.binding.setSurfaceSize(const Size(400, 950));
+      await tester.binding.setSurfaceSize(const Size(400, 1600));
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
       SharedPreferences.setMockInitialValues({});
@@ -245,7 +281,10 @@ void main() {
       final l10n = await AppLocalizations.delegate.load(const Locale('en'));
 
       // Navigate to Profile tab
-      await tester.tap(find.text(l10n.accountTitle));
+      await tester.tap(find.descendant(
+        of: find.byType(NavigationBar),
+        matching: find.text(l10n.accountTab),
+      ));
       await tester.pumpAndSettle();
 
       expect(find.text('Chala Gemechu'), findsOneWidget);

@@ -8,7 +8,8 @@
   - `supabase/functions/ask-assistant/index.ts`: Updated system prompt to guide Gemini to produce clean, well-spaced, structured markdown responses.
 - **Verification**:
   - `test/formatted_chat_message_test.dart`: 7 tests covering bullet points, numbered lists, headings, dividers, inline bold/italic, Amharic rendering, and plain text stripping.
-  - `flutter test --no-pub`: 110 / 110 tests passing (100%).
+  - `test/account_page_test.dart`: 4 tests verifying theme modal, text scale factor modal, notification toggles, and authenticated profile display.
+  - `flutter test --no-pub`: 114 / 114 tests passing (100%).
   - `flutter analyze --no-pub`: 0 issues found.
 
 ## Strict Health & Wellbeing Domain Guardrails for Chatbot (2026-11-03)
