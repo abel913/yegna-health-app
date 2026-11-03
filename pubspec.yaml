@@ -30,6 +30,7 @@ flutter:
   uses-material-design: true
   generate: true
   assets:
+    - assets/images/
     - assets/images/learning/
   fonts:
     - family: PlusJakartaSans

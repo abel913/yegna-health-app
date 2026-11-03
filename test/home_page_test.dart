@@ -79,31 +79,10 @@ void main() {
     await tester.tap(find.text(l10n.accountTitle).first);
     expect(accountOpened, isTrue);
 
-    // 2. Daily Insight Myth vs Fact Card
-    expect(find.text(l10n.dailyTipBadge), findsOneWidget);
-    expect(find.text(l10n.dailyTipMythFact), findsOneWidget);
-    expect(find.text(l10n.dailyTipTitle), findsOneWidget);
+    // 2. Emergency Helpline Bar removed from Home feed
+    expect(find.text(l10n.emergencyHelplineTitle), findsNothing);
 
-    await tester.tap(find.text(l10n.readArticleAction));
-    expect(learningOpened, isTrue);
-
-    // 3. Emergency Helpline Bar & Modal Bottom Sheet
-    expect(find.text(l10n.emergencyHelplineTitle), findsOneWidget);
-    expect(find.text(l10n.emergencyHelplineSubtitle), findsOneWidget);
-
-    await tester.tap(find.text(l10n.emergencyHelplineAction));
-    await tester.pumpAndSettle();
-
-    // Verify Bottom Sheet opened with national helplines
-    expect(find.text(l10n.emergencySheetTitle), findsOneWidget);
-    expect(find.text('952'), findsOneWidget);
-    expect(find.text('8335'), findsOneWidget);
-
-    // Close bottom sheet
-    await tester.tapAt(const Offset(20, 20));
-    await tester.pumpAndSettle();
-
-    // 4. 2x2 Services Grid Actions
+    // 3. 2x2 Services Grid Actions
     expect(find.text(l10n.exploreServicesHeading), findsOneWidget);
     expect(find.text(l10n.selfAssessmentTitle), findsOneWidget);
     expect(find.text(l10n.findFacilitiesTitle), findsOneWidget);
@@ -115,7 +94,7 @@ void main() {
     await tester.tap(find.text(l10n.peerMentorTitle));
     expect(mentorsOpened, isTrue);
 
-    // 5. Featured Health Topics Carousel with Real Modules and Photos
+    // 4. Featured Health Topics Carousel with Real Modules and Photos
     expect(find.text(l10n.featuredArticlesHeading), findsOneWidget);
     expect(find.text('MODULE 01'), findsOneWidget);
     expect(find.text(l10n.module01Title), findsOneWidget);
@@ -128,6 +107,29 @@ void main() {
     await tester.tap(find.text('Explore in Learn Tab'));
     await tester.pumpAndSettle();
     expect(learningOpened, isTrue);
+
+    // 5. Doctor's Daily Article Card (Repositioned to bottom of cards)
+    expect(find.text(l10n.doctorDailyArticleBadge), findsOneWidget);
+    expect(find.text(l10n.dailyTipMythFact),
+        findsNothing); // "Myth vs Fact" removed!
+    expect(find.text(l10n.dailyTipTitle), findsOneWidget);
+
+    // Reset learningOpened flag to verify tapping doctor's article does NOT send to learn tab
+    learningOpened = false;
+
+    // Tap "Read Full Article" opens Doctor's Article modal without sending to learn tab
+    await tester.tap(find.text(l10n.readFullArticleAction));
+    await tester.pumpAndSettle();
+
+    // Verify modal is displayed with clinical note, author, advice cards, and close button
+    expect(find.text(l10n.doctorArticleSheetTitle), findsOneWidget);
+    expect(find.text(l10n.doctorAdviceSkincareTitle), findsOneWidget);
+    expect(find.text(l10n.closeArticleAction), findsOneWidget);
+    expect(learningOpened, isFalse);
+
+    // Close the sheet
+    await tester.tap(find.text(l10n.closeArticleAction));
+    await tester.pumpAndSettle();
   });
 
   testWidgets('HomePage displays authenticated username in greeting',
@@ -171,9 +173,9 @@ void main() {
     final amharic = await AppLocalizations.delegate.load(const Locale('am'));
 
     expect(find.text(amharic.guestGreetingSubtitle), findsOneWidget);
-    expect(find.text(amharic.dailyTipBadge), findsOneWidget);
-    expect(find.text(amharic.dailyTipMythFact), findsOneWidget);
-    expect(find.text(amharic.emergencyHelplineTitle), findsOneWidget);
+    expect(find.text(amharic.doctorDailyArticleBadge), findsOneWidget);
+    expect(find.text(amharic.dailyTipMythFact), findsNothing);
+    expect(find.text(amharic.emergencyHelplineTitle), findsNothing);
     expect(find.text(amharic.exploreServicesHeading), findsOneWidget);
     expect(find.text(amharic.selfAssessmentTitle), findsOneWidget);
   });
