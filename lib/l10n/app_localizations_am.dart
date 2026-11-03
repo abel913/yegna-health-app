@@ -3260,4 +3260,32 @@ class AppLocalizationsAm extends AppLocalizations {
 
   @override
   String get lowRiskAction3 => 'ትክክለኛ የጤና መረጃዎችን ለአቻዎችዎ በማጋራት እውቀትዎን ያጋሩ።';
+
+  @override
+  String get systemTheme => 'የስልኩ ነባሪ';
+
+  @override
+  String get pushAlertsLabel => 'የማሳሰቢያ መልዕክቶች';
+
+  @override
+  String get healthTipsLabel => 'ዕለታዊ የጤና ምክሮች';
+
+  @override
+  String get assessmentRemindersLabel => 'የራስ-ምርመራ ማስታወሻዎች';
+
+  @override
+  String get guestSignInPromoTitle => 'የመማር ሂደትዎን ያስቀምጡ';
+
+  @override
+  String get guestSignInPromoBody =>
+      'የፈተና ውጤቶችን ለማስቀመጥ፣ የምስክር ወረቀት ለማግኘትና በሌሎች ስልኮች ለመጠቀም ይመዝገቡ ወይም ይግቡ።';
+
+  @override
+  String get guestSignInAction => 'ይግቡ / ይመዝገቡ';
+
+  @override
+  String get copyResponseAction => 'ቅዳ';
+
+  @override
+  String get responseCopiedMessage => 'መልእክቱ ተቀድቷል';
 }

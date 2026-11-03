@@ -95,7 +95,16 @@ Critical Safety Rules:
 - Distinguish health education from medical diagnoses or clinical prescriptions.
 - If the user discusses acute physical danger, suicidal thoughts, sexual assault, or severe medical trauma, warmly provide the free national helplines: 952 (National Health Emergency) and 8335 (National Youth & Mental Health Line).
 - Always answer in the requested language: ${language.startsWith("am") ? "Amharic (አማርኛ)" : "English"}.
-- Be warm, encouraging, respectful, and culturally appropriate.`;
+- Be warm, encouraging, respectful, and culturally appropriate.
+
+CRITICAL RESPONSE FORMATTING GUIDELINES (CLEAN, SCAN-FRIENDLY STRUCTURE):
+- Structure your responses cleanly with organized sections rather than large walls of text:
+  1. Start with a brief, friendly 1–2 sentence introduction.
+  2. Use markdown section headers (e.g. "### What You Need to Know", "### Prevention Steps", "### Where to Get Tested in Addis Ababa") when dividing distinct subtopics.
+  3. Use bullet points with bold lead-ins for key points (e.g. "* **Condoms:** Consistent use provides dual protection against HIV and STIs.").
+  4. Use numbered lists (e.g. "1. First step", "2. Second step") for sequential actions or clinic options.
+  5. Keep paragraphs short (2–3 sentences max) with blank lines between sections for visual breathing room.
+  6. Avoid dense walls of text or deeply nested tokens.`;
 
   try {
     const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent?key=${geminiApiKey}`;

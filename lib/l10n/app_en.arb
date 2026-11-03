@@ -1047,6 +1047,15 @@
   "modRiskAction3": "Explore our learning modules and discuss testing with your partner.",
   "lowRiskAction1": "Continue practicing safe behaviors and mutual open communication.",
   "lowRiskAction2": "Maintain annual or bi-annual routine health checkups.",
-  "lowRiskAction3": "Share reliable health facts with friends and peers in your community."
+  "lowRiskAction3": "Share reliable health facts with friends and peers in your community.",
+  "systemTheme": "System Default",
+  "pushAlertsLabel": "Push Alerts & Reminders",
+  "healthTipsLabel": "Daily Health Education Tips",
+  "assessmentRemindersLabel": "Self-Assessment Checkup Reminders",
+  "guestSignInPromoTitle": "Save your learning journey",
+  "guestSignInPromoBody": "Sign in or create a free account to back up quiz scores, access certificates, and sync across devices.",
+  "guestSignInAction": "Sign in / Register",
+  "copyResponseAction": "Copy",
+  "responseCopiedMessage": "Response copied to clipboard"
 }
 

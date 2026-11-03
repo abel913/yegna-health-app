@@ -3331,4 +3331,32 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get lowRiskAction3 =>
       'Share reliable health facts with friends and peers in your community.';
+
+  @override
+  String get systemTheme => 'System Default';
+
+  @override
+  String get pushAlertsLabel => 'Push Alerts & Reminders';
+
+  @override
+  String get healthTipsLabel => 'Daily Health Education Tips';
+
+  @override
+  String get assessmentRemindersLabel => 'Self-Assessment Checkup Reminders';
+
+  @override
+  String get guestSignInPromoTitle => 'Save your learning journey';
+
+  @override
+  String get guestSignInPromoBody =>
+      'Sign in or create a free account to back up quiz scores, access certificates, and sync across devices.';
+
+  @override
+  String get guestSignInAction => 'Sign in / Register';
+
+  @override
+  String get copyResponseAction => 'Copy';
+
+  @override
+  String get responseCopiedMessage => 'Response copied to clipboard';
 }

@@ -1,5 +1,25 @@
 # Phase status
 
+## Structured ChatGPT / Gemini-Style Chatbot Response Formatting (2026-11-03)
+
+**Status: Completed & 100% Verified.**
+- **Structured Message Renderer (`FormattedChatMessage`)**:
+  - Implemented zero-dependency markdown parser converting headers, bullets, numbered steps, dividers, and inline bold/italic into native Flutter widgets.
+  - Eliminated raw asterisks (`**` and `*`) from all chat bubbles.
+  - Custom styled teal bullet dots with clean hanging indentation.
+  - Numbered list badges (`1`, `2`) with soft pill containers.
+  - Styled headers (`###`) with vertical accent indicator bars.
+  - Added one-tap "Copy" action with localized snackbar notification.
+- **UI Integration**:
+  - Replaced plain text rendering in `_MessageTile` within `YegnaChatbotPage`.
+  - Expanded assistant bubble width constraint up to 88% on mobile (max 580px) for comfortable multi-point readability.
+- **Prompt Optimization**:
+  - Instructed remote Gemini edge function to avoid dense walls of text and output clean markdown headers, bold lead-ins, and short digestible paragraphs.
+- **Verification**:
+  - `dart format lib test` passed cleanly.
+  - `flutter analyze --no-pub` passed (**0 issues found**).
+  - `flutter test --no-pub` passed (**all 110 tests passing**, 100% pass rate).
+
 ## Strict Health & Wellbeing Domain Guardrails for Chatbot (2026-11-03)
 
 **Status: Completed & 100% Verified.**

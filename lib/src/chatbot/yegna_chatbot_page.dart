@@ -1,10 +1,12 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../l10n/app_localizations.dart';
 import 'chatbot_models.dart';
 import 'chatbot_repository.dart';
+import 'formatted_chat_message.dart';
 
 /// Full-screen conversational AI health assistant screen.
 class YegnaChatbotPage extends StatefulWidget {
@@ -403,7 +405,10 @@ class _MessageTile extends StatelessWidget {
               Flexible(
                 child: Container(
                   constraints: BoxConstraints(
-                    maxWidth: MediaQuery.of(context).size.width * 0.78,
+                    maxWidth: isUser
+                        ? MediaQuery.of(context).size.width * 0.78
+                        : (MediaQuery.of(context).size.width * 0.88)
+                            .clamp(280.0, 580.0),
                   ),
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -463,18 +468,59 @@ class _MessageTile extends StatelessWidget {
                         const SizedBox(height: 8),
                       ],
 
-                      // Message Body
-                      Text(
-                        message.text,
-                        style: TextStyle(
-                          fontSize: 14,
-                          height: 1.45,
-                          color:
-                              isUser ? Colors.white : const Color(0xFF1E293B),
-                          fontWeight:
-                              isUser ? FontWeight.w500 : FontWeight.w400,
-                        ),
+                      // Message Body (Formatted Structured Markdown)
+                      FormattedChatMessage(
+                        text: message.text,
+                        isUser: isUser,
                       ),
+
+                      // Assistant Actions Footer: One-tap Copy
+                      if (!isUser) ...[
+                        const SizedBox(height: 8),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            InkWell(
+                              borderRadius: BorderRadius.circular(8),
+                              onTap: () {
+                                final clean = FormattedChatMessage.toPlainText(
+                                    message.text);
+                                Clipboard.setData(ClipboardData(text: clean));
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(l10n.responseCopiedMessage),
+                                    duration: const Duration(seconds: 2),
+                                    behavior: SnackBarBehavior.floating,
+                                  ),
+                                );
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 6, vertical: 3),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Icon(
+                                      Icons.copy_rounded,
+                                      size: 13,
+                                      color: Color(0xFF64748B),
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      l10n.copyResponseAction,
+                                      style: const TextStyle(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w600,
+                                        color: Color(0xFF64748B),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
 
                       // Emergency Hotline Action Buttons
                       if (message.isEmergency &&

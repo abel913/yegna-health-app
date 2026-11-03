@@ -5749,6 +5749,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Share reliable health facts with friends and peers in your community.'**
   String get lowRiskAction3;
+
+  /// No description provided for @systemTheme.
+  ///
+  /// In en, this message translates to:
+  /// **'System Default'**
+  String get systemTheme;
+
+  /// No description provided for @pushAlertsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Push Alerts & Reminders'**
+  String get pushAlertsLabel;
+
+  /// No description provided for @healthTipsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Health Education Tips'**
+  String get healthTipsLabel;
+
+  /// No description provided for @assessmentRemindersLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Self-Assessment Checkup Reminders'**
+  String get assessmentRemindersLabel;
+
+  /// No description provided for @guestSignInPromoTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Save your learning journey'**
+  String get guestSignInPromoTitle;
+
+  /// No description provided for @guestSignInPromoBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in or create a free account to back up quiz scores, access certificates, and sync across devices.'**
+  String get guestSignInPromoBody;
+
+  /// No description provided for @guestSignInAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in / Register'**
+  String get guestSignInAction;
+
+  /// No description provided for @copyResponseAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get copyResponseAction;
+
+  /// No description provided for @responseCopiedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Response copied to clipboard'**
+  String get responseCopiedMessage;
 }
 
 class _AppLocalizationsDelegate

@@ -1010,6 +1010,15 @@
   "modRiskAction3": "የትምህርት ክፍሎቻችንን ያንብቡ እና ከአጋርዎ ጋር ስለ ምርመራ በግልጽ ይወያዩ።",
   "lowRiskAction1": "ደህንነታቸው የተጠበቁ ልምዶችን እና ግልጽ ውይይትን ይቀጥሉ።",
   "lowRiskAction2": "ዓመታዊ ወይም የግማሽ ዓመት መደበኛ የጤና ምርመራዎችን ያድርጉ።",
-  "lowRiskAction3": "ትክክለኛ የጤና መረጃዎችን ለአቻዎችዎ በማጋራት እውቀትዎን ያጋሩ።"
+  "lowRiskAction3": "ትክክለኛ የጤና መረጃዎችን ለአቻዎችዎ በማጋራት እውቀትዎን ያጋሩ።",
+  "systemTheme": "የስልኩ ነባሪ",
+  "pushAlertsLabel": "የማሳሰቢያ መልዕክቶች",
+  "healthTipsLabel": "ዕለታዊ የጤና ምክሮች",
+  "assessmentRemindersLabel": "የራስ-ምርመራ ማስታወሻዎች",
+  "guestSignInPromoTitle": "የመማር ሂደትዎን ያስቀምጡ",
+  "guestSignInPromoBody": "የፈተና ውጤቶችን ለማስቀመጥ፣ የምስክር ወረቀት ለማግኘትና በሌሎች ስልኮች ለመጠቀም ይመዝገቡ ወይም ይግቡ።",
+  "guestSignInAction": "ይግቡ / ይመዝገቡ",
+  "copyResponseAction": "ቅዳ",
+  "responseCopiedMessage": "መልእክቱ ተቀድቷል"
 }
 

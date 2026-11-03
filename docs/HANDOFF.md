@@ -1,5 +1,16 @@
 # Handoff
 
+## Structured ChatGPT / Gemini-Style Chatbot Response Formatting (2026-11-03)
+
+- **Completed Response Formatting Upgrade**:
+  - `lib/src/chatbot/formatted_chat_message.dart`: Zero-dependency markdown parser and renderer for headings, dividers, custom bullet points, numbered badges, inline bold/italic, and clean clipboard copy.
+  - `lib/src/chatbot/yegna_chatbot_page.dart`: Upgraded `_MessageTile` with `FormattedChatMessage`, expanded bubble constraints up to 88% width, and added a copy-to-clipboard action button with localized feedback.
+  - `supabase/functions/ask-assistant/index.ts`: Updated system prompt to guide Gemini to produce clean, well-spaced, structured markdown responses.
+- **Verification**:
+  - `test/formatted_chat_message_test.dart`: 7 tests covering bullet points, numbered lists, headings, dividers, inline bold/italic, Amharic rendering, and plain text stripping.
+  - `flutter test --no-pub`: 110 / 110 tests passing (100%).
+  - `flutter analyze --no-pub`: 0 issues found.
+
 ## Strict Health & Wellbeing Domain Guardrails for Chatbot (2026-11-03)
 
 - **Strict Non-Health Topic Refusal**:
