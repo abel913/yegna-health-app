@@ -1,0 +1,46 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build Yegna Health APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Install Dependencies
+        run: flutter pub get
+
+      - name: Generate Localization
+        run: flutter gen-l10n
+
+      - name: Build Release APK
+        run: |
+          flutter build apk --release \
+            --dart-define=SUPABASE_URL=https://oflkhtjskpsedsuczfkj.supabase.co \
+            --dart-define=SUPABASE_PUBLISHABLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9mbGtodGpza3BzZWRzdWN6ZmtqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMzMDAyMDIsImV4cCI6MjEwODg3NjIwMn0.73QE-mUPmRT_ddUOjGAwWe1F-Ekm_2LDwRGgrfmVzPI
+
+      - name: Rename and Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: yegna-health-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 14
