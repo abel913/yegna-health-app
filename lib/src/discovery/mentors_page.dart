@@ -123,38 +123,10 @@ class _MentorsPageState extends State<MentorsPage> {
               children: [
                 // Header & Search Area
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 14, 20, 8),
+                  padding: const EdgeInsets.fromLTRB(20, 10, 20, 8),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      // Introduction Banner
-                      Container(
-                        padding: const EdgeInsets.all(14),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFEFF0FF),
-                          borderRadius: BorderRadius.circular(18),
-                        ),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const CircleAvatar(
-                              radius: 20,
-                              backgroundColor: Color(0xFFDBF3F8),
-                              child: Icon(Icons.people_alt_outlined,
-                                  color: Color(0xFF005A71), size: 20),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Text(
-                                l10n.mentorsIntroduction,
-                                style: Theme.of(context).textTheme.bodyMedium,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-
                       // Interactive Search Input
                       Container(
                         height: 52,
@@ -354,7 +326,7 @@ class _MentorsPageState extends State<MentorsPage> {
       );
 
   Widget _buildNoResultsEmptyState(AppLocalizations l10n) => Center(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(28),
           child: Column(
             mainAxisSize: MainAxisSize.min,

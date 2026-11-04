@@ -3124,6 +3124,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chatbotTyping => 'Yegna Assistant is typing...';
 
   @override
+  String get chatbotCapsuleTitle => 'AI Assistant';
+
+  @override
+  String chatbotHeroGreetingWithUser(String name) {
+    return 'Hi $name! How can I help you today?';
+  }
+
+  @override
+  String get chatbotHeroGreetingDefault =>
+      'Hi there! How can I help you today?';
+
+  @override
   String get askYegnaFabTooltip => 'Ask Yegna Health Assistant';
 
   @override
@@ -3522,4 +3534,49 @@ class AppLocalizationsEn extends AppLocalizations {
   String notificationTimeDaysAgo(int days) {
     return '${days}d ago';
   }
+
+  @override
+  String get adminConsoleTitle => 'Admin Console';
+
+  @override
+  String get adminConsoleSubtitle =>
+      'Manage clubs, questions, modules, and directories';
+
+  @override
+  String get studentClubsTitle => 'Student Health Clubs';
+
+  @override
+  String get studentClubsSubtitle =>
+      'Join peer wellness, mental health, and leadership clubs';
+
+  @override
+  String get studentClubsPromoTitle => 'Student Health Clubs';
+
+  @override
+  String get studentClubsPromoSubtitle =>
+      'Engage with youth peers, attend weekly discussions, and get guided mentorship.';
+
+  @override
+  String get joinClubAction => 'Join Club';
+
+  @override
+  String get leaveClubAction => 'Leave Club';
+
+  @override
+  String get joinedClubBadge => 'Joined ✓';
+
+  @override
+  String get myClubsTab => 'My Clubs';
+
+  @override
+  String get exploreAllClubsTab => 'Explore All';
+
+  @override
+  String get meetingScheduleLabel => 'Meeting Schedule';
+
+  @override
+  String get meetingLocationLabel => 'Meeting Location';
+
+  @override
+  String get assignedMentorLabel => 'Club Lead & Mentor';
 }

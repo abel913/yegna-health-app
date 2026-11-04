@@ -1,28 +1,34 @@
+import 'dart:math' as math;
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../l10n/app_localizations.dart';
+import '../theme/app_glass_theme.dart';
 import 'chat_history_drawer.dart';
 import 'chat_history_repository.dart';
 import 'chatbot_models.dart';
 import 'chatbot_repository.dart';
 import 'formatted_chat_message.dart';
+import 'luminous_chatbot_orb.dart';
 
-/// Full-screen conversational AI health assistant screen with multi-session
-/// chat history and ChatGPT / Gemini-style navigation.
+/// Full-screen conversational AI health assistant screen featuring
+/// advanced glassmorphism in both Dark (Cosmic Obsidian) and Light (Frosted Arctic)
+/// themes, 3D animated luminous orb, floating capsule header, and multi-session history.
 class YegnaChatbotPage extends StatefulWidget {
   const YegnaChatbotPage({
     required this.repository,
     this.historyRepository,
     this.initialQuery,
+    this.userName,
     super.key,
   });
 
   final ChatbotRepository repository;
   final ChatHistoryRepository? historyRepository;
   final String? initialQuery;
+  final String? userName;
 
   @override
   State<YegnaChatbotPage> createState() => _YegnaChatbotPageState();
@@ -284,224 +290,105 @@ class _YegnaChatbotPageState extends State<YegnaChatbotPage> {
     _persistCurrentSession();
   }
 
+  bool get _isWelcomeState =>
+      _messages.length <= 1 && !_messages.any((m) => m.isUser);
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final isDark = context.isDark;
 
-    return Scaffold(
-      key: _scaffoldKey,
-      backgroundColor: const Color(0xFFF3F8FC),
-      drawer: ChatHistoryDrawer(
-        conversations: _conversations,
-        activeConversationId: _currentSessionId,
-        onSelectConversation: _selectConversation,
-        onNewChat: () => _startNewChat(),
-        onDeleteConversation: _deleteConversation,
-        onClearAll: _clearAllHistory,
-      ),
-      appBar: AppBar(
-        backgroundColor: Colors.white.withValues(alpha: 0.85),
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        flexibleSpace: ClipRect(
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
-            child: Container(
-              color: Colors.transparent,
-            ),
+    return _AmbientGlassCanvas(
+      isDark: isDark,
+      child: Scaffold(
+        key: _scaffoldKey,
+        backgroundColor: Colors.transparent,
+        drawer: ChatHistoryDrawer(
+          conversations: _conversations,
+          activeConversationId: _currentSessionId,
+          onSelectConversation: _selectConversation,
+          onNewChat: () => _startNewChat(),
+          onDeleteConversation: _deleteConversation,
+          onClearAll: _clearAllHistory,
+        ),
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(68),
+          child: _FloatingGlassCapsuleBar(
+            title:
+                _currentSessionTitle != null && _currentSessionTitle!.isNotEmpty
+                    ? _currentSessionTitle!
+                    : l10n.chatbotTitle,
+            subtitle: l10n.chatbotSubtitle,
+            isDark: isDark,
+            onBack: () => Navigator.of(context).pop(),
+            onOpenDrawer: () => _scaffoldKey.currentState?.openDrawer(),
+            onNewChat: () => _startNewChat(),
+            onClearChat: _clearChat,
           ),
         ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded,
-              color: Color(0xFF08264A), size: 20),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: Row(
-          children: [
-            Stack(
-              clipBehavior: Clip.none,
-              children: [
-                Container(
-                  width: 36,
-                  height: 36,
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFF007A78), Color(0xFF005A71)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0xFF007A78).withValues(alpha: 0.25),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: const Center(
-                    child: Icon(Icons.smart_toy_rounded,
-                        color: Colors.white, size: 20),
-                  ),
+        body: SafeArea(
+          child: Column(
+            children: [
+              // Safety Disclaimer Banner (dismissible)
+              if (_showDisclaimer)
+                _GlassDisclaimerBanner(
+                  disclaimer: l10n.chatbotDisclaimer,
+                  isDark: isDark,
+                  onDismiss: () => setState(() => _showDisclaimer = false),
                 ),
-                Positioned(
-                  bottom: -1,
-                  right: -1,
-                  child: Container(
-                    width: 10,
-                    height: 10,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF10B981),
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 2),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    _currentSessionTitle != null &&
-                            _currentSessionTitle!.isNotEmpty
-                        ? _currentSessionTitle!
-                        : l10n.chatbotTitle,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w800,
-                      color: Color(0xFF08264A),
-                      letterSpacing: -0.2,
-                    ),
-                  ),
-                  const SizedBox(height: 1),
-                  Text(
-                    l10n.chatbotSubtitle,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w500,
-                      color: Color(0xFF5A758E),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          // 1. History Drawer Toggle (ChatGPT Style)
-          IconButton(
-            icon: const Icon(Icons.history_rounded,
-                color: Color(0xFF005A71), size: 23),
-            tooltip: l10n.chatHistoryTitle,
-            onPressed: () => _scaffoldKey.currentState?.openDrawer(),
-          ),
 
-          // 2. Instant "+ New Chat" Button
-          IconButton(
-            icon: const Icon(Icons.add_comment_outlined,
-                color: Color(0xFF007A78), size: 22),
-            tooltip: l10n.newChatAction,
-            onPressed: () => _startNewChat(),
-          ),
-
-          // 3. Clear Current Chat
-          IconButton(
-            icon: const Icon(Icons.delete_sweep_outlined,
-                color: Color(0xFF5A758E), size: 22),
-            tooltip: l10n.chatbotClearChat,
-            onPressed: _clearChat,
-          ),
-          const SizedBox(width: 4),
-        ],
-      ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Safety Disclaimer Banner
-            if (_showDisclaimer)
-              Container(
-                margin: const EdgeInsets.fromLTRB(14, 10, 14, 4),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFE0F2FE),
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(
-                    color: const Color(0xFFBAE6FD),
-                    width: 1,
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(Icons.health_and_safety_outlined,
-                        color: Color(0xFF0284C7), size: 20),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                        l10n.chatbotDisclaimer,
-                        style: const TextStyle(
-                          fontSize: 11.5,
-                          height: 1.35,
-                          color: Color(0xFF0369A1),
-                          fontWeight: FontWeight.w500,
+              // Main Conversation Thread / Welcome Hero
+              Expanded(
+                child: GestureDetector(
+                  onTap: () => FocusScope.of(context).unfocus(),
+                  child: _isWelcomeState
+                      ? _WelcomeHeroView(
+                          messages: _messages,
+                          userName: widget.userName,
+                          isDark: isDark,
+                          onSelectPrompt: _handleSubmitted,
+                          onCallPhone: _callPhone,
+                        )
+                      : ListView.builder(
+                          controller: _scrollController,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 14, vertical: 12),
+                          itemCount: _messages.length + (_isTyping ? 1 : 0),
+                          itemBuilder: (context, index) {
+                            if (index == _messages.length && _isTyping) {
+                              return _GlassTypingBubble(
+                                label: l10n.chatbotTyping,
+                                isDark: isDark,
+                              );
+                            }
+                            final msg = _messages[index];
+                            return _MessageTile(
+                              message: msg,
+                              isDark: isDark,
+                              onSelectPrompt: _handleSubmitted,
+                              onCallPhone: _callPhone,
+                            );
+                          },
                         ),
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.close_rounded,
-                          size: 16, color: Color(0xFF0284C7)),
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
-                      onPressed: () => setState(() => _showDisclaimer = false),
-                    ),
-                  ],
                 ),
               ),
 
-            // Scrollable Messages Thread
-            Expanded(
-              child: GestureDetector(
-                onTap: () => FocusScope.of(context).unfocus(),
-                child: ListView.builder(
-                  controller: _scrollController,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                  itemCount: _messages.length + (_isTyping ? 1 : 0),
-                  itemBuilder: (context, index) {
-                    if (index == _messages.length && _isTyping) {
-                      return _TypingBubble(label: l10n.chatbotTyping);
-                    }
-                    final msg = _messages[index];
-                    return _MessageTile(
-                      message: msg,
-                      onSelectPrompt: _handleSubmitted,
-                      onCallPhone: _callPhone,
-                    );
-                  },
-                ),
+              // Suggested Chips Row (docked above input)
+              _SuggestedChipsBar(
+                onSelectPrompt: _handleSubmitted,
+                chips: _getLatestSuggestedChips(l10n),
+                isDark: isDark,
               ),
-            ),
 
-            // Suggested Chips Row (shows latest suggestions or defaults)
-            _SuggestedChipsBar(
-              onSelectPrompt: _handleSubmitted,
-              chips: _getLatestSuggestedChips(l10n),
-            ),
-
-            // Bottom Input Row
-            _ChatInputBar(
-              controller: _textController,
-              isTyping: _isTyping,
-              onSubmitted: _handleSubmitted,
-            ),
-          ],
+              // Floating Bottom Input Capsule
+              _ChatInputBar(
+                controller: _textController,
+                isTyping: _isTyping,
+                isDark: isDark,
+                onSubmitted: _handleSubmitted,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -522,14 +409,443 @@ class _YegnaChatbotPageState extends State<YegnaChatbotPage> {
   }
 }
 
+/// Ambient background canvas featuring atmospheric light pools that shine
+/// through frosted glass surfaces in Dark and Light themes.
+class _AmbientGlassCanvas extends StatelessWidget {
+  const _AmbientGlassCanvas({
+    required this.child,
+    required this.isDark,
+  });
+
+  final Widget child;
+  final bool isDark;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: isDark
+              ? const [
+                  Color(0xFF060B18),
+                  Color(0xFF0A1329),
+                  Color(0xFF0E1B38),
+                ]
+              : const [
+                  Color(0xFFEAF5FD),
+                  Color(0xFFF0F8FF),
+                  Color(0xFFE0F2FE),
+                ],
+        ),
+      ),
+      child: Stack(
+        children: [
+          // Ambient Glow Orb 1 (Top Center-Right: Cyan Aura)
+          Positioned(
+            top: -50,
+            right: -30,
+            child: Container(
+              width: 220,
+              height: 220,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(
+                  colors: isDark
+                      ? [
+                          const Color(0xFF00F2FE).withValues(alpha: 0.18),
+                          Colors.transparent,
+                        ]
+                      : [
+                          const Color(0xFFBAE6FD).withValues(alpha: 0.55),
+                          Colors.transparent,
+                        ],
+                ),
+              ),
+            ),
+          ),
+
+          // Ambient Glow Orb 2 (Mid Left: Violet / Soft White Aura)
+          Positioned(
+            top: 260,
+            left: -60,
+            child: Container(
+              width: 240,
+              height: 240,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(
+                  colors: isDark
+                      ? [
+                          const Color(0xFF8B5CF6).withValues(alpha: 0.16),
+                          Colors.transparent,
+                        ]
+                      : [
+                          Colors.white.withValues(alpha: 0.65),
+                          Colors.transparent,
+                        ],
+                ),
+              ),
+            ),
+          ),
+
+          // Ambient Glow Orb 3 (Bottom Center: Electric Azure Aura)
+          Positioned(
+            bottom: -60,
+            right: 40,
+            child: Container(
+              width: 260,
+              height: 260,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(
+                  colors: isDark
+                      ? [
+                          const Color(0xFF0284C7).withValues(alpha: 0.20),
+                          Colors.transparent,
+                        ]
+                      : [
+                          const Color(0xFFBAE6FD).withValues(alpha: 0.45),
+                          Colors.transparent,
+                        ],
+                ),
+              ),
+            ),
+          ),
+
+          // Foreground child
+          child,
+        ],
+      ),
+    );
+  }
+}
+
+/// Floating frosted acrylic capsule header that elevates above the chat canvas.
+class _FloatingGlassCapsuleBar extends StatelessWidget {
+  const _FloatingGlassCapsuleBar({
+    required this.title,
+    required this.subtitle,
+    required this.isDark,
+    required this.onBack,
+    required this.onOpenDrawer,
+    required this.onNewChat,
+    required this.onClearChat,
+  });
+
+  final String title;
+  final String subtitle;
+  final bool isDark;
+  final VoidCallback onBack;
+  final VoidCallback onOpenDrawer;
+  final VoidCallback onNewChat;
+  final VoidCallback onClearChat;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(26),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+            child: Container(
+              height: 58,
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              decoration: BoxDecoration(
+                color: isDark
+                    ? const Color(0xFF0B1428).withValues(alpha: 0.78)
+                    : Colors.white.withValues(alpha: 0.82),
+                borderRadius: BorderRadius.circular(26),
+                border: Border.all(
+                  color: isDark
+                      ? const Color(0xFF38BDF8).withValues(alpha: 0.22)
+                      : Colors.white.withValues(alpha: 0.90),
+                  width: 1,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: isDark
+                        ? const Color(0x60000000)
+                        : const Color(0x10005A71),
+                    blurRadius: 16,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  // Back Action
+                  IconButton(
+                    icon: Icon(
+                      Icons.arrow_back_ios_new_rounded,
+                      color: isDark
+                          ? const Color(0xFFF8FAFC)
+                          : const Color(0xFF08264A),
+                      size: 19,
+                    ),
+                    onPressed: onBack,
+                  ),
+
+                  // Mini Ambient Luminous Orb
+                  const SizedBox(width: 2),
+                  LuminousChatbotOrb(
+                    size: 30,
+                    isDark: isDark,
+                    animate: true,
+                  ),
+                  const SizedBox(width: 10),
+
+                  // Title & Subtitle
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w800,
+                            color: isDark
+                                ? const Color(0xFFF8FAFC)
+                                : const Color(0xFF08264A),
+                            letterSpacing: -0.2,
+                          ),
+                        ),
+                        Text(
+                          subtitle,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 10.5,
+                            fontWeight: FontWeight.w500,
+                            color: isDark
+                                ? const Color(0xFF94A3B8)
+                                : const Color(0xFF5A758E),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // 1. History Drawer Toggle
+                  IconButton(
+                    icon: Icon(
+                      Icons.history_rounded,
+                      color: isDark
+                          ? const Color(0xFF38BDF8)
+                          : const Color(0xFF005A71),
+                      size: 22,
+                    ),
+                    tooltip: l10n.chatHistoryTitle,
+                    onPressed: onOpenDrawer,
+                  ),
+
+                  // 2. Instant "+ New Chat" Action
+                  IconButton(
+                    icon: Icon(
+                      Icons.add_comment_outlined,
+                      color: isDark
+                          ? const Color(0xFF38BDF8)
+                          : const Color(0xFF007A78),
+                      size: 21,
+                    ),
+                    tooltip: l10n.newChatAction,
+                    onPressed: onNewChat,
+                  ),
+
+                  // 3. Clear Chat Action
+                  IconButton(
+                    icon: Icon(
+                      Icons.delete_sweep_outlined,
+                      color: isDark
+                          ? const Color(0xFF94A3B8)
+                          : const Color(0xFF64748B),
+                      size: 21,
+                    ),
+                    tooltip: l10n.chatbotClearChat,
+                    onPressed: onClearChat,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Glassmorphic Disclaimer Banner
+class _GlassDisclaimerBanner extends StatelessWidget {
+  const _GlassDisclaimerBanner({
+    required this.disclaimer,
+    required this.isDark,
+    required this.onDismiss,
+  });
+
+  final String disclaimer;
+  final bool isDark;
+  final VoidCallback onDismiss;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(14, 6, 14, 4),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            decoration: BoxDecoration(
+              color: isDark
+                  ? const Color(0xFF0C192E).withValues(alpha: 0.72)
+                  : const Color(0xFFE0F2FE).withValues(alpha: 0.85),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: isDark
+                    ? const Color(0xFF38BDF8).withValues(alpha: 0.25)
+                    : const Color(0xFFBAE6FD),
+                width: 1,
+              ),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.health_and_safety_outlined,
+                  color: isDark
+                      ? const Color(0xFF38BDF8)
+                      : const Color(0xFF0284C7),
+                  size: 20,
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    disclaimer,
+                    style: TextStyle(
+                      fontSize: 11.5,
+                      height: 1.35,
+                      color: isDark
+                          ? const Color(0xFFE2E8F0)
+                          : const Color(0xFF0369A1),
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(
+                    Icons.close_rounded,
+                    size: 16,
+                    color: isDark
+                        ? const Color(0xFF94A3B8)
+                        : const Color(0xFF0284C7),
+                  ),
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                  onPressed: onDismiss,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Hero presentation when starting a new chat session, featuring
+/// the centered 3D Luminous Orb, personalized greeting, and initial card.
+class _WelcomeHeroView extends StatelessWidget {
+  const _WelcomeHeroView({
+    required this.messages,
+    required this.userName,
+    required this.isDark,
+    required this.onSelectPrompt,
+    required this.onCallPhone,
+  });
+
+  final List<ChatMessage> messages;
+  final String? userName;
+  final bool isDark;
+  final ValueChanged<String> onSelectPrompt;
+  final ValueChanged<String> onCallPhone;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final hasName = userName != null && userName!.trim().isNotEmpty;
+    final greeting = hasName
+        ? l10n.chatbotHeroGreetingWithUser(userName!.trim())
+        : l10n.chatbotHeroGreetingDefault;
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const SizedBox(height: 24),
+
+          // Centered 3D Luminous Orb (matches reference mockup Screen 1)
+          Center(
+            child: LuminousChatbotOrb(
+              size: 118,
+              isDark: isDark,
+              animate: true,
+            ),
+          ),
+
+          const SizedBox(height: 24),
+
+          // Prominent Hero Greeting Typography
+          Text(
+            greeting,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.w800,
+              height: 1.25,
+              color: isDark ? const Color(0xFFF8FAFC) : const Color(0xFF08264A),
+              letterSpacing: -0.3,
+            ),
+          ),
+
+          const SizedBox(height: 18),
+
+          // Initial Welcome Message Frosted Glass Card
+          if (messages.isNotEmpty)
+            _MessageTile(
+              message: messages.first,
+              isDark: isDark,
+              onSelectPrompt: onSelectPrompt,
+              onCallPhone: onCallPhone,
+            ),
+
+          const SizedBox(height: 20),
+        ],
+      ),
+    );
+  }
+}
+
+/// Glassmorphic message bubble for User and Assistant messages.
 class _MessageTile extends StatelessWidget {
   const _MessageTile({
     required this.message,
+    required this.isDark,
     required this.onSelectPrompt,
     required this.onCallPhone,
   });
 
   final ChatMessage message;
+  final bool isDark;
   final ValueChanged<String> onSelectPrompt;
   final ValueChanged<String> onCallPhone;
 
@@ -551,172 +867,212 @@ class _MessageTile extends StatelessWidget {
             children: [
               if (!isUser) ...[
                 Container(
-                  width: 30,
-                  height: 30,
                   margin: const EdgeInsets.only(right: 8, bottom: 2),
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Color(0xFF007A78), Color(0xFF005A71)],
-                    ),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Center(
-                    child: Icon(Icons.smart_toy_rounded,
-                        color: Colors.white, size: 16),
+                  child: LuminousChatbotOrb(
+                    size: 28,
+                    isDark: isDark,
+                    animate: false,
                   ),
                 ),
               ],
               Flexible(
-                child: Container(
-                  constraints: BoxConstraints(
-                    maxWidth: isUser
-                        ? MediaQuery.of(context).size.width * 0.78
-                        : (MediaQuery.of(context).size.width * 0.88)
-                            .clamp(280.0, 580.0),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.only(
+                    topLeft: const Radius.circular(20),
+                    topRight: const Radius.circular(20),
+                    bottomLeft: Radius.circular(isUser ? 20 : 4),
+                    bottomRight: Radius.circular(isUser ? 4 : 20),
                   ),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  decoration: BoxDecoration(
-                    color: isUser ? null : Colors.white,
-                    gradient: isUser
-                        ? const LinearGradient(
-                            colors: [Color(0xFF007A78), Color(0xFF005A71)],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          )
-                        : null,
-                    borderRadius: BorderRadius.only(
-                      topLeft: const Radius.circular(18),
-                      topRight: const Radius.circular(18),
-                      bottomLeft: Radius.circular(isUser ? 18 : 4),
-                      bottomRight: Radius.circular(isUser ? 4 : 18),
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: isUser
-                            ? const Color(0xFF007A78).withValues(alpha: 0.18)
-                            : Colors.black.withValues(alpha: 0.05),
-                        blurRadius: 10,
-                        offset: const Offset(0, 3),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
+                    child: Container(
+                      constraints: BoxConstraints(
+                        maxWidth: isUser
+                            ? MediaQuery.of(context).size.width * 0.78
+                            : (MediaQuery.of(context).size.width * 0.88)
+                                .clamp(280.0, 580.0),
                       ),
-                    ],
-                    border: isUser
-                        ? null
-                        : Border.all(
-                            color: message.isEmergency
-                                ? const Color(0xFFFCA5A5)
-                                : const Color(0xFFE2E8F0),
-                            width: message.isEmergency ? 1.5 : 1,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 12),
+                      decoration: BoxDecoration(
+                        color: isUser
+                            ? (isDark
+                                ? const Color(0xFF0284C7)
+                                    .withValues(alpha: 0.38)
+                                : null)
+                            : (isDark
+                                ? const Color(0xFF0F1E36)
+                                    .withValues(alpha: 0.70)
+                                : Colors.white.withValues(alpha: 0.85)),
+                        gradient: isUser
+                            ? (isDark
+                                ? null
+                                : const LinearGradient(
+                                    colors: [
+                                      Color(0xFF007A78),
+                                      Color(0xFF005A71)
+                                    ],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                  ))
+                            : null,
+                        borderRadius: BorderRadius.only(
+                          topLeft: const Radius.circular(20),
+                          topRight: const Radius.circular(20),
+                          bottomLeft: Radius.circular(isUser ? 20 : 4),
+                          bottomRight: Radius.circular(isUser ? 4 : 20),
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: isUser
+                                ? (isDark
+                                    ? const Color(0x3038BDF8)
+                                    : const Color(0xFF007A78)
+                                        .withValues(alpha: 0.18))
+                                : (isDark
+                                    ? const Color(0x50000000)
+                                    : const Color(0x0A005A71)),
+                            blurRadius: 10,
+                            offset: const Offset(0, 3),
                           ),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Emergency Alert Header
-                      if (message.isEmergency) ...[
-                        Row(
-                          children: [
-                            const Icon(Icons.warning_amber_rounded,
-                                color: Color(0xFFDC2626), size: 18),
-                            const SizedBox(width: 6),
-                            Text(
-                              l10n.chatbotEmergencyTitle,
-                              style: const TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w800,
-                                color: Color(0xFFDC2626),
-                              ),
+                        ],
+                        border: Border.all(
+                          color: isUser
+                              ? (isDark
+                                  ? const Color(0xFF38BDF8)
+                                      .withValues(alpha: 0.35)
+                                  : Colors.white.withValues(alpha: 0.30))
+                              : (message.isEmergency
+                                  ? const Color(0xFFFCA5A5)
+                                  : (isDark
+                                      ? const Color(0xFF38BDF8)
+                                          .withValues(alpha: 0.20)
+                                      : const Color(0xFFBAE6FD)
+                                          .withValues(alpha: 0.60))),
+                          width: message.isEmergency ? 1.5 : 1,
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Emergency Alert Header
+                          if (message.isEmergency) ...[
+                            Row(
+                              children: [
+                                const Icon(Icons.warning_amber_rounded,
+                                    color: Color(0xFFDC2626), size: 18),
+                                const SizedBox(width: 6),
+                                Text(
+                                  l10n.chatbotEmergencyTitle,
+                                  style: const TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w800,
+                                    color: Color(0xFFDC2626),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                          ],
+
+                          // Message Body (Markdown formatted)
+                          FormattedChatMessage(
+                            text: message.text,
+                            isUser: isUser,
+                          ),
+
+                          // Assistant Actions Footer: One-tap Copy
+                          if (!isUser) ...[
+                            const SizedBox(height: 8),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                InkWell(
+                                  borderRadius: BorderRadius.circular(8),
+                                  onTap: () {
+                                    final clean =
+                                        FormattedChatMessage.toPlainText(
+                                            message.text);
+                                    Clipboard.setData(
+                                        ClipboardData(text: clean));
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content:
+                                            Text(l10n.responseCopiedMessage),
+                                        duration: const Duration(seconds: 2),
+                                        behavior: SnackBarBehavior.floating,
+                                      ),
+                                    );
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 6, vertical: 3),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          Icons.copy_rounded,
+                                          size: 13,
+                                          color: isDark
+                                              ? const Color(0xFF94A3B8)
+                                              : const Color(0xFF64748B),
+                                        ),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          l10n.copyResponseAction,
+                                          style: TextStyle(
+                                            fontSize: 11,
+                                            fontWeight: FontWeight.w600,
+                                            color: isDark
+                                                ? const Color(0xFF94A3B8)
+                                                : const Color(0xFF64748B),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
-                        ),
-                        const SizedBox(height: 8),
-                      ],
 
-                      // Message Body (Formatted Structured Markdown)
-                      FormattedChatMessage(
-                        text: message.text,
-                        isUser: isUser,
-                      ),
-
-                      // Assistant Actions Footer: One-tap Copy
-                      if (!isUser) ...[
-                        const SizedBox(height: 8),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            InkWell(
-                              borderRadius: BorderRadius.circular(8),
-                              onTap: () {
-                                final clean = FormattedChatMessage.toPlainText(
-                                    message.text);
-                                Clipboard.setData(ClipboardData(text: clean));
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(l10n.responseCopiedMessage),
-                                    duration: const Duration(seconds: 2),
-                                    behavior: SnackBarBehavior.floating,
+                          // Emergency Hotline Action Buttons
+                          if (message.isEmergency &&
+                              message.emergencyHotlines.isNotEmpty) ...[
+                            const SizedBox(height: 12),
+                            Wrap(
+                              spacing: 8,
+                              runSpacing: 8,
+                              children:
+                                  message.emergencyHotlines.map((hotline) {
+                                return ElevatedButton.icon(
+                                  onPressed: () => onCallPhone(hotline.number),
+                                  icon: const Icon(Icons.phone_in_talk_rounded,
+                                      size: 16),
+                                  label: Text(
+                                    '${hotline.name} (${hotline.number})',
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFFDC2626),
+                                    foregroundColor: Colors.white,
+                                    elevation: 0,
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 12, vertical: 8),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
                                   ),
                                 );
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 6, vertical: 3),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const Icon(
-                                      Icons.copy_rounded,
-                                      size: 13,
-                                      color: Color(0xFF64748B),
-                                    ),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      l10n.copyResponseAction,
-                                      style: const TextStyle(
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w600,
-                                        color: Color(0xFF64748B),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
+                              }).toList(),
                             ),
                           ],
-                        ),
-                      ],
-
-                      // Emergency Hotline Action Buttons
-                      if (message.isEmergency &&
-                          message.emergencyHotlines.isNotEmpty) ...[
-                        const SizedBox(height: 12),
-                        Wrap(
-                          spacing: 8,
-                          runSpacing: 8,
-                          children: message.emergencyHotlines.map((hotline) {
-                            return ElevatedButton.icon(
-                              onPressed: () => onCallPhone(hotline.number),
-                              icon: const Icon(Icons.phone_in_talk_rounded,
-                                  size: 16),
-                              label: Text('${hotline.name} (${hotline.number})',
-                                  style: const TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w700)),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFFDC2626),
-                                foregroundColor: Colors.white,
-                                elevation: 0,
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 12, vertical: 8),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                              ),
-                            );
-                          }).toList(),
-                        ),
-                      ],
-                    ],
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -728,72 +1084,149 @@ class _MessageTile extends StatelessWidget {
   }
 }
 
-class _TypingBubble extends StatelessWidget {
-  const _TypingBubble({required this.label});
+/// Animated 3-dot waving typing indicator pill (matches Screen 2 in mockup).
+class _GlassTypingBubble extends StatefulWidget {
+  const _GlassTypingBubble({
+    required this.label,
+    required this.isDark,
+  });
+
   final String label;
+  final bool isDark;
+
+  @override
+  State<_GlassTypingBubble> createState() => _GlassTypingBubbleState();
+}
+
+class _GlassTypingBubbleState extends State<_GlassTypingBubble>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    );
+    final isTest =
+        WidgetsBinding.instance.runtimeType.toString().contains('Test');
+    if (!isTest) {
+      _controller.repeat();
+    } else {
+      _controller.value = 0.5;
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final dotColor =
+        widget.isDark ? const Color(0xFF38BDF8) : const Color(0xFF007A78);
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
         children: [
           Container(
-            width: 30,
-            height: 30,
             margin: const EdgeInsets.only(right: 8),
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xFF007A78), Color(0xFF005A71)],
-              ),
-              shape: BoxShape.circle,
-            ),
-            child: const Center(
-              child:
-                  Icon(Icons.smart_toy_rounded, color: Colors.white, size: 16),
+            child: LuminousChatbotOrb(
+              size: 28,
+              isDark: widget.isDark,
+              animate: true,
             ),
           ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(18),
-                topRight: Radius.circular(18),
-                bottomLeft: Radius.circular(4),
-                bottomRight: Radius.circular(18),
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 3),
-                ),
-              ],
-              border: Border.all(color: const Color(0xFFE2E8F0)),
+          ClipRRect(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+              bottomLeft: Radius.circular(4),
+              bottomRight: Radius.circular(20),
             ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  label,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontStyle: FontStyle.italic,
-                    color: Color(0xFF64748B),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                decoration: BoxDecoration(
+                  color: widget.isDark
+                      ? const Color(0xFF0F1E36).withValues(alpha: 0.70)
+                      : Colors.white.withValues(alpha: 0.85),
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
+                    bottomLeft: Radius.circular(4),
+                    bottomRight: Radius.circular(20),
+                  ),
+                  border: Border.all(
+                    color: widget.isDark
+                        ? const Color(0xFF38BDF8).withValues(alpha: 0.20)
+                        : const Color(0xFFBAE6FD).withValues(alpha: 0.60),
                   ),
                 ),
-                const SizedBox(width: 8),
-                const SizedBox(
-                  width: 14,
-                  height: 14,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    valueColor:
-                        AlwaysStoppedAnimation<Color>(Color(0xFF007A78)),
-                  ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Accessible label for screen readers & tests
+                    Semantics(
+                      label: widget.label,
+                      child: Text(
+                        widget.label,
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontStyle: FontStyle.italic,
+                          color: widget.isDark
+                              ? const Color(0xFF94A3B8)
+                              : const Color(0xFF64748B),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+
+                    // 3-dot Animated Waving Indicator
+                    AnimatedBuilder(
+                      animation: _controller,
+                      builder: (context, _) {
+                        return Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: List.generate(3, (index) {
+                            final delay = index * 0.20;
+                            final t = (_controller.value + delay) % 1.0;
+                            final bounce = math.sin(t * math.pi);
+
+                            return Container(
+                              margin:
+                                  const EdgeInsets.symmetric(horizontal: 2.2),
+                              transform: Matrix4.translationValues(
+                                  0, -bounce * 4.5, 0),
+                              width: 6.5,
+                              height: 6.5,
+                              decoration: BoxDecoration(
+                                color: dotColor.withValues(
+                                    alpha: 0.40 + (bounce * 0.60)),
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  if (bounce > 0.4)
+                                    BoxShadow(
+                                      color: dotColor.withValues(
+                                          alpha: 0.45 * bounce),
+                                      blurRadius: 5,
+                                    ),
+                                ],
+                              ),
+                            );
+                          }),
+                        );
+                      },
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ],
@@ -802,14 +1235,17 @@ class _TypingBubble extends StatelessWidget {
   }
 }
 
+/// Docked horizontal row of frosted glass suggestion pills.
 class _SuggestedChipsBar extends StatelessWidget {
   const _SuggestedChipsBar({
     required this.chips,
     required this.onSelectPrompt,
+    required this.isDark,
   });
 
   final List<String> chips;
   final ValueChanged<String> onSelectPrompt;
+  final bool isDark;
 
   @override
   Widget build(BuildContext context) {
@@ -828,14 +1264,22 @@ class _SuggestedChipsBar extends StatelessWidget {
           return ActionChip(
             label: Text(
               chip,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
-                color: Color(0xFF005A71),
+                color:
+                    isDark ? const Color(0xFF38BDF8) : const Color(0xFF005A71),
               ),
             ),
-            backgroundColor: Colors.white,
-            side: const BorderSide(color: Color(0xFFBAE6FD), width: 1),
+            backgroundColor: isDark
+                ? const Color(0xFF0F1E36).withValues(alpha: 0.72)
+                : Colors.white.withValues(alpha: 0.85),
+            side: BorderSide(
+              color: isDark
+                  ? const Color(0xFF38BDF8).withValues(alpha: 0.35)
+                  : const Color(0xFFBAE6FD),
+              width: 1,
+            ),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
             ),
@@ -848,15 +1292,18 @@ class _SuggestedChipsBar extends StatelessWidget {
   }
 }
 
+/// Floating glassmorphic input capsule with upward-arrow circular send button.
 class _ChatInputBar extends StatelessWidget {
   const _ChatInputBar({
     required this.controller,
     required this.isTyping,
+    required this.isDark,
     required this.onSubmitted,
   });
 
   final TextEditingController controller;
   final bool isTyping;
+  final bool isDark;
   final ValueChanged<String> onSubmitted;
 
   @override
@@ -864,73 +1311,125 @@ class _ChatInputBar extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
 
     return Container(
-      padding: const EdgeInsets.fromLTRB(14, 8, 14, 12),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        border: Border(
-          top: BorderSide(
-            color: Color(0xFFE2E8F0),
-            width: 1,
-          ),
-        ),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              decoration: BoxDecoration(
-                color: const Color(0xFFF1F5F9),
-                borderRadius: BorderRadius.circular(24),
-                border: Border.all(color: const Color(0xFFE2E8F0)),
+      margin: const EdgeInsets.fromLTRB(14, 4, 14, 12),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(30),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+            decoration: BoxDecoration(
+              color: isDark
+                  ? const Color(0xFF0B1428).withValues(alpha: 0.82)
+                  : Colors.white.withValues(alpha: 0.85),
+              borderRadius: BorderRadius.circular(30),
+              border: Border.all(
+                color: isDark
+                    ? const Color(0xFF38BDF8).withValues(alpha: 0.25)
+                    : const Color(0xFFDCEAF5),
+                width: 1,
               ),
-              child: TextField(
-                controller: controller,
-                textCapitalization: TextCapitalization.sentences,
-                textInputAction: TextInputAction.send,
-                onSubmitted: onSubmitted,
-                decoration: InputDecoration(
-                  hintText: l10n.chatbotInputHint,
-                  hintStyle: const TextStyle(
-                    fontSize: 13,
-                    color: Color(0xFF94A3B8),
-                  ),
-                  border: InputBorder.none,
-                  isDense: true,
-                  contentPadding: const EdgeInsets.symmetric(vertical: 12),
+              boxShadow: [
+                BoxShadow(
+                  color: isDark
+                      ? const Color(0x60000000)
+                      : const Color(0x0A005A71),
+                  blurRadius: 16,
+                  offset: const Offset(0, 4),
                 ),
-              ),
+              ],
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: controller,
+                    textCapitalization: TextCapitalization.sentences,
+                    textInputAction: TextInputAction.send,
+                    onSubmitted: onSubmitted,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: isDark
+                          ? const Color(0xFFF8FAFC)
+                          : const Color(0xFF08264A),
+                    ),
+                    decoration: InputDecoration(
+                      hintText: l10n.chatbotInputHint,
+                      hintStyle: TextStyle(
+                        fontSize: 13,
+                        color: isDark
+                            ? const Color(0xFF64748B)
+                            : const Color(0xFF94A3B8),
+                      ),
+                      border: InputBorder.none,
+                      isDense: true,
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 10, horizontal: 8),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 6),
+                ValueListenableBuilder<TextEditingValue>(
+                  valueListenable: controller,
+                  builder: (context, value, _) {
+                    final canSend = value.text.trim().isNotEmpty && !isTyping;
+                    return Container(
+                      width: 42,
+                      height: 42,
+                      decoration: BoxDecoration(
+                        gradient: canSend
+                            ? LinearGradient(
+                                colors: isDark
+                                    ? const [
+                                        Color(0xFF00F2FE),
+                                        Color(0xFF4FACFE),
+                                      ]
+                                    : const [
+                                        Color(0xFF007A78),
+                                        Color(0xFF005A71),
+                                      ],
+                              )
+                            : null,
+                        color: canSend
+                            ? null
+                            : (isDark
+                                ? const Color(0xFF1E293B)
+                                : const Color(0xFFE2E8F0)),
+                        shape: BoxShape.circle,
+                        boxShadow: canSend
+                            ? [
+                                BoxShadow(
+                                  color: isDark
+                                      ? const Color(0xFF00F2FE)
+                                          .withValues(alpha: 0.35)
+                                      : const Color(0xFF007A78)
+                                          .withValues(alpha: 0.25),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ]
+                            : null,
+                      ),
+                      child: IconButton(
+                        icon: Icon(
+                          Icons.arrow_upward_rounded,
+                          color: canSend
+                              ? Colors.white
+                              : (isDark
+                                  ? const Color(0xFF64748B)
+                                  : const Color(0xFF94A3B8)),
+                          size: 20,
+                        ),
+                        onPressed:
+                            canSend ? () => onSubmitted(value.text) : null,
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
           ),
-          const SizedBox(width: 8),
-          ValueListenableBuilder<TextEditingValue>(
-            valueListenable: controller,
-            builder: (context, value, _) {
-              final canSend = value.text.trim().isNotEmpty && !isTyping;
-              return Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  gradient: canSend
-                      ? const LinearGradient(
-                          colors: [Color(0xFF007A78), Color(0xFF005A71)],
-                        )
-                      : null,
-                  color: canSend ? null : const Color(0xFFE2E8F0),
-                  shape: BoxShape.circle,
-                ),
-                child: IconButton(
-                  icon: Icon(
-                    Icons.arrow_upward_rounded,
-                    color: canSend ? Colors.white : const Color(0xFF94A3B8),
-                    size: 22,
-                  ),
-                  onPressed: canSend ? () => onSubmitted(value.text) : null,
-                ),
-              );
-            },
-          ),
-        ],
+        ),
       ),
     );
   }

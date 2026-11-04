@@ -85,7 +85,7 @@ void main() {
       final en = await AppLocalizations.delegate.load(const Locale('en'));
 
       // Check header and search bar
-      expect(find.text(en.mentorsIntroduction), findsOneWidget);
+      expect(find.text(en.mentorsIntroduction), findsNothing);
       expect(find.text(en.searchMentors), findsOneWidget);
 
       // Check mentor presence & phone badges
@@ -142,7 +142,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final am = await AppLocalizations.delegate.load(const Locale('am'));
-      expect(find.text(am.mentorsIntroduction), findsOneWidget);
+      expect(find.text(am.mentorsIntroduction), findsNothing);
       expect(find.text('ሰላማዊት ታደሰ'), findsOneWidget);
       expect(find.text(am.callMentorAction), findsWidgets);
     });

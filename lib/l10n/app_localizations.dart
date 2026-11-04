@@ -5414,6 +5414,24 @@ abstract class AppLocalizations {
   /// **'Yegna Assistant is typing...'**
   String get chatbotTyping;
 
+  /// No description provided for @chatbotCapsuleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Assistant'**
+  String get chatbotCapsuleTitle;
+
+  /// No description provided for @chatbotHeroGreetingWithUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Hi {name}! How can I help you today?'**
+  String chatbotHeroGreetingWithUser(String name);
+
+  /// No description provided for @chatbotHeroGreetingDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'Hi there! How can I help you today?'**
+  String get chatbotHeroGreetingDefault;
+
   /// No description provided for @askYegnaFabTooltip.
   ///
   /// In en, this message translates to:
@@ -6085,6 +6103,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{days}d ago'**
   String notificationTimeDaysAgo(int days);
+
+  /// No description provided for @adminConsoleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Admin Console'**
+  String get adminConsoleTitle;
+
+  /// No description provided for @adminConsoleSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage clubs, questions, modules, and directories'**
+  String get adminConsoleSubtitle;
+
+  /// No description provided for @studentClubsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Student Health Clubs'**
+  String get studentClubsTitle;
+
+  /// No description provided for @studentClubsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Join peer wellness, mental health, and leadership clubs'**
+  String get studentClubsSubtitle;
+
+  /// No description provided for @studentClubsPromoTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Student Health Clubs'**
+  String get studentClubsPromoTitle;
+
+  /// No description provided for @studentClubsPromoSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Engage with youth peers, attend weekly discussions, and get guided mentorship.'**
+  String get studentClubsPromoSubtitle;
+
+  /// No description provided for @joinClubAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Join Club'**
+  String get joinClubAction;
+
+  /// No description provided for @leaveClubAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave Club'**
+  String get leaveClubAction;
+
+  /// No description provided for @joinedClubBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Joined ✓'**
+  String get joinedClubBadge;
+
+  /// No description provided for @myClubsTab.
+  ///
+  /// In en, this message translates to:
+  /// **'My Clubs'**
+  String get myClubsTab;
+
+  /// No description provided for @exploreAllClubsTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore All'**
+  String get exploreAllClubsTab;
+
+  /// No description provided for @meetingScheduleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Meeting Schedule'**
+  String get meetingScheduleLabel;
+
+  /// No description provided for @meetingLocationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Meeting Location'**
+  String get meetingLocationLabel;
+
+  /// No description provided for @assignedMentorLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Club Lead & Mentor'**
+  String get assignedMentorLabel;
 }
 
 class _AppLocalizationsDelegate

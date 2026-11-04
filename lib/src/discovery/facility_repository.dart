@@ -207,3 +207,33 @@ class LocalVerifiedFacilityRepository implements FacilityRepository {
     return result;
   }
 }
+
+class DynamicFacilityRepository implements FacilityRepository {
+  const DynamicFacilityRepository({
+    this.customFacilitiesProvider,
+    this.fallback = const LocalVerifiedFacilityRepository(),
+  });
+
+  final Future<List<Facility>> Function()? customFacilitiesProvider;
+  final FacilityRepository fallback;
+
+  @override
+  Future<List<Facility>> getFacilities({
+    String? query,
+    FacilityFilterCategory? category,
+  }) async {
+    final base = await fallback.getFacilities(query: query, category: category);
+    if (fallback is UnconfiguredFacilityRepository) {
+      return base;
+    }
+    if (customFacilitiesProvider == null) return base;
+    try {
+      final custom = await customFacilitiesProvider!();
+      final ids = base.map((f) => f.id).toSet();
+      final extras = custom.where((f) => !ids.contains(f.id)).toList();
+      return [...base, ...extras];
+    } catch (_) {
+      return base;
+    }
+  }
+}

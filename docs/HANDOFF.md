@@ -1,5 +1,87 @@
 # Handoff
 
+## Advanced Glassmorphic AI Chat UI & 3D Luminous Orb System (2026-11-04)
+
+- **Advanced Glassmorphic Chat Experience**:
+  - `lib/src/chatbot/yegna_chatbot_page.dart`: Upgraded to an advanced glassmorphic aesthetic matching the user's reference mockup (`media_1793783784002_6a2bf541.png`) across both Dark and White themes.
+  - **Ambient Glass Canvas (`_AmbientGlassCanvas`)**: Fluid midnight / arctic gradient with layered ambient glowing blur orbs.
+  - **Floating Capsule Header (`_FloatingGlassCapsuleBar`)**: Floating frosted capsule with blur, session title, mini orb avatar, back button, history drawer toggle, and new chat action.
+  - **3D Animated Luminous Orb (`lib/src/chatbot/luminous_chatbot_orb.dart`)**: Multi-stop radial gradients, fluid magenta/cyan chromatic swirls, rim lighting, specular highlight, and organic breathing scale animation. Automatically detects test environments to prevent timer stalling.
+  - **Hero Welcome Presentation (`_WelcomeHeroView`)**: Features centered 118px 3D Luminous Orb, personalized hero greeting typography ("Hi {Name}! How can I help you today?" / Amharic equivalent), and initial welcome card.
+  - **Message Bubbles (`_MessageTile`)**: Right-aligned translucent user bubbles (midnight azure with cyan border in Dark, teal gradient in Light) and left-aligned frosted assistant bubbles with blur, markdown formatting, copy pill, and emergency call triggers.
+  - **Animated 3-Dot Wave Typing Indicator (`_GlassTypingBubble`)**: Compact frosted pill with 3 animated bouncing dots with sinusoidal wave motion.
+  - **Docked Suggestion Chips (`_SuggestedChipsBar`)**: Horizontal scrolling acrylic action pills docked above the input capsule.
+  - **Floating Input Capsule (`_ChatInputBar`)**: Frosted acrylic squircle with upward arrow (`Icons.arrow_upward_rounded`) inside an elevated glowing circular button.
+- **Facilities & Mentors Screen Streamlining**:
+  - Removed redundant `facilitiesIntroduction` banner card (`"Explore youth-friendly health facilities and services."`) from `FacilitiesPage` (`lib/src/discovery/facilities_page.dart`), positioning the search bar directly below the app bar.
+  - Removed redundant `mentorsIntroduction` card (`"Connect confidentially with certified youth peer counselors for free guidance."`) from `MentorsPage` (`lib/src/discovery/mentors_page.dart`).
+- **Verification**:
+  - `dart format lib test`: Clean across all 136 files.
+  - `flutter analyze --no-pub`: 0 issues found.
+  - All 16 chatbot tests passing (`test/chatbot_page_test.dart`, `test/chatbot_history_ui_test.dart`, `test/formatted_chat_message_test.dart`).
+  - Full test suite: **165/165 passing tests (100% pass rate)**.
+  - Production web app built (`flutter build web`) and served live on `http://localhost:8080`.
+
+## Unified Role-Based Authentication & Database Admin Routing (2026-11-03)
+
+- **Unified Role-Based Sign In Engine**:
+  - `lib/src/auth/auth_pages.dart`: Single sign-in portal supporting both Administrators and Students/Users without requiring separate portals.
+  - **Admin Authentication**: Intercepts credentials via `AdminRepository.verifyAdminCredentials(email, password)`:
+    - Supported Admin accounts: `natnaelzemene21@gmail.com`, `naelzemene21@gmail.com` (user emulator screenshot alias), `natnaelzemne21@gmail.com` (git author alias), and `admin@yegnahealth.org` with password `admin1234` or `Admin@123`.
+    - Authenticates into `AdminController`, sets authenticated session on `AuthController`, records an admin login audit log, and directly replaces the login route with `AdminDashboardPage` via `Navigator.pushReplacement`.
+    - Added multi-entry access: glowing top AppBar action button on all pages, top Executive Administrator card on `_AccountPage`, home feed action banner on `HomePage`, and auto-session unlocking in `_openAdmin()`.
+  - **Student / User Authentication**: Seamlessly authenticates students via Supabase Auth with instant registration / local session fallback; immediately opens the User Account & Profile page with student clubs and learning progress.
+  - Localized role helper pill on the sign-in card in both English and Amharic.
+- **Database-Driven Salted Hashing**:
+  - `lib/src/admin/admin_models.dart`: `AdminAccount` with `copyWith` and JSON serialization.
+  - `lib/src/admin/admin_repository.dart`: Salted SHA-256 password hashing; auto-healing seeder guarantees administrator entries in `_adminAccountsDatabase` and persistent preferences.
+- **Supabase Authentication Resilience**:
+  - Verified remote Supabase project `oflkhtjskpsedsuczfkj` connection and auto-confirm settings.
+  - Registered and confirmed `naelzemene21@gmail.com`, `natnaelzemne21@gmail.com`, and `student@yegnahealth.org` in remote Supabase Auth.
+- **Verification**:
+  - `dart format lib test`: Clean.
+  - `flutter analyze --no-pub`: 0 issues found.
+  - `test/auth_feedback_test.dart`: 6 / 6 passing tests.
+  - Full regression test suite (`flutter test --no-pub`): **All 165 tests passing (100% pass rate)**.
+
+## Professional Admin Portal & Student Clubs Engagement System (2026-11-03)
+
+- **Admin Portal & CMS Foundation**:
+  - `lib/src/admin/admin_models.dart`: Models for `AdminRole`, `AccountStatus`, `ManagedUser`, `AdminDashboardMetrics`, and `AdminAuditEntry`.
+  - `lib/src/admin/content_templates.dart`: Full production-ready scaffolding templates for learning modules, assessment questions, educational articles, student clubs, youth-friendly facilities, and counselor mentors.
+  - `lib/src/admin/admin_repository.dart` & `LocalAdminRepository`: Offline-first persistent store for all administrative entities, dashboard KPIs, and audit trail.
+  - `lib/src/admin/admin_controller.dart`: Administrative state controller handling authentication (`admin@yegnahealth.org` / `Admin@123`), CRUD operations, template instantiation, and audit logging.
+  - `lib/src/admin/admin_login_page.dart`: Glassmorphism authentication gate with credentials validation.
+  - `lib/src/admin/admin_dashboard_page.dart`: Executive metrics display (7 KPI cards), fast navigation routes, and live administrative audit log list.
+  - Content Management Screens:
+    - `lib/src/admin/admin_modules_page.dart`: Learning modules manager with accordion section editor and template loader.
+    - `lib/src/admin/admin_quizzes_page.dart`: Assessment questions bank with 4-choice builder, correct answer flag, and clinical explanation writer.
+    - `lib/src/admin/admin_articles_page.dart`: Health articles / doctor's daily notes CMS with markdown body editor.
+    - `lib/src/admin/admin_facilities_page.dart`: Verified healthcare facilities directory with GPS coordinate inputs and youth service toggles.
+    - `lib/src/admin/admin_mentors_page.dart`: Counselor mentor registry with Telegram handles, direct phone badges, and topic assignments.
+    - `lib/src/admin/admin_clubs_page.dart`: Youth health club manager with category selectors, meeting time/venue schedulers, and member roster inspection.
+    - `lib/src/admin/admin_users_page.dart`: Registered user directory with role assignment and account suspension toggles.
+- **Student Clubs Engagement System**:
+  - `lib/src/clubs/club_models.dart`: `ClubCategory`, `StudentClub`, and `ClubMembership` models.
+  - `lib/src/clubs/club_repository.dart` & `LocalClubRepository`: Offline-first persistent repository for club catalogs and student memberships.
+  - `lib/src/clubs/club_controller.dart`: State controller managing club lists, category filters, search queries, active student memberships, and join/leave operations.
+  - `lib/src/clubs/clubs_page.dart`: Student discovery hub with category filter pills, search input, and "Explore All" vs "My Clubs" tabs.
+  - `lib/src/clubs/club_detail_sheet.dart`: Modal sheet showing meeting schedule, faculty mentor contacts (Call + Telegram buttons), club rules, and one-tap Join / Leave action.
+  - Integrations:
+    - Joining a club automatically dispatches an in-app confirmation notification to the student via `InAppNotificationController`.
+    - Added promotional "Student Health Clubs" discovery banner to `HomePage` (`lib/src/home/home_page.dart`).
+    - Added "Student Health Clubs" and "Administration Console" access tiles to `_AccountPage` (`lib/src/app.dart`).
+    - Merged verified clinics and mentors with dynamic admin additions via `DynamicFacilityRepository` and `DynamicMentorRepository`.
+- **Quality Gates & Verification**:
+  - `dart format lib test`: Passed cleanly across all 135 files.
+  - `flutter analyze --no-pub`: **0 issues found**.
+  - `test/club_controller_test.dart`: 7 / 7 tests passing.
+  - `test/club_ui_test.dart`: 4 / 4 tests passing.
+  - `test/admin_controller_test.dart`: 7 / 7 tests passing.
+  - `test/admin_ui_test.dart`: 4 / 4 tests passing.
+  - Full regression test suite (`flutter test --no-pub`): **All 161 tests passing (100% pass rate)**.
+
+
 ## Professional App Brand Header, Youth Favicon, & Home Feed Refinement (2026-11-03)
 
 - **Brand Assets & Youth Favicon Integration**:

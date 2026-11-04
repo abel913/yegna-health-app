@@ -3061,6 +3061,17 @@ class AppLocalizationsAm extends AppLocalizations {
   String get chatbotTyping => 'የየኛ ረዳት በመጻፍ ላይ ነው...';
 
   @override
+  String get chatbotCapsuleTitle => 'የጤና ረዳት';
+
+  @override
+  String chatbotHeroGreetingWithUser(String name) {
+    return 'ሰላም $name! ዛሬ በምን ልርዳዎት?';
+  }
+
+  @override
+  String get chatbotHeroGreetingDefault => 'ሰላም! ዛሬ በምን ልርዳዎት?';
+
+  @override
   String get askYegnaFabTooltip => 'የየኛ ጤና ረዳትን ይጠይቁ';
 
   @override
@@ -3449,4 +3460,47 @@ class AppLocalizationsAm extends AppLocalizations {
   String notificationTimeDaysAgo(int days) {
     return 'ከ$days ቀናት በፊት';
   }
+
+  @override
+  String get adminConsoleTitle => 'የአስተዳዳሪ ማዕከል';
+
+  @override
+  String get adminConsoleSubtitle => 'ክበቦችን፣ ጥያቄዎችን፣ ሞጁሎችን እና አድራሻዎችን ማስተዳደሪያ';
+
+  @override
+  String get studentClubsTitle => 'የተማሪዎች የጤና ክበቦች';
+
+  @override
+  String get studentClubsSubtitle => 'የአቻ ደህንነት፣ የአእምሮ ጤና እና የአመራር ክበቦችን ይቀላቀሉ';
+
+  @override
+  String get studentClubsPromoTitle => 'የተማሪዎች የጤና ክበቦች';
+
+  @override
+  String get studentClubsPromoSubtitle =>
+      'ከእኩዮችዎ ጋር ይወያዩ፣ በሳምንታዊ መድረኮች ይሳተፉ እና የአቻ ድጋፍ ያግኙ።';
+
+  @override
+  String get joinClubAction => 'ክበቡን ተቀላቀል';
+
+  @override
+  String get leaveClubAction => 'ከክበቡ ውጣ';
+
+  @override
+  String get joinedClubBadge => 'አባል ነዎት ✓';
+
+  @override
+  String get myClubsTab => 'የእኔ ክበቦች';
+
+  @override
+  String get exploreAllClubsTab => 'ሁሉንም አስስ';
+
+  @override
+  String get meetingScheduleLabel => 'የስብሰባ ሰዓት';
+
+  @override
+  String get meetingLocationLabel => 'የመሰብሰቢያ ቦታ';
+
+  @override
+  String get assignedMentorLabel => 'የክበቡ መሪ እና አማካሪ';
 }

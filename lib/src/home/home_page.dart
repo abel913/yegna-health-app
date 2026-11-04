@@ -21,6 +21,8 @@ class HomePage extends StatefulWidget {
     required this.onOpenAccount,
     required this.onOpenArticle,
     this.onOpenSelfAssessment,
+    this.onOpenClubs,
+    this.onOpenAdmin,
     this.authController,
     this.progressController,
     this.assessmentRepository,
@@ -35,6 +37,8 @@ class HomePage extends StatefulWidget {
   final VoidCallback onOpenAccount;
   final ValueChanged<String> onOpenArticle;
   final VoidCallback? onOpenSelfAssessment;
+  final VoidCallback? onOpenClubs;
+  final VoidCallback? onOpenAdmin;
   final AuthController? authController;
   final LearningProgressController? progressController;
   final AssessmentRepository? assessmentRepository;
@@ -656,6 +660,221 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ],
                     ),
+                    if (widget.onOpenClubs != null) ...[
+                      const SizedBox(height: 18),
+                      InkWell(
+                        onTap: widget.onOpenClubs,
+                        borderRadius: BorderRadius.circular(22),
+                        child: Container(
+                          padding: const EdgeInsets.all(18),
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFF065F46), Color(0xFF047857)],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                            borderRadius: BorderRadius.circular(22),
+                            border: Border.all(
+                              color: const Color(0xFF34D399)
+                                  .withValues(alpha: 0.4),
+                              width: 1.2,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0xFF047857)
+                                    .withValues(alpha: 0.25),
+                                blurRadius: 14,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 44,
+                                height: 44,
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withValues(alpha: 0.2),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: const Icon(Icons.groups_rounded,
+                                    color: Colors.white, size: 26),
+                              ),
+                              const SizedBox(width: 14),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      l10n.studentClubsPromoTitle,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 15.5,
+                                        fontWeight: FontWeight.w800,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 3),
+                                    Text(
+                                      l10n.studentClubsPromoSubtitle,
+                                      style: TextStyle(
+                                        color: Colors.white
+                                            .withValues(alpha: 0.85),
+                                        fontSize: 12.5,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withValues(alpha: 0.25),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(Icons.arrow_forward_rounded,
+                                    color: Colors.white, size: 18),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                    if (widget.onOpenAdmin != null &&
+                        (widget.authController?.user?.email.trim().toLowerCase() ==
+                                'natnaelzemene21@gmail.com' ||
+                            widget
+                                    .authController?.user?.email
+                                    .trim()
+                                    .toLowerCase() ==
+                                'naelzemene21@gmail.com' ||
+                            widget
+                                    .authController?.user?.email
+                                    .trim()
+                                    .toLowerCase() ==
+                                'natnaelzemne21@gmail.com' ||
+                            widget.authController?.user?.email
+                                    .trim()
+                                    .toLowerCase() ==
+                                'admin@yegnahealth.org' ||
+                            (widget.authController?.user?.email
+                                    .trim()
+                                    .toLowerCase()
+                                    .contains('admin') ??
+                                false) ||
+                            (widget.authController?.user?.displayName
+                                    .trim()
+                                    .toLowerCase()
+                                    .contains('admin') ??
+                                false))) ...[
+                      const SizedBox(height: 18),
+                      InkWell(
+                        onTap: widget.onOpenAdmin,
+                        borderRadius: BorderRadius.circular(22),
+                        child: Container(
+                          padding: const EdgeInsets.all(18),
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFF0F172A), Color(0xFF0369A1)],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                            borderRadius: BorderRadius.circular(22),
+                            border: Border.all(
+                              color: const Color(0xFF38BDF8),
+                              width: 1.4,
+                            ),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Color(0x330284C7),
+                                blurRadius: 16,
+                                offset: Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 44,
+                                height: 44,
+                                decoration: BoxDecoration(
+                                  gradient: const LinearGradient(
+                                    colors: [
+                                      Color(0xFF0284C7),
+                                      Color(0xFF38BDF8)
+                                    ],
+                                  ),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: const Icon(
+                                    Icons.admin_panel_settings_rounded,
+                                    color: Colors.white,
+                                    size: 26),
+                              ),
+                              const SizedBox(width: 14),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Text(
+                                          Localizations.localeOf(context)
+                                                      .languageCode ==
+                                                  'am'
+                                              ? 'የአስተዳዳሪ ማዕከል'
+                                              : 'Executive Admin Console',
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 15.5,
+                                            fontWeight: FontWeight.w800,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 6),
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 6, vertical: 2),
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xFF38BDF8),
+                                            borderRadius:
+                                                BorderRadius.circular(6),
+                                          ),
+                                          child: const Text(
+                                            'ADMIN',
+                                            style: TextStyle(
+                                              color: Color(0xFF0F172A),
+                                              fontSize: 9.5,
+                                              fontWeight: FontWeight.w900,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 3),
+                                    Text(
+                                      Localizations.localeOf(context)
+                                                  .languageCode ==
+                                              'am'
+                                          ? 'ሞጁሎችን፣ ጥያቄዎችን፣ ጽሑፎችን እና ክለቦችን ለማስተዳደር ይንኩ'
+                                          : 'Tap to manage learning modules, quizzes, articles & clubs',
+                                      style: TextStyle(
+                                        color:
+                                            Colors.white.withValues(alpha: 0.9),
+                                        fontSize: 12.5,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const Icon(Icons.arrow_forward_ios_rounded,
+                                  color: Color(0xFF38BDF8), size: 16),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                     const SizedBox(height: 26),
 
                     // 6. Featured Health Topics Carousel with Real Modules & Photos

@@ -72,7 +72,7 @@ void main() {
       final en = await AppLocalizations.delegate.load(const Locale('en'));
 
       // Check header and search bar
-      expect(find.text(en.facilitiesIntroduction), findsOneWidget);
+      expect(find.text(en.facilitiesIntroduction), findsNothing);
       expect(find.text(en.searchFacilities), findsOneWidget);
 
       // Check facility card presence
@@ -148,7 +148,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final am = await AppLocalizations.delegate.load(const Locale('am'));
-      expect(find.text(am.facilitiesIntroduction), findsOneWidget);
+      expect(find.text(am.facilitiesIntroduction), findsNothing);
       expect(find.text('የአራዳ ወጣቶች ተስማሚ ጤና ጣቢያ'), findsOneWidget);
     });
 

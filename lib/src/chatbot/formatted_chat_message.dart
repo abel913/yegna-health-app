@@ -35,9 +35,28 @@ class FormattedChatMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final effectiveTextColor =
-        textColor ?? (isUser ? Colors.white : const Color(0xFF1E293B));
-    final boldTextColor = isUser ? Colors.white : const Color(0xFF0F172A);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final effectiveTextColor = textColor ??
+        (isUser
+            ? Colors.white
+            : (isDark ? const Color(0xFFF1F5F9) : const Color(0xFF1E293B)));
+    final boldTextColor = isUser
+        ? Colors.white
+        : (isDark ? Colors.white : const Color(0xFF0F172A));
+    final headingColor = isUser
+        ? Colors.white
+        : (isDark ? const Color(0xFF38BDF8) : const Color(0xFF08264A));
+    final accentColor = isUser
+        ? Colors.white
+        : (isDark ? const Color(0xFF38BDF8) : const Color(0xFF007A78));
+    final numberBg = isUser
+        ? Colors.white.withValues(alpha: 0.2)
+        : (isDark ? const Color(0xFF1E293B) : const Color(0xFFE6F4F1));
+    final numberBorder = isUser
+        ? Colors.white70
+        : (isDark
+            ? const Color(0xFF38BDF8).withValues(alpha: 0.4)
+            : const Color(0xFF99D5CA));
 
     final normalStyle = TextStyle(
       fontSize: fontSize,
@@ -74,6 +93,10 @@ class FormattedChatMessage extends StatelessWidget {
           normalStyle: normalStyle,
           boldStyle: boldStyle,
           italicStyle: italicStyle,
+          headingColor: headingColor,
+          accentColor: accentColor,
+          numberBg: numberBg,
+          numberBorder: numberBorder,
         );
       }).toList(),
     );
@@ -84,6 +107,10 @@ class FormattedChatMessage extends StatelessWidget {
     required TextStyle normalStyle,
     required TextStyle boldStyle,
     required TextStyle italicStyle,
+    required Color headingColor,
+    required Color accentColor,
+    required Color numberBg,
+    required Color numberBorder,
   }) {
     switch (element.type) {
       case _ElementType.heading:
@@ -97,7 +124,7 @@ class FormattedChatMessage extends StatelessWidget {
                 height: 16,
                 margin: const EdgeInsets.only(right: 8),
                 decoration: BoxDecoration(
-                  color: isUser ? Colors.white : const Color(0xFF007A78),
+                  color: accentColor,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -107,7 +134,7 @@ class FormattedChatMessage extends StatelessWidget {
                   style: TextStyle(
                     fontSize: fontSize + 1.5,
                     fontWeight: FontWeight.w800,
-                    color: isUser ? Colors.white : const Color(0xFF08264A),
+                    color: headingColor,
                     letterSpacing: -0.2,
                   ),
                 ),
@@ -137,7 +164,7 @@ class FormattedChatMessage extends StatelessWidget {
                 height: 6,
                 margin: const EdgeInsets.only(top: 8, right: 10),
                 decoration: BoxDecoration(
-                  color: isUser ? Colors.white : const Color(0xFF007A78),
+                  color: accentColor,
                   shape: BoxShape.circle,
                 ),
               ),
@@ -168,12 +195,10 @@ class FormattedChatMessage extends StatelessWidget {
                 height: 20,
                 margin: const EdgeInsets.only(top: 1.5, right: 9),
                 decoration: BoxDecoration(
-                  color: isUser
-                      ? Colors.white.withValues(alpha: 0.2)
-                      : const Color(0xFFE6F4F1),
+                  color: numberBg,
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: isUser ? Colors.white70 : const Color(0xFF99D5CA),
+                    color: numberBorder,
                     width: 1,
                   ),
                 ),
@@ -183,7 +208,7 @@ class FormattedChatMessage extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 10.5,
                       fontWeight: FontWeight.w800,
-                      color: isUser ? Colors.white : const Color(0xFF007A78),
+                      color: accentColor,
                     ),
                   ),
                 ),

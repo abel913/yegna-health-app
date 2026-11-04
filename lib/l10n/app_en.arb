@@ -979,6 +979,16 @@
   "chatbotEmergencyCall8335": "Call 8335 (Youth)",
   "chatbotClearChat": "Clear conversation",
   "chatbotTyping": "Yegna Assistant is typing...",
+  "chatbotCapsuleTitle": "AI Assistant",
+  "chatbotHeroGreetingWithUser": "Hi {name}! How can I help you today?",
+  "@chatbotHeroGreetingWithUser": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "chatbotHeroGreetingDefault": "Hi there! How can I help you today?",
   "askYegnaFabTooltip": "Ask Yegna Health Assistant",
   "askYegnaFabLabel": "Ask AI",
   "selfAssessmentHeading": "Self-Assessment",
@@ -1145,6 +1155,20 @@
         "type": "int"
       }
     }
-  }
+  },
+  "adminConsoleTitle": "Admin Console",
+  "adminConsoleSubtitle": "Manage clubs, questions, modules, and directories",
+  "studentClubsTitle": "Student Health Clubs",
+  "studentClubsSubtitle": "Join peer wellness, mental health, and leadership clubs",
+  "studentClubsPromoTitle": "Student Health Clubs",
+  "studentClubsPromoSubtitle": "Engage with youth peers, attend weekly discussions, and get guided mentorship.",
+  "joinClubAction": "Join Club",
+  "leaveClubAction": "Leave Club",
+  "joinedClubBadge": "Joined ✓",
+  "myClubsTab": "My Clubs",
+  "exploreAllClubsTab": "Explore All",
+  "meetingScheduleLabel": "Meeting Schedule",
+  "meetingLocationLabel": "Meeting Location",
+  "assignedMentorLabel": "Club Lead & Mentor"
 }
 

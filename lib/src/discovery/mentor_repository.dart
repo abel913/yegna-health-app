@@ -227,3 +227,40 @@ class LocalVerifiedMentorRepository implements MentorRepository {
     return result;
   }
 }
+
+class DynamicMentorRepository implements MentorRepository {
+  const DynamicMentorRepository({
+    this.customMentorsProvider,
+    this.fallback = const LocalVerifiedMentorRepository(),
+  });
+
+  final Future<List<Mentor>> Function()? customMentorsProvider;
+  final MentorRepository fallback;
+
+  @override
+  Future<List<Mentor>> getMentors({
+    String? query,
+    MentorTopic? topic,
+    String? language,
+    bool? onlineOnly,
+  }) async {
+    final base = await fallback.getMentors(
+      query: query,
+      topic: topic,
+      language: language,
+      onlineOnly: onlineOnly,
+    );
+    if (fallback is UnconfiguredMentorRepository) {
+      return base;
+    }
+    if (customMentorsProvider == null) return base;
+    try {
+      final custom = await customMentorsProvider!();
+      final ids = base.map((m) => m.id).toSet();
+      final extras = custom.where((m) => !ids.contains(m.id)).toList();
+      return [...base, ...extras];
+    } catch (_) {
+      return base;
+    }
+  }
+}

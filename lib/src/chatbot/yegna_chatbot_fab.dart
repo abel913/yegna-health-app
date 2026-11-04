@@ -11,11 +11,13 @@ class YegnaChatbotFab extends StatelessWidget {
   const YegnaChatbotFab({
     this.chatbotRepository,
     this.chatHistoryRepository,
+    this.userName,
     super.key,
   });
 
   final ChatbotRepository? chatbotRepository;
   final ChatHistoryRepository? chatHistoryRepository;
+  final String? userName;
 
   void _openChat(BuildContext context) {
     Navigator.of(context).push<void>(
@@ -23,6 +25,7 @@ class YegnaChatbotFab extends StatelessWidget {
         builder: (_) => YegnaChatbotPage(
           repository: chatbotRepository ?? CompositeChatbotRepository(),
           historyRepository: chatHistoryRepository,
+          userName: userName,
         ),
       ),
     );

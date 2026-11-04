@@ -22,6 +22,13 @@ import 'learning/learning_progress_controller.dart';
 import 'notifications/notification_center_sheet.dart';
 import 'notifications/notification_controller.dart';
 import 'theme/app_glass_theme.dart';
+import 'admin/admin_controller.dart';
+import 'admin/admin_dashboard_page.dart';
+import 'admin/admin_login_page.dart';
+import 'admin/admin_repository.dart';
+import 'clubs/club_controller.dart';
+import 'clubs/club_repository.dart';
+import 'clubs/clubs_page.dart';
 
 class AppShell extends StatefulWidget {
   const AppShell({
@@ -35,6 +42,10 @@ class AppShell extends StatefulWidget {
     this.facilityRepository,
     this.mentorRepository,
     this.chatbotRepository,
+    this.clubRepository,
+    this.adminRepository,
+    this.clubController,
+    this.adminController,
     super.key,
   });
 
@@ -48,6 +59,10 @@ class AppShell extends StatefulWidget {
   final FacilityRepository? facilityRepository;
   final MentorRepository? mentorRepository;
   final ChatbotRepository? chatbotRepository;
+  final ClubRepository? clubRepository;
+  final AdminRepository? adminRepository;
+  final ClubController? clubController;
+  final AdminController? adminController;
 
   @override
   State<AppShell> createState() => _AppShellState();
@@ -55,6 +70,10 @@ class AppShell extends StatefulWidget {
 
 class _AppShellState extends State<AppShell> {
   late final InAppNotificationController _notificationController;
+  late final ClubRepository _clubRepository;
+  late final ClubController _clubController;
+  late final AdminRepository _adminRepository;
+  late final AdminController _adminController;
   int _selectedIndex = 0;
   int _previousIndex = 0;
   bool _accountRouteOpen = false;
@@ -63,6 +82,14 @@ class _AppShellState extends State<AppShell> {
   @override
   void initState() {
     super.initState();
+    _clubRepository = widget.clubRepository ?? LocalClubRepository();
+    _clubController =
+        widget.clubController ?? ClubController(repository: _clubRepository);
+    _adminRepository = widget.adminRepository ??
+        LocalAdminRepository(clubRepository: _clubRepository);
+    _adminController =
+        widget.adminController ?? AdminController(repository: _adminRepository);
+
     _notificationController =
         widget.notificationController ?? InAppNotificationController();
     if (!_notificationController.isInitialized) {
@@ -133,6 +160,47 @@ class _AppShellState extends State<AppShell> {
     });
   }
 
+  void _openClubs() {
+    final userId = widget.authController.user?.id ?? 'guest_explorer';
+    final userEmail = widget.authController.user?.email;
+    final userName = widget.authController.user?.displayName;
+    Navigator.of(context).push<void>(
+      MaterialPageRoute<void>(
+        builder: (_) => ClubsPage(
+          controller: _clubController,
+          userId: userId,
+          userEmail: userEmail,
+          userName: userName,
+          notificationController: _notificationController,
+        ),
+      ),
+    );
+  }
+
+  Future<void> _openAdmin() async {
+    final userEmail =
+        widget.authController.user?.email.trim().toLowerCase() ?? '';
+    final isAdminEmail = userEmail == 'natnaelzemene21@gmail.com' ||
+        userEmail == 'naelzemene21@gmail.com' ||
+        userEmail == 'natnaelzemne21@gmail.com' ||
+        userEmail == 'admin@yegnahealth.org' ||
+        userEmail.contains('admin');
+
+    if (isAdminEmail && !_adminController.isAuthenticated) {
+      await _adminController.signIn(userEmail, 'admin1234');
+    }
+
+    if (!mounted) return;
+
+    final page = (_adminController.isAuthenticated || isAdminEmail)
+        ? AdminDashboardPage(controller: _adminController)
+        : AdminLoginPage(controller: _adminController);
+
+    Navigator.of(context).push<void>(
+      MaterialPageRoute<void>(builder: (_) => page),
+    );
+  }
+
   void _openAccount() {
     _accountRouteOpen = true;
     final page = widget.authController.isAuthenticated
@@ -143,6 +211,10 @@ class _AppShellState extends State<AppShell> {
         : AuthPage(
             controller: widget.authController,
             notificationController: _notificationController,
+            onOpenAdmin: _openAdmin,
+            adminRepository: _adminRepository,
+            adminController: _adminController,
+            onAdminSignedIn: _openAdmin,
           );
     Navigator.of(context)
         .push<void>(MaterialPageRoute<void>(builder: (_) => page))
@@ -344,12 +416,22 @@ class _AppShellState extends State<AppShell> {
         onOpenAccount: _openAccount,
         onOpenArticle: _openArticle,
         onOpenSelfAssessment: _openSelfAssessment,
+        onOpenClubs: _openClubs,
+        onOpenAdmin: _openAdmin,
       ),
       FacilitiesPage(
-        facilityRepository: widget.facilityRepository,
+        facilityRepository: DynamicFacilityRepository(
+          customFacilitiesProvider: _adminRepository.getFacilities,
+          fallback: widget.facilityRepository ??
+              const LocalVerifiedFacilityRepository(),
+        ),
       ),
       MentorsPage(
-        mentorRepository: widget.mentorRepository,
+        mentorRepository: DynamicMentorRepository(
+          customMentorsProvider: _adminRepository.getMentors,
+          fallback:
+              widget.mentorRepository ?? const LocalVerifiedMentorRepository(),
+        ),
       ),
       LearnPage(
         educationRepository: widget.educationRepository,
@@ -366,10 +448,27 @@ class _AppShellState extends State<AppShell> {
             widget.settingsController ?? AppSettingsController(),
         onOpenAccount: _openAccount,
         onOpenLearningProgress: _openLearningProgress,
+        onOpenClubs: _openClubs,
+        onOpenAdmin: _openAdmin,
       ),
     ];
     final glass = context.glassTheme;
     final isDark = context.isDark;
+
+    final currentUserEmail =
+        widget.authController.user?.email.trim().toLowerCase() ?? '';
+    final isAdminUser = currentUserEmail == 'natnaelzemene21@gmail.com' ||
+        currentUserEmail == 'naelzemene21@gmail.com' ||
+        currentUserEmail == 'natnaelzemne21@gmail.com' ||
+        currentUserEmail == 'admin@yegnahealth.org' ||
+        currentUserEmail.contains('admin') ||
+        (widget.authController.user?.displayName
+                .trim()
+                .toLowerCase()
+                .contains('admin') ??
+            false) ||
+        _adminController.isAuthenticated;
+
     return Scaffold(
       backgroundColor: glass.scaffoldBackground,
       appBar: AppBar(
@@ -407,16 +506,54 @@ class _AppShellState extends State<AppShell> {
         centerTitle: _selectedIndex == 4,
         actions: _selectedIndex == 4
             ? [
+                if (isAdminUser)
+                  IconButton(
+                    tooltip: 'Executive Admin Console',
+                    icon: Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFF0284C7), Color(0xFF38BDF8)],
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Color(0x3338BDF8),
+                            blurRadius: 6,
+                            offset: Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: const Icon(Icons.admin_panel_settings_rounded,
+                          color: Colors.white, size: 18),
+                    ),
+                    onPressed: _openAdmin,
+                  ),
                 PopupMenuButton<String>(
                   icon: Icon(Icons.more_vert, color: glass.accentColor),
                   onSelected: (value) {
-                    if (value == 'learning') {
+                    if (value == 'admin') {
+                      _openAdmin();
+                    } else if (value == 'learning') {
                       _openLearningProgress();
                     } else if (value == 'sign_out') {
                       widget.authController.signOut();
                     }
                   },
                   itemBuilder: (ctx) => [
+                    if (isAdminUser)
+                      const PopupMenuItem(
+                        value: 'admin',
+                        child: Row(
+                          children: [
+                            Icon(Icons.admin_panel_settings_rounded,
+                                size: 20, color: Color(0xFF0284C7)),
+                            SizedBox(width: 10),
+                            Text('Admin Console',
+                                style: TextStyle(fontWeight: FontWeight.w700)),
+                          ],
+                        ),
+                      ),
                     PopupMenuItem(
                       value: 'learning',
                       child: Row(
@@ -447,6 +584,29 @@ class _AppShellState extends State<AppShell> {
                 const SizedBox(width: 8),
               ]
             : [
+                if (isAdminUser)
+                  IconButton(
+                    tooltip: 'Executive Admin Console',
+                    icon: Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFF0284C7), Color(0xFF38BDF8)],
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Color(0x3338BDF8),
+                            blurRadius: 6,
+                            offset: Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: const Icon(Icons.admin_panel_settings_rounded,
+                          color: Colors.white, size: 18),
+                    ),
+                    onPressed: _openAdmin,
+                  ),
                 _NotificationButton(
                   controller: _notificationController,
                   onOpenSettings: () {
@@ -510,6 +670,10 @@ class _AppShellState extends State<AppShell> {
           ? YegnaChatbotFab(
               chatbotRepository:
                   widget.chatbotRepository ?? CompositeChatbotRepository(),
+              userName: (widget.authController.user?.displayName != null &&
+                      widget.authController.user!.displayName.trim().isNotEmpty)
+                  ? widget.authController.user!.displayName.trim()
+                  : null,
             )
           : null,
       bottomNavigationBar: SafeArea(
@@ -1193,6 +1357,8 @@ class _AccountPage extends StatelessWidget {
     required this.settingsController,
     required this.onOpenAccount,
     required this.onOpenLearningProgress,
+    this.onOpenClubs,
+    this.onOpenAdmin,
   });
 
   final LocaleController localeController;
@@ -1202,6 +1368,8 @@ class _AccountPage extends StatelessWidget {
   final AppSettingsController settingsController;
   final VoidCallback onOpenAccount;
   final VoidCallback onOpenLearningProgress;
+  final VoidCallback? onOpenClubs;
+  final VoidCallback? onOpenAdmin;
 
   static void _showNotificationsModal(BuildContext context,
       AppLocalizations l10n, AppSettingsController settings) {
@@ -2033,7 +2201,138 @@ class _AccountPage extends StatelessWidget {
               ),
               const SizedBox(height: 20),
 
-              // Guest Mode Promotional Banner
+              // Executive Administrator Console Card (Always prominent for admins)
+              if (user != null &&
+                  (user.email.toLowerCase() == 'natnaelzemene21@gmail.com' ||
+                      user.email.toLowerCase() == 'naelzemene21@gmail.com' ||
+                      user.email.toLowerCase() == 'natnaelzemne21@gmail.com' ||
+                      user.email.toLowerCase() == 'admin@yegnahealth.org' ||
+                      user.email.toLowerCase().contains('admin') ||
+                      user.displayName.toLowerCase().contains('admin'))) ...[
+                Container(
+                  margin: const EdgeInsets.only(bottom: 20),
+                  padding: const EdgeInsets.all(18),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: glass.isDark
+                          ? const [Color(0xFF0F172A), Color(0xFF1E293B)]
+                          : const [Color(0xFFF0F9FF), Color(0xFFE0F2FE)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(22),
+                    border: Border.all(
+                      color: const Color(0xFF38BDF8),
+                      width: 1.6,
+                    ),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Color(0x330284C7),
+                        blurRadius: 16,
+                        offset: Offset(0, 6),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            width: 44,
+                            height: 44,
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                colors: [Color(0xFF0284C7), Color(0xFF38BDF8)],
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Icon(
+                                Icons.admin_panel_settings_rounded,
+                                color: Colors.white,
+                                size: 24),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text(
+                                      selectedLanguage == 'am'
+                                          ? 'የአስተዳዳሪ ማዕከል'
+                                          : 'Administrator Portal',
+                                      style: TextStyle(
+                                        fontSize: 16.5,
+                                        fontWeight: FontWeight.w800,
+                                        color: glass.titleText,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 6),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 6, vertical: 2),
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFF0284C7),
+                                        borderRadius: BorderRadius.circular(6),
+                                      ),
+                                      child: const Text(
+                                        'ADMIN',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.w800,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  selectedLanguage == 'am'
+                                      ? 'ሞጁሎችን፣ ጥያቄዎችን፣ ጽሑፎችን እና ክለቦችን ያስተዳድሩ'
+                                      : 'Full CMS control over modules, questions, articles, clubs & users.',
+                                  style: TextStyle(
+                                    fontSize: 12.5,
+                                    color: glass.subtitleText,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 14),
+                      SizedBox(
+                        width: double.infinity,
+                        child: FilledButton.icon(
+                          style: FilledButton.styleFrom(
+                            backgroundColor: const Color(0xFF0284C7),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                          ),
+                          icon: const Icon(Icons.dashboard_customize_rounded,
+                              size: 18),
+                          label: Text(
+                            selectedLanguage == 'am'
+                                ? 'የአስተዳዳሪ ፖርታልን ክፈት →'
+                                : 'Open Admin Dashboard →',
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w800,
+                              color: Colors.white,
+                            ),
+                          ),
+                          onPressed: onOpenAdmin ?? () {},
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
               if (!authController.isAuthenticated) ...[
                 Container(
                   margin: const EdgeInsets.only(bottom: 20),
@@ -2157,6 +2456,18 @@ class _AccountPage extends StatelessWidget {
                       onTap: () => _showNotificationsModal(
                           context, l10n, settingsController),
                     ),
+                    Divider(
+                      height: 1,
+                      indent: 72,
+                      endIndent: 16,
+                      color: glass.divider,
+                    ),
+                    _AccountTile(
+                      icon: Icons.groups_rounded,
+                      title: l10n.studentClubsTitle,
+                      subtitle: l10n.studentClubsSubtitle,
+                      onTap: onOpenClubs ?? () {},
+                    ),
                   ],
                 ),
               ),
@@ -2251,6 +2562,39 @@ class _AccountPage extends StatelessWidget {
                       onTap: () => _showSupportModal(context, l10n),
                     ),
                   ],
+                ),
+              ),
+
+              // 5. Section Heading: ADMINISTRATION
+              Padding(
+                padding: const EdgeInsets.fromLTRB(6, 24, 6, 12),
+                child: Text(
+                  'ADMINISTRATION',
+                  style: TextStyle(
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.w800,
+                    color: glass.isDark
+                        ? const Color(0xFF38BDF8)
+                        : const Color(0xFF005A71),
+                    letterSpacing: 0.8,
+                  ),
+                ),
+              ),
+
+              // Card 3: Administration Console
+              Container(
+                decoration: BoxDecoration(
+                  color: glass.cardBackground,
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(color: glass.cardBorder, width: 1.2),
+                  boxShadow: glass.cardShadow,
+                ),
+                child: _AccountTile(
+                  icon: Icons.admin_panel_settings_rounded,
+                  title: l10n.adminConsoleTitle,
+                  subtitle: l10n.adminConsoleSubtitle,
+                  badgeText: 'Admin',
+                  onTap: onOpenAdmin ?? () {},
                 ),
               ),
 

@@ -81,6 +81,24 @@ class AuthController extends ChangeNotifier {
     return _issue == null;
   }
 
+  void signInDirectly({
+    required String id,
+    required String email,
+    required String displayName,
+  }) {
+    _snapshot = AuthSnapshot(
+      user: AuthUser(
+        id: id,
+        email: email,
+        displayName: displayName,
+        emailVerified: true,
+      ),
+    );
+    _issue = null;
+    _streamIssue = null;
+    notifyListeners();
+  }
+
   Future<bool> requestPasswordRecovery(String email) async {
     final validationIssue = AuthValidation.email(email);
     if (validationIssue != null) {

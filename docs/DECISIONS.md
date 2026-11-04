@@ -1,5 +1,34 @@
 # Technical decisions
 
+## 2026-11-03 — Database-Driven Admin Credentials & Password Hashing
+
+- **Database-Backed Authentication (No Hardcoded Credentials)**:
+  - Eliminated all hardcoded administrator credentials from the code logic.
+  - Implemented `AdminAccount` model storing administrator accounts in the database table (`admin_accounts` in Supabase when remote, and `yegna_db_admin_accounts_table_v2` in persistent database storage when offline/local).
+  - Passwords are encrypted using cryptographic SHA-256 with project salt (`LocalAdminRepository.hashPassword`), preventing plaintext password exposure in storage or logs.
+  - `verifyAdminCredentials` queries the database table dynamically, matching email and verifying the cryptographic password hash.
+  - Added full administrative account management (`getAdminAccounts()`, `saveAdminAccount()`) to allow creating and updating admin credentials dynamically in the database.
+- **Dependency Pin (`crypto: ^3.0.6`)**:
+  - Added direct dependency `crypto: ^3.0.6` (previously only present transitively) to provide secure SHA-256 hashing for database administrator credentials.
+
+## 2026-11-03 — Professional Admin Portal & Student Clubs Engagement System
+
+- **Unified Admin Portal & Content Management Architecture**:
+  - Built an administrative engine providing full CRUD governance across 7 entities: Learning Modules, Assessment Questions, Educational Articles / Doctor's Notes, Verified Facilities, Counselor Mentors, Student Clubs, and Registered Users.
+  - Implemented `AdminRepository` and `LocalAdminRepository` utilizing lightweight JSON serialization persisted via `SharedPreferences`. No heavy new third-party state or database dependencies were introduced.
+  - Added `AdminAuditEntry` logging all administrative mutations (creations, edits, deletions, role updates) with timestamps and actor emails to ensure full traceability.
+  - Added pre-configured scaffolding templates (`ContentTemplates`) enabling instant one-tap content generation ("Load Template") across all entity editors.
+- **Student Clubs Engagement System**:
+  - Implemented `StudentClub` and `ClubMembership` data models with category filters (`wellness`, `mentalHealth`, `srh`, `substanceFree`, `leadership`).
+  - Added `ClubRepository` and `LocalClubRepository` supporting persistent member rosters and joined-club filtering.
+  - Wired direct integration with `InAppNotificationController` to generate in-app student confirmations upon club registration.
+- **Dynamic Repository Composition Pattern**:
+  - Implemented `DynamicFacilityRepository` and `DynamicMentorRepository` to cleanly augment hardcoded verified healthcare and mentor registries with dynamic admin additions.
+  - Preserved unconfigured fallback isolation (`UnconfiguredFacilityRepository` / `UnconfiguredMentorRepository`) so offline/unconfigured widget test contracts continue to pass without regression.
+- **Localization & Accessibility**:
+  - Full bilingual ARB resources (`app_en.arb`, `app_am.arb`) across all admin console screens, student club detail sheets, categories, and audit logs.
+  - Ensured empty states and long content use scrollable containers (`SingleChildScrollView`) to prevent layout clipping on small viewports and high text-scale settings.
+
 ## 2026-11-03 — Functional Settings: Dark Theme, Global Text Sizing, and Persistent Preferences
 
 - **App Settings Architecture (`AppSettingsController`)**:

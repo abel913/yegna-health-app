@@ -942,6 +942,9 @@
   "chatbotEmergencyCall8335": "በ 8335 ይደውሉ (ወጣቶች)",
   "chatbotClearChat": "ውይይቱን አጽዳ",
   "chatbotTyping": "የየኛ ረዳት በመጻፍ ላይ ነው...",
+  "chatbotCapsuleTitle": "የጤና ረዳት",
+  "chatbotHeroGreetingWithUser": "ሰላም {name}! ዛሬ በምን ልርዳዎት?",
+  "chatbotHeroGreetingDefault": "ሰላም! ዛሬ በምን ልርዳዎት?",
   "askYegnaFabTooltip": "የየኛ ጤና ረዳትን ይጠይቁ",
   "askYegnaFabLabel": "AI ጠይቅ",
   "selfAssessmentHeading": "የራስ-ምርመራ",
@@ -1108,6 +1111,20 @@
         "type": "int"
       }
     }
-  }
+  },
+  "adminConsoleTitle": "የአስተዳዳሪ ማዕከል",
+  "adminConsoleSubtitle": "ክበቦችን፣ ጥያቄዎችን፣ ሞጁሎችን እና አድራሻዎችን ማስተዳደሪያ",
+  "studentClubsTitle": "የተማሪዎች የጤና ክበቦች",
+  "studentClubsSubtitle": "የአቻ ደህንነት፣ የአእምሮ ጤና እና የአመራር ክበቦችን ይቀላቀሉ",
+  "studentClubsPromoTitle": "የተማሪዎች የጤና ክበቦች",
+  "studentClubsPromoSubtitle": "ከእኩዮችዎ ጋር ይወያዩ፣ በሳምንታዊ መድረኮች ይሳተፉ እና የአቻ ድጋፍ ያግኙ።",
+  "joinClubAction": "ክበቡን ተቀላቀል",
+  "leaveClubAction": "ከክበቡ ውጣ",
+  "joinedClubBadge": "አባል ነዎት ✓",
+  "myClubsTab": "የእኔ ክበቦች",
+  "exploreAllClubsTab": "ሁሉንም አስስ",
+  "meetingScheduleLabel": "የስብሰባ ሰዓት",
+  "meetingLocationLabel": "የመሰብሰቢያ ቦታ",
+  "assignedMentorLabel": "የክበቡ መሪ እና አማካሪ"
 }
 
