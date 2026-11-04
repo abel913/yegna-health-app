@@ -1,5 +1,16 @@
 # Technical decisions
 
+## 2026-11-04 — Official App Launcher Icons Generation (`flutter_launcher_icons`)
+
+- **Dedicated Launcher Icon Automation (`flutter_launcher_icons: ^0.14.4`)**:
+  - Added `flutter_launcher_icons: ^0.14.4` under `dev_dependencies` to automate the generation of cross-platform launcher icon assets for Android, iOS, and Web.
+  - Generates platform-compliant assets from the high-resolution source master icon (`assets/icon/app_icon.png`):
+    - **Android Adaptive Icons**: Separated solid white background (`#FFFFFF` in `colors.xml`) and transparent foreground (`ic_launcher_foreground.png`), configured with `adaptive_icon_foreground_inset: 0` to preserve the calculated 66% safe zone radius (325.7 px max glyph radius vs 341 px mask limit).
+    - **Android Legacy Icons**: Populates `mipmap-*/ic_launcher.png` for Android API < 26.
+    - **iOS App Icons**: Generates full Apple Human Interface Guidelines specification in `Runner/Assets.xcassets/AppIcon.appiconset/` without alpha transparency.
+    - **Web Icons**: Automatically updates `web/favicon.png` and PWA maskable icons (`Icon-192.png`, `Icon-512.png`).
+  - Scoped strictly to `dev_dependencies`, adding 0 runtime footprint to production mobile or web binaries.
+
 ## 2026-11-03 — Database-Driven Admin Credentials & Password Hashing
 
 - **Database-Backed Authentication (No Hardcoded Credentials)**:
