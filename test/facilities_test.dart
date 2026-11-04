@@ -77,6 +77,7 @@ void main() {
 
       // Check facility card presence
       expect(find.text('Arada Youth-Friendly Health Center'), findsOneWidget);
+      expect(find.text(en.callClinicAction), findsWidgets);
       expect(
           find.text('AAU Student Health Clinic (Sidist Kilo)'), findsOneWidget);
 
@@ -113,13 +114,14 @@ void main() {
       await tester.tap(find.text(en.viewDetailsAction).first);
       await tester.pumpAndSettle();
 
-      expect(
-        find.descendant(
-          of: find.byType(FacilityDetailSheet),
-          matching: find.text(en.callClinicAction),
-        ),
-        findsOneWidget,
+      final callClinicBtn = find.descendant(
+        of: find.byType(FacilityDetailSheet),
+        matching: find.text(en.callClinicAction),
       );
+      expect(callClinicBtn, findsOneWidget);
+      await tester.tap(callClinicBtn);
+      await tester.pump();
+      expect(tester.takeException(), isNull);
       await tester.scrollUntilVisible(
         find.text(en.confidentialityNoticeTitle),
         300,
@@ -215,6 +217,7 @@ void main() {
       expect(find.text(en.locationPermissionDenied), findsOneWidget);
       // List still displays verified facilities
       expect(find.text('Arada Youth-Friendly Health Center'), findsOneWidget);
+      expect(find.text(en.callClinicAction), findsWidgets);
     });
   });
 }

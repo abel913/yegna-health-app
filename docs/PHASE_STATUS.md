@@ -94,6 +94,18 @@
     - `test/club_ui_test.dart`: 4 / 4 tests passing.
   - Full project test suite (`flutter test --no-pub`): **All 161 tests passing (100% pass rate)**.
 
+## Direct Phone Call Integration for Facilities Directory (2026-11-04)
+
+**Status: Completed & 100% Verified.**
+- **Direct Phone Dialer Implementation (`PhoneLauncher`)**:
+  - Implemented centralized `PhoneLauncher.launchCall` in `lib/src/discovery/phone_launcher.dart` using `url_launcher` with external application dialer intent (`tel:...`) and regex-based number sanitization.
+  - Replaced the previous clipboard-only copy behavior on both `FacilityCard` and `FacilityDetailSheet` with direct telephone dialing matching the Peer Mentors interaction model.
+  - Preserved graceful fallback to clipboard copy with floating SnackBar notification if the platform cannot open a dialer (e.g. tablet or simulator).
+  - Added `FacilityCard.launchCall` helper for convenient programmatic access.
+- **Verification**:
+  - `dart format lib test`: Clean (114 files formatted, 0 unformatted).
+  - `flutter analyze --no-pub`: **0 issues found**.
+  - `flutter test --no-pub`: **All 139 tests passing (100% pass rate)**.
 
 ## Professional App Brand Header, Youth Favicon, & Home Feed Refinement (2026-11-03)
 

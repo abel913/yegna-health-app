@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import '../../l10n/app_localizations.dart';
 import 'facility_model.dart';
+import 'phone_launcher.dart';
 
 class FacilityDetailSheet extends StatelessWidget {
   const FacilityDetailSheet({
@@ -139,21 +139,8 @@ class FacilityDetailSheet extends StatelessWidget {
                     children: [
                       Expanded(
                         child: ElevatedButton.icon(
-                          onPressed: () {
-                            Clipboard.setData(
-                                ClipboardData(text: facility.phone));
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                    '${l10n.copiedToClipboard}: ${facility.phone}'),
-                                backgroundColor: const Color(0xFF0284C7),
-                                behavior: SnackBarBehavior.floating,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
-                            );
-                          },
+                          onPressed: () => PhoneLauncher.launchCall(
+                              context, facility.phone, l10n),
                           icon: const Icon(Icons.phone_in_talk_rounded,
                               size: 19, color: Colors.white),
                           label: Text(
