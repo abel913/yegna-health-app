@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import '../../l10n/app_localizations.dart';
 import 'facility_detail_sheet.dart';
 import 'facility_model.dart';
+import 'phone_launcher.dart';
 
 class FacilityCard extends StatelessWidget {
   const FacilityCard({
@@ -14,6 +14,14 @@ class FacilityCard extends StatelessWidget {
 
   final Facility facility;
   final VoidCallback? onTap;
+
+  /// Launches the native phone dialer for the clinic or falls back to clipboard copy.
+  static Future<void> launchCall(
+    BuildContext context,
+    String phone,
+    AppLocalizations l10n,
+  ) =>
+      PhoneLauncher.launchCall(context, phone, l10n);
 
   @override
   Widget build(BuildContext context) {
@@ -212,21 +220,8 @@ class FacilityCard extends StatelessWidget {
                   children: [
                     Expanded(
                       child: OutlinedButton.icon(
-                        onPressed: () {
-                          Clipboard.setData(
-                              ClipboardData(text: facility.phone));
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                  '${l10n.copiedToClipboard}: ${facility.phone}'),
-                              backgroundColor: const Color(0xFF0284C7),
-                              behavior: SnackBarBehavior.floating,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                          );
-                        },
+                        onPressed: () =>
+                            launchCall(context, facility.phone, l10n),
                         icon: const Icon(Icons.call_outlined,
                             size: 15, color: Color(0xFF0284C7)),
                         label: Text(

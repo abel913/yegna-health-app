@@ -1,5 +1,17 @@
 # Handoff
 
+## Direct Phone Call Integration for Facilities Directory (2026-11-04)
+
+- **Direct Clinic Calling via `PhoneLauncher`**:
+  - Implemented centralized `PhoneLauncher.launchCall` in `lib/src/discovery/phone_launcher.dart` with phone string cleanup (`RegExp(r'[^0-9+]')`) and native dialer intent (`tel:...`) via `url_launcher`.
+  - Updated `FacilityCard` and `FacilityDetailSheet` "Call Clinic" action buttons to directly open the device's native telephone dialer matching the Peer Mentors implementation.
+  - Graceful fallback: when dialing cannot be completed (e.g. tablet, emulator), the phone number is copied to the clipboard with a floating confirmation SnackBar.
+  - Cleaned unused `flutter/services.dart` imports from `facility_card.dart` and `facility_detail_sheet.dart`.
+- **Verification**:
+  - `dart format lib test`: Clean (114 files formatted, 0 unformatted).
+  - `flutter analyze --no-pub`: **0 issues found**.
+  - `flutter test --no-pub`: **All 139 tests passing (100% pass rate)**.
+
 ## Professional App Brand Header, Youth Favicon, & Home Feed Refinement (2026-11-03)
 
 - **Brand Assets & Youth Favicon Integration**:
