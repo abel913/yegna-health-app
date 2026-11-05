@@ -169,24 +169,24 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
         {/* Card 1: Registered Students */}
         <div
           onClick={() => onNavigate('users')}
-          className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-md transition-all cursor-pointer group"
+          className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs hover:shadow-md transition-all cursor-pointer group"
         >
           <div className="flex items-center justify-between mb-3">
-            <div className="w-11 h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center group-hover:scale-105 transition-transform">
+            <div className="w-11 h-11 rounded-xl bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-cyan-400 flex items-center justify-center group-hover:scale-105 transition-transform">
               <Users size={22} />
             </div>
-            <span className="flex items-center text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
+            <span className="flex items-center text-[11px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded-full border border-emerald-100 dark:border-emerald-800/60">
               +14% <ArrowUpRight size={12} />
             </span>
           </div>
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+          <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
             {lang === 'am' ? 'የተመዘገቡ ተማሪዎች' : 'Registered Students'}
           </p>
-          <h3 className="text-2xl font-extrabold text-slate-900 mt-0.5">
+          <h3 className="text-2xl font-extrabold text-slate-900 dark:text-white mt-0.5">
             {metrics?.registeredUsers ? (metrics.registeredUsers * 1240).toLocaleString() : '24,850'}
           </h3>
-          <p className="text-[11px] text-slate-400 mt-1 flex items-center gap-1">
-            <ShieldCheck size={12} className="text-emerald-500" />
+          <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1 flex items-center gap-1">
+            <ShieldCheck size={12} className="text-emerald-500 dark:text-emerald-400" />
             {lang === 'am' ? 'የግል መረጃ ሚስጥራዊ ነው' : 'Zero-knowledge protected'}
           </p>
         </div>
@@ -194,23 +194,23 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
         {/* Card 2: Verified Health Facilities */}
         <div
           onClick={() => onNavigate('facilities')}
-          className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-md transition-all cursor-pointer group"
+          className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs hover:shadow-md transition-all cursor-pointer group"
         >
           <div className="flex items-center justify-between mb-3">
-            <div className="w-11 h-11 rounded-xl bg-cyan-50 text-cyan-600 flex items-center justify-center group-hover:scale-105 transition-transform">
+            <div className="w-11 h-11 rounded-xl bg-cyan-50 dark:bg-cyan-950/40 text-cyan-600 dark:text-cyan-400 flex items-center justify-center group-hover:scale-105 transition-transform">
               <Hospital size={22} />
             </div>
-            <span className="text-[11px] font-bold text-brand-600 bg-brand-50 px-2 py-0.5 rounded-full">
+            <span className="text-[11px] font-bold text-brand-600 dark:text-cyan-400 bg-brand-50 dark:bg-brand-950/40 px-2 py-0.5 rounded-full border border-brand-100 dark:border-cyan-800/60">
               {lang === 'am' ? 'ጎንደርና አዲስ አበባ' : 'Gondar & Addis'}
             </span>
           </div>
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+          <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
             {lang === 'am' ? 'የተረጋገጡ ክሊኒኮች' : 'Verified Clinics'}
           </p>
-          <h3 className="text-2xl font-extrabold text-slate-900 mt-0.5">
+          <h3 className="text-2xl font-extrabold text-slate-900 dark:text-white mt-0.5">
             {metrics?.verifiedFacilities || facilities.length}
           </h3>
-          <p className="text-[11px] text-slate-400 mt-1">
+          <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1">
             {lang === 'am' ? 'የካምፓስና የከተማ ማዕከላት' : 'Campuses & regional hubs'}
           </p>
         </div>
@@ -218,24 +218,24 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
         {/* Card 3: Certified Peer Mentors */}
         <div
           onClick={() => onNavigate('mentors')}
-          className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-md transition-all cursor-pointer group"
+          className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs hover:shadow-md transition-all cursor-pointer group"
         >
           <div className="flex items-center justify-between mb-3">
-            <div className="w-11 h-11 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center group-hover:scale-105 transition-transform">
+            <div className="w-11 h-11 rounded-xl bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400 flex items-center justify-center group-hover:scale-105 transition-transform">
               <Users2 size={22} />
             </div>
-            <span className="flex items-center gap-1 text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="flex items-center gap-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded-full border border-emerald-100 dark:border-emerald-800/60">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-pulse" />
               {lang === 'am' ? 'አሁን የሚገኙ' : 'Online'}
             </span>
           </div>
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+          <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
             {lang === 'am' ? 'የወጣቶች አማካሪዎች' : 'Certified Mentors'}
           </p>
-          <h3 className="text-2xl font-extrabold text-slate-900 mt-0.5">
+          <h3 className="text-2xl font-extrabold text-slate-900 dark:text-white mt-0.5">
             {metrics?.counselorMentors || mentors.length}
           </h3>
-          <p className="text-[11px] text-slate-400 mt-1">
+          <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1">
             {lang === 'am' ? 'በስልክና ቴሌግራም የሚያማክሩ' : 'TYA & Red Cross certified'}
           </p>
         </div>
@@ -243,23 +243,23 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
         {/* Card 4: Learning Modules & Quizzes */}
         <div
           onClick={() => onNavigate('modules')}
-          className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-md transition-all cursor-pointer group"
+          className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs hover:shadow-md transition-all cursor-pointer group"
         >
           <div className="flex items-center justify-between mb-3">
-            <div className="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:scale-105 transition-transform">
+            <div className="w-11 h-11 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center group-hover:scale-105 transition-transform">
               <BookOpen size={22} />
             </div>
-            <span className="text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
+            <span className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded-full border border-emerald-100 dark:border-emerald-800/60">
               {lang === 'am' ? 'ሁለት ቋንቋ' : 'Bilingual'}
             </span>
           </div>
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+          <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
             {lang === 'am' ? 'የትምህርት ሞጁሎች' : 'Learning Modules'}
           </p>
-          <h3 className="text-2xl font-extrabold text-slate-900 mt-0.5">
+          <h3 className="text-2xl font-extrabold text-slate-900 dark:text-white mt-0.5">
             {metrics?.learningModules || 4}
           </h3>
-          <p className="text-[11px] text-slate-400 mt-1">
+          <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1">
             {metrics?.quizQuestions || 12} {lang === 'am' ? 'የፈተና ጥያቄዎች ያሉት' : 'interactive quiz questions'}
           </p>
         </div>
@@ -268,15 +268,15 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
       {/* 2. MIDDLE SECTION: INTERACTIVE ENGAGEMENT CHART & RECENT CLINICS */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left: Interactive Engagement Line & Area Chart (7 Cols) */}
-        <div className="lg:col-span-7 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col justify-between">
+        <div className="lg:col-span-7 bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs flex flex-col justify-between">
           <div>
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
               <div>
-                <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
-                  <TrendingUp size={18} className="text-brand-600" />
+                <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                  <TrendingUp size={18} className="text-brand-600 dark:text-cyan-400" />
                   <span>{lang === 'am' ? 'የወጣቶች ጤና ግንዛቤ ሂደት' : 'Youth Health Engagement Trends'}</span>
                 </h3>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-slate-500 dark:text-slate-400">
                   {lang === 'am'
                     ? 'ሳምንታዊ የትምህርት ንባብና የፈተና ተሳትፎ (ከተመረጠው ነጥብ ጋር በይነተገናኝ)'
                     : 'Module reads vs quiz passes with interactive point inspection'}
@@ -284,7 +284,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
               </div>
 
               {/* Timeframe Selector Pills */}
-              <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl text-xs font-bold self-start sm:self-auto">
+              <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl text-xs font-bold self-start sm:self-auto">
                 {(['7D', '30D', '12M'] as const).map((tf) => (
                   <button
                     key={tf}
@@ -294,8 +294,8 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
                     }}
                     className={`px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
                       timeframe === tf
-                        ? 'bg-white text-brand-700 shadow-xs font-extrabold'
-                        : 'text-slate-600 hover:text-slate-900'
+                        ? 'bg-white dark:bg-slate-700 text-brand-700 dark:text-cyan-300 shadow-xs font-extrabold'
+                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                     }`}
                   >
                     {tf === '7D'
@@ -416,39 +416,39 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
           </div>
 
           {/* Graph Legend & Status */}
-          <div className="flex items-center justify-between text-xs text-slate-500 pt-3 border-t border-slate-100 mt-2">
+          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 pt-3 border-t border-slate-100 dark:border-slate-800 mt-2">
             <div className="flex items-center gap-4">
-              <span className="flex items-center gap-1.5 font-semibold text-slate-700">
+              <span className="flex items-center gap-1.5 font-semibold text-slate-700 dark:text-slate-300">
                 <span className="w-3 h-1 rounded-full bg-cyan-600" />
                 {lang === 'am' ? 'የትምህርት ንባብ' : 'Module Reads'}
               </span>
-              <span className="flex items-center gap-1.5 font-semibold text-slate-700">
+              <span className="flex items-center gap-1.5 font-semibold text-slate-700 dark:text-slate-300">
                 <span className="w-3 h-1 rounded-full bg-purple-600" />
                 {lang === 'am' ? 'የተጠናቀቁ ፈተናዎች' : 'Quiz Completions'}
               </span>
             </div>
-            <span className="text-[11px] text-emerald-600 font-bold bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-100">
+            <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-50 dark:bg-emerald-950/40 px-2.5 py-0.5 rounded-full border border-emerald-100 dark:border-emerald-800/60">
               +18.4% {lang === 'am' ? 'ዕድገት' : 'growth'}
             </span>
           </div>
         </div>
 
         {/* Right: Quick Facilities Directory Preview (5 Cols) */}
-        <div className="lg:col-span-5 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col justify-between">
+        <div className="lg:col-span-5 bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h3 className="text-base font-bold text-slate-900 flex items-center gap-1.5">
-                  <Hospital size={17} className="text-brand-600" />
+                <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                  <Hospital size={17} className="text-brand-600 dark:text-cyan-400" />
                   <span>{lang === 'am' ? 'የተረጋገጡ የጤና ተቋማት' : 'Verified Clinics'}</span>
                 </h3>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-slate-500 dark:text-slate-400">
                   {lang === 'am' ? 'የጎንደር ዩኒቨርሲቲና የከተማ ማዕከላት' : 'University campuses & regional centers'}
                 </p>
               </div>
               <button
                 onClick={() => onNavigate('facilities')}
-                className="text-xs font-bold text-brand-600 hover:text-brand-700 cursor-pointer"
+                className="text-xs font-bold text-brand-600 dark:text-cyan-400 hover:text-brand-700 cursor-pointer"
               >
                 {lang === 'am' ? 'ሁሉንም እይ →' : 'View all →'}
               </button>
@@ -458,22 +458,22 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
               {facilities.slice(0, 3).map((f) => (
                 <div
                   key={f.id}
-                  className="p-3 rounded-xl border border-slate-100 hover:border-slate-200 bg-slate-50/50 hover:bg-white transition-all flex items-start justify-between gap-3"
+                  className="p-3 rounded-xl border border-slate-100 dark:border-slate-800 hover:border-slate-200 dark:hover:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 transition-all flex items-start justify-between gap-3"
                 >
                   <div className="min-w-0">
                     <div className="flex items-center gap-1.5">
-                      <h4 className="text-xs font-bold text-slate-900 truncate">
+                      <h4 className="text-xs font-bold text-slate-900 dark:text-white truncate">
                         {lang === 'am' ? f.nameAm : f.nameEn}
                       </h4>
-                      {f.isVerified && <CheckCircle2 size={13} className="text-brand-600 flex-shrink-0" />}
+                      {f.isVerified && <CheckCircle2 size={13} className="text-brand-600 dark:text-cyan-400 flex-shrink-0" />}
                     </div>
-                    <p className="text-[11px] text-slate-500 truncate mt-0.5">
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate mt-0.5">
                       {f.subCity} • {f.operatingHours}
                     </p>
                   </div>
                   <a
                     href={`tel:${f.phone}`}
-                    className="p-1.5 rounded-lg bg-white border border-slate-200 text-slate-600 hover:text-brand-600 hover:border-brand-200 flex-shrink-0 transition-colors"
+                    className="p-1.5 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-cyan-400 hover:border-brand-200 flex-shrink-0 transition-colors"
                   >
                     <Phone size={13} />
                   </a>
@@ -482,10 +482,10 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
             </div>
           </div>
 
-          <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 mt-3">
+          <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mt-3">
             <span>{facilities.length} {lang === 'am' ? 'ተቋማት በሲስተሙ አሉ' : 'clinics active'}</span>
             <span
-              className="text-brand-600 font-semibold cursor-pointer hover:underline"
+              className="text-brand-600 dark:text-cyan-400 font-semibold cursor-pointer hover:underline"
               onClick={() => onNavigate('facilities')}
             >
               {lang === 'am' ? '+ አዲስ ጨምር' : '+ Add New'}
@@ -497,19 +497,19 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
       {/* 3. VISUAL DISTRIBUTION SECTION: TOP HEALTH TOPICS & REGIONAL ENGAGEMENT */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Card A: Top Health Topics Engagement Bar Breakdown */}
-        <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs">
+        <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
-                <BarChart2 size={18} className="text-brand-600" />
+              <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <BarChart2 size={18} className="text-brand-600 dark:text-cyan-400" />
                 <span>{lang === 'am' ? 'የትምህርት ርዕሶች ተሳትፎ መጠን' : 'Health Curriculum Topic Breakdown'}</span>
               </h3>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-slate-500 dark:text-slate-400">
                 {lang === 'am' ? 'በወጣቶች ዘንድ በብዛት የሚነበቡ የጤና ዘርፎች' : 'Most frequently studied health domains by students'}
               </p>
             </div>
-            <span className="flex items-center gap-1 text-xs font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
-              <Flame size={12} className="text-amber-500" />
+            <span className="flex items-center gap-1 text-xs font-bold text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 px-2 py-0.5 rounded-full border border-amber-200 dark:border-amber-800/60">
+              <Flame size={12} className="text-amber-500 dark:text-amber-400" />
               {lang === 'am' ? 'ተፈላጊ' : 'Trending'}
             </span>
           </div>
@@ -523,10 +523,10 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
             ].map((topic, idx) => (
               <div key={idx} className="space-y-1">
                 <div className="flex items-center justify-between text-xs font-semibold">
-                  <span className="text-slate-800">{lang === 'am' ? topic.labelAm : topic.labelEn}</span>
-                  <span className="text-slate-500 font-bold">{topic.pct}% ({topic.count})</span>
+                  <span className="text-slate-800 dark:text-slate-200">{lang === 'am' ? topic.labelAm : topic.labelEn}</span>
+                  <span className="text-slate-500 dark:text-slate-400 font-bold">{topic.pct}% ({topic.count})</span>
                 </div>
-                <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+                <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2.5 overflow-hidden">
                   <div
                     className={`${topic.color} h-2.5 rounded-full transition-all duration-500`}
                     style={{ width: `${topic.pct}%` }}
@@ -538,18 +538,18 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
         </div>
 
         {/* Card B: Campus & Regional Engagement Distribution */}
-        <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs">
+        <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
-                <Compass size={18} className="text-brand-600" />
+              <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <Compass size={18} className="text-brand-600 dark:text-cyan-400" />
                 <span>{lang === 'am' ? 'የካምፓሶችና የክልሎች ተሳትፎ' : 'Regional & Campus Geographic Distribution'}</span>
               </h3>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-slate-500 dark:text-slate-400">
                 {lang === 'am' ? 'የተማሪዎች እንቅስቃሴ በካምፓሶችና ክልሎች' : 'Active student user engagement by campus cluster'}
               </p>
             </div>
-            <span className="text-xs font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-full border border-indigo-200">
+            <span className="text-xs font-bold text-indigo-700 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/40 px-2 py-0.5 rounded-full border border-indigo-200 dark:border-indigo-800/60">
               {lang === 'am' ? 'አገር አቀፍ' : 'Nationwide'}
             </span>
           </div>
@@ -562,13 +562,13 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
             ].map((reg, idx) => (
               <div key={idx} className="space-y-1">
                 <div className="flex items-center justify-between text-xs font-semibold">
-                  <span className="flex items-center gap-1.5 text-slate-800">
-                    <reg.icon size={14} className="text-slate-500" />
+                  <span className="flex items-center gap-1.5 text-slate-800 dark:text-slate-200">
+                    <reg.icon size={14} className="text-slate-500 dark:text-slate-400" />
                     <span>{lang === 'am' ? reg.nameAm : reg.nameEn}</span>
                   </span>
-                  <span className="text-slate-700 font-bold">{reg.pct}%</span>
+                  <span className="text-slate-700 dark:text-slate-300 font-bold">{reg.pct}%</span>
                 </div>
-                <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+                <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2.5 overflow-hidden">
                   <div
                     className={`${reg.color} h-2.5 rounded-full transition-all duration-500`}
                     style={{ width: `${reg.pct}%` }}
@@ -583,20 +583,20 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
       {/* 4. BOTTOM SECTION: CERTIFIED MENTORS & AUDIT TRAIL */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Counselors Roster (6 Cols) */}
-        <div className="lg:col-span-6 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs">
+        <div className="lg:col-span-6 bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h3 className="text-base font-bold text-slate-900 flex items-center gap-1.5">
-                <Users2 size={18} className="text-purple-600" />
+              <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                <Users2 size={18} className="text-purple-600 dark:text-purple-400" />
                 <span>{lang === 'am' ? 'የወጣቶች አማካሪዎች' : 'Certified Peer Counselors'}</span>
               </h3>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-slate-500 dark:text-slate-400">
                 {lang === 'am' ? 'የስነ-ተዋልዶና የአእምሮ ጤና ባለሙያዎች' : 'Confidential counseling network'}
               </p>
             </div>
             <button
               onClick={() => onNavigate('mentors')}
-              className="text-xs font-bold text-brand-600 hover:text-brand-700 cursor-pointer"
+              className="text-xs font-bold text-brand-600 dark:text-cyan-400 hover:text-brand-700 cursor-pointer"
             >
               {lang === 'am' ? 'አማካሪዎች →' : 'Mentors →'}
             </button>
@@ -606,21 +606,21 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
             {mentors.slice(0, 3).map((m) => (
               <div
                 key={m.id}
-                className="p-3 rounded-xl border border-slate-100 hover:border-slate-200 bg-slate-50/50 hover:bg-white transition-all flex items-center justify-between gap-3"
+                className="p-3 rounded-xl border border-slate-100 dark:border-slate-800 hover:border-slate-200 dark:hover:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 transition-all flex items-center justify-between gap-3"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-purple-100 text-purple-700 font-bold text-xs flex items-center justify-center">
+                  <div className="w-9 h-9 rounded-full bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 font-bold text-xs flex items-center justify-center">
                     {m.name.slice(0, 2).toUpperCase()}
                   </div>
                   <div>
-                    <h4 className="text-xs font-bold text-slate-900">{m.name}</h4>
-                    <p className="text-[11px] text-slate-500">{m.organization}</p>
+                    <h4 className="text-xs font-bold text-slate-900 dark:text-white">{m.name}</h4>
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400">{m.organization}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
                   <a
                     href={`tel:${m.phone}`}
-                    className="p-1.5 rounded-lg bg-white border border-slate-200 text-slate-600 hover:text-brand-600 hover:border-brand-200 transition-colors"
+                    className="p-1.5 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-cyan-400 hover:border-brand-200 flex-shrink-0 transition-colors"
                   >
                     <Phone size={13} />
                   </a>
@@ -631,20 +631,20 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
         </div>
 
         {/* Audit Activity Feed (6 Cols) */}
-        <div className="lg:col-span-6 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs">
+        <div className="lg:col-span-6 bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h3 className="text-base font-bold text-slate-900 flex items-center gap-1.5">
-                <Clock size={17} className="text-brand-600" />
+              <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                <Clock size={17} className="text-brand-600 dark:text-cyan-400" />
                 <span>{lang === 'am' ? 'የቅርብ የአስተዳዳሪ እርምጃዎች' : 'Recent Audit Activity'}</span>
               </h3>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-slate-500 dark:text-slate-400">
                 {lang === 'am' ? 'የተመዘገቡ የለውጥ እንቅስቃሴዎች' : 'Immutable administrative audit stream'}
               </p>
             </div>
             <button
               onClick={() => onNavigate('audit')}
-              className="text-xs font-bold text-brand-600 hover:text-brand-700 cursor-pointer"
+              className="text-xs font-bold text-brand-600 dark:text-cyan-400 hover:text-brand-700 cursor-pointer"
             >
               {lang === 'am' ? 'ሙሉ ኦዲት →' : 'Audit logs →'}
             </button>
@@ -652,14 +652,14 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
 
           <div className="space-y-3">
             {activity.slice(0, 4).map((act) => (
-              <div key={act.id} className="text-xs pb-2.5 border-b border-slate-100 last:border-0 last:pb-0">
-                <div className="flex items-center justify-between text-slate-400 text-[11px] mb-1">
-                  <span className="font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded-md">
+              <div key={act.id} className="text-xs pb-2.5 border-b border-slate-100 dark:border-slate-800 last:border-0 last:pb-0">
+                <div className="flex items-center justify-between text-slate-400 dark:text-slate-500 text-[11px] mb-1">
+                  <span className="font-bold text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md border border-slate-200/50 dark:border-slate-700">
                     {act.action}
                   </span>
                   <span>{new Date(act.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                 </div>
-                <p className="text-slate-600 line-clamp-1">{act.details}</p>
+                <p className="text-slate-600 dark:text-slate-300 line-clamp-1">{act.details}</p>
               </div>
             ))}
           </div>

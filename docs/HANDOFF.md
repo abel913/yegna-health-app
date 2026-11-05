@@ -1,5 +1,16 @@
 # Handoff
 
+## Enterprise Dark / Light Mode Theme Engine Architecture (2026-11-05)
+
+- **Theme Engine (`admin-web/src/context/ThemeContext.tsx`)**:
+  - Persistent `'light' | 'dark'` theme manager with `localStorage` and `prefers-color-scheme` support.
+  - Smooth animated Sun/Moon toggle switch in top navigation header bar.
+  - "Toggle Theme" quick action integrated directly into the `Ctrl+K` Command Palette.
+  - Deep slate (`slate-950` / `slate-900`) aesthetic with glowing cyan accents across Dashboard, Audit Logs, Users, and Login screens.
+- **Verification**:
+  - `cd admin-web && npm run build`: 1,594 modules transformed, 0 errors in 13.14s.
+  - `flutter analyze --no-pub`: 0 issues found.
+
 ## Global Command Palette (Ctrl+K) & Spotlight Search Architecture (2026-11-05)
 
 - **Command Palette (`admin-web/src/components/CommandPalette.tsx`)**:

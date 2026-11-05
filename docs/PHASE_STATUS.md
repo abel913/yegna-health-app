@@ -1,5 +1,23 @@
 # Phase status
 
+## Enterprise Dark / Light Mode Theme Engine Architecture (2026-11-05)
+
+**Status: Completed & 100% Verified.**
+- **Theme Engine Architecture (`ThemeContext.tsx`)**:
+  - Implemented persistent theme management system (`'light' | 'dark'`) persisted to `localStorage` (`yegna_admin_theme`) with automatic OS preference fallback (`prefers-color-scheme`).
+  - Added class-based dark mode (`darkMode: 'class'`) in Tailwind configuration and document root synchronization (`<html class="dark">`).
+  - Added custom slate dark mode scrollbars and selection styling (`selection:bg-brand-500 selection:text-white`).
+- **Portal-Wide Dark Palette Integration**:
+  - `AdminLayout.tsx`: Deep slate (`slate-950` / `slate-900`) sidebar and header with subtle borders (`border-slate-800`), vibrant brand accents (`text-cyan-400`), and animated Sun/Moon toggle button.
+  - `CommandPalette.tsx`: Dark glassmorphic spotlight modal, dark item hover states, and direct "Switch to Dark / Light Mode" quick action.
+  - `DashboardPage.tsx`: Dark mode KPI cards, interactive SVG engagement curves with theme-aware grid rules, dark facility previews, topic progress bars, and audit stream.
+  - `UsersPage.tsx`: Dark mode role filters, table headers, zero-knowledge privacy card, and moderation selects.
+  - `AuditLogsPage.tsx`: Dark table rows, action badges, and export buttons.
+  - `LoginPage.tsx`: Dark authentication card with ambient radial gradients.
+- **Quality Gates & Verification**:
+  - TypeScript & Vite production build (`cd admin-web && npm run build`): **1,594 modules transformed, 0 errors in 13.14s**.
+  - Root Flutter static analysis (`flutter analyze --no-pub`): **0 issues found**.
+
 ## Global Command Palette (Ctrl+K) & Spotlight Search Architecture (2026-11-05)
 
 **Status: Completed & 100% Verified.**

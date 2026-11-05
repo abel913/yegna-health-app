@@ -15,8 +15,11 @@ import {
   X,
   FileSpreadsheet,
   PlusCircle,
+  Sun,
+  Moon,
 } from 'lucide-react';
 import { Facility, Mentor, Module, StudentClub } from '../types/index.js';
+import { useTheme } from '../context/ThemeContext.js';
 
 export interface CommandPaletteProps {
   isOpen: boolean;
@@ -65,6 +68,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
   const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
+  const { toggleTheme, isDark } = useTheme();
 
   // Focus input when opened & reset search
   useEffect(() => {
@@ -172,6 +176,30 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
       iconColor: 'text-emerald-600',
       onSelect: () => {
         onToggleLang();
+        onClose();
+      },
+    });
+
+    items.push({
+      id: 'act-theme',
+      groupId: 'actions',
+      groupLabel: lang === 'am' ? 'ፈጣን ትዕዛዛት' : 'Quick Actions',
+      title: isDark
+        ? lang === 'am'
+          ? 'ወደ ብሩህ ገጽታ ቀይር (Light Mode)'
+          : 'Switch to Light Mode'
+        : lang === 'am'
+        ? 'ወደ ጥቁር ገጽታ ቀይር (Dark Mode)'
+        : 'Switch to Dark Mode',
+      subtitle: isDark
+        ? 'Switch interface to light palette'
+        : 'Switch interface to high-contrast dark theme',
+      badge: 'Theme',
+      icon: isDark ? Sun : Moon,
+      iconBgColor: isDark ? 'bg-amber-500/10 text-amber-400' : 'bg-slate-500/10 text-slate-600',
+      iconColor: isDark ? 'text-amber-400' : 'text-slate-600',
+      onSelect: () => {
+        toggleTheme();
         onClose();
       },
     });
@@ -383,17 +411,17 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-start justify-center pt-16 md:pt-24 px-4 bg-slate-900/50 backdrop-blur-sm animate-in fade-in duration-150"
+      className="fixed inset-0 z-50 flex items-start justify-center pt-16 md:pt-24 px-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-150"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-2xl bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden animate-in zoom-in-95 duration-150 flex flex-col max-h-[80vh]"
+        className="w-full max-w-2xl bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden animate-in zoom-in-95 duration-150 flex flex-col max-h-[80vh]"
         onClick={(e) => e.stopPropagation()}
         onKeyDown={handleKeyDown}
       >
         {/* Search Input Bar */}
-        <div className="relative flex items-center px-4 py-3.5 border-b border-slate-100 bg-white">
-          <Search size={20} className="text-slate-400 mr-3 flex-shrink-0" />
+        <div className="relative flex items-center px-4 py-3.5 border-b border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900">
+          <Search size={20} className="text-slate-400 dark:text-slate-500 mr-3 flex-shrink-0" />
           <input
             ref={inputRef}
             type="text"
@@ -404,7 +432,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                 ? 'ገጽ፣ ክሊኒክ፣ ሞጁል ወይም ትዕዛዝ ፈልግ... (ለምሳሌ: Gondar, SRH, ክሊኒክ)'
                 : 'Search pages, facilities, modules, actions... (e.g. Gondar, SRH, Clinics)'
             }
-            className="w-full text-sm font-semibold text-slate-800 placeholder:text-slate-400 bg-transparent border-none outline-none"
+            className="w-full text-sm font-semibold text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 bg-transparent border-none outline-none"
           />
           {query ? (
             <button
@@ -412,30 +440,30 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                 setQuery('');
                 inputRef.current?.focus();
               }}
-              className="p-1 text-slate-400 hover:text-slate-600 rounded-md hover:bg-slate-100 mr-2 transition-colors"
+              className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 mr-2 transition-colors cursor-pointer"
             >
               <X size={16} />
             </button>
           ) : null}
           <kbd
             onClick={onClose}
-            className="hidden sm:inline-flex items-center px-2 py-0.5 rounded-md bg-slate-100 border border-slate-200 text-[10px] font-bold text-slate-500 shadow-2xs cursor-pointer hover:bg-slate-200 transition-colors"
+            className="hidden sm:inline-flex items-center px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[10px] font-bold text-slate-500 dark:text-slate-400 shadow-2xs cursor-pointer hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
           >
             ESC
           </kbd>
         </div>
 
         {/* Scrollable Results List */}
-        <div ref={listRef} className="overflow-y-auto p-2 divide-y divide-slate-50 flex-1">
+        <div ref={listRef} className="overflow-y-auto p-2 divide-y divide-slate-50 dark:divide-slate-800/60 flex-1">
           {filteredItems.length === 0 ? (
             <div className="py-12 px-6 text-center">
-              <div className="w-12 h-12 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-3">
+              <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 flex items-center justify-center mx-auto mb-3">
                 <Search size={22} />
               </div>
-              <p className="text-sm font-bold text-slate-800">
+              <p className="text-sm font-bold text-slate-800 dark:text-slate-100">
                 {lang === 'am' ? `ምንም አልተገኘም "${query}"` : `No results found for "${query}"`}
               </p>
-              <p className="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
+              <p className="text-xs text-slate-400 dark:text-slate-500 mt-1 max-w-sm mx-auto">
                 {lang === 'am'
                   ? 'እባክዎ የተለየ ቃል፣ የካምፓስ ስም (Gondar) ወይም የትምህርት ርዕስ ይሞክሩ።'
                   : 'Try searching for campus names like "Maraki", topics like "SRH", or navigation tabs.'}
@@ -444,7 +472,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
           ) : (
             groupedResults.map((group) => (
               <div key={group.label} className="py-1.5 first:pt-0 last:pb-0">
-                <div className="px-3 py-1 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
+                <div className="px-3 py-1 text-[10px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-500">
                   {group.label}
                 </div>
                 <div className="space-y-0.5 mt-0.5">
@@ -458,8 +486,8 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                         onMouseEnter={() => setSelectedIndex(flatIndex)}
                         className={`flex items-center justify-between px-3 py-2 rounded-xl text-xs cursor-pointer transition-all ${
                           isSelected
-                            ? 'bg-slate-100/90 text-slate-900 font-semibold shadow-2xs'
-                            : 'text-slate-600 hover:bg-slate-50'
+                            ? 'bg-slate-100 dark:bg-slate-800/90 text-slate-900 dark:text-white font-semibold shadow-2xs'
+                            : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50'
                         }`}
                       >
                         <div className="flex items-center gap-3 min-w-0 flex-1">
@@ -469,21 +497,21 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                             <Icon size={16} />
                           </div>
                           <div className="min-w-0 flex-1">
-                            <p className="text-xs font-bold text-slate-900 truncate">{item.title}</p>
+                            <p className="text-xs font-bold text-slate-900 dark:text-slate-100 truncate">{item.title}</p>
                             {item.subtitle && (
-                              <p className="text-[11px] text-slate-400 truncate">{item.subtitle}</p>
+                              <p className="text-[11px] text-slate-400 dark:text-slate-500 truncate">{item.subtitle}</p>
                             )}
                           </div>
                         </div>
 
                         <div className="flex items-center gap-2 flex-shrink-0 ml-3">
                           {item.badge && (
-                            <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 font-bold text-[10px] border border-slate-200/60">
+                            <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold text-[10px] border border-slate-200/60 dark:border-slate-700">
                               {item.badge}
                             </span>
                           )}
                           {isSelected && (
-                            <div className="hidden sm:flex items-center gap-1 text-[11px] font-bold text-brand-600">
+                            <div className="hidden sm:flex items-center gap-1 text-[11px] font-bold text-brand-600 dark:text-cyan-400">
                               <span>Select</span>
                               <CornerDownLeft size={12} />
                             </div>
@@ -499,32 +527,32 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
         </div>
 
         {/* Footer Keyboard Guide */}
-        <div className="px-4 py-2.5 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500 font-medium">
+        <div className="px-4 py-2.5 bg-slate-50 dark:bg-slate-950 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 font-medium">
           <div className="flex items-center gap-4">
             <span className="inline-flex items-center gap-1">
-              <kbd className="px-1.5 py-0.5 rounded bg-white border border-slate-200 text-[10px] font-bold text-slate-600 shadow-2xs">
+              <kbd className="px-1.5 py-0.5 rounded bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[10px] font-bold text-slate-600 dark:text-slate-300 shadow-2xs">
                 ↑
               </kbd>
-              <kbd className="px-1.5 py-0.5 rounded bg-white border border-slate-200 text-[10px] font-bold text-slate-600 shadow-2xs">
+              <kbd className="px-1.5 py-0.5 rounded bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[10px] font-bold text-slate-600 dark:text-slate-300 shadow-2xs">
                 ↓
               </kbd>
               <span className="ml-0.5">{lang === 'am' ? 'ለማሰስ' : 'to navigate'}</span>
             </span>
             <span className="inline-flex items-center gap-1">
-              <kbd className="px-1.5 py-0.5 rounded bg-white border border-slate-200 text-[10px] font-bold text-slate-600 shadow-2xs">
+              <kbd className="px-1.5 py-0.5 rounded bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[10px] font-bold text-slate-600 dark:text-slate-300 shadow-2xs">
                 ↵
               </kbd>
               <span className="ml-0.5">{lang === 'am' ? 'ለመምረጥ' : 'to select'}</span>
             </span>
             <span className="hidden sm:inline-flex items-center gap-1">
-              <kbd className="px-1.5 py-0.5 rounded bg-white border border-slate-200 text-[10px] font-bold text-slate-600 shadow-2xs">
+              <kbd className="px-1.5 py-0.5 rounded bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[10px] font-bold text-slate-600 dark:text-slate-300 shadow-2xs">
                 esc
               </kbd>
               <span className="ml-0.5">{lang === 'am' ? 'ለመዝጋት' : 'to close'}</span>
             </span>
           </div>
 
-          <div className="text-[10px] font-semibold text-slate-400">
+          <div className="text-[10px] font-semibold text-slate-400 dark:text-slate-500">
             Yegna Health Spotlight v2.0
           </div>
         </div>
