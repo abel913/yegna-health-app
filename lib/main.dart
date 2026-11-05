@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -15,6 +16,8 @@ import 'src/chatbot/composite_chatbot_repository.dart';
 import 'src/chatbot/supabase_gemini_chatbot_repository.dart';
 import 'src/discovery/facility_repository.dart';
 import 'src/discovery/mentor_repository.dart';
+import 'src/discovery/sync_facility_repository.dart';
+import 'src/discovery/sync_mentor_repository.dart';
 import 'src/locale_controller.dart';
 import 'src/notifications/notification_controller.dart';
 import 'src/learning/assessment_repository.dart';
@@ -23,6 +26,10 @@ import 'src/learning/learning_cache.dart';
 import 'src/learning/learning_progress_controller.dart';
 import 'src/learning/progress_repository.dart';
 import 'src/learning/supabase_education_repository.dart';
+import 'src/learning/sync_education_repository.dart';
+import 'src/sync/api_client.dart';
+import 'src/sync/offline_sync_store.dart';
+import 'src/sync/sync_manager.dart';
 
 const _supabaseUrl = String.fromEnvironment('SUPABASE_URL');
 const _supabasePublishableKey =
@@ -37,6 +44,23 @@ Future<void> main() async {
   await settingsController.load();
   final notificationController = InAppNotificationController(preferences);
 
+  final apiClient = ApiClient();
+  final syncStore = OfflineSyncStore(preferences: preferences);
+  final syncManager = SyncManager(apiClient: apiClient, store: syncStore);
+  unawaited(syncManager.init());
+  unawaited(syncManager.syncAll());
+
+  final facilityRepository = SyncFacilityRepository(
+    store: syncStore,
+    apiClient: apiClient,
+    fallback: const LocalVerifiedFacilityRepository(),
+  );
+  final mentorRepository = SyncMentorRepository(
+    store: syncStore,
+    apiClient: apiClient,
+    fallback: const LocalVerifiedMentorRepository(),
+  );
+
   final supabaseClient = await _initializeSupabase();
   final authRepository = supabaseClient == null
       ? const UnconfiguredAuthRepository()
@@ -47,21 +71,26 @@ Future<void> main() async {
         ? null
         : SupabaseGeminiChatbotRepository(supabaseClient),
   );
+
+  final educationRepository = supabaseClient == null
+      ? SyncEducationRepository(store: syncStore, apiClient: apiClient)
+      : SupabaseEducationRepository(supabaseClient, LearningCache());
+  final assessmentRepository = supabaseClient == null
+      ? SyncAssessmentRepository(store: syncStore, apiClient: apiClient)
+      : SupabaseAssessmentRepository(supabaseClient, LearningCache());
+
   runApp(YegnaHealthApp(
     localeController: localeController,
     authController: authController,
     settingsController: settingsController,
     notificationController: notificationController,
     chatbotRepository: chatbotRepository,
-    educationRepository: supabaseClient == null
-        ? const UnconfiguredEducationRepository()
-        : SupabaseEducationRepository(supabaseClient, LearningCache()),
-    assessmentRepository: supabaseClient == null
-        ? const UnconfiguredAssessmentRepository()
-        : SupabaseAssessmentRepository(supabaseClient, LearningCache()),
+    educationRepository: educationRepository,
+    assessmentRepository: assessmentRepository,
     progressStore: ProgressRepository(supabaseClient),
-    facilityRepository: const LocalVerifiedFacilityRepository(),
-    mentorRepository: const LocalVerifiedMentorRepository(),
+    facilityRepository: facilityRepository,
+    mentorRepository: mentorRepository,
+    syncManager: syncManager,
   ));
 }
 
@@ -98,6 +127,7 @@ class YegnaHealthApp extends StatefulWidget {
     this.facilityRepository,
     this.mentorRepository,
     this.chatbotRepository,
+    this.syncManager,
     super.key,
   });
 
@@ -111,6 +141,7 @@ class YegnaHealthApp extends StatefulWidget {
   final FacilityRepository? facilityRepository;
   final MentorRepository? mentorRepository;
   final ChatbotRepository? chatbotRepository;
+  final SyncManager? syncManager;
 
   @override
   State<YegnaHealthApp> createState() => _YegnaHealthAppState();
@@ -417,6 +448,7 @@ class _YegnaHealthAppState extends State<YegnaHealthApp> {
             facilityRepository: _facilityRepository,
             mentorRepository: _mentorRepository,
             chatbotRepository: _chatbotRepository,
+            syncManager: widget.syncManager,
           ),
         ),
       );
