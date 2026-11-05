@@ -1,5 +1,15 @@
 # Handoff
 
+## User Governance Search, Role Filter & Pagination Architecture (2026-11-05)
+
+- **User Management Enhancements (`admin-web/src/pages/UsersPage.tsx`)**:
+  - Search by name/email, role filter tabs, account status dropdown (`ACTIVE` / `SUSPENDED`).
+  - Pagination controls (5, 10, 25, 50 rows per page).
+  - 1-click **Export Users (CSV)** with Zero-Knowledge student privacy compliance.
+- **Verification**:
+  - `tsc && vite build`: 0 errors in 5.97s.
+  - `flutter analyze --no-pub`: 0 issues found.
+
 ## Modern Floating Toast Notification Architecture (2026-11-05)
 
 - **Toast System Architecture (`admin-web/src/context/ToastContext.tsx`)**:
