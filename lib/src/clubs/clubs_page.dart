@@ -383,7 +383,11 @@ class _ClubsPageState extends State<ClubsPage> {
                               ),
                             ),
                           )
-                        : ListView.separated(
+                        : RefreshIndicator(
+                            onRefresh: () =>
+                                widget.controller.loadClubs(widget.userId),
+                            color: const Color(0xFF0284C7),
+                            child: ListView.separated(
                             padding: const EdgeInsets.fromLTRB(16, 10, 16, 24),
                             itemCount: clubs.length,
                             separatorBuilder: (_, __) =>
@@ -648,6 +652,7 @@ class _ClubsPageState extends State<ClubsPage> {
                               );
                             },
                           ),
+                        ),
               ),
             ],
           );
