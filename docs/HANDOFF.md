@@ -1,5 +1,18 @@
 # Handoff
 
+## Offline-First Mobile Synchronization & Custom Backend Integration (2026-11-05)
+
+- **Offline-First Synchronization Pipeline**:
+  - `ApiClient` (`lib/src/sync/api_client.dart`): Connects to Node.js backend (`http://localhost:5000/api` on desktop/web/iOS, `http://10.0.2.2:5000/api` on Android emulator).
+  - `OfflineSyncStore` (`lib/src/sync/offline_sync_store.dart`): Persistent local storage with JSON serialization for facilities, mentors, modules, quizzes, and clubs.
+  - `SyncManager` (`lib/src/sync/sync_manager.dart`): Orchestrates concurrent background revalidations (`syncAll()`), tracks sync state (`SyncStatus.synced`, `SyncStatus.offline`), and notifies listeners on cache refresh.
+  - Repositories (`SyncFacilityRepository`, `SyncMentorRepository`, `SyncClubRepository`, `SyncEducationRepository`, `SyncAssessmentRepository`): Return cached data immediately (0ms latency), falling back to bundled verified data when cache is empty, and revalidating in the background.
+  - Pull-to-refresh (`RefreshIndicator`) enabled on Facilities, Mentors, Student Clubs, and Learning pages.
+- **Verification**:
+  - `dart analyze lib test`: **0 issues found**.
+  - `flutter test --no-pub`: **All 179 tests passing (100% pass rate)** including 14 new dedicated offline sync tests.
+
+
 ## Desktop Web Admin Portal & Custom Node.js/Prisma Backend (2026-11-05)
 
 - **Backend Architecture (`server/`)**:
