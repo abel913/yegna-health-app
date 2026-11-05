@@ -1,5 +1,24 @@
 # Phase status
 
+## Learning CMS Live Markdown Preview & Media Support Architecture (2026-11-05)
+
+**Status: Completed & 100% Verified.**
+- **Live Markdown Preview Engine (`LearningCmsPage.tsx`)**:
+  - Implemented real-time mode toggle (`Editor` vs `Live Preview`) in both creation and editing modals.
+  - Built zero-dependency markdown parser and renderer supporting:
+    - Headers (`# H1`, `## H2`, `### H3`) with distinct typography and divider rules.
+    - Blockquotes (`> quote`) with emerald left border accent and italic styling.
+    - Bulleted and numbered lists with customized marker icons.
+    - Inline styling (`**bold**`, `*italic*`, and inline `` `code` `` chips).
+    - Image embeds (`![alt](url)`) with rounded borders, responsive scaling, and captions.
+  - Added fast formatting toolbar buttons (`Bold`, `Heading2`, `List`, `Quote`) for frictionless curriculum editing with auto-selection replacement.
+- **Curriculum CSV Export Engine**:
+  - Integrated 1-click **Export Curriculum (CSV)** button powered by UTF-8 BOM `exportToCsv`.
+  - Serializes module ID, bilingual titles (English & Amharic), category, read duration, lesson content snippet, and publish status.
+- **Quality Gates & Verification**:
+  - TypeScript & Vite production build (`cd admin-web && npm run build`): **1,592 modules transformed, 0 errors in 3.99s**.
+  - Root Flutter static analysis (`flutter analyze --no-pub`): **0 issues found**.
+
 ## Interactive Visual Trend Charts & Topic Breakdown Architecture (2026-11-05)
 
 **Status: Completed & 100% Verified.**

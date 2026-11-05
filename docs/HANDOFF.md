@@ -1,5 +1,16 @@
 # Handoff
 
+## Learning CMS Live Markdown Preview & Media Support Architecture (2026-11-05)
+
+- **Learning CMS Enhancements (`admin-web/src/pages/LearningCmsPage.tsx`)**:
+  - Live markdown preview toggle (`Editor` / `Live Preview`) with instant side-by-side or tabbed inspection.
+  - Zero-dependency client-side markdown engine parsing headers, blockquotes, bullet lists, inline bold/italic/code, and image embeds.
+  - Quick formatting toolbar (`Bold`, `Heading 2`, `List`, `Quote`) with cursor-aware markdown injection.
+  - 1-click **Export Curriculum (CSV)** with full Amharic UTF-8 BOM compatibility.
+- **Verification**:
+  - `cd admin-web && npm run build`: 1,592 modules transformed, 0 errors in 3.99s.
+  - `flutter analyze --no-pub`: 0 issues found.
+
 ## Interactive Visual Trend Charts & Topic Breakdown Architecture (2026-11-05)
 
 - **Interactive Dashboard Analytics (`admin-web/src/pages/DashboardPage.tsx`)**:
