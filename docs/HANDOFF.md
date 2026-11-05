@@ -1,5 +1,19 @@
 # Handoff
 
+## Audit Trail Advanced Multi-Filter & Date Range Picker Architecture (2026-11-05)
+
+- **Date Range Picker (`admin-web/src/components/common/DateRangePicker.tsx`)**:
+  - 6 Presets (`All Time`, `Today`, `Last 7 Days`, `Last 30 Days`, `This Month`, `Custom Range`) with dual date inputs.
+- **Deep Event Inspection Modal (`admin-web/src/components/audit/AuditDetailModal.tsx`)**:
+  - 1-click Event ID copying, semantic action color coding, relative time formatting, and Zero-Knowledge verification.
+- **Audit Page Refactor (`admin-web/src/pages/AuditLogsPage.tsx`)**:
+  - Real-time 4-card KPI metric strip (Filtered Events, Creations, Updates, Moderations).
+  - Multi-tier filtering: Search query, Action Category pills, Operation type dropdown, Admin Actor dropdown, Date Range Picker.
+  - Client-side pagination (10, 25, 50, 100 rows per page) and 1-click Reset All Filters.
+- **Verification**:
+  - `cd admin-web && npm run build`: 1,598 modules transformed, 0 errors in 4.55s.
+  - `flutter analyze --no-pub`: 0 issues found (9.5s).
+
 ## Interactive Sortable Table Columns & Illustrated Empty States Architecture (2026-11-05)
 
 - **Components (`admin-web/src/components/common/`)**:
