@@ -1,5 +1,20 @@
 # Handoff
 
+## Interactive Sortable Table Columns & Illustrated Empty States Architecture (2026-11-05)
+
+- **Components (`admin-web/src/components/common/`)**:
+  - `SortableHeader.tsx`: Reusable click-to-sort `<th>` with tri-state cycling (`asc` -> `desc` -> `null`), chevron indicators, and active status styling.
+  - `EmptyState.tsx`: Reusable empty state view with icon container, bilingual headings, clear filter button, and primary action CTA.
+- **Pages Integrated**:
+  - `FacilitiesPage.tsx`: Click-to-sort on Name, SubCity, Phone, Status + `EmptyState` when filtered list is empty.
+  - `AuditLogsPage.tsx`: Search bar, click-to-sort on Action, Admin Actor, Timestamp + `EmptyState`.
+  - `UsersPage.tsx`: Click-to-sort on User, Role, Clubs Joined, Status + `EmptyState` with filter reset.
+  - `MentorsPage.tsx`: `EmptyState` for empty mentor directory + full dark mode styling.
+  - `ClubsPage.tsx`: `EmptyState` for empty clubs directory + full dark mode styling.
+- **Verification**:
+  - `cd admin-web && npm run build`: 1,596 modules transformed, 0 errors in 4.79s.
+  - `flutter analyze --no-pub`: 0 issues found.
+
 ## Enterprise Dark / Light Mode Theme Engine Architecture (2026-11-05)
 
 - **Theme Engine (`admin-web/src/context/ThemeContext.tsx`)**:

@@ -15,6 +15,8 @@ import {
 } from 'lucide-react';
 import { ManagedUser } from '../types/index.js';
 import { exportToCsv } from '../utils/csvExport.js';
+import { SortableHeader, SortOrder } from '../components/common/SortableHeader.js';
+import { EmptyState } from '../components/common/EmptyState.js';
 
 interface UsersPageProps {
   users: ManagedUser[];
@@ -34,6 +36,19 @@ export const UsersPage: React.FC<UsersPageProps> = ({
   const [statusFilter, setStatusFilter] = useState<'ALL' | 'ACTIVE' | 'SUSPENDED'>('ALL');
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [sortField, setSortField] = useState<string>('name');
+  const [sortOrder, setSortOrder] = useState<SortOrder>('asc');
+
+  const handleSort = (field: string) => {
+    if (sortField === field) {
+      if (sortOrder === 'asc') setSortOrder('desc');
+      else if (sortOrder === 'desc') setSortOrder(null);
+      else setSortOrder('asc');
+    } else {
+      setSortField(field);
+      setSortOrder('asc');
+    }
+  };
 
   // 1. Filter logic
   const filteredUsers = useMemo(() => {
@@ -57,15 +72,40 @@ export const UsersPage: React.FC<UsersPageProps> = ({
     });
   }, [users, search, roleFilter, statusFilter]);
 
+  // 2. Sort logic
+  const sortedUsers = useMemo(() => {
+    if (!sortOrder) return filteredUsers;
+    return [...filteredUsers].sort((a, b) => {
+      let valA: any = '';
+      let valB: any = '';
+      if (sortField === 'name') {
+        valA = (a.displayName || a.email).toLowerCase();
+        valB = (b.displayName || b.email).toLowerCase();
+      } else if (sortField === 'role') {
+        valA = a.role;
+        valB = b.role;
+      } else if (sortField === 'clubs') {
+        valA = a.joinedClubCount || 0;
+        valB = b.joinedClubCount || 0;
+      } else if (sortField === 'status') {
+        valA = a.isSuspended ? 1 : 0;
+        valB = b.isSuspended ? 1 : 0;
+      }
+      if (valA < valB) return sortOrder === 'asc' ? -1 : 1;
+      if (valA > valB) return sortOrder === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }, [filteredUsers, sortField, sortOrder]);
+
   // Reset to page 1 whenever filters change
-  const totalPages = Math.max(1, Math.ceil(filteredUsers.length / pageSize));
+  const totalPages = Math.max(1, Math.ceil(sortedUsers.length / pageSize));
   const safeCurrentPage = Math.min(currentPage, totalPages);
 
-  // 2. Pagination slice
+  // 3. Pagination slice
   const paginatedUsers = useMemo(() => {
     const startIndex = (safeCurrentPage - 1) * pageSize;
-    return filteredUsers.slice(startIndex, startIndex + pageSize);
-  }, [filteredUsers, safeCurrentPage, pageSize]);
+    return sortedUsers.slice(startIndex, startIndex + pageSize);
+  }, [sortedUsers, safeCurrentPage, pageSize]);
 
   // 3. Export to CSV (Zero-knowledge safe: only public roles & account status)
   const handleExportCsv = () => {
@@ -79,7 +119,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({
         { header: 'Account Status', accessor: (u) => (u.isSuspended ? 'SUSPENDED' : 'ACTIVE') },
         { header: 'Registration Date', accessor: (u) => new Date(u.createdAt).toLocaleDateString() },
       ],
-      filteredUsers
+      sortedUsers
     );
   };
 
@@ -206,10 +246,34 @@ export const UsersPage: React.FC<UsersPageProps> = ({
           <table className="w-full text-left text-xs md:text-sm">
             <thead className="bg-slate-50 dark:bg-slate-800/80 border-b border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400 font-bold uppercase text-[11px] tracking-wider">
               <tr>
-                <th className="py-3 px-4">{lang === 'am' ? 'ተጠቃሚ' : 'User'}</th>
-                <th className="py-3 px-4">{lang === 'am' ? 'የሲስተም ሚና' : 'Platform Role'}</th>
-                <th className="py-3 px-4">{lang === 'am' ? 'የተቀላቀሏቸው ክለቦች' : 'Clubs Joined'}</th>
-                <th className="py-3 px-4">{lang === 'am' ? 'የአካውንት ሁኔታ' : 'Account Status'}</th>
+                <SortableHeader
+                  label={lang === 'am' ? 'ተጠቃሚ' : 'User'}
+                  field="name"
+                  currentField={sortField}
+                  currentOrder={sortOrder}
+                  onSort={handleSort}
+                />
+                <SortableHeader
+                  label={lang === 'am' ? 'የሲስተም ሚና' : 'Platform Role'}
+                  field="role"
+                  currentField={sortField}
+                  currentOrder={sortOrder}
+                  onSort={handleSort}
+                />
+                <SortableHeader
+                  label={lang === 'am' ? 'የተቀላቀሏቸው ክለቦች' : 'Clubs Joined'}
+                  field="clubs"
+                  currentField={sortField}
+                  currentOrder={sortOrder}
+                  onSort={handleSort}
+                />
+                <SortableHeader
+                  label={lang === 'am' ? 'የአካውንት ሁኔታ' : 'Account Status'}
+                  field="status"
+                  currentField={sortField}
+                  currentOrder={sortOrder}
+                  onSort={handleSort}
+                />
                 <th className="py-3 px-4 text-right">{lang === 'am' ? 'የአመራር እርምጃ' : 'Moderation Actions'}</th>
               </tr>
             </thead>
@@ -276,14 +340,26 @@ export const UsersPage: React.FC<UsersPageProps> = ({
                 </tr>
               ))}
               {filteredUsers.length === 0 && (
-                <tr>
-                  <td colSpan={5} className="py-12 text-center text-slate-400 dark:text-slate-500">
-                    <UsersIcon size={36} className="mx-auto mb-2 opacity-40" />
-                    <p className="font-semibold text-sm">
-                      {lang === 'am' ? 'ምንም ተጠቃሚ አልተገኘም' : 'No users match your search and filter criteria.'}
-                    </p>
-                  </td>
-                </tr>
+                <EmptyState
+                  colSpan={5}
+                  icon={UsersIcon}
+                  title={lang === 'am' ? 'ምንም ተጠቃሚ አልተገኘም' : 'No users match your criteria'}
+                  description={
+                    lang === 'am'
+                      ? 'የተመረጠውን ፍለጋ ወይም የሚና ማጣሪያ በማስተካከል እንደገና ይሞክሩ።'
+                      : 'Try broadening your search keywords or clearing your role and status filters.'
+                  }
+                  clearLabel={lang === 'am' ? 'ሁሉንም አጽዳ' : 'Clear Filters'}
+                  onClear={
+                    search || roleFilter !== 'ALL' || statusFilter !== 'ALL'
+                      ? () => {
+                          setSearch('');
+                          setRoleFilter('ALL');
+                          setStatusFilter('ALL');
+                        }
+                      : undefined
+                  }
+                />
               )}
             </tbody>
           </table>

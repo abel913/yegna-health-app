@@ -1,5 +1,25 @@
 # Phase status
 
+## Interactive Sortable Table Columns & Illustrated Empty States Architecture (2026-11-05)
+
+**Status: Completed & 100% Verified.**
+- **Reusable Sortable Column Header (`SortableHeader.tsx`)**:
+  - Engineered flexible `SortableHeader` component supporting tri-state sorting (`asc`, `desc`, `null`) with dynamic Lucide chevron icons (`ChevronUp`, `ChevronDown`, `ChevronsUpDown`).
+  - Active column indicator badge showing sort state, smooth hover transitions, and keyboard/mouse accessibility.
+  - Alignment flexibility (`left`, `center`, `right`).
+- **Reusable Illustrated Empty State Card (`EmptyState.tsx`)**:
+  - Engineered responsive, theme-adaptive empty state component featuring custom icon badge, bold title, descriptive guidance subtext, 1-click filter reset button (`onClear`), and primary action trigger (`onAction`).
+  - Dual presentation modes: standalone card view and table `colSpan` embedded row.
+- **Portal-Wide Integration**:
+  - `FacilitiesPage.tsx`: Interactive sorting by Name, SubCity / Campus, Phone, and Status + `EmptyState` when 0 clinics match search or filters.
+  - `AuditLogsPage.tsx`: Real-time search input bar, sorting by Action, Admin Actor, and Timestamp + `EmptyState` when 0 logs match.
+  - `UsersPage.tsx`: Sorting by User name, Platform Role, Clubs Joined, and Account Status + `EmptyState` with 1-click filter reset.
+  - `MentorsPage.tsx`: Integrated `EmptyState` when no mentors are registered + full dark mode styling.
+  - `ClubsPage.tsx`: Integrated `EmptyState` when no student clubs exist + full dark mode styling.
+- **Quality Gates & Verification**:
+  - TypeScript & Vite production build (`cd admin-web && npm run build`): **1,596 modules transformed, 0 errors in 4.79s**.
+  - Root Flutter static analysis (`flutter analyze --no-pub`): **0 issues found**.
+
 ## Enterprise Dark / Light Mode Theme Engine Architecture (2026-11-05)
 
 **Status: Completed & 100% Verified.**

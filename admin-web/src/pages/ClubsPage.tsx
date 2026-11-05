@@ -17,6 +17,7 @@ import { StudentClub } from '../types/index.js';
 import { api } from '../services/api.js';
 import { exportToCsv } from '../utils/csvExport.js';
 import { useToast } from '../context/ToastContext.js';
+import { EmptyState } from '../components/common/EmptyState.js';
 
 interface ClubsPageProps {
   clubs: StudentClub[];
@@ -113,11 +114,11 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl md:text-2xl font-extrabold text-slate-900 flex items-center gap-2">
-            <GraduationCap className="text-brand-600" size={24} />
+          <h2 className="text-xl md:text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+            <GraduationCap className="text-brand-600 dark:text-cyan-400" size={24} />
             <span>{lang === 'am' ? 'የተማሪዎች ጤና ክለቦች' : 'Student Health Clubs & Chapters'}</span>
           </h2>
-          <p className="text-xs md:text-sm text-slate-500 mt-1">
+          <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 mt-1">
             {lang === 'am'
               ? 'የትምህርት ቤት የወጣቶች ጤና ክለቦችን፣ የአባላት ዝርዝርና የመሰብሰቢያ ሰዓቶችን ያስተዳድሩ።'
               : 'Moderate student peer support chapters, meeting schedules, and member rosters.'}
@@ -126,7 +127,7 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
         <div className="flex items-center gap-2 self-start sm:self-auto">
           <button
             onClick={handleExportCsv}
-            className="flex items-center gap-1.5 px-3.5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs md:text-sm font-bold rounded-xl border border-slate-200 transition-all cursor-pointer"
+            className="flex items-center gap-1.5 px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs md:text-sm font-bold rounded-xl border border-slate-200 dark:border-slate-700 transition-all cursor-pointer shadow-2xs"
             title={lang === 'am' ? 'የክለቦች ሪፖርት (CSV) አውርድ' : 'Export clubs to Excel CSV'}
           >
             <Download size={15} />
@@ -142,115 +143,131 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
         </div>
       </div>
 
-      {/* Clubs Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        {clubs.map((c) => (
-          <div
-            key={c.id}
-            className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs hover:shadow-md transition-all flex flex-col justify-between"
-          >
-            <div>
-              <div className="flex items-center justify-between gap-2 mb-2.5">
-                <span className="text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-md bg-brand-50 text-brand-700">
-                  {c.category}
-                </span>
+      {/* Clubs Grid or Empty State */}
+      {clubs.length === 0 ? (
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs">
+          <EmptyState
+            icon={GraduationCap}
+            title={lang === 'am' ? 'ምንም የተማሪ ክለቦች አልተመዘገቡም' : 'No Student Clubs Found'}
+            description={
+              lang === 'am'
+                ? 'አዳዲስ የትምህርት ቤት የጤና ክለቦችን፣ የአባላት ዝርዝርና የመሰብሰቢያ ሰዓቶችን በማስገባት ይጀምሩ።'
+                : 'Start by creating health and peer-support chapters across university and high school campuses.'
+            }
+            actionLabel={lang === 'am' ? '+ አዲስ ክለብ ፍጠር' : '+ Create Student Club'}
+            onAction={openCreateModal}
+          />
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {clubs.map((c) => (
+            <div
+              key={c.id}
+              className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-5 shadow-xs hover:shadow-md transition-all flex flex-col justify-between"
+            >
+              <div>
+                <div className="flex items-center justify-between gap-2 mb-2.5">
+                  <span className="text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-md bg-brand-50 dark:bg-brand-950/50 text-brand-700 dark:text-cyan-400 border border-brand-100 dark:border-brand-900/40">
+                    {c.category}
+                  </span>
 
-                <div className="flex items-center gap-1.5">
-                  {/* Inline 1-Click Approval Toggle */}
-                  <button
-                    onClick={() => onToggleApproval(c)}
-                    className={`px-2 py-0.5 rounded-full text-[10px] font-bold flex items-center gap-1 transition-colors cursor-pointer ${
-                      c.isApproved
-                        ? 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200'
-                        : 'bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-200'
-                    }`}
-                    title={lang === 'am' ? 'የፍቃድ ሁኔታን ለመቀየር ይጫኑ' : 'Click to toggle approval'}
-                  >
-                    {c.isApproved ? (
-                      <>
-                        <CheckCircle2 size={11} className="text-emerald-600" />
-                        <span>{lang === 'am' ? 'የተፈቀደ' : 'Approved'}</span>
-                      </>
-                    ) : (
-                      <>
-                        <Clock size={11} className="text-amber-600" />
-                        <span>{lang === 'am' ? 'በመጠባበቅ ላይ' : 'Pending'}</span>
-                      </>
-                    )}
-                  </button>
+                  <div className="flex items-center gap-1.5">
+                    {/* Inline 1-Click Approval Toggle */}
+                    <button
+                      onClick={() => onToggleApproval(c)}
+                      className={`px-2 py-0.5 rounded-full text-[10px] font-bold flex items-center gap-1 transition-colors cursor-pointer ${
+                        c.isApproved
+                          ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 border border-emerald-200 dark:border-emerald-800'
+                          : 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-amber-900/50 border border-amber-200 dark:border-amber-800'
+                      }`}
+                      title={lang === 'am' ? 'የፍቃድ ሁኔታን ለመቀየር ይጫኑ' : 'Click to toggle approval'}
+                    >
+                      {c.isApproved ? (
+                        <>
+                          <CheckCircle2 size={11} className="text-emerald-600 dark:text-emerald-400" />
+                          <span>{lang === 'am' ? 'የተፈቀደ' : 'Approved'}</span>
+                        </>
+                      ) : (
+                        <>
+                          <Clock size={11} className="text-amber-600 dark:text-amber-400" />
+                          <span>{lang === 'am' ? 'በመጠባበቅ ላይ' : 'Pending'}</span>
+                        </>
+                      )}
+                    </button>
 
-                  {/* Edit Button */}
-                  <button
-                    onClick={() => openEditModal(c)}
-                    className="p-1.5 text-slate-400 hover:text-brand-600 hover:bg-brand-50 rounded-lg transition-colors"
-                    title={lang === 'am' ? 'አርትዕ' : 'Edit club'}
-                  >
-                    <Edit2 size={14} />
-                  </button>
+                    {/* Edit Button */}
+                    <button
+                      onClick={() => openEditModal(c)}
+                      className="p-1.5 text-slate-400 hover:text-brand-600 dark:hover:text-cyan-400 hover:bg-brand-50 dark:hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
+                      title={lang === 'am' ? 'አርትዕ' : 'Edit club'}
+                    >
+                      <Edit2 size={14} />
+                    </button>
 
-                  {/* Delete Button */}
-                  <button
-                    onClick={() => {
-                      if (confirm(lang === 'am' ? `ክለብ "${c.name}" ይሰረዝ?` : `Delete club "${c.name}"?`)) {
-                        onDeleteClub(c.id);
-                      }
-                    }}
-                    className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
-                    title={lang === 'am' ? 'ሰርዝ' : 'Delete club'}
-                  >
-                    <Trash2 size={14} />
-                  </button>
+                    {/* Delete Button */}
+                    <button
+                      onClick={() => {
+                        if (confirm(lang === 'am' ? `ክለብ "${c.name}" ይሰረዝ?` : `Delete club "${c.name}"?`)) {
+                          onDeleteClub(c.id);
+                        }
+                      }}
+                      className="p-1.5 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition-colors cursor-pointer"
+                      title={lang === 'am' ? 'ሰርዝ' : 'Delete club'}
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                </div>
+
+                <h3 className="font-extrabold text-slate-900 dark:text-white text-base mb-1">{c.name}</h3>
+                <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-3 leading-relaxed mb-4">{c.description}</p>
+
+                <div className="space-y-1.5 text-xs text-slate-500 dark:text-slate-400">
+                  {c.venue && (
+                    <div className="flex items-center gap-1.5">
+                      <MapPin size={13} className="text-slate-400 dark:text-slate-500" />
+                      <span className="truncate">{c.venue}</span>
+                    </div>
+                  )}
+                  {c.meetingTime && (
+                    <div className="flex items-center gap-1.5">
+                      <Calendar size={13} className="text-slate-400 dark:text-slate-500" />
+                      <span>{c.meetingTime}</span>
+                    </div>
+                  )}
                 </div>
               </div>
 
-              <h3 className="font-extrabold text-slate-900 text-base mb-1">{c.name}</h3>
-              <p className="text-xs text-slate-600 line-clamp-3 leading-relaxed mb-4">{c.description}</p>
-
-              <div className="space-y-1.5 text-xs text-slate-500">
-                {c.venue && (
-                  <div className="flex items-center gap-1.5">
-                    <MapPin size={13} className="text-slate-400" />
-                    <span className="truncate">{c.venue}</span>
-                  </div>
-                )}
-                {c.meetingTime && (
-                  <div className="flex items-center gap-1.5">
-                    <Calendar size={13} className="text-slate-400" />
-                    <span>{c.meetingTime}</span>
-                  </div>
-                )}
+              <div className="pt-4 mt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">
+                <span className="flex items-center gap-1 font-bold text-slate-700 dark:text-slate-300">
+                  <Users size={14} className="text-brand-600 dark:text-cyan-400" />
+                  {c.memberCount || 0} {lang === 'am' ? 'አባላት' : 'members'}
+                </span>
+                <button
+                  onClick={() => openRoster(c)}
+                  className="flex items-center gap-1 font-bold text-brand-600 dark:text-cyan-400 hover:underline cursor-pointer"
+                >
+                  <Eye size={13} />
+                  {lang === 'am' ? 'አባላትን እይ' : 'View Roster'}
+                </button>
               </div>
             </div>
-
-            <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between text-xs">
-              <span className="flex items-center gap-1 font-bold text-slate-700">
-                <Users size={14} className="text-brand-600" />
-                {c.memberCount || 0} {lang === 'am' ? 'አባላት' : 'members'}
-              </span>
-              <button
-                onClick={() => openRoster(c)}
-                className="flex items-center gap-1 font-bold text-brand-600 hover:underline"
-              >
-                <Eye size={13} />
-                {lang === 'am' ? 'አባላትን እይ' : 'View Roster'}
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
       {/* Roster Modal */}
       {rosterModal.open && (
-        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-lg w-full max-h-[80vh] overflow-y-auto p-6 animate-in fade-in zoom-in-95">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl max-w-lg w-full max-h-[80vh] overflow-y-auto p-6 animate-in fade-in zoom-in-95">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
               <div>
-                <h3 className="text-base font-extrabold text-slate-900">Member Roster</h3>
-                <p className="text-xs text-slate-400">{rosterModal.clubName}</p>
+                <h3 className="text-base font-extrabold text-slate-900 dark:text-white">Member Roster</h3>
+                <p className="text-xs text-slate-400 dark:text-slate-500">{rosterModal.clubName}</p>
               </div>
               <button
                 onClick={() => setRosterModal({ open: false, clubName: '', members: [] })}
-                className="p-1 text-slate-400 hover:text-slate-600"
+                className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
               >
                 <X size={20} />
               </button>
@@ -258,18 +275,18 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
 
             <div className="mt-4 space-y-2">
               {rosterModal.members.map((m: any, idx: number) => (
-                <div key={idx} className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between text-xs">
+                <div key={idx} className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700/60 flex items-center justify-between text-xs">
                   <div>
-                    <p className="font-bold text-slate-900">{m.user?.displayName || 'Student'}</p>
-                    <p className="text-[11px] text-slate-400">{m.user?.email}</p>
+                    <p className="font-bold text-slate-900 dark:text-white">{m.user?.displayName || 'Student'}</p>
+                    <p className="text-[11px] text-slate-400 dark:text-slate-500">{m.user?.email}</p>
                   </div>
-                  <span className="text-[10px] text-slate-400">
+                  <span className="text-[10px] text-slate-400 dark:text-slate-500">
                     Joined {new Date(m.joinedAt).toLocaleDateString()}
                   </span>
                 </div>
               ))}
               {rosterModal.members.length === 0 && (
-                <p className="py-8 text-center text-xs text-slate-400 font-semibold">No students have joined this club yet.</p>
+                <p className="py-8 text-center text-xs text-slate-400 dark:text-slate-500 font-semibold">No students have joined this club yet.</p>
               )}
             </div>
           </div>
@@ -278,22 +295,22 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
 
       {/* Create / Edit Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-lg w-full p-6 md:p-8 animate-in fade-in zoom-in-95">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <h3 className="text-lg font-extrabold text-slate-900">
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl max-w-lg w-full p-6 md:p-8 animate-in fade-in zoom-in-95">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+              <h3 className="text-lg font-extrabold text-slate-900 dark:text-white">
                 {editingClub
                   ? (lang === 'am' ? 'የተማሪዎች ክለብን አርትዕ' : 'Edit Student Club')
                   : (lang === 'am' ? 'አዲስ የተማሪዎች ክለብ ፍጠር' : 'Register New Student Club')}
               </h3>
-              <button onClick={() => setIsModalOpen(false)} className="p-1 text-slate-400 hover:text-slate-600">
+              <button onClick={() => setIsModalOpen(false)} className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer">
                 <X size={20} />
               </button>
             </div>
 
             <form onSubmit={handleSubmit} className="mt-4 space-y-3.5 text-xs md:text-sm">
               <div>
-                <label className="block font-bold text-slate-700 mb-1">
+                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
                   {lang === 'am' ? 'የክለቡ ስም' : 'Club Name'}
                 </label>
                 <input
@@ -301,19 +318,19 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
                   required
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-200 rounded-xl"
+                  className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:border-brand-500 focus:outline-none"
                   placeholder="e.g. Arada Youth Wellness Club"
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 mb-1">
+                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
                   {lang === 'am' ? 'ምድብ' : 'Category'}
                 </label>
                 <select
                   value={formData.category}
                   onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-200 rounded-xl bg-white font-medium"
+                  className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:border-brand-500 focus:outline-none cursor-pointer"
                 >
                   <option value="wellness">Wellness & Lifestyle</option>
                   <option value="mental_health">Mental Health & Stress</option>
@@ -323,7 +340,7 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 mb-1">
+                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
                   {lang === 'am' ? 'መግለጫ' : 'Description'}
                 </label>
                 <textarea
@@ -331,33 +348,33 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
                   required
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs"
+                  className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl text-xs focus:border-brand-500 focus:outline-none"
                   placeholder="Purpose, activities, and goals..."
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">
+                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
                     {lang === 'am' ? 'የመሰብሰቢያ ቦታ' : 'Meeting Venue'}
                   </label>
                   <input
                     type="text"
                     value={formData.venue}
                     onChange={(e) => setFormData({ ...formData, venue: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-200 rounded-xl"
+                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:border-brand-500 focus:outline-none"
                     placeholder="e.g. School Hall / Library"
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">
+                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
                     {lang === 'am' ? 'የመሰብሰቢያ ሰዓት' : 'Meeting Schedule'}
                   </label>
                   <input
                     type="text"
                     value={formData.meetingTime}
                     onChange={(e) => setFormData({ ...formData, meetingTime: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-200 rounded-xl"
+                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:border-brand-500 focus:outline-none"
                     placeholder="e.g. Every Wed at 4:30 PM"
                   />
                 </div>
@@ -369,24 +386,24 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
                   id="clubApproved"
                   checked={formData.isApproved}
                   onChange={(e) => setFormData({ ...formData, isApproved: e.target.checked })}
-                  className="w-4 h-4 text-brand-600 rounded border-slate-300"
+                  className="w-4 h-4 text-brand-600 rounded border-slate-300 focus:ring-brand-500"
                 />
-                <label htmlFor="clubApproved" className="text-xs font-bold text-slate-700">
+                <label htmlFor="clubApproved" className="text-xs font-bold text-slate-700 dark:text-slate-300 cursor-pointer">
                   {lang === 'am' ? 'ይህ ክለብ በይፋ እንዲታይ የተፈቀደ ነው (Approved)' : 'Club is officially approved and active'}
                 </label>
               </div>
 
-              <div className="pt-4 flex items-center justify-end gap-3 border-t border-slate-100">
+              <div className="pt-4 flex items-center justify-end gap-3 border-t border-slate-100 dark:border-slate-800">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 border border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50"
+                  className="px-4 py-2 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl shadow-md shadow-brand-600/20"
+                  className="px-5 py-2 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl shadow-md shadow-brand-600/20 cursor-pointer"
                 >
                   {editingClub
                     ? (lang === 'am' ? 'ለውጦችን መዝግብ' : 'Save Changes')

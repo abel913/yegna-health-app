@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   Hospital,
   Plus,
@@ -16,6 +16,8 @@ import {
 } from 'lucide-react';
 import { Facility } from '../types/index.js';
 import { exportToCsv } from '../utils/csvExport.js';
+import { SortableHeader, SortOrder } from '../components/common/SortableHeader.js';
+import { EmptyState } from '../components/common/EmptyState.js';
 
 interface FacilitiesPageProps {
   facilities: Facility[];
@@ -117,6 +119,44 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
 
     return matchesSearch && matchesPreset && matchesRegion;
   });
+
+  const [sortField, setSortField] = useState<string>('name');
+  const [sortOrder, setSortOrder] = useState<SortOrder>('asc');
+
+  const handleSort = (field: string) => {
+    if (sortField === field) {
+      if (sortOrder === 'asc') setSortOrder('desc');
+      else if (sortOrder === 'desc') setSortOrder(null);
+      else setSortOrder('asc');
+    } else {
+      setSortField(field);
+      setSortOrder('asc');
+    }
+  };
+
+  const sortedFacilities = useMemo(() => {
+    if (!sortOrder) return filtered;
+    return [...filtered].sort((a, b) => {
+      let valA: any = '';
+      let valB: any = '';
+      if (sortField === 'name') {
+        valA = lang === 'am' ? a.nameAm || a.nameEn : a.nameEn;
+        valB = lang === 'am' ? b.nameAm || b.nameEn : b.nameEn;
+      } else if (sortField === 'subCity') {
+        valA = a.subCity.toLowerCase();
+        valB = b.subCity.toLowerCase();
+      } else if (sortField === 'phone') {
+        valA = a.phone || '';
+        valB = b.phone || '';
+      } else if (sortField === 'status') {
+        valA = a.isVerified ? 1 : 0;
+        valB = b.isVerified ? 1 : 0;
+      }
+      if (valA < valB) return sortOrder === 'asc' ? -1 : 1;
+      if (valA > valB) return sortOrder === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }, [filtered, sortField, sortOrder, lang]);
 
   const openCreateModal = () => {
     setEditingFacility(null);
@@ -406,42 +446,66 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
       </div>
 
       {/* Facilities Data Table */}
-      <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs md:text-sm">
-            <thead className="bg-slate-50 border-b border-slate-100 text-slate-500 font-bold uppercase text-[11px] tracking-wider">
+            <thead className="bg-slate-50 dark:bg-slate-800/80 border-b border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400 font-bold uppercase text-[11px] tracking-wider">
               <tr>
-                <th className="py-3 px-4">{lang === 'am' ? 'የተቋሙ ስም' : 'Facility Name'}</th>
-                <th className="py-3 px-4">{lang === 'am' ? 'ካምፓስ / ከተማ / አድራሻ' : 'Campus / City & Address'}</th>
-                <th className="py-3 px-4">{lang === 'am' ? 'ስልክ ቁጥር' : 'Contact Phone'}</th>
+                <SortableHeader
+                  label={lang === 'am' ? 'የተቋሙ ስም' : 'Facility Name'}
+                  field="name"
+                  currentField={sortField}
+                  currentOrder={sortOrder}
+                  onSort={handleSort}
+                />
+                <SortableHeader
+                  label={lang === 'am' ? 'ካምፓስ / ከተማ / አድራሻ' : 'Campus / City & Address'}
+                  field="subCity"
+                  currentField={sortField}
+                  currentOrder={sortOrder}
+                  onSort={handleSort}
+                />
+                <SortableHeader
+                  label={lang === 'am' ? 'ስልክ ቁጥር' : 'Contact Phone'}
+                  field="phone"
+                  currentField={sortField}
+                  currentOrder={sortOrder}
+                  onSort={handleSort}
+                />
                 <th className="py-3 px-4">{lang === 'am' ? 'አገልግሎቶች' : 'Services'}</th>
-                <th className="py-3 px-4">{lang === 'am' ? 'ሁኔታ' : 'Status'}</th>
+                <SortableHeader
+                  label={lang === 'am' ? 'ሁኔታ' : 'Status'}
+                  field="status"
+                  currentField={sortField}
+                  currentOrder={sortOrder}
+                  onSort={handleSort}
+                />
                 <th className="py-3 px-4 text-right">{lang === 'am' ? 'እርምጃዎች' : 'Actions'}</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 font-medium">
-              {filtered.map((f) => (
-                <tr key={f.id} className="hover:bg-slate-50/70 transition-colors">
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-medium">
+              {sortedFacilities.map((f) => (
+                <tr key={f.id} className="hover:bg-slate-50/70 dark:hover:bg-slate-800/50 transition-colors">
                   <td className="py-3.5 px-4">
                     <div>
-                      <p className="font-bold text-slate-900">{lang === 'am' ? f.nameAm : f.nameEn}</p>
-                      <p className="text-[11px] text-slate-400">{lang === 'am' ? f.nameEn : f.nameAm}</p>
+                      <p className="font-bold text-slate-900 dark:text-white">{lang === 'am' ? f.nameAm : f.nameEn}</p>
+                      <p className="text-[11px] text-slate-400 dark:text-slate-500">{lang === 'am' ? f.nameEn : f.nameAm}</p>
                     </div>
                   </td>
-                  <td className="py-3.5 px-4 text-slate-600">
+                  <td className="py-3.5 px-4 text-slate-600 dark:text-slate-300">
                     <div className="flex items-center gap-1.5 mb-1">
                       {getLocationBadge(f.subCity)}
-                      {f.woreda && <span className="text-slate-400 text-xs">• {f.woreda}</span>}
+                      {f.woreda && <span className="text-slate-400 dark:text-slate-500 text-xs">• {f.woreda}</span>}
                     </div>
-                    <div className="flex items-center gap-1 text-[11px] text-slate-400 truncate max-w-xs">
-                      <MapPin size={11} className="text-slate-400 flex-shrink-0" />
+                    <div className="flex items-center gap-1 text-[11px] text-slate-400 dark:text-slate-500 truncate max-w-xs">
+                      <MapPin size={11} className="text-slate-400 dark:text-slate-500 flex-shrink-0" />
                       <span>{lang === 'am' ? f.addressAm : f.addressEn}</span>
                     </div>
                   </td>
                   <td className="py-3.5 px-4">
                     <a
                       href={`tel:${f.phone}`}
-                      className="inline-flex items-center gap-1.5 text-xs font-bold text-brand-600 hover:underline"
+                      className="inline-flex items-center gap-1.5 text-xs font-bold text-brand-600 dark:text-cyan-400 hover:underline"
                     >
                       <Phone size={12} />
                       {f.phone}
@@ -452,7 +516,7 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
                       {(f.services || []).map((s, idx) => (
                         <span
                           key={idx}
-                          className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 text-[10px] font-bold"
+                          className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[10px] font-bold border border-slate-200/60 dark:border-slate-700"
                         >
                           {s}
                         </span>
@@ -461,12 +525,12 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
                   </td>
                   <td className="py-3.5 px-4">
                     {f.isVerified ? (
-                      <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                      <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2.5 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800/60">
                         <CheckCircle2 size={12} />
                         {lang === 'am' ? 'የተረጋገጠ' : 'Verified'}
                       </span>
                     ) : (
-                      <span className="inline-flex items-center text-[11px] font-bold text-amber-700 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200">
+                      <span className="inline-flex items-center text-[11px] font-bold text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 px-2.5 py-0.5 rounded-full border border-amber-200 dark:border-amber-800/60">
                         {lang === 'am' ? 'በግምገማ ላይ' : 'Pending'}
                       </span>
                     )}
@@ -475,7 +539,7 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
                     <div className="inline-flex items-center gap-1">
                       <button
                         onClick={() => openEditModal(f)}
-                        className="p-1.5 text-slate-500 hover:text-brand-600 hover:bg-brand-50 rounded-lg transition-colors cursor-pointer"
+                        className="p-1.5 text-slate-500 hover:text-brand-600 dark:hover:text-cyan-400 hover:bg-brand-50 dark:hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
                         title={lang === 'am' ? 'አርትዕ' : 'Edit Facility'}
                       >
                         <Edit2 size={15} />
@@ -486,7 +550,7 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
                             onDelete(f.id);
                           }
                         }}
-                        className="p-1.5 text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+                        className="p-1.5 text-slate-500 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition-colors cursor-pointer"
                         title={lang === 'am' ? 'ሰርዝ' : 'Delete Facility'}
                       >
                         <Trash2 size={15} />
@@ -495,15 +559,35 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
                   </td>
                 </tr>
               ))}
-              {filtered.length === 0 && (
-                <tr>
-                  <td colSpan={6} className="py-12 text-center text-slate-400">
-                    <Hospital size={36} className="mx-auto mb-2 opacity-40" />
-                    <p className="font-semibold text-sm">
-                      {lang === 'am' ? 'ምንም ተቋም አልተገኘም' : 'No facilities match your search criteria.'}
-                    </p>
-                  </td>
-                </tr>
+              {sortedFacilities.length === 0 && (
+                <EmptyState
+                  colSpan={6}
+                  icon={Hospital}
+                  title={lang === 'am' ? 'ምንም የጤና ተቋም አልተገኘም' : 'No health facilities found'}
+                  description={
+                    search || selectedSubCity !== 'All' || regionFilter !== 'all'
+                      ? lang === 'am'
+                        ? 'በተመረጡት ማጣሪያዎች የሚገኝ ተቋም የለም። እባክዎ ማጣሪያዎቹን ያጽዱ ወይም አዲስ ተቋም ይመዝግቡ።'
+                        : 'No campus clinics match your current search and location filter criteria.'
+                      : lang === 'am'
+                      ? 'እስካሁን የተመዘገበ የጤና ተቋም የለም። የመጀመሪያውን ተቋም እዚህ ይመዝግቡ።'
+                      : 'No healthcare clinics or youth posts registered yet.'
+                  }
+                  clearLabel={
+                    search || selectedSubCity !== 'All' || regionFilter !== 'all'
+                      ? lang === 'am'
+                        ? 'ማጣሪያዎችን አጽዳ'
+                        : 'Reset Filters'
+                      : undefined
+                  }
+                  onClear={() => {
+                    setSearch('');
+                    setSelectedSubCity('All');
+                    setRegionFilter('all');
+                  }}
+                  actionLabel={lang === 'am' ? '+ አዲስ ክሊኒክ መዝግብ' : '+ Add Facility'}
+                  onAction={openCreateModal}
+                />
               )}
             </tbody>
           </table>

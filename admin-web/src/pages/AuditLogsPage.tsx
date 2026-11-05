@@ -1,7 +1,9 @@
-import React from 'react';
-import { History, Shield, Clock, Download } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { History, Shield, Clock, Download, Search, X } from 'lucide-react';
 import { AuditLog } from '../types/index.js';
 import { exportToCsv } from '../utils/csvExport.js';
+import { SortableHeader, SortOrder } from '../components/common/SortableHeader.js';
+import { EmptyState } from '../components/common/EmptyState.js';
 
 interface AuditLogsPageProps {
   logs: AuditLog[];
@@ -9,6 +11,53 @@ interface AuditLogsPageProps {
 }
 
 export const AuditLogsPage: React.FC<AuditLogsPageProps> = ({ logs, lang }) => {
+  const [search, setSearch] = useState('');
+  const [sortField, setSortField] = useState<string>('timestamp');
+  const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
+
+  const handleSort = (field: string) => {
+    if (sortField === field) {
+      if (sortOrder === 'asc') setSortOrder('desc');
+      else if (sortOrder === 'desc') setSortOrder(null);
+      else setSortOrder('asc');
+    } else {
+      setSortField(field);
+      setSortOrder('asc');
+    }
+  };
+
+  const filteredLogs = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return logs;
+    return logs.filter(
+      (l) =>
+        l.action.toLowerCase().includes(q) ||
+        l.adminEmail.toLowerCase().includes(q) ||
+        l.details.toLowerCase().includes(q)
+    );
+  }, [logs, search]);
+
+  const sortedLogs = useMemo(() => {
+    if (!sortOrder) return filteredLogs;
+    return [...filteredLogs].sort((a, b) => {
+      let valA: any = '';
+      let valB: any = '';
+      if (sortField === 'timestamp') {
+        valA = new Date(a.timestamp).getTime();
+        valB = new Date(b.timestamp).getTime();
+      } else if (sortField === 'action') {
+        valA = a.action;
+        valB = b.action;
+      } else if (sortField === 'adminEmail') {
+        valA = a.adminEmail.toLowerCase();
+        valB = b.adminEmail.toLowerCase();
+      }
+      if (valA < valB) return sortOrder === 'asc' ? -1 : 1;
+      if (valA > valB) return sortOrder === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }, [filteredLogs, sortField, sortOrder]);
+
   const handleExportCsv = () => {
     exportToCsv(
       'Yegna_Health_Audit_Logs',
@@ -19,7 +68,7 @@ export const AuditLogsPage: React.FC<AuditLogsPageProps> = ({ logs, lang }) => {
         { header: 'Timestamp (UTC)', accessor: (l) => l.timestamp },
         { header: 'Local Time', accessor: (l) => new Date(l.timestamp).toLocaleString() },
       ],
-      logs
+      sortedLogs
     );
   };
 
@@ -48,20 +97,65 @@ export const AuditLogsPage: React.FC<AuditLogsPageProps> = ({ logs, lang }) => {
         </button>
       </div>
 
+      {/* Search Input Bar */}
+      <div className="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs">
+        <div className="relative">
+          <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder={
+              lang === 'am'
+                ? 'በእርምጃ አይነት፣ በአስተዳዳሪ ኢሜይል ወይም በዝርዝር ፈልግ...'
+                : 'Search audit logs by action type, admin actor email, or details...'
+            }
+            className="w-full pl-9 pr-8 py-2 text-xs md:text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:bg-white dark:focus:bg-slate-800/80 focus:border-brand-500 focus:outline-none transition-all text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500"
+          />
+          {search && (
+            <button
+              onClick={() => setSearch('')}
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+            >
+              <X size={15} />
+            </button>
+          )}
+        </div>
+      </div>
+
       {/* Logs Table */}
       <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs md:text-sm">
             <thead className="bg-slate-50 dark:bg-slate-800/80 border-b border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400 font-bold uppercase text-[11px] tracking-wider">
               <tr>
-                <th className="py-3 px-4">Action</th>
-                <th className="py-3 px-4">Admin Actor</th>
-                <th className="py-3 px-4">Action Details</th>
-                <th className="py-3 px-4 text-right">Timestamp</th>
+                <SortableHeader
+                  label={lang === 'am' ? 'እርምጃ' : 'Action'}
+                  field="action"
+                  currentField={sortField}
+                  currentOrder={sortOrder}
+                  onSort={handleSort}
+                />
+                <SortableHeader
+                  label={lang === 'am' ? 'አስተዳዳሪ' : 'Admin Actor'}
+                  field="adminEmail"
+                  currentField={sortField}
+                  currentOrder={sortOrder}
+                  onSort={handleSort}
+                />
+                <th className="py-3 px-4">{lang === 'am' ? 'የእርምጃው ዝርዝር' : 'Action Details'}</th>
+                <SortableHeader
+                  label={lang === 'am' ? 'ሰዓት' : 'Timestamp'}
+                  field="timestamp"
+                  currentField={sortField}
+                  currentOrder={sortOrder}
+                  onSort={handleSort}
+                  align="right"
+                />
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800/80 font-medium">
-              {logs.map((log) => (
+              {sortedLogs.map((log) => (
                 <tr key={log.id} className="hover:bg-slate-50/70 dark:hover:bg-slate-800/50 transition-colors">
                   <td className="py-3.5 px-4">
                     <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 text-[11px] font-extrabold tracking-wide border border-slate-200/60 dark:border-slate-700">
@@ -79,12 +173,23 @@ export const AuditLogsPage: React.FC<AuditLogsPageProps> = ({ logs, lang }) => {
                   </td>
                 </tr>
               ))}
-              {logs.length === 0 && (
-                <tr>
-                  <td colSpan={4} className="py-12 text-center text-slate-400 dark:text-slate-500">
-                    No activity logs recorded yet.
-                  </td>
-                </tr>
+              {sortedLogs.length === 0 && (
+                <EmptyState
+                  colSpan={4}
+                  icon={History}
+                  title={lang === 'am' ? 'ምንም የኦዲት መዝገብ አልተገኘም' : 'No audit logs found'}
+                  description={
+                    search
+                      ? lang === 'am'
+                        ? 'ለተሰጠው ፍለጋ ምንም የተመዘገበ እርምጃ የለም።'
+                        : `No audit log events match your search query "${search}".`
+                      : lang === 'am'
+                      ? 'እስካሁን ምንም የአስተዳዳሪ እርምጃ አልተመዘገበም።'
+                      : 'No administrative activity has been logged yet.'
+                  }
+                  clearLabel={search ? (lang === 'am' ? 'ፍለጋውን አጽዳ' : 'Clear Search') : undefined}
+                  onClear={() => setSearch('')}
+                />
               )}
             </tbody>
           </table>
