@@ -6,7 +6,10 @@ import {
   MapPin,
   Calendar,
   Trash2,
+  Edit2,
   Eye,
+  CheckCircle2,
+  Clock,
   X,
 } from 'lucide-react';
 import { StudentClub } from '../types/index.js';
@@ -15,17 +18,20 @@ import { api } from '../services/api.js';
 interface ClubsPageProps {
   clubs: StudentClub[];
   lang: 'en' | 'am';
-  onCreateClub: (data: Partial<StudentClub>) => Promise<void>;
+  onSaveClub: (data: Partial<StudentClub>, id?: string) => Promise<void>;
   onDeleteClub: (id: string) => Promise<void>;
+  onToggleApproval: (club: StudentClub) => Promise<void>;
 }
 
 export const ClubsPage: React.FC<ClubsPageProps> = ({
   clubs,
   lang,
-  onCreateClub,
+  onSaveClub,
   onDeleteClub,
+  onToggleApproval,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingClub, setEditingClub] = useState<StudentClub | null>(null);
   const [rosterModal, setRosterModal] = useState<{ open: boolean; clubName: string; members: any[] }>({
     open: false,
     clubName: '',
@@ -41,6 +47,32 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
     isApproved: true,
   });
 
+  const openCreateModal = () => {
+    setEditingClub(null);
+    setFormData({
+      name: '',
+      description: '',
+      category: 'wellness',
+      venue: '',
+      meetingTime: '',
+      isApproved: true,
+    });
+    setIsModalOpen(true);
+  };
+
+  const openEditModal = (c: StudentClub) => {
+    setEditingClub(c);
+    setFormData({
+      name: c.name,
+      description: c.description,
+      category: c.category,
+      venue: c.venue || '',
+      meetingTime: c.meetingTime || '',
+      isApproved: c.isApproved,
+    });
+    setIsModalOpen(true);
+  };
+
   const openRoster = async (club: StudentClub) => {
     try {
       const data = await api.getClubRoster(club.id);
@@ -52,7 +84,7 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await onCreateClub(formData);
+    await onSaveClub(formData, editingClub ? editingClub.id : undefined);
     setIsModalOpen(false);
   };
 
@@ -72,7 +104,7 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
           </p>
         </div>
         <button
-          onClick={() => setIsModalOpen(true)}
+          onClick={openCreateModal}
           className="flex items-center gap-2 px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-xs md:text-sm font-bold rounded-xl shadow-md shadow-brand-600/20 transition-all self-start sm:self-auto"
         >
           <Plus size={16} />
@@ -88,18 +120,57 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
             className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs hover:shadow-md transition-all flex flex-col justify-between"
           >
             <div>
-              <div className="flex items-start justify-between gap-2 mb-2">
+              <div className="flex items-center justify-between gap-2 mb-2.5">
                 <span className="text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-md bg-brand-50 text-brand-700">
                   {c.category}
                 </span>
-                <button
-                  onClick={() => {
-                    if (confirm(`Delete club ${c.name}?`)) onDeleteClub(c.id);
-                  }}
-                  className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg"
-                >
-                  <Trash2 size={14} />
-                </button>
+
+                <div className="flex items-center gap-1.5">
+                  {/* Inline 1-Click Approval Toggle */}
+                  <button
+                    onClick={() => onToggleApproval(c)}
+                    className={`px-2 py-0.5 rounded-full text-[10px] font-bold flex items-center gap-1 transition-colors cursor-pointer ${
+                      c.isApproved
+                        ? 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200'
+                        : 'bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-200'
+                    }`}
+                    title={lang === 'am' ? 'የፍቃድ ሁኔታን ለመቀየር ይጫኑ' : 'Click to toggle approval'}
+                  >
+                    {c.isApproved ? (
+                      <>
+                        <CheckCircle2 size={11} className="text-emerald-600" />
+                        <span>{lang === 'am' ? 'የተፈቀደ' : 'Approved'}</span>
+                      </>
+                    ) : (
+                      <>
+                        <Clock size={11} className="text-amber-600" />
+                        <span>{lang === 'am' ? 'በመጠባበቅ ላይ' : 'Pending'}</span>
+                      </>
+                    )}
+                  </button>
+
+                  {/* Edit Button */}
+                  <button
+                    onClick={() => openEditModal(c)}
+                    className="p-1.5 text-slate-400 hover:text-brand-600 hover:bg-brand-50 rounded-lg transition-colors"
+                    title={lang === 'am' ? 'አርትዕ' : 'Edit club'}
+                  >
+                    <Edit2 size={14} />
+                  </button>
+
+                  {/* Delete Button */}
+                  <button
+                    onClick={() => {
+                      if (confirm(lang === 'am' ? `ክለብ "${c.name}" ይሰረዝ?` : `Delete club "${c.name}"?`)) {
+                        onDeleteClub(c.id);
+                      }
+                    }}
+                    className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
+                    title={lang === 'am' ? 'ሰርዝ' : 'Delete club'}
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
               </div>
 
               <h3 className="font-extrabold text-slate-900 text-base mb-1">{c.name}</h3>
@@ -175,12 +246,16 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
         </div>
       )}
 
-      {/* Create Modal */}
+      {/* Create / Edit Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-lg w-full p-6 md:p-8 animate-in fade-in zoom-in-95">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <h3 className="text-lg font-extrabold text-slate-900">Register New Student Club</h3>
+              <h3 className="text-lg font-extrabold text-slate-900">
+                {editingClub
+                  ? (lang === 'am' ? 'የተማሪዎች ክለብን አርትዕ' : 'Edit Student Club')
+                  : (lang === 'am' ? 'አዲስ የተማሪዎች ክለብ ፍጠር' : 'Register New Student Club')}
+              </h3>
               <button onClick={() => setIsModalOpen(false)} className="p-1 text-slate-400 hover:text-slate-600">
                 <X size={20} />
               </button>
@@ -188,7 +263,9 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
 
             <form onSubmit={handleSubmit} className="mt-4 space-y-3.5 text-xs md:text-sm">
               <div>
-                <label className="block font-bold text-slate-700 mb-1">Club Name</label>
+                <label className="block font-bold text-slate-700 mb-1">
+                  {lang === 'am' ? 'የክለቡ ስም' : 'Club Name'}
+                </label>
                 <input
                   type="text"
                   required
@@ -200,7 +277,9 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 mb-1">Category</label>
+                <label className="block font-bold text-slate-700 mb-1">
+                  {lang === 'am' ? 'ምድብ' : 'Category'}
+                </label>
                 <select
                   value={formData.category}
                   onChange={(e) => setFormData({ ...formData, category: e.target.value })}
@@ -214,7 +293,9 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 mb-1">Description</label>
+                <label className="block font-bold text-slate-700 mb-1">
+                  {lang === 'am' ? 'መግለጫ' : 'Description'}
+                </label>
                 <textarea
                   rows={3}
                   required
@@ -227,7 +308,9 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">Meeting Venue</label>
+                  <label className="block font-bold text-slate-700 mb-1">
+                    {lang === 'am' ? 'የመሰብሰቢያ ቦታ' : 'Meeting Venue'}
+                  </label>
                   <input
                     type="text"
                     value={formData.venue}
@@ -237,7 +320,9 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">Meeting Schedule</label>
+                  <label className="block font-bold text-slate-700 mb-1">
+                    {lang === 'am' ? 'የመሰብሰቢያ ሰዓት' : 'Meeting Schedule'}
+                  </label>
                   <input
                     type="text"
                     value={formData.meetingTime}
@@ -246,6 +331,19 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
                     placeholder="e.g. Every Wed at 4:30 PM"
                   />
                 </div>
+              </div>
+
+              <div className="pt-1 flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="clubApproved"
+                  checked={formData.isApproved}
+                  onChange={(e) => setFormData({ ...formData, isApproved: e.target.checked })}
+                  className="w-4 h-4 text-brand-600 rounded border-slate-300"
+                />
+                <label htmlFor="clubApproved" className="text-xs font-bold text-slate-700">
+                  {lang === 'am' ? 'ይህ ክለብ በይፋ እንዲታይ የተፈቀደ ነው (Approved)' : 'Club is officially approved and active'}
+                </label>
               </div>
 
               <div className="pt-4 flex items-center justify-end gap-3 border-t border-slate-100">
@@ -258,9 +356,11 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl shadow-md"
+                  className="px-5 py-2 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl shadow-md shadow-brand-600/20"
                 >
-                  Create Club
+                  {editingClub
+                    ? (lang === 'am' ? 'ለውጦችን መዝግብ' : 'Save Changes')
+                    : (lang === 'am' ? 'ክለብ ፍጠር' : 'Create Club')}
                 </button>
               </div>
             </form>

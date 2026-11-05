@@ -126,8 +126,12 @@ export function App() {
   };
 
   // Quiz Question Actions
-  const handleCreateQuestion = async (data: Partial<QuizQuestion>) => {
-    await api.createQuestion(data);
+  const handleSaveQuestion = async (data: Partial<QuizQuestion>, id?: string) => {
+    if (id) {
+      await api.updateQuestion(id, data);
+    } else {
+      await api.createQuestion(data);
+    }
     await loadAllData();
   };
 
@@ -137,8 +141,17 @@ export function App() {
   };
 
   // Club Actions
-  const handleCreateClub = async (data: Partial<StudentClub>) => {
-    await api.createClub(data);
+  const handleSaveClub = async (data: Partial<StudentClub>, id?: string) => {
+    if (id) {
+      await api.updateClub(id, data);
+    } else {
+      await api.createClub(data);
+    }
+    await loadAllData();
+  };
+
+  const handleToggleClubApproval = async (club: StudentClub) => {
+    await api.updateClub(club.id, { isApproved: !club.isApproved });
     await loadAllData();
   };
 
@@ -211,7 +224,7 @@ export function App() {
           questions={questions}
           modules={modules}
           lang={lang}
-          onCreateQuestion={handleCreateQuestion}
+          onSaveQuestion={handleSaveQuestion}
           onDeleteQuestion={handleDeleteQuestion}
         />
       )}
@@ -219,8 +232,9 @@ export function App() {
         <ClubsPage
           clubs={clubs}
           lang={lang}
-          onCreateClub={handleCreateClub}
+          onSaveClub={handleSaveClub}
           onDeleteClub={handleDeleteClub}
+          onToggleApproval={handleToggleClubApproval}
         />
       )}
       {currentTab === 'users' && (

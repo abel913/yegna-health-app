@@ -1,5 +1,22 @@
 # Phase status
 
+## Admin Web Portal CRUD Symmetry & Governance Enhancements (2026-11-05)
+
+**Status: Completed & 100% Verified.**
+- **Admin Web Quizzes Management (`QuizzesPage.tsx`)**:
+  - Implemented full Edit Modal supporting modification of parent module, bilingual question titles (English & Amharic), 4 option choices, correct option radio indexing, and doctor clinical explanations.
+  - Added discrete `Edit2` and `Trash2` action buttons for every quiz question card.
+  - Wired `api.updateQuestion(id, data)` communicating via `PUT /api/admin/quizzes/:id`.
+- **Student Clubs Moderation & Approval (`ClubsPage.tsx`)**:
+  - Implemented full Edit Modal supporting club name, category, description, venue, meeting schedule, and approval state.
+  - Added inline 1-click Approval status toggle button (`Approved` in emerald / `Pending` in amber) for rapid moderation.
+  - Wired `api.updateClub(id, data)` communicating via `PUT /api/admin/clubs/:id`.
+- **Quality Gates & Verification**:
+  - TypeScript static analysis (`tsc`): **0 errors**.
+  - Vite production build (`vite build`): **1,590 modules transformed, 0 errors in 14.03s**.
+  - Root Flutter static analysis (`flutter analyze --no-pub`): **0 issues found**.
+  - Root Flutter test suite (`flutter test --no-pub`): **179/179 tests passing (100%)**.
+
 ## Offline-First Mobile Synchronization & Backend Integration (2026-11-05)
 
 **Status: Completed & 100% Verified.**

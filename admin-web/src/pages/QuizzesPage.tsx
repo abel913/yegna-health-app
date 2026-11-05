@@ -3,6 +3,7 @@ import {
   HelpCircle,
   Plus,
   Trash2,
+  Edit2,
   CheckCircle,
   X,
 } from 'lucide-react';
@@ -12,7 +13,7 @@ interface QuizzesPageProps {
   questions: QuizQuestion[];
   modules: Module[];
   lang: 'en' | 'am';
-  onCreateQuestion: (data: Partial<QuizQuestion>) => Promise<void>;
+  onSaveQuestion: (data: Partial<QuizQuestion>, id?: string) => Promise<void>;
   onDeleteQuestion: (id: string) => Promise<void>;
 }
 
@@ -20,10 +21,11 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
   questions,
   modules,
   lang,
-  onCreateQuestion,
+  onSaveQuestion,
   onDeleteQuestion,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingQuestion, setEditingQuestion] = useState<QuizQuestion | null>(null);
   const [formData, setFormData] = useState({
     moduleId: modules[0]?.id || '',
     questionEn: '',
@@ -36,6 +38,7 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
   });
 
   const openCreateModal = () => {
+    setEditingQuestion(null);
     setFormData({
       moduleId: modules[0]?.id || '',
       questionEn: '',
@@ -49,9 +52,24 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
     setIsModalOpen(true);
   };
 
+  const openEditModal = (q: QuizQuestion) => {
+    setEditingQuestion(q);
+    setFormData({
+      moduleId: q.moduleId,
+      questionEn: q.questionEn,
+      questionAm: q.questionAm,
+      optionsEn: [...q.optionsEn],
+      optionsAm: [...q.optionsAm],
+      correctIndex: q.correctIndex,
+      explanationEn: q.explanationEn,
+      explanationAm: q.explanationAm,
+    });
+    setIsModalOpen(true);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await onCreateQuestion(formData);
+    await onSaveQuestion(formData, editingQuestion ? editingQuestion.id : undefined);
     setIsModalOpen(false);
   };
 
@@ -92,14 +110,26 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
                   {q.module?.category || 'Curriculum'}
                 </span>
               </div>
-              <button
-                onClick={() => {
-                  if (confirm('Delete this question?')) onDeleteQuestion(q.id);
-                }}
-                className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg"
-              >
-                <Trash2 size={15} />
-              </button>
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => openEditModal(q)}
+                  className="p-1.5 text-slate-400 hover:text-brand-600 hover:bg-brand-50 rounded-lg transition-colors"
+                  title={lang === 'am' ? 'አርትዕ' : 'Edit question'}
+                >
+                  <Edit2 size={15} />
+                </button>
+                <button
+                  onClick={() => {
+                    if (confirm(lang === 'am' ? 'ይህን ጥያቄ መሰረዝ ይፈልጋሉ?' : 'Delete this question?')) {
+                      onDeleteQuestion(q.id);
+                    }
+                  }}
+                  className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
+                  title={lang === 'am' ? 'ሰርዝ' : 'Delete question'}
+                >
+                  <Trash2 size={15} />
+                </button>
+              </div>
             </div>
 
             <h3 className="font-bold text-slate-900 text-sm mb-1">{lang === 'am' ? q.questionAm : q.questionEn}</h3>
@@ -137,7 +167,11 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
         <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-xl w-full max-h-[90vh] overflow-y-auto p-6 md:p-8 animate-in fade-in zoom-in-95">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <h3 className="text-lg font-extrabold text-slate-900">Add New Quiz Question</h3>
+              <h3 className="text-lg font-extrabold text-slate-900">
+                {editingQuestion
+                  ? (lang === 'am' ? 'የፈተና ጥያቄን አርትዕ' : 'Edit Quiz Question')
+                  : (lang === 'am' ? 'አዲስ የፈተና ጥያቄ ጨምር' : 'Add New Quiz Question')}
+              </h3>
               <button onClick={() => setIsModalOpen(false)} className="p-1 text-slate-400 hover:text-slate-600">
                 <X size={20} />
               </button>
@@ -263,9 +297,11 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl shadow-md"
+                  className="px-5 py-2 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl shadow-md shadow-brand-600/20"
                 >
-                  Save Question
+                  {editingQuestion
+                    ? (lang === 'am' ? 'ለውጦችን መዝግብ' : 'Save Changes')
+                    : (lang === 'am' ? 'ጥያቄውን መዝግብ' : 'Save Question')}
                 </button>
               </div>
             </form>

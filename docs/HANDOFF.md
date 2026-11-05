@@ -1,5 +1,17 @@
 # Handoff
 
+## Admin Web Portal CRUD Symmetry & Governance Enhancements (2026-11-05)
+
+- **Admin Web Portal Updates**:
+  - `admin-web/src/pages/QuizzesPage.tsx`: Added question editing modal, bilingual inputs, radio option selection, and `Edit2` button.
+  - `admin-web/src/pages/ClubsPage.tsx`: Added student club editing modal, 1-click approval toggle button, and `Edit2` button.
+  - `admin-web/src/services/api.ts`: Added `updateQuestion` and `updateClub` calling backend `PUT /api/admin/quizzes/:id` and `PUT /api/admin/clubs/:id`.
+  - `admin-web/src/App.tsx`: Wired state handlers for question and club updating.
+- **Verification**:
+  - `tsc && vite build`: 0 errors.
+  - `flutter analyze --no-pub`: 0 issues found.
+  - `flutter test --no-pub`: 179/179 tests passing.
+
 ## Offline-First Mobile Synchronization & Custom Backend Integration (2026-11-05)
 
 - **Offline-First Synchronization Pipeline**:

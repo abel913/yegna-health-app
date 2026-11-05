@@ -186,6 +186,16 @@ export const api = {
     return res.json();
   },
 
+  async updateQuestion(id: string, data: Partial<QuizQuestion>): Promise<{ question: QuizQuestion }> {
+    const res = await fetch(`${API_BASE}/admin/quizzes/${id}`, {
+      method: 'PUT',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) throw new Error('Failed to update question');
+    return res.json();
+  },
+
   async deleteQuestion(id: string): Promise<void> {
     const res = await fetch(`${API_BASE}/admin/quizzes/${id}`, {
       method: 'DELETE',
@@ -208,6 +218,16 @@ export const api = {
       body: JSON.stringify(data),
     });
     if (!res.ok) throw new Error('Failed to create club');
+    return res.json();
+  },
+
+  async updateClub(id: string, data: Partial<StudentClub>): Promise<{ club: StudentClub }> {
+    const res = await fetch(`${API_BASE}/admin/clubs/${id}`, {
+      method: 'PUT',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) throw new Error('Failed to update club');
     return res.json();
   },
 
