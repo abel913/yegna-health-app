@@ -1,5 +1,20 @@
 # Phase status
 
+## Multi-Campus & Regional City Support in Facilities CMS (2026-11-05)
+
+**Status: Completed & 100% Verified.**
+- **University of Gondar & Regional Hubs Integration (`FacilitiesPage.tsx`)**:
+  - Implemented categorized location presets (`LOCATION_PRESETS`) covering University of Gondar campuses (Maraki, Atse Tewodros, GCMS Referral Hospital, Fasil), regional health centers (Gondar City, Bahir Dar, Hawassa, Mekelle, Jimma), and Addis Ababa sub-cities.
+  - Added smart GPS coordinate auto-presets prefilling latitude and longitude upon location selection.
+  - Added dynamic custom campus input mode (`+ Custom Campus / City Name...`) enabling admins to register any campus or regional branch nationwide.
+  - Built regional filter tabs (`All Locations`, `University of Gondar`, `Regional Hubs`, `Addis Ababa`) with sub-location pills.
+  - Added visual identity badges in the data table distinguishing academic campus clinics, regional hubs, and urban health posts.
+- **Backend Seed Dataset Updates (`server/prisma/seed.ts`)**:
+  - Added official seed records for *UoG Maraki Student Health Center* and *UoG Comprehensive Specialized Hospital (GCMS) Adolescent Clinic*.
+- **Quality Gates & Verification**:
+  - TypeScript & Vite production build (`tsc && vite build`): **1,590 modules transformed, 0 errors in 5.11s**.
+  - Flutter static analysis (`flutter analyze --no-pub`): **0 issues found**.
+
 ## Admin Web Portal CRUD Symmetry & Governance Enhancements (2026-11-05)
 
 **Status: Completed & 100% Verified.**

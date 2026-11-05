@@ -1,5 +1,14 @@
 # Handoff
 
+## Multi-Campus & Regional City Support in Facilities CMS (2026-11-05)
+
+- **Facilities Management Updates**:
+  - `admin-web/src/pages/FacilitiesPage.tsx`: Added `LOCATION_PRESETS` for University of Gondar campuses (Maraki, Atse Tewodros, GCMS, Fasil), regional centers (Gondar, Hawassa, Bahir Dar, etc.), and Addis Ababa sub-cities. Added GPS auto-preset loading, custom location input, region filter tabs, and campus badges.
+  - `server/prisma/seed.ts`: Added UoG Maraki Student Health Center and UoG GCMS Referral Hospital to seed data.
+- **Verification**:
+  - `tsc && vite build`: 0 errors in 5.11s.
+  - `flutter analyze --no-pub`: 0 issues found.
+
 ## Admin Web Portal CRUD Symmetry & Governance Enhancements (2026-11-05)
 
 - **Admin Web Portal Updates**:
