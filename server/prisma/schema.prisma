@@ -1,0 +1,118 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id           String       @id @default(uuid())
+  email        String       @unique
+  passwordHash String
+  displayName  String
+  role         String       @default("STUDENT") // STUDENT, MENTOR, ADMIN, SUPER_ADMIN
+  isSuspended  Boolean      @default(false)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  memberships  ClubMember[]
+}
+
+model Facility {
+  id             String   @id @default(uuid())
+  nameEn         String
+  nameAm         String
+  subCity        String   // Arada, Kirkos, Bole, etc.
+  woreda         String?
+  addressEn      String
+  addressAm      String
+  phone          String
+  latitude       Float
+  longitude      Float
+  operatingHours String   @default("08:30 - 17:30")
+  isVerified     Boolean  @default(true)
+  services       String   @default("[]") // JSON string array of tags
+  createdAt      DateTime @default(now())
+}
+
+model Mentor {
+  id             String   @id @default(uuid())
+  name           String
+  organization   String
+  phone          String
+  telegramHandle String?
+  email          String?
+  languages      String   @default("[\"Amharic\",\"English\"]") // JSON string array
+  specialties    String   @default("[]") // JSON string array
+  isAvailable    Boolean  @default(true)
+  isVerified     Boolean  @default(true)
+  createdAt      DateTime @default(now())
+}
+
+model Module {
+  id          String         @id @default(uuid())
+  category    String         // puberty, srh, hiv, gbv, mental_health, substance
+  titleEn     String
+  titleAm     String
+  summaryEn   String
+  summaryAm   String
+  contentEn   String
+  contentAm   String
+  readTimeMin Int            @default(4)
+  isPublished Boolean        @default(true)
+  authorName  String?
+  orderIndex  Int            @default(0)
+  createdAt   DateTime       @default(now())
+
+  quizzes     QuizQuestion[]
+}
+
+model QuizQuestion {
+  id            String   @id @default(uuid())
+  moduleId      String
+  questionEn    String
+  questionAm    String
+  optionsEn     String   @default("[]") // JSON string array
+  optionsAm     String   @default("[]") // JSON string array
+  correctIndex  Int      @default(0)
+  explanationEn String
+  explanationAm String
+  createdAt     DateTime @default(now())
+
+  module        Module   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+}
+
+model StudentClub {
+  id          String       @id @default(uuid())
+  name        String
+  description String
+  category    String       // wellness, mental_health, srh, leadership
+  venue       String?
+  meetingTime String?
+  isApproved  Boolean      @default(true)
+  createdAt   DateTime     @default(now())
+
+  members     ClubMember[]
+}
+
+model ClubMember {
+  id        String      @id @default(uuid())
+  userId    String
+  clubId    String
+  joinedAt  DateTime    @default(now())
+
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  club      StudentClub @relation(fields: [clubId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, clubId])
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  action     String   // e.g. "FACILITY_CREATED", "USER_SUSPENDED", "MODULE_UPDATED"
+  adminEmail String
+  details    String
+  timestamp  DateTime @default(now())
+}
