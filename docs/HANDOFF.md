@@ -1,5 +1,18 @@
 # Handoff
 
+## Mobile & Tablet Responsive Navigation Drawer Architecture (2026-11-05)
+
+- **Mobile Off-Canvas Drawer (`admin-web/src/components/layout/AdminLayout.tsx`)**:
+  - Slide-out drawer with backdrop blur overlay, automatic route close, touch dismiss, and `Escape` key capture.
+  - In-drawer brand logo, complete navigation tabs, user card, theme toggle, and language toggle.
+- **Adaptive Header & Viewport**:
+  - Dedicated mobile hamburger menu trigger button (`lg:hidden`).
+  - Fluid search button scaling (`max-w-[190px]` to `w-80`) preventing overflow on narrow mobile screens.
+  - Adaptive button labels and responsive body padding (`p-4 sm:p-6 md:p-8`).
+- **Verification**:
+  - `cd admin-web && npm run build`: 1,598 modules transformed, 0 errors in 5.04s.
+  - `flutter analyze --no-pub`: 0 issues found (10.1s).
+
 ## Audit Trail Advanced Multi-Filter & Date Range Picker Architecture (2026-11-05)
 
 - **Date Range Picker (`admin-web/src/components/common/DateRangePicker.tsx`)**:
