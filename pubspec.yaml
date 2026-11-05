@@ -21,6 +21,7 @@ dependencies:
   url_launcher: ^6.3.3
   geolocator: ^14.0.2
   crypto: ^3.0.6
+  http: ^1.2.0
 
 dev_dependencies:
   flutter_test:
