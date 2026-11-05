@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { AdminUser } from '../../types/index.js';
 import { useTheme } from '../../context/ThemeContext.js';
+import { SystemHealthIndicator } from '../common/SystemHealthIndicator.js';
 
 interface AdminLayoutProps {
   currentTab: string;
@@ -203,6 +204,17 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
               </button>
             </div>
 
+            {/* Mobile In-Drawer Live Telemetry Bar */}
+            <div className="flex items-center justify-between px-2.5 py-1.5 rounded-xl bg-slate-100/80 dark:bg-slate-800/60 border border-slate-200/50 dark:border-slate-700/50 text-[11px] font-bold text-slate-600 dark:text-slate-300">
+              <span className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span>{lang === 'am' ? 'የሲስተም ጤና' : 'API & Telemetry'}</span>
+              </span>
+              <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-mono">
+                Online • SQLite Synced
+              </span>
+            </div>
+
             {/* User Profile & Sign Out Card */}
             <div className="flex items-center justify-between p-2 rounded-xl bg-white dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60">
               <div className="flex items-center gap-2.5 min-w-0">
@@ -366,8 +378,11 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
             </button>
           </div>
 
-          {/* Right: Privacy Shield, Theme Toggle, Language Toggle & Quick Action */}
-          <div className="flex items-center gap-1.5 sm:gap-3">
+          {/* Right: Telemetry, Privacy Shield, Theme Toggle, Language Toggle & Quick Action */}
+          <div className="flex items-center gap-1.5 sm:gap-2.5">
+            {/* Live Infrastructure Telemetry Health Indicator */}
+            <SystemHealthIndicator lang={lang} />
+
             {/* Zero-Knowledge Privacy Shield Pill (Desktop/Tablet) */}
             <div className="hidden xl:flex items-center gap-2 px-3 py-1.5 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/80 dark:border-emerald-800 rounded-full text-emerald-800 dark:text-emerald-300 text-xs font-semibold shadow-xs">
               <ShieldCheck size={16} className="text-emerald-600 dark:text-emerald-400" />

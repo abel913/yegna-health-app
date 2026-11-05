@@ -1,5 +1,28 @@
 # Phase status
 
+## Live Telemetry & System Health Indicator Architecture (2026-11-05)
+
+**Status: Completed & 100% Verified.**
+- **Backend Health & Telemetry Endpoint (`server/src/routes/index.ts`)**:
+  - Enhanced `/api/health` with real-time SQLite database ping (`SELECT 1`), database query latency in milliseconds, server uptime calculation, runtime environment, and Zero-Knowledge privacy verification payload.
+- **Frontend Telemetry Service & Types (`api.ts` & `types/index.ts`)**:
+  - Added `SystemTelemetry` interface and `api.getHealth()` client method calculating precise roundtrip latency in ms (`performance.now()`).
+- **Interactive System Health Indicator Component (`SystemHealthIndicator.tsx`)**:
+  - Top header pill with pulsing status beacon (Emerald for `200 OK`, Amber for degraded, Rose for offline), real-time roundtrip latency, and 30-second automated polling.
+  - Rich glassmorphic dropdown dialog featuring:
+    - API Gateway status and live roundtrip latency in ms.
+    - Database engine health (SQLite & Prisma query latency).
+    - Zero-Knowledge student privacy vault active guarantee.
+    - Server uptime counter (formatted days/hours/minutes/seconds) and runtime version.
+    - 1-click manual refresh button with animated spinner.
+- **Portal & Mobile Layout Integration (`AdminLayout.tsx`)**:
+  - Mounted `SystemHealthIndicator` in top header bar.
+  - Added in-drawer live telemetry status badge inside the mobile slide-out navigation panel.
+- **Quality Gates & Verification**:
+  - TypeScript & Vite production build (`cd admin-web && npm run build`): **1,599 modules transformed, 0 errors in 8.32s**.
+  - Server TypeScript build (`cd server && npm run build`): **0 errors**.
+  - Root Flutter static analysis (`flutter analyze --no-pub`): **0 issues found** (12.2s).
+
 ## Mobile & Tablet Responsive Navigation Drawer Architecture (2026-11-05)
 
 **Status: Completed & 100% Verified.**

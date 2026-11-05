@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { prisma } from '../config/index.js';
 import { authenticateToken, requireAdmin } from '../middleware/auth.middleware.js';
 
 import * as auth from '../controllers/auth.controller.js';
@@ -12,11 +13,29 @@ import * as dashboard from '../controllers/dashboard.controller.js';
 
 export const router = Router();
 
-// --- 1. HEALTH CHECK ---
-router.get('/health', (req, res) => {
+// --- 1. HEALTH & TELEMETRY CHECK ---
+router.get('/health', async (req, res) => {
+  const start = Date.now();
+  let dbStatus = 'connected';
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+  } catch (err) {
+    dbStatus = 'degraded';
+  }
+  const dbLatencyMs = Date.now() - start;
+
   res.json({
     status: 'ok',
     service: 'Yegna Health Custom Backend API',
+    version: '1.0.0',
+    environment: process.env.NODE_ENV || 'development',
+    uptimeSeconds: Math.floor(process.uptime()),
+    database: {
+      type: 'SQLite (Prisma ORM)',
+      status: dbStatus,
+      latencyMs: dbLatencyMs,
+    },
+    privacyVault: 'Zero-Knowledge Active',
     timestamp: new Date().toISOString(),
   });
 });

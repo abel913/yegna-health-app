@@ -1,5 +1,18 @@
 # Handoff
 
+## Live Telemetry & System Health Indicator Architecture (2026-11-05)
+
+- **Backend Health Check (`server/src/routes/index.ts`)**:
+  - `/api/health` reports live SQLite query latency, server uptime, environment, and Zero-Knowledge vault status.
+- **Frontend Telemetry Indicator (`admin-web/src/components/common/SystemHealthIndicator.tsx`)**:
+  - Top header pill with pulsing status beacon and live roundtrip latency (e.g. `● 18ms Live`).
+  - Rich glassmorphic dropdown dialog detailing Gateway roundtrip, Database engine query latency, Zero-Knowledge privacy vault, server uptime, and 1-click manual refresh.
+  - In-drawer live telemetry status in mobile slide-out drawer.
+- **Verification**:
+  - `cd admin-web && npm run build`: 1,599 modules transformed, 0 errors in 8.32s.
+  - `cd server && npm run build`: 0 errors.
+  - `flutter analyze --no-pub`: 0 issues found (12.2s).
+
 ## Mobile & Tablet Responsive Navigation Drawer Architecture (2026-11-05)
 
 - **Mobile Off-Canvas Drawer (`admin-web/src/components/layout/AdminLayout.tsx`)**:

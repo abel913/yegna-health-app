@@ -111,3 +111,19 @@ export interface DashboardMetrics {
   studentClubs: number;
   registeredUsers: number;
 }
+
+export interface SystemTelemetry {
+  status: 'ok' | 'degraded' | 'offline';
+  service: string;
+  version: string;
+  environment: string;
+  uptimeSeconds: number;
+  database: {
+    type: string;
+    status: string;
+    latencyMs: number;
+  };
+  privacyVault: string;
+  timestamp: string;
+  clientRoundtripMs: number;
+}
