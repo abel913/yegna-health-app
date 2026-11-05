@@ -192,4 +192,223 @@ void main() {
       expect(health, isFalse);
     });
   });
+
+  group('SyncFacilityRepository Offline Tests', () {
+    test('Falls back to bundled verified clinics on cold start without network',
+        () async {
+      final store = OfflineSyncStore();
+      final repo = SyncFacilityRepository(
+        store: store,
+        fallback: const LocalVerifiedFacilityRepository(),
+      );
+
+      final facilities = await repo.getFacilities();
+      expect(facilities.isNotEmpty, isTrue);
+      expect(facilities.any((f) => f.nameEn.contains('Arada')), isTrue);
+
+      // Verify it cached the fallback seed so subsequent reads are immediate
+      final cached = await store.getCachedFacilities();
+      expect(cached, isNotNull);
+      expect(cached!.length, facilities.length);
+    });
+
+    test('Filters facilities by category correctly', () async {
+      final store = OfflineSyncStore();
+      final repo = SyncFacilityRepository(store: store);
+
+      final srhFacilities = await repo.getFacilities(
+        category: FacilityFilterCategory.srhVct,
+      );
+      expect(srhFacilities.isNotEmpty, isTrue);
+      for (final f in srhFacilities) {
+        expect(
+          f.services.any((s) => s.contains('SRH') || s.contains('VCT')),
+          isTrue,
+        );
+      }
+    });
+
+    test('Searches facilities by query in English and Amharic', () async {
+      final store = OfflineSyncStore();
+      final repo = SyncFacilityRepository(store: store);
+
+      final searchEn = await repo.getFacilities(query: 'kirkos');
+      expect(searchEn.isNotEmpty, isTrue);
+
+      final searchAm = await repo.getFacilities(query: 'አራዳ');
+      expect(searchAm.isNotEmpty, isTrue);
+    });
+  });
+
+  group('SyncMentorRepository Offline Tests', () {
+    test('Falls back to bundled verified mentors on cold start', () async {
+      final store = OfflineSyncStore();
+      final repo = SyncMentorRepository(
+        store: store,
+        fallback: const LocalVerifiedMentorRepository(),
+      );
+
+      final mentors = await repo.getMentors();
+      expect(mentors.isNotEmpty, isTrue);
+      expect(mentors.first.nameEn, isNotEmpty);
+    });
+
+    test('Filters mentors by topic and online status', () async {
+      final store = OfflineSyncStore();
+      final repo = SyncMentorRepository(store: store);
+
+      final mentalHealthMentors = await repo.getMentors(
+        topic: MentorTopic.mentalHealth,
+      );
+      expect(mentalHealthMentors.isNotEmpty, isTrue);
+      for (final m in mentalHealthMentors) {
+        expect(m.topics.contains(MentorTopic.mentalHealth), isTrue);
+      }
+
+      final onlineMentors = await repo.getMentors(onlineOnly: true);
+      for (final m in onlineMentors) {
+        expect(m.isOnline, isTrue);
+      }
+    });
+  });
+
+  group('SyncClubRepository Offline Tests', () {
+    test('Allows joining a club offline and persists to local roster', () async {
+      final store = OfflineSyncStore();
+      final localRepo = LocalClubRepository();
+      final repo = SyncClubRepository(
+        store: store,
+        localRepository: localRepo,
+      );
+
+      final clubs = await repo.getClubs();
+      expect(clubs.isNotEmpty, isTrue);
+      final firstClub = clubs.first;
+
+      const testUserId = 'student_test_user_42';
+      final joinResult = await repo.joinClub(
+        firstClub.id,
+        testUserId,
+        userEmail: 'student@aau.edu.et',
+        userName: 'Abebe Bikila',
+      );
+      expect(joinResult, isTrue);
+
+      final joinedIds = await repo.getJoinedClubIds(testUserId);
+      expect(joinedIds, contains(firstClub.id));
+
+      final roster = await repo.getClubMembers(firstClub.id);
+      expect(roster.any((m) => m.userId == testUserId), isTrue);
+    });
+  });
+
+  group('SyncEducationRepository Offline Tests', () {
+    test('Provides categories and articles with zero network', () async {
+      final store = OfflineSyncStore();
+      final repo = SyncEducationRepository(store: store);
+
+      final catRes = await repo.categories('en');
+      expect(catRes.value.isNotEmpty, isTrue);
+
+      final artRes = await repo.articles('en');
+      expect(artRes.value.isNotEmpty, isTrue);
+
+      final firstArticleId = artRes.value.first.id;
+      final articleDetail = await repo.article(firstArticleId, 'en');
+      expect(articleDetail, isNotNull);
+      expect(articleDetail!.value.title, isNotEmpty);
+    });
+  });
+
+  group('SyncManager Orchestration Tests', () {
+    test('Updates status to synced when backend responds with fresh data',
+        () async {
+      final mockClient = MockClient((request) async {
+        if (request.url.path.endsWith('/facilities')) {
+          return http.Response(
+            jsonEncode({'facilities': []}),
+            200,
+            headers: {'content-type': 'application/json'},
+          );
+        }
+        if (request.url.path.endsWith('/mentors')) {
+          return http.Response(
+            jsonEncode({'mentors': []}),
+            200,
+            headers: {'content-type': 'application/json'},
+          );
+        }
+        if (request.url.path.endsWith('/modules')) {
+          return http.Response(
+            jsonEncode({
+              'modules': [
+                {
+                  'id': 'mod_synced_1',
+                  'titleEn': 'Adolescent Nutrition',
+                  'titleAm': 'የአፍላ ወጣቶች አመጋገብ',
+                  'summaryEn': 'Healthy diets for youth.',
+                  'summaryAm': 'ለወጣቶች ጤናማ አመጋገብ።',
+                  'category': 'wellness',
+                }
+              ]
+            }),
+            200,
+            headers: {'content-type': 'application/json'},
+          );
+        }
+        if (request.url.path.endsWith('/quizzes')) {
+          return http.Response(
+            jsonEncode({'questions': []}),
+            200,
+            headers: {'content-type': 'application/json'},
+          );
+        }
+        if (request.url.path.endsWith('/clubs')) {
+          return http.Response(
+            jsonEncode({'clubs': []}),
+            200,
+            headers: {'content-type': 'application/json'},
+          );
+        }
+        return http.Response('Not Found', 404);
+      });
+
+      final store = OfflineSyncStore();
+      final apiClient = ApiClient(
+        baseUrl: 'http://test-server/api',
+        httpClient: mockClient,
+      );
+
+      final manager = SyncManager(apiClient: apiClient, store: store);
+      expect(manager.status, SyncStatus.idle);
+
+      final success = await manager.syncAll();
+      expect(success, isTrue);
+      expect(manager.status, SyncStatus.synced);
+      expect(manager.lastSyncedAt, isNotNull);
+
+      final cachedModules = await store.getCachedModules();
+      expect(cachedModules, isNotNull);
+      expect(cachedModules!.first['titleEn'], 'Adolescent Nutrition');
+    });
+
+    test('Gracefully sets status to offline when server connection fails',
+        () async {
+      final mockClient = MockClient((request) async {
+        return http.Response('Server Down', 503);
+      });
+
+      final store = OfflineSyncStore();
+      final apiClient = ApiClient(
+        baseUrl: 'http://unreachable-server/api',
+        httpClient: mockClient,
+      );
+
+      final manager = SyncManager(apiClient: apiClient, store: store);
+      final success = await manager.syncAll();
+      expect(success, isFalse);
+      expect(manager.status, SyncStatus.offline);
+      expect(manager.isOffline, isTrue);
+    });
+  });
 }
