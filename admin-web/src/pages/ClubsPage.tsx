@@ -16,6 +16,7 @@ import {
 import { StudentClub } from '../types/index.js';
 import { api } from '../services/api.js';
 import { exportToCsv } from '../utils/csvExport.js';
+import { useToast } from '../context/ToastContext.js';
 
 interface ClubsPageProps {
   clubs: StudentClub[];
@@ -32,6 +33,7 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
   onDeleteClub,
   onToggleApproval,
 }) => {
+  const { toast } = useToast();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingClub, setEditingClub] = useState<StudentClub | null>(null);
   const [rosterModal, setRosterModal] = useState<{ open: boolean; clubName: string; members: any[] }>({
@@ -80,7 +82,7 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
       const data = await api.getClubRoster(club.id);
       setRosterModal({ open: true, clubName: data.clubName, members: data.roster || [] });
     } catch (err: any) {
-      alert('Failed to load roster: ' + err.message);
+      toast.error('Failed to load roster: ' + err.message, 'Roster Error');
     }
   };
 

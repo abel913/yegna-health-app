@@ -21,8 +21,10 @@ import {
   ManagedUser,
   AuditLog,
 } from './types/index.js';
+import { useToast } from './context/ToastContext.js';
 
 export function App() {
+  const { toast } = useToast();
   const [user, setUser] = useState<AdminUser | null>(() => api.getCurrentUser());
   const [currentTab, setCurrentTab] = useState('dashboard');
   const [lang, setLang] = useState<'en' | 'am'>('en');
@@ -82,93 +84,174 @@ export function App() {
 
   // Facility Actions
   const handleSaveFacility = async (data: Partial<Facility>, id?: string) => {
-    if (id) {
-      await api.updateFacility(id, data);
-    } else {
-      await api.createFacility(data);
+    try {
+      if (id) {
+        await api.updateFacility(id, data);
+        toast.success(lang === 'am' ? 'የተቋሙ መረጃ ተዘምኗል' : 'Facility updated successfully', 'Facilities CMS');
+      } else {
+        await api.createFacility(data);
+        toast.success(lang === 'am' ? 'አዲስ ተቋም ተመዝግቧል' : 'New health facility added', 'Facilities CMS');
+      }
+      await loadAllData();
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to save facility', 'Error');
     }
-    await loadAllData();
   };
 
   const handleDeleteFacility = async (id: string) => {
-    await api.deleteFacility(id);
-    await loadAllData();
+    try {
+      await api.deleteFacility(id);
+      toast.info(lang === 'am' ? 'ተቋሙ ተሰርዟል' : 'Facility removed from directory', 'Removed');
+      await loadAllData();
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to delete facility', 'Error');
+    }
   };
 
   // Mentor Actions
   const handleSaveMentor = async (data: Partial<Mentor>, id?: string) => {
-    if (id) {
-      await api.updateMentor(id, data);
-    } else {
-      await api.createMentor(data);
+    try {
+      if (id) {
+        await api.updateMentor(id, data);
+        toast.success(lang === 'am' ? 'የአማካሪ መረጃ ተዘምኗል' : 'Counselor profile updated', 'Peer Mentors');
+      } else {
+        await api.createMentor(data);
+        toast.success(lang === 'am' ? 'አዲስ አማካሪ ተመዝግቧል' : 'New peer mentor registered', 'Peer Mentors');
+      }
+      await loadAllData();
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to save mentor', 'Error');
     }
-    await loadAllData();
   };
 
   const handleDeleteMentor = async (id: string) => {
-    await api.deleteMentor(id);
-    await loadAllData();
+    try {
+      await api.deleteMentor(id);
+      toast.info(lang === 'am' ? 'አማካሪው ተሰርዟል' : 'Mentor removed from network', 'Removed');
+      await loadAllData();
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to delete mentor', 'Error');
+    }
   };
 
   // Module Actions
   const handleSaveModule = async (data: Partial<Module>, id?: string) => {
-    if (id) {
-      await api.updateModule(id, data);
-    } else {
-      await api.createModule(data);
+    try {
+      if (id) {
+        await api.updateModule(id, data);
+        toast.success(lang === 'am' ? 'ሞጁሉ ተዘምኗል' : 'Learning module updated', 'Learning CMS');
+      } else {
+        await api.createModule(data);
+        toast.success(lang === 'am' ? 'አዲስ ሞጁል ታትሟል' : 'New health module published', 'Learning CMS');
+      }
+      await loadAllData();
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to save module', 'Error');
     }
-    await loadAllData();
   };
 
   const handleDeleteModule = async (id: string) => {
-    await api.deleteModule(id);
-    await loadAllData();
+    try {
+      await api.deleteModule(id);
+      toast.info(lang === 'am' ? 'ሞጁሉ ተሰርዟል' : 'Curriculum module deleted', 'Removed');
+      await loadAllData();
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to delete module', 'Error');
+    }
   };
 
   // Quiz Question Actions
   const handleSaveQuestion = async (data: Partial<QuizQuestion>, id?: string) => {
-    if (id) {
-      await api.updateQuestion(id, data);
-    } else {
-      await api.createQuestion(data);
+    try {
+      if (id) {
+        await api.updateQuestion(id, data);
+        toast.success(lang === 'am' ? 'የፈተና ጥያቄው ተዘምኗል' : 'Quiz question updated', 'Assessment Bank');
+      } else {
+        await api.createQuestion(data);
+        toast.success(lang === 'am' ? 'አዲስ ጥያቄ ተፈጥሯል' : 'New quiz question created', 'Assessment Bank');
+      }
+      await loadAllData();
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to save question', 'Error');
     }
-    await loadAllData();
   };
 
   const handleDeleteQuestion = async (id: string) => {
-    await api.deleteQuestion(id);
-    await loadAllData();
+    try {
+      await api.deleteQuestion(id);
+      toast.info(lang === 'am' ? 'ጥያቄው ተሰርዟል' : 'Quiz question deleted', 'Removed');
+      await loadAllData();
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to delete question', 'Error');
+    }
   };
 
   // Club Actions
   const handleSaveClub = async (data: Partial<StudentClub>, id?: string) => {
-    if (id) {
-      await api.updateClub(id, data);
-    } else {
-      await api.createClub(data);
+    try {
+      if (id) {
+        await api.updateClub(id, data);
+        toast.success(lang === 'am' ? 'የክለብ መረጃ ተዘምኗል' : 'Student club updated', 'Student Chapters');
+      } else {
+        await api.createClub(data);
+        toast.success(lang === 'am' ? 'አዲስ ክለብ ተመዝግቧል' : 'New student club chapter created', 'Student Chapters');
+      }
+      await loadAllData();
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to save club', 'Error');
     }
-    await loadAllData();
   };
 
   const handleToggleClubApproval = async (club: StudentClub) => {
-    await api.updateClub(club.id, { isApproved: !club.isApproved });
-    await loadAllData();
+    try {
+      await api.updateClub(club.id, { isApproved: !club.isApproved });
+      toast.success(
+        club.isApproved
+          ? (lang === 'am' ? 'ክለቡ ወደ መጠባበቂያ ተቀይሯል' : 'Club set to Pending approval')
+          : (lang === 'am' ? 'ክለቡ በይፋ ጸድቋል' : 'Club officially Approved & Activated!'),
+        'Club Moderation'
+      );
+      await loadAllData();
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to update approval status', 'Error');
+    }
   };
 
   const handleDeleteClub = async (id: string) => {
-    await api.deleteClub(id);
-    await loadAllData();
+    try {
+      await api.deleteClub(id);
+      toast.info(lang === 'am' ? 'ክለቡ ተሰርዟል' : 'Student club deleted', 'Removed');
+      await loadAllData();
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to delete club', 'Error');
+    }
   };
 
   // User Actions
   const handleUpdateRole = async (id: string, role: string) => {
-    await api.updateUserRole(id, role);
-    await loadAllData();
+    try {
+      await api.updateUserRole(id, role);
+      toast.success(
+        lang === 'am' ? `የተጠቃሚው ሚና ወደ ${role} ተቀይሯል` : `User role changed to ${role}`,
+        'Role Governance'
+      );
+      await loadAllData();
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to update user role', 'Error');
+    }
   };
 
   const handleToggleSuspension = async (id: string) => {
-    await api.toggleUserSuspension(id);
-    await loadAllData();
+    try {
+      await api.toggleUserSuspension(id);
+      toast.warning(
+        lang === 'am' ? 'የተጠቃሚው እገዳ ሁኔታ ተቀይሯል' : 'User account suspension toggled',
+        'Safety Moderation'
+      );
+      await loadAllData();
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to toggle suspension', 'Error');
+    }
   };
 
   if (!user) {

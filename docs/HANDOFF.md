@@ -1,5 +1,15 @@
 # Handoff
 
+## Modern Floating Toast Notification Architecture (2026-11-05)
+
+- **Toast System Architecture (`admin-web/src/context/ToastContext.tsx`)**:
+  - `ToastProvider` & `useToast()` hook.
+  - Floating toast container with auto-dismiss timers, backdrop-blur styling, and distinct colors for `success`, `error`, `warning`, and `info`.
+  - Wired into `App.tsx` (facilities, mentors, modules, quizzes, clubs, user roles, suspensions) and `ClubsPage.tsx` (roster loading error handling), eliminating all native browser `alert()` popups.
+- **Verification**:
+  - `tsc && vite build`: 0 errors in 5.26s.
+  - `flutter analyze --no-pub`: 0 issues found.
+
 ## Institutional Reporting & CSV Export Integration (2026-11-05)
 
 - **CSV Export Architecture (`admin-web/src/utils/csvExport.ts`)**:
