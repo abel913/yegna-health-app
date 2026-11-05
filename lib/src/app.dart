@@ -29,6 +29,10 @@ import 'admin/admin_repository.dart';
 import 'clubs/club_controller.dart';
 import 'clubs/club_repository.dart';
 import 'clubs/clubs_page.dart';
+import 'clubs/sync_club_repository.dart';
+import 'sync/api_client.dart';
+import 'sync/offline_sync_store.dart';
+import 'sync/sync_manager.dart';
 
 class AppShell extends StatefulWidget {
   const AppShell({
@@ -46,6 +50,7 @@ class AppShell extends StatefulWidget {
     this.adminRepository,
     this.clubController,
     this.adminController,
+    this.syncManager,
     super.key,
   });
 
@@ -63,6 +68,7 @@ class AppShell extends StatefulWidget {
   final AdminRepository? adminRepository;
   final ClubController? clubController;
   final AdminController? adminController;
+  final SyncManager? syncManager;
 
   @override
   State<AppShell> createState() => _AppShellState();
@@ -82,7 +88,12 @@ class _AppShellState extends State<AppShell> {
   @override
   void initState() {
     super.initState();
-    _clubRepository = widget.clubRepository ?? LocalClubRepository();
+    _clubRepository = widget.clubRepository ??
+        SyncClubRepository(
+          store: OfflineSyncStore(),
+          localRepository: LocalClubRepository(),
+          apiClient: ApiClient(),
+        );
     _clubController =
         widget.clubController ?? ClubController(repository: _clubRepository);
     _adminRepository = widget.adminRepository ??
