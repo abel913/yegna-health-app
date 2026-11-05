@@ -1,5 +1,16 @@
 # Handoff
 
+## Interactive Visual Trend Charts & Topic Breakdown Architecture (2026-11-05)
+
+- **Interactive Dashboard Analytics (`admin-web/src/pages/DashboardPage.tsx`)**:
+  - Dynamic timeframe selector (`7D`, `30D`, `12M`) recalculating SVG chart curves and dates.
+  - Interactive hover tooltips rendering precise reading volumes, quiz attempts, and pass percentages.
+  - Visual topic breakdown progress bars (SRH, Puberty, HIV/STI, Mental Health).
+  - Geographic campus distribution widget (University of Gondar, Addis Ababa, regional campuses).
+- **Verification**:
+  - `tsc && vite build`: 0 errors in 4.31s.
+  - `flutter analyze --no-pub`: 0 issues found.
+
 ## User Governance Search, Role Filter & Pagination Architecture (2026-11-05)
 
 - **User Management Enhancements (`admin-web/src/pages/UsersPage.tsx`)**:
