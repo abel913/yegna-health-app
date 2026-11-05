@@ -20,3 +20,11 @@ macos/Flutter/ephemeral/
 .flutter-plugins
 .flutter-plugins-dependencies
 docs/smart delivery mock/
+
+# Node.js & Web Admin
+node_modules/
+dist/
+*.db
+*.db-journal
+.env.local
+
