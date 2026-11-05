@@ -1,5 +1,21 @@
 # Handoff
 
+## Desktop Web Admin Portal & Custom Node.js/Prisma Backend (2026-11-05)
+
+- **Backend Architecture (`server/`)**:
+  - Node.js 24 + TypeScript + Express REST API running on port `5000` (`http://localhost:5000/api`).
+  - Prisma ORM managing SQLite/PostgreSQL database (`server/prisma/schema.prisma`).
+  - JWT authentication and bcrypt password hashing with `requireAdmin` role guard.
+  - Zero-knowledge student privacy safeguards preventing administrative snooping into personal student reading logs or private self-assessment answers.
+  - Pre-seeded with SuperAdmin (`admin@yegnahealth.org`), verified clinics across Addis Ababa sub-cities, certified counselors, bilingual modules, and student clubs.
+- **Desktop Web Admin Portal (`admin-web/`)**:
+  - React 19 + TypeScript + Vite + Tailwind CSS desktop interface running on `http://localhost:5173`.
+  - 8 core management screens: Dashboard KPI overview, Healthcare Facilities (GPS & filters), Counselor Mentors, Bilingual Learning CMS, Quizzes Editor, Student Clubs Moderation, User Safety & Permissions, and Audit Trail.
+- **Verification**:
+  - Both server and web admin running live in background daemon tasks.
+  - `dart analyze lib test`: 0 issues found.
+  - Full Flutter test suite (`flutter test --no-pub`): **All 165 tests passing (100% pass rate)**.
+
 ## Official Application Launcher Icon Implementation (Android & iOS) (2026-11-04)
 
 - **Official App Launcher Icon Generation**:
