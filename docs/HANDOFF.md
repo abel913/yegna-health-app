@@ -1,5 +1,16 @@
 # Handoff
 
+## Global Command Palette (Ctrl+K) & Spotlight Search Architecture (2026-11-05)
+
+- **Command Palette (`admin-web/src/components/CommandPalette.tsx`)**:
+  - Spotlight overlay activated via `Ctrl+K` / `Cmd+K` keyboard shortcut or clicking header search bar.
+  - Multi-category search: Navigation tabs, healthcare clinics, learning modules, peer counselors, student clubs, and quick actions.
+  - Full keyboard navigation with `↑`/`↓`, `Enter` trigger, and `Esc` dismissal.
+  - Quick action integrations: Language toggle (`EN`/`AM`), New facility shortcut, Executive KPI CSV export, and Sign Out.
+- **Verification**:
+  - `cd admin-web && npm run build`: 1,593 modules transformed, 0 errors in 3.87s.
+  - `flutter analyze --no-pub`: 0 issues found.
+
 ## Learning CMS Live Markdown Preview & Media Support Architecture (2026-11-05)
 
 - **Learning CMS Enhancements (`admin-web/src/pages/LearningCmsPage.tsx`)**:

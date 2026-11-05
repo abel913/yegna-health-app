@@ -25,6 +25,7 @@ interface AdminLayoutProps {
   lang: 'en' | 'am';
   onToggleLang: () => void;
   onQuickAction?: () => void;
+  onOpenCommandPalette?: () => void;
   children: React.ReactNode;
 }
 
@@ -36,6 +37,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
   lang,
   onToggleLang,
   onQuickAction,
+  onOpenCommandPalette,
   children,
 }) => {
   const [collapsed, setCollapsed] = useState(false);
@@ -134,15 +136,22 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
       <div className="flex-1 flex flex-col h-screen overflow-hidden">
         {/* Top Header Bar */}
         <header className="h-16 bg-white border-b border-slate-200 px-6 flex items-center justify-between z-10">
-          {/* Global Search Bar */}
-          <div className="relative w-80">
-            <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
-            <input
-              type="text"
-              placeholder={lang === 'am' ? 'ፈልግ... (Ctrl+K)' : 'Search facilities, mentors, articles... (Ctrl+K)'}
-              className="w-full pl-9 pr-4 py-2 bg-slate-100 hover:bg-slate-100/80 focus:bg-white text-xs font-medium rounded-xl border border-transparent focus:border-brand-500 focus:outline-none transition-all placeholder:text-slate-400"
-            />
-          </div>
+          {/* Global Search Bar / Command Palette Trigger */}
+          <button
+            type="button"
+            onClick={onOpenCommandPalette}
+            className="flex items-center justify-between w-72 md:w-80 px-3.5 py-2 bg-slate-100 hover:bg-slate-200/70 border border-slate-200/80 rounded-xl text-xs font-medium text-slate-500 transition-all cursor-pointer group shadow-2xs text-left"
+          >
+            <div className="flex items-center gap-2.5 truncate">
+              <Search size={15} className="text-slate-400 group-hover:text-brand-600 transition-colors flex-shrink-0" />
+              <span className="text-slate-500 group-hover:text-slate-800 transition-colors truncate">
+                {lang === 'am' ? 'ፈልግ ወይም ትዕዛዝ ስጥ...' : 'Search or type a command...'}
+              </span>
+            </div>
+            <kbd className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-white border border-slate-200 text-[10px] font-bold text-slate-500 shadow-2xs flex-shrink-0">
+              <span className="text-[11px]">⌘</span>K
+            </kbd>
+          </button>
 
           {/* Privacy Badge, Language Toggle & Actions */}
           <div className="flex items-center gap-3">

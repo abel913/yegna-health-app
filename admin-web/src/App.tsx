@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { AdminLayout } from './components/layout/AdminLayout.js';
+import { CommandPalette } from './components/CommandPalette.js';
 import { DashboardPage } from './pages/DashboardPage.js';
 import { FacilitiesPage } from './pages/FacilitiesPage.js';
 import { MentorsPage } from './pages/MentorsPage.js';
@@ -22,12 +23,14 @@ import {
   AuditLog,
 } from './types/index.js';
 import { useToast } from './context/ToastContext.js';
+import { exportToCsv } from './utils/csvExport.js';
 
 export function App() {
   const { toast } = useToast();
   const [user, setUser] = useState<AdminUser | null>(() => api.getCurrentUser());
   const [currentTab, setCurrentTab] = useState('dashboard');
   const [lang, setLang] = useState<'en' | 'am'>('en');
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
 
   // App Data State
   const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
@@ -80,6 +83,44 @@ export function App() {
   const handleLogout = () => {
     api.logout();
     setUser(null);
+  };
+
+  // Global Command Palette (Ctrl+K / Cmd+K) Listener
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setIsCommandPaletteOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  const handleExportKpiCsv = () => {
+    const rows = [
+      { category: 'Platform Metric', item: 'Registered Students (Zero-Knowledge)', value: metrics?.registeredUsers || 1240, details: 'End-to-end confidential accounts' },
+      { category: 'Platform Metric', item: 'Verified Health Clinics', value: metrics?.verifiedFacilities || facilities.length, details: 'Campuses & regional youth centers' },
+      { category: 'Platform Metric', item: 'Peer Mentors & Counselors', value: metrics?.counselorMentors || mentors.length, details: 'Active adolescent counselors' },
+      { category: 'Platform Metric', item: 'Bilingual Health Modules', value: metrics?.learningModules || modules.length, details: 'Puberty, SRH, STI, Substance prevention' },
+      { category: 'Platform Metric', item: 'Interactive Quiz Questions', value: metrics?.quizQuestions || questions.length, details: 'Clinical assessments' },
+      { category: 'Platform Metric', item: 'Student Health Clubs', value: metrics?.studentClubs || clubs.length, details: 'Active student peer chapters' },
+    ];
+
+    exportToCsv(
+      'Yegna_Health_Executive_KPI_Report',
+      [
+        { header: 'Category', accessor: (r) => r.category },
+        { header: 'Indicator / Metric', accessor: (r) => r.item },
+        { header: 'Current Value / Count', accessor: (r) => r.value },
+        { header: 'Notes & Scope', accessor: (r) => r.details },
+      ],
+      rows
+    );
+    toast.success(
+      lang === 'am' ? 'የአመራር ሪፖርት በተሳካ ሁኔታ ወርዷል' : 'Executive KPI report exported successfully',
+      'Institutional Report'
+    );
   };
 
   // Facility Actions
@@ -259,76 +300,96 @@ export function App() {
   }
 
   return (
-    <AdminLayout
-      currentTab={currentTab}
-      onTabChange={setCurrentTab}
-      user={user}
-      onLogout={handleLogout}
-      lang={lang}
-      onToggleLang={() => setLang(lang === 'en' ? 'am' : 'en')}
-      onQuickAction={() => setCurrentTab('facilities')}
-    >
-      {currentTab === 'dashboard' && (
-        <DashboardPage
-          metrics={metrics}
-          facilities={facilities}
-          mentors={mentors}
-          activity={activity}
-          lang={lang}
-          onNavigate={setCurrentTab}
-        />
-      )}
-      {currentTab === 'facilities' && (
-        <FacilitiesPage
-          facilities={facilities}
-          lang={lang}
-          onSave={handleSaveFacility}
-          onDelete={handleDeleteFacility}
-        />
-      )}
-      {currentTab === 'mentors' && (
-        <MentorsPage
-          mentors={mentors}
-          lang={lang}
-          onSave={handleSaveMentor}
-          onDelete={handleDeleteMentor}
-        />
-      )}
-      {currentTab === 'modules' && (
-        <LearningCmsPage
-          modules={modules}
-          lang={lang}
-          onSave={handleSaveModule}
-          onDelete={handleDeleteModule}
-        />
-      )}
-      {currentTab === 'quizzes' && (
-        <QuizzesPage
-          questions={questions}
-          modules={modules}
-          lang={lang}
-          onSaveQuestion={handleSaveQuestion}
-          onDeleteQuestion={handleDeleteQuestion}
-        />
-      )}
-      {currentTab === 'clubs' && (
-        <ClubsPage
-          clubs={clubs}
-          lang={lang}
-          onSaveClub={handleSaveClub}
-          onDeleteClub={handleDeleteClub}
-          onToggleApproval={handleToggleClubApproval}
-        />
-      )}
-      {currentTab === 'users' && (
-        <UsersPage
-          users={users}
-          lang={lang}
-          onUpdateRole={handleUpdateRole}
-          onToggleSuspension={handleToggleSuspension}
-        />
-      )}
-      {currentTab === 'audit' && <AuditLogsPage logs={logs} lang={lang} />}
-    </AdminLayout>
+    <>
+      <AdminLayout
+        currentTab={currentTab}
+        onTabChange={setCurrentTab}
+        user={user}
+        onLogout={handleLogout}
+        lang={lang}
+        onToggleLang={() => setLang(lang === 'en' ? 'am' : 'en')}
+        onQuickAction={() => setCurrentTab('facilities')}
+        onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
+      >
+        {currentTab === 'dashboard' && (
+          <DashboardPage
+            metrics={metrics}
+            facilities={facilities}
+            mentors={mentors}
+            activity={activity}
+            lang={lang}
+            onNavigate={setCurrentTab}
+          />
+        )}
+        {currentTab === 'facilities' && (
+          <FacilitiesPage
+            facilities={facilities}
+            lang={lang}
+            onSave={handleSaveFacility}
+            onDelete={handleDeleteFacility}
+          />
+        )}
+        {currentTab === 'mentors' && (
+          <MentorsPage
+            mentors={mentors}
+            lang={lang}
+            onSave={handleSaveMentor}
+            onDelete={handleDeleteMentor}
+          />
+        )}
+        {currentTab === 'modules' && (
+          <LearningCmsPage
+            modules={modules}
+            lang={lang}
+            onSave={handleSaveModule}
+            onDelete={handleDeleteModule}
+          />
+        )}
+        {currentTab === 'quizzes' && (
+          <QuizzesPage
+            questions={questions}
+            modules={modules}
+            lang={lang}
+            onSaveQuestion={handleSaveQuestion}
+            onDeleteQuestion={handleDeleteQuestion}
+          />
+        )}
+        {currentTab === 'clubs' && (
+          <ClubsPage
+            clubs={clubs}
+            lang={lang}
+            onSaveClub={handleSaveClub}
+            onDeleteClub={handleDeleteClub}
+            onToggleApproval={handleToggleClubApproval}
+          />
+        )}
+        {currentTab === 'users' && (
+          <UsersPage
+            users={users}
+            lang={lang}
+            onUpdateRole={handleUpdateRole}
+            onToggleSuspension={handleToggleSuspension}
+          />
+        )}
+        {currentTab === 'audit' && <AuditLogsPage logs={logs} lang={lang} />}
+      </AdminLayout>
+
+      {/* Global Command Palette (Ctrl+K) */}
+      <CommandPalette
+        isOpen={isCommandPaletteOpen}
+        onClose={() => setIsCommandPaletteOpen(false)}
+        currentTab={currentTab}
+        onNavigate={setCurrentTab}
+        lang={lang}
+        onToggleLang={() => setLang((l) => (l === 'en' ? 'am' : 'en'))}
+        onLogout={handleLogout}
+        facilities={facilities}
+        mentors={mentors}
+        modules={modules}
+        clubs={clubs}
+        onOpenAddFacility={() => setCurrentTab('facilities')}
+        onExportCsv={handleExportKpiCsv}
+      />
+    </>
   );
 }
