@@ -259,11 +259,15 @@ class _MentorsPageState extends State<MentorsPage> {
                         )
                       : _mentors.isEmpty
                           ? _buildNoResultsEmptyState(l10n)
-                          : ListView.builder(
-                              padding: const EdgeInsets.fromLTRB(20, 6, 20, 24),
-                              itemCount: _mentors.length,
-                              itemBuilder: (context, index) => MentorCard(
-                                mentor: _mentors[index],
+                          : RefreshIndicator(
+                              onRefresh: _loadMentors,
+                              color: const Color(0xFF0284C7),
+                              child: ListView.builder(
+                                padding: const EdgeInsets.fromLTRB(20, 6, 20, 24),
+                                itemCount: _mentors.length,
+                                itemBuilder: (context, index) => MentorCard(
+                                  mentor: _mentors[index],
+                                ),
                               ),
                             ),
                 ),
