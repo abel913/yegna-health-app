@@ -1,6 +1,7 @@
 import React from 'react';
-import { History, Shield, Clock } from 'lucide-react';
+import { History, Shield, Clock, Download } from 'lucide-react';
 import { AuditLog } from '../types/index.js';
+import { exportToCsv } from '../utils/csvExport.js';
 
 interface AuditLogsPageProps {
   logs: AuditLog[];
@@ -8,19 +9,43 @@ interface AuditLogsPageProps {
 }
 
 export const AuditLogsPage: React.FC<AuditLogsPageProps> = ({ logs, lang }) => {
+  const handleExportCsv = () => {
+    exportToCsv(
+      'Yegna_Health_Audit_Logs',
+      [
+        { header: 'Action Type', accessor: (l) => l.action },
+        { header: 'Admin Actor', accessor: (l) => l.adminEmail },
+        { header: 'Action Details', accessor: (l) => l.details },
+        { header: 'Timestamp (UTC)', accessor: (l) => l.timestamp },
+        { header: 'Local Time', accessor: (l) => new Date(l.timestamp).toLocaleString() },
+      ],
+      logs
+    );
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h2 className="text-xl md:text-2xl font-extrabold text-slate-900 flex items-center gap-2">
-          <History className="text-brand-600" size={24} />
-          <span>{lang === 'am' ? 'የአስተዳዳሪ ቁጥጥርና ኦዲት መዝገብ' : 'Immutable Platform Audit Trail'}</span>
-        </h2>
-        <p className="text-xs md:text-sm text-slate-500 mt-1">
-          {lang === 'am'
-            ? 'በሲስተሙ ላይ የተከናወኑ ማናቸውም ለውጦች (የክሊኒክ ምዝገባ፣ የትምህርት አርትዖት፣ የተጠቃሚ እገዳ) በሙሉ ተመዝግበው ይቀመጣሉ።'
-            : 'Traceable administrative activity log tracking every creation, edit, and moderation action.'}
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 className="text-xl md:text-2xl font-extrabold text-slate-900 flex items-center gap-2">
+            <History className="text-brand-600" size={24} />
+            <span>{lang === 'am' ? 'የአስተዳዳሪ ቁጥጥርና ኦዲት መዝገብ' : 'Immutable Platform Audit Trail'}</span>
+          </h2>
+          <p className="text-xs md:text-sm text-slate-500 mt-1">
+            {lang === 'am'
+              ? 'በሲስተሙ ላይ የተከናወኑ ማናቸውም ለውጦች (የክሊኒክ ምዝገባ፣ የትምህርት አርትዖት፣ የተጠቃሚ እገዳ) በሙሉ ተመዝግበው ይቀመጣሉ።'
+              : 'Traceable administrative activity log tracking every creation, edit, and moderation action.'}
+          </p>
+        </div>
+        <button
+          onClick={handleExportCsv}
+          className="flex items-center gap-1.5 px-3.5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs md:text-sm font-bold rounded-xl border border-slate-200 transition-all cursor-pointer self-start sm:self-auto"
+          title={lang === 'am' ? 'የኦዲት ሪፖርት (CSV) አውርድ' : 'Export audit trail to Excel CSV'}
+        >
+          <Download size={15} />
+          <span>{lang === 'am' ? 'ኦዲት ሪፖርት (CSV)' : 'Export Audit Log (CSV)'}</span>
+        </button>
       </div>
 
       {/* Logs Table */}

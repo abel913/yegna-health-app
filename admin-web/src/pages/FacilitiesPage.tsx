@@ -12,8 +12,10 @@ import {
   GraduationCap,
   Building2,
   Compass,
+  Download,
 } from 'lucide-react';
 import { Facility } from '../types/index.js';
+import { exportToCsv } from '../utils/csvExport.js';
 
 interface FacilitiesPageProps {
   facilities: Facility[];
@@ -239,6 +241,27 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
     );
   };
 
+  const handleExportCsv = () => {
+    exportToCsv(
+      'Yegna_Health_Facilities_Directory',
+      [
+        { header: 'Facility Name (English)', accessor: (f) => f.nameEn },
+        { header: 'Facility Name (Amharic)', accessor: (f) => f.nameAm },
+        { header: 'Campus / City', accessor: (f) => f.subCity },
+        { header: 'Ward / Woreda', accessor: (f) => f.woreda || '' },
+        { header: 'Contact Phone', accessor: (f) => f.phone },
+        { header: 'Operating Hours', accessor: (f) => f.operatingHours },
+        { header: 'Address (English)', accessor: (f) => f.addressEn },
+        { header: 'Address (Amharic)', accessor: (f) => f.addressAm },
+        { header: 'GPS Latitude', accessor: (f) => f.latitude },
+        { header: 'GPS Longitude', accessor: (f) => f.longitude },
+        { header: 'Verification Status', accessor: (f) => (f.isVerified ? 'VERIFIED' : 'PENDING') },
+        { header: 'Services', accessor: (f) => (f.services || []).join('; ') },
+      ],
+      filtered
+    );
+  };
+
   return (
     <div className="space-y-6">
       {/* Page Header */}
@@ -254,13 +277,23 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
               : 'Manage verified campus clinics (University of Gondar), regional centers, and youth-friendly health posts.'}
           </p>
         </div>
-        <button
-          onClick={openCreateModal}
-          className="flex items-center gap-2 px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-xs md:text-sm font-bold rounded-xl shadow-md shadow-brand-600/20 transition-all self-start sm:self-auto cursor-pointer"
-        >
-          <Plus size={16} />
-          <span>{lang === 'am' ? '+ አዲስ ተቋም ጨምር' : '+ Add Health Facility'}</span>
-        </button>
+        <div className="flex items-center gap-2 self-start sm:self-auto">
+          <button
+            onClick={handleExportCsv}
+            className="flex items-center gap-1.5 px-3.5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs md:text-sm font-bold rounded-xl border border-slate-200 transition-all cursor-pointer"
+            title={lang === 'am' ? 'ወደ ኤክሴል (CSV) አውርድ' : 'Export directory to Excel CSV'}
+          >
+            <Download size={15} />
+            <span>{lang === 'am' ? 'ሪፖርት (CSV)' : 'Export CSV'}</span>
+          </button>
+          <button
+            onClick={openCreateModal}
+            className="flex items-center gap-2 px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-xs md:text-sm font-bold rounded-xl shadow-md shadow-brand-600/20 transition-all cursor-pointer"
+          >
+            <Plus size={16} />
+            <span>{lang === 'am' ? '+ አዲስ ተቋም ጨምር' : '+ Add Health Facility'}</span>
+          </button>
+        </div>
       </div>
 
       {/* Search & Location Filters */}

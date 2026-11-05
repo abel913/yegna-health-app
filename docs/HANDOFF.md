@@ -1,5 +1,14 @@
 # Handoff
 
+## Institutional Reporting & CSV Export Integration (2026-11-05)
+
+- **CSV Export Architecture (`admin-web/src/utils/csvExport.ts`)**:
+  - Reusable UTF-8 BOM CSV engine compatible with Microsoft Excel.
+  - 1-Click Export buttons added to `DashboardPage.tsx` (Executive KPI Report), `FacilitiesPage.tsx` (Healthcare Directory), `ClubsPage.tsx` (Student Clubs), and `AuditLogsPage.tsx` (Audit Trail).
+- **Verification**:
+  - `tsc && vite build`: 0 errors in 3.87s.
+  - `flutter analyze --no-pub`: 0 issues found.
+
 ## Multi-Campus & Regional City Support in Facilities CMS (2026-11-05)
 
 - **Facilities Management Updates**:

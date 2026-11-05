@@ -10,10 +10,12 @@ import {
   Eye,
   CheckCircle2,
   Clock,
+  Download,
   X,
 } from 'lucide-react';
 import { StudentClub } from '../types/index.js';
 import { api } from '../services/api.js';
+import { exportToCsv } from '../utils/csvExport.js';
 
 interface ClubsPageProps {
   clubs: StudentClub[];
@@ -88,6 +90,22 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
     setIsModalOpen(false);
   };
 
+  const handleExportCsv = () => {
+    exportToCsv(
+      'Yegna_Health_Student_Clubs',
+      [
+        { header: 'Club Name', accessor: (c) => c.name },
+        { header: 'Category', accessor: (c) => c.category },
+        { header: 'Active Members', accessor: (c) => c.memberCount || 0 },
+        { header: 'Meeting Venue', accessor: (c) => c.venue || 'TBD' },
+        { header: 'Schedule', accessor: (c) => c.meetingTime || 'TBD' },
+        { header: 'Approval Status', accessor: (c) => (c.isApproved ? 'APPROVED' : 'PENDING') },
+        { header: 'Description', accessor: (c) => c.description },
+      ],
+      clubs
+    );
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -103,13 +121,23 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
               : 'Moderate student peer support chapters, meeting schedules, and member rosters.'}
           </p>
         </div>
-        <button
-          onClick={openCreateModal}
-          className="flex items-center gap-2 px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-xs md:text-sm font-bold rounded-xl shadow-md shadow-brand-600/20 transition-all self-start sm:self-auto"
-        >
-          <Plus size={16} />
-          <span>{lang === 'am' ? '+ አዲስ ክለብ ፍጠር' : '+ Create Student Club'}</span>
-        </button>
+        <div className="flex items-center gap-2 self-start sm:self-auto">
+          <button
+            onClick={handleExportCsv}
+            className="flex items-center gap-1.5 px-3.5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs md:text-sm font-bold rounded-xl border border-slate-200 transition-all cursor-pointer"
+            title={lang === 'am' ? 'የክለቦች ሪፖርት (CSV) አውርድ' : 'Export clubs to Excel CSV'}
+          >
+            <Download size={15} />
+            <span>{lang === 'am' ? 'ሪፖርት (CSV)' : 'Export CSV'}</span>
+          </button>
+          <button
+            onClick={openCreateModal}
+            className="flex items-center gap-2 px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-xs md:text-sm font-bold rounded-xl shadow-md shadow-brand-600/20 transition-all cursor-pointer"
+          >
+            <Plus size={16} />
+            <span>{lang === 'am' ? '+ አዲስ ክለብ ፍጠር' : '+ Create Student Club'}</span>
+          </button>
+        </div>
       </div>
 
       {/* Clubs Grid */}

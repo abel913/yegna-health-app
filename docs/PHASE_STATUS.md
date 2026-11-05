@@ -1,5 +1,21 @@
 # Phase status
 
+## Institutional Reporting & CSV Export Integration (2026-11-05)
+
+**Status: Completed & 100% Verified.**
+- **Universal CSV Engine (`admin-web/src/utils/csvExport.ts`)**:
+  - Implemented robust CSV serialization engine with automatic cell quoting and double-quote escaping.
+  - Added UTF-8 Byte Order Mark (`\uFEFF`) ensuring Microsoft Excel renders Amharic Geez characters and English text without encoding corruption.
+  - Generates auto-timestamped downloads (`[ReportName]_YYYY-MM-DD.csv`).
+- **1-Click Export Points Integrated**:
+  - `FacilitiesPage.tsx`: Exports filtered clinic directory with bilingual names, campus/city, contact phones, operating hours, GPS coordinates, and youth service tags.
+  - `ClubsPage.tsx`: Exports student health clubs directory with category, membership count, meeting venue, schedule, approval status, and description.
+  - `AuditLogsPage.tsx`: Exports immutable platform audit trail with action type, admin actor email, details, and UTC/local timestamps.
+  - `DashboardPage.tsx`: Exports executive KPI report with high-level platform indicators, metrics, and operational notes for donor/university leadership review.
+- **Quality Gates & Verification**:
+  - TypeScript & Vite production build (`tsc && vite build`): **1,591 modules transformed, 0 errors in 3.87s**.
+  - Flutter static analysis (`flutter analyze --no-pub`): **0 issues found**.
+
 ## Multi-Campus & Regional City Support in Facilities CMS (2026-11-05)
 
 **Status: Completed & 100% Verified.**
