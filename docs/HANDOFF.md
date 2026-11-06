@@ -78,6 +78,63 @@
   - `flutter test test/backend_auth_test.dart --no-pub`: 12/12 passed.
   - `flutter test --no-pub`: All 191 tests passed.
 
+## Bilingual Login Experience & Password Visibility Architecture (2026-11-06)
+
+- **Login Experience & Security (`admin-web/src/pages/LoginPage.tsx`)**:
+  - Full bilingual localization (English / Amharic) across all labels, placeholders, badges, buttons, and error messages.
+  - Interactive password visibility toggle (`Eye` / `EyeOff` icons).
+  - 1-click **Quick Fill Demo Credentials** pill (`Sparkles` icon) with feedback chip.
+  - Floating toolbar with language toggle (`Globe` icon) and theme toggle (`Sun` / `Moon` icons via `useTheme()`).
+  - Dark mode support across cards, inputs, error alerts, and footer notes.
+- **Verification**:
+  - `cd admin-web && npm run build`: 1,600 modules transformed, 0 errors in 14.13s.
+  - `flutter analyze --no-pub`: 0 issues found (19.9s).
+
+## Learning CMS & Facilities Modal Dark Theme & Search Polish Architecture (2026-11-06)
+
+- **Learning CMS Enhancements (`admin-web/src/pages/LearningCmsPage.tsx`)**:
+  - Real-time search query matching English & Amharic module titles, summaries, markdown contents, authors, and categories.
+  - Category pill filter with per-category count chips and Geez translation labels.
+  - Active search metrics ("Showing X of Y modules") and 1-click **Reset Filters** button.
+  - Illustrated `EmptyState` component for empty curriculum library or zero-match search queries.
+  - Complete dark theme styling across module cards, category pills, editor modal, inputs, selects, textareas, and live markdown preview rendering.
+  - Body scroll lock (`overflow: hidden`) and `Escape` key capture when editor modal is open.
+- **Facilities Modal Dark Theme (`admin-web/src/pages/FacilitiesPage.tsx`)**:
+  - Full dark theme styling for Facility create/edit modal, form inputs, location selector, and custom location field.
+  - Body scroll lock and `Escape` key dismissal.
+- **Verification**:
+  - `cd admin-web && npm run build`: 1,600 modules transformed, 0 errors in 17.19s.
+  - `flutter analyze --no-pub`: 0 issues found (24.7s).
+
+## Interactive Assessment Studio & Quizzes Hub Architecture (2026-11-05)
+
+- **Interactive Assessment Studio (`admin-web/src/pages/QuizzesPage.tsx`)**:
+  - Full-text search matching English/Amharic question text, options, clinical explanations, and module titles.
+  - Health module filter dropdown with question counts per curriculum topic and 1-click filter reset.
+  - Interactive Student Test Player modal simulating youth app experience with instant choice validation (Emerald for correct, Rose for incorrect), clinical rationale banner, and "Try Again" retest mechanism.
+  - On-the-fly bilingual language switcher (English / Amharic) within the preview player.
+  - 1-click UTF-8 BOM CSV exporter with full Geez script support for all 4 options, correct answer indices, and doctor rationales.
+  - Complete dark theme styling and `EmptyState` component for 0-result and empty question scenarios.
+- **Verification**:
+  - `cd admin-web && npm run build`: 1,600 modules transformed, 0 errors in 10.92s.
+  - `flutter analyze --no-pub`: 0 issues found (10.3s).
+
+## SaaS Delete Confirmation Modal Engine Architecture (2026-11-05)
+
+- **Modal Component (`admin-web/src/components/common/ConfirmModal.tsx`)**:
+  - Reusable glassmorphic confirmation dialog replacing browser `window.confirm(...)`.
+  - Item name highlight chip, danger alert badge, bilingual warning subtext, and loading state.
+  - Keyboard accessibility with `Escape` dismiss and body scroll lock.
+- **Pages Integrated**:
+  - `FacilitiesPage.tsx`: Replaced native confirm on clinic deletions.
+  - `MentorsPage.tsx`: Replaced native confirm on peer mentor deletions.
+  - `LearningCmsPage.tsx`: Replaced native confirm on curriculum module deletions.
+  - `QuizzesPage.tsx`: Replaced native confirm on quiz question deletions.
+  - `ClubsPage.tsx`: Replaced native confirm on student club deletions.
+- **Verification**:
+  - `cd admin-web && npm run build`: 1,600 modules transformed, 0 errors in 19.15s.
+  - `flutter analyze --no-pub`: 0 issues found (61.9s).
+
 ## Live Telemetry & System Health Indicator Architecture (2026-11-05)
 
 - **Backend Health Check (`server/src/routes/index.ts`)**:

@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { Mentor } from '../types/index.js';
 import { EmptyState } from '../components/common/EmptyState.js';
+import { ConfirmModal } from '../components/common/ConfirmModal.js';
 
 interface MentorsPageProps {
   mentors: Mentor[];
@@ -28,6 +29,7 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingMentor, setEditingMentor] = useState<Mentor | null>(null);
+  const [mentorToDelete, setMentorToDelete] = useState<Mentor | null>(null);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -149,10 +151,9 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
                       <Edit2 size={14} />
                     </button>
                     <button
-                      onClick={() => {
-                        if (confirm(`Delete mentor ${m.name}?`)) onDelete(m.id);
-                      }}
-                      className="p-1.5 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg cursor-pointer"
+                      onClick={() => setMentorToDelete(m)}
+                      className="p-1.5 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg cursor-pointer transition-colors"
+                      title={lang === 'am' ? 'አማካሪን ሰርዝ' : 'Delete Mentor'}
                     >
                       <Trash2 size={14} />
                     </button>
@@ -330,6 +331,24 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
           </div>
         </div>
       )}
+      {/* Delete Confirmation Modal */}
+      <ConfirmModal
+        isOpen={Boolean(mentorToDelete)}
+        onClose={() => setMentorToDelete(null)}
+        onConfirm={async () => {
+          if (mentorToDelete) {
+            await onDelete(mentorToDelete.id);
+          }
+        }}
+        title={lang === 'am' ? 'የወጣቶች አማካሪው ይሰረዝ?' : 'Delete Youth Peer Counselor?'}
+        itemName={mentorToDelete?.name || ''}
+        message={
+          lang === 'am'
+            ? 'ይህ አማካሪ ከሲስተሙ በቋሚነት ይሰረዛል። ተማሪዎች ይህንን አማካሪ በቴሌግራም ወይም በስልክ ማግኘት አይችሉም።'
+            : 'This certified peer counselor will be removed from the active directory. Students will no longer see their contact handle or hotline.'
+        }
+        lang={lang}
+      />
     </div>
   );
 };

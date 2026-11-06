@@ -358,7 +358,13 @@ export function App() {
   };
 
   if (!user) {
-    return <LoginPage onLoginSuccess={setUser} lang={lang} />;
+    return (
+      <LoginPage
+        onLoginSuccess={setUser}
+        lang={lang}
+        onToggleLang={() => setLang(lang === 'en' ? 'am' : 'en')}
+      />
+    );
   }
 
   return (

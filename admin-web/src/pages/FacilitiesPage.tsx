@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   Hospital,
   Plus,
@@ -18,6 +18,7 @@ import { Facility } from '../types/index.js';
 import { exportToCsv } from '../utils/csvExport.js';
 import { SortableHeader, SortOrder } from '../components/common/SortableHeader.js';
 import { EmptyState } from '../components/common/EmptyState.js';
+import { ConfirmModal } from '../components/common/ConfirmModal.js';
 
 interface FacilitiesPageProps {
   facilities: Facility[];
@@ -70,6 +71,26 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
   const [selectedSubCity, setSelectedSubCity] = useState('All');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingFacility, setEditingFacility] = useState<Facility | null>(null);
+  const [facilityToDelete, setFacilityToDelete] = useState<Facility | null>(null);
+
+  // Lock body scroll when modal is open and handle Escape key
+  useEffect(() => {
+    if (isModalOpen) {
+      document.body.style.overflow = 'hidden';
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          setIsModalOpen(false);
+        }
+      };
+      window.addEventListener('keydown', handleKeyDown);
+      return () => {
+        document.body.style.overflow = '';
+        window.removeEventListener('keydown', handleKeyDown);
+      };
+    } else {
+      document.body.style.overflow = '';
+    }
+  }, [isModalOpen]);
 
   // Form State
   const [formData, setFormData] = useState({
@@ -545,11 +566,7 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
                         <Edit2 size={15} />
                       </button>
                       <button
-                        onClick={() => {
-                          if (confirm(lang === 'am' ? `ተቋም "${f.nameEn}" ይሰረዝ?` : `Delete facility "${f.nameEn}"?`)) {
-                            onDelete(f.id);
-                          }
-                        }}
+                        onClick={() => setFacilityToDelete(f)}
                         className="p-1.5 text-slate-500 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition-colors cursor-pointer"
                         title={lang === 'am' ? 'ሰርዝ' : 'Delete Facility'}
                       >
@@ -596,17 +613,17 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
 
       {/* Add / Edit Facility Modal Dialog */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-xl w-full max-h-[90vh] overflow-y-auto p-6 md:p-8 animate-in fade-in zoom-in-95 duration-150">
-            <div className="flex items-center justify-between pb-4 border-b border-slate-100">
-              <h3 className="text-lg font-extrabold text-slate-900">
+        <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl max-w-xl w-full max-h-[90vh] overflow-y-auto p-6 md:p-8 animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
+              <h3 className="text-lg font-extrabold text-slate-900 dark:text-white">
                 {editingFacility
                   ? (lang === 'am' ? 'የጤና ተቋምን አርትዕ' : 'Edit Healthcare Facility')
                   : (lang === 'am' ? 'አዲስ የጤና ተቋም መዝግብ' : 'Add New Healthcare Facility')}
               </h3>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 cursor-pointer"
+                className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
               >
                 <X size={20} />
               </button>
@@ -615,7 +632,7 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
             <form onSubmit={handleSubmit} className="mt-5 space-y-4 text-xs md:text-sm">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">
+                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
                     {lang === 'am' ? 'የተቋሙ ስም (እንግሊዝኛ)' : 'Facility Name (English)'}
                   </label>
                   <input
@@ -623,12 +640,12 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
                     required
                     value={formData.nameEn}
                     onChange={(e) => setFormData({ ...formData, nameEn: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:border-brand-500 focus:outline-none"
+                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-brand-500 focus:outline-hidden"
                     placeholder="e.g. UoG Maraki Youth Health Clinic"
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">
+                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
                     {lang === 'am' ? 'የተቋሙ ስም (በአማርኛ)' : 'Facility Name (Amharic)'}
                   </label>
                   <input
@@ -636,7 +653,7 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
                     required
                     value={formData.nameAm}
                     onChange={(e) => setFormData({ ...formData, nameAm: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:border-brand-500 focus:outline-none"
+                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-brand-500 focus:outline-hidden"
                     placeholder="ምሳሌ፡ የጎንደር ዩኒቨርሲቲ ማራኪ የወጣቶች ክሊኒክ"
                   />
                 </div>
@@ -644,36 +661,36 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
 
               {/* Campus / Location Selector */}
               <div className="space-y-2">
-                <label className="block font-bold text-slate-700">
+                <label className="block font-bold text-slate-700 dark:text-slate-300">
                   {lang === 'am' ? 'ካምፓስ ወይም የከተማ አካባቢ' : 'Campus / Regional City / Sub-City'}
                 </label>
                 <select
                   value={isCustomLocation ? '__custom__' : formData.subCity}
                   onChange={(e) => handleLocationPresetChange(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:border-brand-500 focus:outline-none bg-white font-medium text-slate-800"
+                  className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl focus:border-brand-500 focus:outline-hidden bg-white dark:bg-slate-800 font-medium text-slate-800 dark:text-slate-200"
                 >
-                  <optgroup label="University of Gondar Campuses">
+                  <optgroup label="University of Gondar Campuses" className="dark:bg-slate-800 dark:text-white">
                     {LOCATION_PRESETS.filter((p) => p.category === 'uog').map((p) => (
                       <option key={p.id} value={p.id}>
                         {p.nameEn} ({p.nameAm})
                       </option>
                     ))}
                   </optgroup>
-                  <optgroup label="Regional Cities & Health Hubs">
+                  <optgroup label="Regional Cities & Health Hubs" className="dark:bg-slate-800 dark:text-white">
                     {LOCATION_PRESETS.filter((p) => p.category === 'regional').map((p) => (
                       <option key={p.id} value={p.id}>
                         {p.nameEn} ({p.nameAm})
                       </option>
                     ))}
                   </optgroup>
-                  <optgroup label="Addis Ababa Sub-Cities">
+                  <optgroup label="Addis Ababa Sub-Cities" className="dark:bg-slate-800 dark:text-white">
                     {LOCATION_PRESETS.filter((p) => p.category === 'addis').map((p) => (
                       <option key={p.id} value={p.id}>
                         {p.nameEn} ({p.nameAm})
                       </option>
                     ))}
                   </optgroup>
-                  <optgroup label="Custom Location">
+                  <optgroup label="Custom Location" className="dark:bg-slate-800 dark:text-white">
                     <option value="__custom__">
                       {lang === 'am' ? '+ የተለየ ካምፓስ ወይም ከተማ በጽሑፍ ጻፍ...' : '+ Custom Campus / City Name...'}
                     </option>
@@ -683,7 +700,7 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
                 {/* Conditional Custom Location Input */}
                 {isCustomLocation && (
                   <div className="animate-in fade-in duration-150 pt-1">
-                    <label className="block font-semibold text-slate-600 text-xs mb-1">
+                    <label className="block font-semibold text-slate-600 dark:text-slate-400 text-xs mb-1">
                       {lang === 'am' ? 'የተለየ ካምፓስ ወይም ከተማ ስም ያስገቡ' : 'Enter Custom Campus or Location Name'}
                     </label>
                     <input
@@ -691,7 +708,7 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
                       required
                       value={formData.customSubCity}
                       onChange={(e) => setFormData({ ...formData, customSubCity: e.target.value })}
-                      className="w-full px-3 py-2 border border-brand-300 bg-brand-50/30 rounded-xl focus:border-brand-500 focus:outline-none text-xs"
+                      className="w-full px-3 py-2 border border-brand-300 dark:border-brand-700 bg-brand-50/30 dark:bg-brand-950/30 text-slate-900 dark:text-white rounded-xl focus:border-brand-500 focus:outline-hidden text-xs"
                       placeholder="e.g. Debre Berhan Campus or Jimma Specialized Clinic"
                     />
                   </div>
@@ -700,26 +717,26 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">
+                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
                     {lang === 'am' ? 'ክፍል / ወረዳ' : 'Branch / Ward / Woreda'}
                   </label>
                   <input
                     type="text"
                     value={formData.woreda}
                     onChange={(e) => setFormData({ ...formData, woreda: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:border-brand-500 focus:outline-none"
+                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-brand-500 focus:outline-hidden"
                     placeholder="e.g. Student Health Wing"
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">
+                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
                     {lang === 'am' ? 'የሥራ ሰዓት' : 'Operating Hours'}
                   </label>
                   <input
                     type="text"
                     value={formData.operatingHours}
                     onChange={(e) => setFormData({ ...formData, operatingHours: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:border-brand-500 focus:outline-none"
+                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-brand-500 focus:outline-hidden"
                     placeholder="Open 24/7 or 08:30 - 17:30"
                   />
                 </div>
@@ -727,7 +744,7 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">
+                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
                     {lang === 'am' ? 'ስልክ ቁጥር' : 'Direct Phone Contact'}
                   </label>
                   <input
@@ -735,12 +752,12 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
                     required
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:border-brand-500 focus:outline-none"
+                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-brand-500 focus:outline-hidden"
                     placeholder="+251581141234"
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">
+                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
                     {lang === 'am' ? 'አገልግሎቶች (በኮማ የተለዩ)' : 'Services (#Tags separated by comma)'}
                   </label>
                   <input
@@ -752,7 +769,7 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
                         services: e.target.value.split(',').map((s) => s.trim()).filter(Boolean),
                       })
                     }
-                    className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:border-brand-500 focus:outline-none"
+                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-brand-500 focus:outline-hidden"
                     placeholder="#Youth_Friendly, #HIV_VCT, #MentalHealth"
                   />
                 </div>
@@ -761,9 +778,9 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
               {/* GPS Coordinates with Default Preset Indicator */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1 flex items-center justify-between">
+                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center justify-between">
                     <span>{lang === 'am' ? 'GPS ኬክሮስ (Latitude)' : 'GPS Latitude'}</span>
-                    <span className="text-[10px] text-slate-400 font-normal">Auto-preset available</span>
+                    <span className="text-[10px] text-slate-400 dark:text-slate-500 font-normal">Auto-preset available</span>
                   </label>
                   <input
                     type="number"
@@ -771,14 +788,14 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
                     required
                     value={formData.latitude}
                     onChange={(e) => setFormData({ ...formData, latitude: parseFloat(e.target.value) || 0 })}
-                    className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:border-brand-500 focus:outline-none"
+                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-brand-500 focus:outline-hidden"
                     placeholder="12.6075"
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1 flex items-center justify-between">
+                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center justify-between">
                     <span>{lang === 'am' ? 'GPS ኬንትሮስ (Longitude)' : 'GPS Longitude'}</span>
-                    <span className="text-[10px] text-slate-400 font-normal">Auto-preset available</span>
+                    <span className="text-[10px] text-slate-400 dark:text-slate-500 font-normal">Auto-preset available</span>
                   </label>
                   <input
                     type="number"
@@ -786,7 +803,7 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
                     required
                     value={formData.longitude}
                     onChange={(e) => setFormData({ ...formData, longitude: parseFloat(e.target.value) || 0 })}
-                    className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:border-brand-500 focus:outline-none"
+                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-brand-500 focus:outline-hidden"
                     placeholder="37.4589"
                   />
                 </div>
@@ -794,7 +811,7 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">
+                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
                     {lang === 'am' ? 'አድራሻ (በእንግሊዝኛ)' : 'Physical Address (English)'}
                   </label>
                   <input
@@ -802,12 +819,12 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
                     required
                     value={formData.addressEn}
                     onChange={(e) => setFormData({ ...formData, addressEn: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:border-brand-500 focus:outline-none"
+                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-brand-500 focus:outline-hidden"
                     placeholder="Inside Maraki Campus, Student Services Building"
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">
+                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
                     {lang === 'am' ? 'አድራሻ (በአማርኛ)' : 'Physical Address (Amharic)'}
                   </label>
                   <input
@@ -815,7 +832,7 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
                     required
                     value={formData.addressAm}
                     onChange={(e) => setFormData({ ...formData, addressAm: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:border-brand-500 focus:outline-none"
+                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-brand-500 focus:outline-hidden"
                     placeholder="ማራኪ ካምፓስ ውስጥ፣ የተማሪዎች አገልግሎት ሕንፃ"
                   />
                 </div>
@@ -827,18 +844,18 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
                   id="isVerified"
                   checked={formData.isVerified}
                   onChange={(e) => setFormData({ ...formData, isVerified: e.target.checked })}
-                  className="rounded border-slate-300 text-brand-600 focus:ring-brand-500 cursor-pointer"
+                  className="rounded border-slate-300 text-brand-600 focus:ring-brand-500 cursor-pointer accent-brand-600"
                 />
-                <label htmlFor="isVerified" className="text-xs font-bold text-slate-700 cursor-pointer">
+                <label htmlFor="isVerified" className="text-xs font-bold text-slate-700 dark:text-slate-300 cursor-pointer">
                   {lang === 'am' ? 'የተረጋገጠ ይፋዊ የጤና ተቋም ምልክት ስጠው (Verified Badge)' : 'Mark as Officially Verified Healthcare Center'}
                 </label>
               </div>
 
-              <div className="pt-4 flex items-center justify-end gap-3 border-t border-slate-100">
+              <div className="pt-4 flex items-center justify-end gap-3 border-t border-slate-100 dark:border-slate-800">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 border border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition-colors cursor-pointer"
+                  className="px-4 py-2 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer"
                 >
                   {lang === 'am' ? 'ሰርዝ' : 'Cancel'}
                 </button>
@@ -853,6 +870,24 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
           </div>
         </div>
       )}
+      {/* Delete Confirmation Modal */}
+      <ConfirmModal
+        isOpen={Boolean(facilityToDelete)}
+        onClose={() => setFacilityToDelete(null)}
+        onConfirm={async () => {
+          if (facilityToDelete) {
+            await onDelete(facilityToDelete.id);
+          }
+        }}
+        title={lang === 'am' ? 'የጤና ተቋሙ ይሰረዝ?' : 'Delete Healthcare Facility?'}
+        itemName={facilityToDelete ? (lang === 'am' ? facilityToDelete.nameAm || facilityToDelete.nameEn : facilityToDelete.nameEn) : ''}
+        message={
+          lang === 'am'
+            ? 'ይህ እርምጃ የተቋሙን መረጃ፣ የአገልግሎት ዝርዝርና የመገኛ ካርታ ከመዝገቡ በቋሚነት ያጠፋል።'
+            : 'This will permanently remove the clinic, its operating hours, and location from the youth healthcare network.'
+        }
+        lang={lang}
+      />
     </div>
   );
 };

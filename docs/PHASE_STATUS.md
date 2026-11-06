@@ -92,6 +92,82 @@
   - Unit tests in `test/backend_auth_test.dart`: **12/12 tests passed**.
   - Full mobile test suite: **All 191 tests passed**.
 
+## Bilingual Login Experience & Password Visibility Architecture (2026-11-06)
+
+**Status: Completed & 100% Verified.**
+- **Bilingual Amharic & English Localization (`LoginPage.tsx`)**:
+  - Full Geez script translation across brand header, portal subtitle, Zero-Knowledge privacy badge, email/password labels, input placeholders, error banners, and action buttons.
+  - Floating top toolbar with dedicated language switcher button (`Globe` icon) toggling between English and Amharic on the login screen.
+- **Password Visibility Toggle & Interactive Controls**:
+  - Added password show/hide button (`Eye` / `EyeOff` icons) with accessible tooltip and smooth state switching.
+  - Added 1-click **Quick Fill Demo Credentials** pill (`Sparkles` icon) prefilling executive account (`admin@yegnahealth.org`) and clearing any active errors with visual check feedback.
+- **Theme Switcher & Dark Mode Integration**:
+  - Integrated `useTheme()` toggle button (`Sun` / `Moon` icons) directly on the login screen, persisting preferences to local storage.
+  - Polished form inputs, labels, cards, alerts, and badges for complete dark mode compatibility.
+- **Quality Gates & Verification**:
+  - TypeScript & Vite production build (`cd admin-web && npm run build`): **1,600 modules transformed, 0 errors in 14.13s**.
+  - Root Flutter static analysis (`flutter analyze --no-pub`): **0 issues found** (19.9s).
+
+## Learning CMS & Facilities Modal Dark Theme & Search Polish Architecture (2026-11-06)
+
+**Status: Completed & 100% Verified.**
+- **Real-Time Search & Category Filters in Learning CMS (`LearningCmsPage.tsx`)**:
+  - Implemented client-side search matching module English and Amharic titles, summaries, markdown contents, medical authors, and curriculum categories.
+  - Category filter pills with count chips showing modules per category and bilingual Geez labels.
+  - Active search metrics ("Showing X of Y modules") and 1-click **Reset Filters** button.
+- **Illustrated Empty State (`EmptyState.tsx`) in Learning CMS**:
+  - Embedded `EmptyState` component for empty curriculum repository and zero-match search results with 1-click filter reset.
+- **Comprehensive Dark Mode Across Learning CMS & Facilities**:
+  - Upgraded Facility modal dialog in `FacilitiesPage.tsx`: Dark backdrop blur (`bg-slate-950/60`), dark card container (`dark:bg-slate-900 dark:border-slate-800`), inputs/selects (`dark:bg-slate-800 dark:border-slate-700 dark:text-white`), and custom location inputs.
+  - Upgraded Curriculum editor modal in `LearningCmsPage.tsx`: Dark mode inputs, textareas, category dropdown, tabs, toolbar buttons, and live markdown preview rendering (`dark:bg-slate-800/40 dark:border-brand-900/60`).
+  - Dark mode styled category pills and module cards in `LearningCmsPage.tsx`.
+- **Body Scroll Lock & Escape Key Capture**:
+  - Modal open state locks body scroll (`overflow: hidden`) and dismisses gracefully on `Escape` key in both `LearningCmsPage.tsx` and `FacilitiesPage.tsx`.
+- **Quality Gates & Verification**:
+  - TypeScript & Vite production build (`cd admin-web && npm run build`): **1,600 modules transformed, 0 errors in 17.19s**.
+  - Root Flutter static analysis (`flutter analyze --no-pub`): **0 issues found** (24.7s).
+
+## Interactive Assessment Studio & Quizzes Hub Architecture (2026-11-05)
+
+**Status: Completed & 100% Verified.**
+- **Real-Time Search & Module Multi-Filter Engine (`QuizzesPage.tsx`)**:
+  - Implemented client-side search indexing question text (English & Amharic), 4 option answers (EN & AM), clinical rationale explanations, and parent module titles/categories.
+  - Added module selector dropdown with real-time question count badges per curriculum topic and an "All Modules" aggregate option.
+  - Added dynamic counter ("Showing X of Y questions") and 1-click filter reset pill (`Reset Filters`).
+- **Interactive Student Quiz Preview & Simulation Studio**:
+  - Engineered an interactive student assessment player dialog (`previewQuestion`) enabling administrators to test clinical self-assessments from a youth user's perspective.
+  - Dynamic bilingual translation switcher (English / Amharic) allowing administrators to audit Geez and English questions and answers side by side.
+  - Interactive multiple-choice selection buttons (A, B, C, D) with immediate scoring feedback:
+    - Clinically validated correct answer: Emerald highlight, check icon, and confirmation banner.
+    - Incorrect answer: Rose highlight, error icon, and review alert banner.
+    - Clinical explanation box revealing rationale and medical background immediately upon selection.
+    - 1-click test reset button (`Reset / Try Again`) with `RotateCcw` icon.
+- **1-Click Quizzes CSV Export (`exportToCsv`)**:
+  - Integrated UTF-8 BOM compatible Excel/CSV exporter with comprehensive question columns: Question ID, Parent Module ID, Category, Titles (EN/AM), Question text (EN/AM), Options 1–4 (EN/AM), Correct Option Index and Letter (A–D), and Clinical Explanations (EN/AM).
+- **Theme Consistency & Illustrated Empty State**:
+  - Complete dark mode palette across question cards, option pills, clinical rationale callouts, search/filter inputs, and create/edit modal.
+  - Embedded `EmptyState` component with custom messaging for empty question bank and filtered-out queries, with 1-click filter clearing.
+- **Quality Gates & Verification**:
+  - TypeScript & Vite production build (`cd admin-web && npm run build`): **1,600 modules transformed, 0 errors in 10.92s**.
+  - Root Flutter static analysis (`flutter analyze --no-pub`): **0 issues found** (10.3s).
+
+## SaaS Delete Confirmation Modal Engine Architecture (2026-11-05)
+
+**Status: Completed & 100% Verified.**
+- **Reusable Glassmorphic Confirmation Modal (`ConfirmModal.tsx`)**:
+  - Engineered an accessible, theme-aware deletion confirmation dialog with dark backdrop blur overlay (`bg-slate-950/60 backdrop-blur-xs`), scale-in transition (`animate-in zoom-in-95`), danger trash badge with pulsing indicator, highlighted item name chip, and body scroll locking.
+  - Supports keyboard shortcuts (`Escape` to dismiss, `Enter` to confirm) and animated loading spinner state on action buttons.
+  - Fully bilingual with Amharic and English default and custom warning strings.
+- **Portal-Wide Integration (Replaced Native Browser Popups)**:
+  - `FacilitiesPage.tsx`: Integrated `ConfirmModal` for youth clinic and campus post deletions.
+  - `MentorsPage.tsx`: Integrated `ConfirmModal` for verified peer counselor and mentor removals.
+  - `LearningCmsPage.tsx`: Integrated `ConfirmModal` for curriculum health module deletions.
+  - `QuizzesPage.tsx`: Integrated `ConfirmModal` for assessment question deletions.
+  - `ClubsPage.tsx`: Integrated `ConfirmModal` for student peer chapter deletions.
+- **Quality Gates & Verification**:
+  - TypeScript & Vite production build (`cd admin-web && npm run build`): **1,600 modules transformed, 0 errors in 19.15s**.
+  - Root Flutter static analysis (`flutter analyze --no-pub`): **0 issues found** (61.9s).
+
 ## Live Telemetry & System Health Indicator Architecture (2026-11-05)
 
 **Status: Completed & 100% Verified.**
