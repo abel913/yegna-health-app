@@ -476,6 +476,18 @@ abstract class AppLocalizations {
   /// **'Something went wrong. Please try again.'**
   String get errorUnexpected;
 
+  /// No description provided for @errorAccountSuspended.
+  ///
+  /// In en, this message translates to:
+  /// **'This account has been suspended by community safety. Please contact an administrator.'**
+  String get errorAccountSuspended;
+
+  /// No description provided for @errorEmailAlreadyInUse.
+  ///
+  /// In en, this message translates to:
+  /// **'An account with this email address already exists. Try signing in instead.'**
+  String get errorEmailAlreadyInUse;
+
   /// No description provided for @errorTitle.
   ///
   /// In en, this message translates to:

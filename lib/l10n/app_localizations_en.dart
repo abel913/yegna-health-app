@@ -218,6 +218,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get errorUnexpected => 'Something went wrong. Please try again.';
 
   @override
+  String get errorAccountSuspended =>
+      'This account has been suspended by community safety. Please contact an administrator.';
+
+  @override
+  String get errorEmailAlreadyInUse =>
+      'An account with this email address already exists. Try signing in instead.';
+
+  @override
   String get errorTitle => 'Account request could not be completed';
 
   @override

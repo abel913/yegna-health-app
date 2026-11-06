@@ -208,6 +208,14 @@ class AppLocalizationsAm extends AppLocalizations {
   String get errorUnexpected => 'አንድ ችግር ተፈጥሯል። እባክዎ እንደገና ይሞክሩ።';
 
   @override
+  String get errorAccountSuspended =>
+      'ይህ መለያ በማህበረሰብ ደህንነት ምክንያት ታግዷል። እባክዎ አስተዳዳሪውን ያነጋግሩ።';
+
+  @override
+  String get errorEmailAlreadyInUse =>
+      'በዚህ የኢሜይል አድራሻ የተመዘገበ መለያ አስቀድሞ አለ። እባክዎ ይግቡ።';
+
+  @override
   String get errorTitle => 'የመለያ ጥያቄው አልተሳካም';
 
   @override
