@@ -1,5 +1,18 @@
 # Handoff
 
+## Interactive Assessment Studio & Quizzes Hub Architecture (2026-11-05)
+
+- **Interactive Assessment Studio (`admin-web/src/pages/QuizzesPage.tsx`)**:
+  - Full-text search matching English/Amharic question text, options, clinical explanations, and module titles.
+  - Health module filter dropdown with question counts per curriculum topic and 1-click filter reset.
+  - Interactive Student Test Player modal simulating youth app experience with instant choice validation (Emerald for correct, Rose for incorrect), clinical rationale banner, and "Try Again" retest mechanism.
+  - On-the-fly bilingual language switcher (English / Amharic) within the preview player.
+  - 1-click UTF-8 BOM CSV exporter with full Geez script support for all 4 options, correct answer indices, and doctor rationales.
+  - Complete dark theme styling and `EmptyState` component for 0-result and empty question scenarios.
+- **Verification**:
+  - `cd admin-web && npm run build`: 1,600 modules transformed, 0 errors in 10.92s.
+  - `flutter analyze --no-pub`: 0 issues found (10.3s).
+
 ## SaaS Delete Confirmation Modal Engine Architecture (2026-11-05)
 
 - **Modal Component (`admin-web/src/components/common/ConfirmModal.tsx`)**:
