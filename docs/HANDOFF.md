@@ -1,5 +1,21 @@
 # Handoff
 
+## Learning CMS & Facilities Modal Dark Theme & Search Polish Architecture (2026-11-06)
+
+- **Learning CMS Enhancements (`admin-web/src/pages/LearningCmsPage.tsx`)**:
+  - Real-time search query matching English & Amharic module titles, summaries, markdown contents, authors, and categories.
+  - Category pill filter with per-category count chips and Geez translation labels.
+  - Active search metrics ("Showing X of Y modules") and 1-click **Reset Filters** button.
+  - Illustrated `EmptyState` component for empty curriculum library or zero-match search queries.
+  - Complete dark theme styling across module cards, category pills, editor modal, inputs, selects, textareas, and live markdown preview rendering.
+  - Body scroll lock (`overflow: hidden`) and `Escape` key capture when editor modal is open.
+- **Facilities Modal Dark Theme (`admin-web/src/pages/FacilitiesPage.tsx`)**:
+  - Full dark theme styling for Facility create/edit modal, form inputs, location selector, and custom location field.
+  - Body scroll lock and `Escape` key dismissal.
+- **Verification**:
+  - `cd admin-web && npm run build`: 1,600 modules transformed, 0 errors in 17.19s.
+  - `flutter analyze --no-pub`: 0 issues found (24.7s).
+
 ## Interactive Assessment Studio & Quizzes Hub Architecture (2026-11-05)
 
 - **Interactive Assessment Studio (`admin-web/src/pages/QuizzesPage.tsx`)**:

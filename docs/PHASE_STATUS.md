@@ -1,5 +1,24 @@
 # Phase status
 
+## Learning CMS & Facilities Modal Dark Theme & Search Polish Architecture (2026-11-06)
+
+**Status: Completed & 100% Verified.**
+- **Real-Time Search & Category Filters in Learning CMS (`LearningCmsPage.tsx`)**:
+  - Implemented client-side search matching module English and Amharic titles, summaries, markdown contents, medical authors, and curriculum categories.
+  - Category filter pills with count chips showing modules per category and bilingual Geez labels.
+  - Active search metrics ("Showing X of Y modules") and 1-click **Reset Filters** button.
+- **Illustrated Empty State (`EmptyState.tsx`) in Learning CMS**:
+  - Embedded `EmptyState` component for empty curriculum repository and zero-match search results with 1-click filter reset.
+- **Comprehensive Dark Mode Across Learning CMS & Facilities**:
+  - Upgraded Facility modal dialog in `FacilitiesPage.tsx`: Dark backdrop blur (`bg-slate-950/60`), dark card container (`dark:bg-slate-900 dark:border-slate-800`), inputs/selects (`dark:bg-slate-800 dark:border-slate-700 dark:text-white`), and custom location inputs.
+  - Upgraded Curriculum editor modal in `LearningCmsPage.tsx`: Dark mode inputs, textareas, category dropdown, tabs, toolbar buttons, and live markdown preview rendering (`dark:bg-slate-800/40 dark:border-brand-900/60`).
+  - Dark mode styled category pills and module cards in `LearningCmsPage.tsx`.
+- **Body Scroll Lock & Escape Key Capture**:
+  - Modal open state locks body scroll (`overflow: hidden`) and dismisses gracefully on `Escape` key in both `LearningCmsPage.tsx` and `FacilitiesPage.tsx`.
+- **Quality Gates & Verification**:
+  - TypeScript & Vite production build (`cd admin-web && npm run build`): **1,600 modules transformed, 0 errors in 17.19s**.
+  - Root Flutter static analysis (`flutter analyze --no-pub`): **0 issues found** (24.7s).
+
 ## Interactive Assessment Studio & Quizzes Hub Architecture (2026-11-05)
 
 **Status: Completed & 100% Verified.**
