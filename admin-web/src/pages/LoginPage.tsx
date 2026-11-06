@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Lock, Mail, ArrowRight, ShieldCheck } from 'lucide-react';
 import { AdminUser } from '../types/index.js';
+import { BrandLogo } from '../components/common/BrandLogo.js';
 
 interface LoginPageProps {
   onLoginSuccess: (user: AdminUser) => void;
@@ -54,11 +55,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, lang: _lan
       <div className="max-w-md w-full bg-white dark:bg-slate-900 rounded-3xl p-8 shadow-2xl relative z-10 border border-slate-100 dark:border-slate-800">
         {/* Brand */}
         <div className="flex flex-col items-center text-center mb-6">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-cyan-500 via-blue-500 to-pink-500 p-0.5 shadow-lg shadow-cyan-500/25 mb-3 flex items-center justify-center">
-            <div className="w-full h-full bg-white dark:bg-slate-900 rounded-[14px] flex items-center justify-center text-2xl">
-              🩺
-            </div>
-          </div>
+          <BrandLogo size="xl" className="mb-3" />
           <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">Yegna Health</h1>
           <p className="text-xs font-semibold text-brand-600 dark:text-cyan-400 uppercase tracking-widest mt-0.5">
             Desktop Web Admin Portal
