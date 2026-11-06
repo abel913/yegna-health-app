@@ -31,7 +31,7 @@ router.get('/health', async (req, res) => {
     environment: process.env.NODE_ENV || 'development',
     uptimeSeconds: Math.floor(process.uptime()),
     database: {
-      type: 'SQLite (Prisma ORM)',
+      type: 'Supabase PostgreSQL (Prisma ORM)',
       status: dbStatus,
       latencyMs: dbLatencyMs,
     },
