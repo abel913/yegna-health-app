@@ -295,6 +295,68 @@ export function App() {
     }
   };
 
+  const handleResetPassword = async (id: string, newPassword: string) => {
+    try {
+      await api.resetUserPassword(id, newPassword);
+      toast.success(
+        lang === 'am' ? 'የተጠቃሚው የይለፍ ቃል ተቀይሯል' : 'User password reset successfully',
+        'Security'
+      );
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to reset password', 'Error');
+    }
+  };
+
+  const handleDeleteUser = async (id: string) => {
+    try {
+      await api.deleteUser(id);
+      toast.info(
+        lang === 'am' ? 'የተጠቃሚ አካውንት ተሰርዟል' : 'User account deleted',
+        'User Management'
+      );
+      await loadAllData();
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to delete user', 'Error');
+    }
+  };
+
+  const handleVerifyEmail = async (id: string) => {
+    try {
+      await api.verifyUserEmail(id);
+      setUsers((prev) =>
+        prev.map((u) => (u.id === id ? { ...u, isEmailVerified: true } : u))
+      );
+      toast.success(
+        lang === 'am' ? 'የተጠቃሚው ኢሜይል ተረጋግጧል' : 'User email verified successfully',
+        'Verification'
+      );
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to verify email', 'Error');
+    }
+  };
+
+  const handleCreateUser = async (data: {
+    email: string;
+    displayName: string;
+    password?: string;
+    role?: string;
+    isEmailVerified?: boolean;
+  }) => {
+    try {
+      await api.createUser(data);
+      toast.success(
+        lang === 'am'
+          ? 'አዲስ ተጠቃሚ በተሳካ ሁኔታ ተፈጥሯል'
+          : `User "${data.displayName || data.email}" created successfully`,
+        'User Management'
+      );
+      await loadAllData();
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to create user', 'Error');
+      throw err;
+    }
+  };
+
   if (!user) {
     return <LoginPage onLoginSuccess={setUser} lang={lang} />;
   }
@@ -310,12 +372,17 @@ export function App() {
         onToggleLang={() => setLang(lang === 'en' ? 'am' : 'en')}
         onQuickAction={() => setCurrentTab('facilities')}
         onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
+        userCount={users.length}
       >
         {currentTab === 'dashboard' && (
           <DashboardPage
             metrics={metrics}
             facilities={facilities}
             mentors={mentors}
+            modules={modules}
+            questions={questions}
+            clubs={clubs}
+            users={users}
             activity={activity}
             lang={lang}
             onNavigate={setCurrentTab}
@@ -367,8 +434,12 @@ export function App() {
           <UsersPage
             users={users}
             lang={lang}
+            onCreateUser={handleCreateUser}
             onUpdateRole={handleUpdateRole}
             onToggleSuspension={handleToggleSuspension}
+            onResetPassword={handleResetPassword}
+            onDeleteUser={handleDeleteUser}
+            onVerifyEmail={handleVerifyEmail}
           />
         )}
         {currentTab === 'audit' && <AuditLogsPage logs={logs} lang={lang} />}
