@@ -1,10 +1,13 @@
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+  schemas   = ["yegna"]
 }
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
 }
 
 model User {
@@ -21,6 +24,8 @@ model User {
   updatedAt         DateTime     @updatedAt
 
   memberships  ClubMember[]
+
+  @@schema("yegna")
 }
 
 model Facility {
@@ -38,6 +43,8 @@ model Facility {
   isVerified     Boolean  @default(true)
   services       String   @default("[]") // JSON string array of tags
   createdAt      DateTime @default(now())
+
+  @@schema("yegna")
 }
 
 model Mentor {
@@ -52,6 +59,8 @@ model Mentor {
   isAvailable    Boolean  @default(true)
   isVerified     Boolean  @default(true)
   createdAt      DateTime @default(now())
+
+  @@schema("yegna")
 }
 
 model Module {
@@ -70,11 +79,14 @@ model Module {
   createdAt   DateTime       @default(now())
 
   quizzes     QuizQuestion[]
+
+  @@schema("yegna")
 }
 
 model QuizQuestion {
   id            String   @id @default(uuid())
   moduleId      String
+  type          String   @default("MULTIPLE_CHOICE") // MULTIPLE_CHOICE, TRUE_FALSE
   questionEn    String
   questionAm    String
   optionsEn     String   @default("[]") // JSON string array
@@ -85,6 +97,8 @@ model QuizQuestion {
   createdAt     DateTime @default(now())
 
   module        Module   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+
+  @@schema("yegna")
 }
 
 model StudentClub {
@@ -98,6 +112,8 @@ model StudentClub {
   createdAt   DateTime     @default(now())
 
   members     ClubMember[]
+
+  @@schema("yegna")
 }
 
 model ClubMember {
@@ -110,6 +126,7 @@ model ClubMember {
   club      StudentClub @relation(fields: [clubId], references: [id], onDelete: Cascade)
 
   @@unique([userId, clubId])
+  @@schema("yegna")
 }
 
 model AuditLog {
@@ -118,4 +135,6 @@ model AuditLog {
   adminEmail String
   details    String
   timestamp  DateTime @default(now())
+
+  @@schema("yegna")
 }
