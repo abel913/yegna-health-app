@@ -43,7 +43,12 @@ router.get('/health', async (req, res) => {
 // --- 2. AUTHENTICATION ---
 router.post('/auth/login', auth.login);
 router.post('/auth/register', auth.register);
+router.get('/auth/verify-email', auth.verifyEmail);
+router.post('/auth/verify-email', auth.verifyEmail);
+router.post('/auth/resend-verification', auth.resendVerification);
 router.get('/auth/me', authenticateToken as any, auth.me as any);
+router.put('/auth/profile', authenticateToken as any, auth.updateProfile as any);
+router.put('/auth/password', authenticateToken as any, auth.updatePassword as any);
 
 // --- 3. PUBLIC DIRECTORIES (FOR MOBILE APP & WEB) ---
 router.get('/facilities', facilities.getAllFacilities);
@@ -96,7 +101,11 @@ adminRouter.get('/clubs/:id/roster', clubs.getClubRoster as any);
 
 // User Governance
 adminRouter.get('/users', users.getAllUsers as any);
+adminRouter.post('/users', users.createUser as any);
 adminRouter.put('/users/:id/role', users.updateUserRole as any);
 adminRouter.put('/users/:id/suspend', users.toggleUserSuspension as any);
+adminRouter.put('/users/:id/verify-email', users.verifyUserEmail as any);
+adminRouter.post('/users/:id/reset-password', users.resetUserPassword as any);
+adminRouter.delete('/users/:id', users.deleteUser as any);
 
 router.use('/admin', adminRouter);
