@@ -58,6 +58,7 @@ export interface Module {
 export interface QuizQuestion {
   id: string;
   moduleId: string;
+  type?: 'MULTIPLE_CHOICE' | 'TRUE_FALSE';
   questionEn: string;
   questionAm: string;
   optionsEn: string[];
