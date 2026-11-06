@@ -90,6 +90,7 @@ export interface ManagedUser {
   displayName: string;
   role: string;
   isSuspended: boolean;
+  isEmailVerified?: boolean;
   createdAt: string;
   joinedClubCount: number;
 }
@@ -102,6 +103,14 @@ export interface AuditLog {
   timestamp: string;
 }
 
+export interface DashboardTimelinePoint {
+  labelEn: string;
+  labelAm: string;
+  signups: number;
+  actions: number;
+  date: string;
+}
+
 export interface DashboardMetrics {
   activeArticles: number;
   learningModules: number;
@@ -110,6 +119,22 @@ export interface DashboardMetrics {
   counselorMentors: number;
   studentClubs: number;
   registeredUsers: number;
+  usersByRole?: {
+    students: number;
+    mentors: number;
+    admins: number;
+    authors: number;
+  };
+  facilitiesByRegion?: {
+    addis: number;
+    gondar: number;
+    other: number;
+  };
+  timeline?: {
+    '7D': DashboardTimelinePoint[];
+    '30D': DashboardTimelinePoint[];
+    '12M': DashboardTimelinePoint[];
+  };
 }
 
 export interface SystemTelemetry {
