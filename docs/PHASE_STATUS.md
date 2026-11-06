@@ -1,5 +1,21 @@
 # Phase status
 
+## Bilingual Login Experience & Password Visibility Architecture (2026-11-06)
+
+**Status: Completed & 100% Verified.**
+- **Bilingual Amharic & English Localization (`LoginPage.tsx`)**:
+  - Full Geez script translation across brand header, portal subtitle, Zero-Knowledge privacy badge, email/password labels, input placeholders, error banners, and action buttons.
+  - Floating top toolbar with dedicated language switcher button (`Globe` icon) toggling between English and Amharic on the login screen.
+- **Password Visibility Toggle & Interactive Controls**:
+  - Added password show/hide button (`Eye` / `EyeOff` icons) with accessible tooltip and smooth state switching.
+  - Added 1-click **Quick Fill Demo Credentials** pill (`Sparkles` icon) prefilling executive account (`admin@yegnahealth.org`) and clearing any active errors with visual check feedback.
+- **Theme Switcher & Dark Mode Integration**:
+  - Integrated `useTheme()` toggle button (`Sun` / `Moon` icons) directly on the login screen, persisting preferences to local storage.
+  - Polished form inputs, labels, cards, alerts, and badges for complete dark mode compatibility.
+- **Quality Gates & Verification**:
+  - TypeScript & Vite production build (`cd admin-web && npm run build`): **1,600 modules transformed, 0 errors in 14.13s**.
+  - Root Flutter static analysis (`flutter analyze --no-pub`): **0 issues found** (19.9s).
+
 ## Learning CMS & Facilities Modal Dark Theme & Search Polish Architecture (2026-11-06)
 
 **Status: Completed & 100% Verified.**

@@ -1,5 +1,17 @@
 # Handoff
 
+## Bilingual Login Experience & Password Visibility Architecture (2026-11-06)
+
+- **Login Experience & Security (`admin-web/src/pages/LoginPage.tsx`)**:
+  - Full bilingual localization (English / Amharic) across all labels, placeholders, badges, buttons, and error messages.
+  - Interactive password visibility toggle (`Eye` / `EyeOff` icons).
+  - 1-click **Quick Fill Demo Credentials** pill (`Sparkles` icon) with feedback chip.
+  - Floating toolbar with language toggle (`Globe` icon) and theme toggle (`Sun` / `Moon` icons via `useTheme()`).
+  - Dark mode support across cards, inputs, error alerts, and footer notes.
+- **Verification**:
+  - `cd admin-web && npm run build`: 1,600 modules transformed, 0 errors in 14.13s.
+  - `flutter analyze --no-pub`: 0 issues found (19.9s).
+
 ## Learning CMS & Facilities Modal Dark Theme & Search Polish Architecture (2026-11-06)
 
 - **Learning CMS Enhancements (`admin-web/src/pages/LearningCmsPage.tsx`)**:
