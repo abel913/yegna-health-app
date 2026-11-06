@@ -85,4 +85,26 @@ void main() {
 
     expect(find.text('Completed'), findsOneWidget);
   });
+
+  testWidgets(
+      'PubertyDetailPage opens PubertyQuizPage when Take Quiz button is tapped',
+      (tester) async {
+    tester.view.physicalSize = const Size(800, 1600);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(buildTestWidget());
+    await tester.pumpAndSettle();
+
+    final takeQuizBtn = find.text('Take Quiz');
+    expect(takeQuizBtn, findsOneWidget);
+    await tester.ensureVisible(takeQuizBtn);
+    await tester.pumpAndSettle();
+    await tester.tap(takeQuizBtn);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Adolescent Health & Puberty Quiz'), findsOneWidget);
+    expect(find.text('Question 1 of 4'), findsOneWidget);
+  });
 }

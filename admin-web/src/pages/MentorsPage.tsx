@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   Users2,
   Plus,
@@ -9,10 +9,14 @@ import {
   Trash2,
   X,
   Languages,
+  Search,
+  Download,
 } from 'lucide-react';
 import { Mentor } from '../types/index.js';
 import { EmptyState } from '../components/common/EmptyState.js';
 import { ConfirmModal } from '../components/common/ConfirmModal.js';
+import { exportToCsv } from '../utils/csvExport.js';
+import { useToast } from '../context/ToastContext.js';
 
 interface MentorsPageProps {
   mentors: Mentor[];
@@ -27,6 +31,9 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
   onSave,
   onDelete,
 }) => {
+  const { toast } = useToast();
+  const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'available' | 'offline' | 'verified'>('all');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingMentor, setEditingMentor] = useState<Mentor | null>(null);
   const [mentorToDelete, setMentorToDelete] = useState<Mentor | null>(null);
@@ -42,6 +49,56 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
     isAvailable: true,
     isVerified: true,
   });
+
+  // Filtered mentors computation
+  const filteredMentors = useMemo(() => {
+    return mentors.filter((m) => {
+      const q = search.trim().toLowerCase();
+      const matchesSearch =
+        !q ||
+        m.name.toLowerCase().includes(q) ||
+        m.organization.toLowerCase().includes(q) ||
+        m.phone.toLowerCase().includes(q) ||
+        (m.telegramHandle && m.telegramHandle.toLowerCase().includes(q)) ||
+        (m.specialties && m.specialties.some((s) => s.toLowerCase().includes(q)));
+
+      const matchesStatus =
+        statusFilter === 'all' ||
+        (statusFilter === 'available' && m.isAvailable) ||
+        (statusFilter === 'offline' && !m.isAvailable) ||
+        (statusFilter === 'verified' && m.isVerified);
+
+      return matchesSearch && matchesStatus;
+    });
+  }, [mentors, search, statusFilter]);
+
+  // Counts for status pills
+  const totalCount = mentors.length;
+  const availableCount = useMemo(() => mentors.filter((m) => m.isAvailable).length, [mentors]);
+  const offlineCount = useMemo(() => mentors.filter((m) => !m.isAvailable).length, [mentors]);
+  const verifiedCount = useMemo(() => mentors.filter((m) => m.isVerified).length, [mentors]);
+
+  const handleExportCsv = () => {
+    exportToCsv(
+      'Yegna_Health_Mentors_Roster',
+      [
+        { header: 'Counselor Name', accessor: (m) => m.name },
+        { header: 'Organization', accessor: (m) => m.organization },
+        { header: 'Phone', accessor: (m) => m.phone },
+        { header: 'Telegram Handle', accessor: (m) => m.telegramHandle || 'N/A' },
+        { header: 'Email', accessor: (m) => m.email || 'N/A' },
+        { header: 'Languages', accessor: (m) => (m.languages || []).join('; ') },
+        { header: 'Availability', accessor: (m) => (m.isAvailable ? 'AVAILABLE_ONLINE' : 'OFFLINE') },
+        { header: 'Verification', accessor: (m) => (m.isVerified ? 'VERIFIED' : 'STANDARD') },
+        { header: 'Specialties', accessor: (m) => (m.specialties || []).join('; ') },
+      ],
+      filteredMentors
+    );
+    toast.success(
+      lang === 'am' ? 'የአማካሪዎች ዝርዝር ወደ CSV በተሳካ ሁኔታ ወርዷል' : 'Mentors roster exported successfully',
+      lang === 'am' ? 'ሪፖርት ተዘጋጅቷል' : 'Export Ready'
+    );
+  };
 
   const openCreateModal = () => {
     setEditingMentor(null);
@@ -96,14 +153,104 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
               : 'Manage certified youth peer counselors, Telegram contact handles, hotlines, and availability.'}
           </p>
         </div>
-        <button
-          onClick={openCreateModal}
-          className="flex items-center gap-2 px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-xs md:text-sm font-bold rounded-xl shadow-md shadow-brand-600/20 transition-all self-start sm:self-auto cursor-pointer"
-        >
-          <Plus size={16} />
-          <span>{lang === 'am' ? '+ አዲስ አማካሪ መዝግብ' : '+ Add New Mentor'}</span>
-        </button>
+        <div className="flex items-center gap-2 self-start sm:self-auto">
+          <button
+            onClick={handleExportCsv}
+            className="flex items-center gap-1.5 px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs md:text-sm font-bold rounded-xl border border-slate-200 dark:border-slate-700 transition-all cursor-pointer shadow-2xs"
+            title={lang === 'am' ? 'የአማካሪዎች ሪፖርት (CSV) አውርድ' : 'Export mentors to Excel CSV'}
+          >
+            <Download size={15} />
+            <span>{lang === 'am' ? 'ሪፖርት (CSV)' : 'Export CSV'}</span>
+          </button>
+          <button
+            onClick={openCreateModal}
+            className="flex items-center gap-2 px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-xs md:text-sm font-bold rounded-xl shadow-md shadow-brand-600/20 transition-all cursor-pointer"
+          >
+            <Plus size={16} />
+            <span>{lang === 'am' ? '+ አዲስ አማካሪ መዝግብ' : '+ Add New Mentor'}</span>
+          </button>
+        </div>
       </div>
+
+      {/* Search & Filter Controls */}
+      {mentors.length > 0 && (
+        <div className="bg-white dark:bg-slate-900 p-4 md:p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-4">
+          <div className="flex flex-col md:flex-row gap-3">
+            <div className="relative flex-1">
+              <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder={
+                  lang === 'am'
+                    ? 'በአማካሪ ስም፣ በድርጅት፣ በስልክ ቁጥር ወይም በልዩ ሙያ ፈልግ...'
+                    : 'Search counselors by name, organization, phone, @telegram, or specialty...'
+                }
+                className="w-full pl-9 pr-9 py-2 text-xs md:text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl focus:bg-white dark:focus:bg-slate-850 focus:border-brand-500 focus:outline-none transition-all placeholder:text-slate-400"
+              />
+              {search && (
+                <button
+                  onClick={() => setSearch('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
+                  aria-label="Clear search"
+                >
+                  <X size={15} />
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Status Filter Pills */}
+          <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-slate-100 dark:border-slate-800">
+            <span className="text-xs font-bold text-slate-400 dark:text-slate-500 mr-1">
+              {lang === 'am' ? 'ሁኔታ:' : 'Status:'}
+            </span>
+            <button
+              onClick={() => setStatusFilter('all')}
+              className={`px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                statusFilter === 'all'
+                  ? 'bg-slate-900 dark:bg-brand-600 text-white shadow-xs'
+                  : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200/80 dark:hover:bg-slate-700'
+              }`}
+            >
+              {lang === 'am' ? 'ሁሉም አማካሪዎች' : 'All Mentors'} ({totalCount})
+            </button>
+            <button
+              onClick={() => setStatusFilter('available')}
+              className={`px-3 py-1 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                statusFilter === 'available'
+                  ? 'bg-emerald-600 text-white shadow-xs'
+                  : 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 border border-emerald-200/60 dark:border-emerald-800'
+              }`}
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+              <span>{lang === 'am' ? 'አሁን ዝግጁ የሆኑ' : 'Available Now'}</span> ({availableCount})
+            </button>
+            <button
+              onClick={() => setStatusFilter('offline')}
+              className={`px-3 py-1 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                statusFilter === 'offline'
+                  ? 'bg-slate-600 text-white shadow-xs'
+                  : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200/80 dark:hover:bg-slate-700'
+              }`}
+            >
+              <span>{lang === 'am' ? 'ከመስመር ውጭ' : 'Offline'}</span> ({offlineCount})
+            </button>
+            <button
+              onClick={() => setStatusFilter('verified')}
+              className={`px-3 py-1 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                statusFilter === 'verified'
+                  ? 'bg-brand-600 text-white shadow-xs'
+                  : 'bg-brand-50 dark:bg-brand-950/40 text-brand-700 dark:text-cyan-400 hover:bg-brand-100 dark:hover:bg-brand-900/60 border border-brand-200/60 dark:border-brand-800'
+              }`}
+            >
+              <CheckCircle2 size={13} />
+              <span>{lang === 'am' ? 'የተረጋገጡ ብቻ' : 'Verified Only'}</span> ({verifiedCount})
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Counselor Grid or Empty State */}
       {mentors.length === 0 ? (
@@ -120,9 +267,32 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
             onAction={openCreateModal}
           />
         </div>
+      ) : filteredMentors.length === 0 ? (
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-12 text-center shadow-xs">
+          <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center mx-auto mb-3">
+            <Search size={22} />
+          </div>
+          <h4 className="text-base font-extrabold text-slate-900 dark:text-white mb-1">
+            {lang === 'am' ? 'ምንም አማካሪ አልተገኘም' : 'No Counselors Match Your Filters'}
+          </h4>
+          <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto mb-4">
+            {lang === 'am'
+              ? 'የተጠቀምከውን የፍለጋ ቃል ወይም ማጣሪያ ቀይረህ እንደገና ሞክር።'
+              : 'Try adjusting your search query or switching to "All Mentors" to see full results.'}
+          </p>
+          <button
+            onClick={() => {
+              setSearch('');
+              setStatusFilter('all');
+            }}
+            className="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl transition-all cursor-pointer"
+          >
+            {lang === 'am' ? 'ማጣሪያዎችን አጽዳ' : 'Reset Filters'}
+          </button>
+        </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {mentors.map((m) => (
+          {filteredMentors.map((m) => (
             <div
               key={m.id}
               className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-5 shadow-xs hover:shadow-md transition-all flex flex-col justify-between"
@@ -147,6 +317,7 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
                     <button
                       onClick={() => openEditModal(m)}
                       className="p-1.5 text-slate-400 hover:text-brand-600 dark:hover:text-cyan-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg cursor-pointer"
+                      title={lang === 'am' ? 'አማካሪን አርትዕ' : 'Edit Counselor'}
                     >
                       <Edit2 size={14} />
                     </button>
@@ -331,6 +502,7 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
           </div>
         </div>
       )}
+
       {/* Delete Confirmation Modal */}
       <ConfirmModal
         isOpen={Boolean(mentorToDelete)}

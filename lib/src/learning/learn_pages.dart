@@ -264,14 +264,13 @@ class _LearnPageState extends State<LearnPage> {
     );
   }
 
-  Future<void> _handleOpenModule(
-      BuildContext context, LearningModuleItem module) async {
+  Future<void> _handleOpenModule(LearningModuleItem module) async {
+    if (!mounted) return;
     if (module.id == 'module-01') {
       Navigator.of(context).push<void>(MaterialPageRoute<void>(
         builder: (_) => PubertyDetailPage(
           progressController: widget.progressController,
           assessmentRepository: widget.assessmentRepository,
-          onOpenQuiz: () => _handleOpenQuiz(context, module),
         ),
       ));
       return;
@@ -281,7 +280,6 @@ class _LearnPageState extends State<LearnPage> {
         builder: (_) => StiModuleDetailPage(
           progressController: widget.progressController,
           assessmentRepository: widget.assessmentRepository,
-          onOpenQuiz: () => _handleOpenQuiz(context, module),
         ),
       ));
       return;
@@ -291,7 +289,6 @@ class _LearnPageState extends State<LearnPage> {
         builder: (_) => HepatitisDetailPage(
           progressController: widget.progressController,
           assessmentRepository: widget.assessmentRepository,
-          onOpenQuiz: () => _handleOpenQuiz(context, module),
         ),
       ));
       return;
@@ -301,7 +298,6 @@ class _LearnPageState extends State<LearnPage> {
         builder: (_) => GenderBasedViolenceDetailPage(
           progressController: widget.progressController,
           assessmentRepository: widget.assessmentRepository,
-          onOpenQuiz: () => _handleOpenQuiz(context, module),
         ),
       ));
       return;
@@ -311,7 +307,6 @@ class _LearnPageState extends State<LearnPage> {
         builder: (_) => SrhDetailPage(
           progressController: widget.progressController,
           assessmentRepository: widget.assessmentRepository,
-          onOpenQuiz: () => _handleOpenQuiz(context, module),
         ),
       ));
       return;
@@ -321,7 +316,6 @@ class _LearnPageState extends State<LearnPage> {
         builder: (_) => MentalHealthDetailPage(
           progressController: widget.progressController,
           assessmentRepository: widget.assessmentRepository,
-          onOpenQuiz: () => _handleOpenQuiz(context, module),
         ),
       ));
       return;
@@ -331,7 +325,6 @@ class _LearnPageState extends State<LearnPage> {
         builder: (_) => HivModuleDetailPage(
           progressController: widget.progressController,
           assessmentRepository: widget.assessmentRepository,
-          onOpenQuiz: () => _handleOpenQuiz(context, module),
         ),
       ));
       return;
@@ -341,7 +334,6 @@ class _LearnPageState extends State<LearnPage> {
         builder: (_) => SubstanceAbuseDetailPage(
           progressController: widget.progressController,
           assessmentRepository: widget.assessmentRepository,
-          onOpenQuiz: () => _handleOpenQuiz(context, module),
         ),
       ));
       return;
@@ -358,20 +350,20 @@ class _LearnPageState extends State<LearnPage> {
               module.id.contains(a.slug),
           orElse: () => articles.first,
         );
-        if (context.mounted) {
+        if (mounted) {
           _openArticle(matched.id);
           return;
         }
       }
     } catch (_) {}
 
-    if (context.mounted) {
+    if (mounted) {
       _openModuleInfo(context, module);
     }
   }
 
-  Future<void> _handleOpenQuiz(
-      BuildContext context, LearningModuleItem module) async {
+  Future<void> _handleOpenQuiz(LearningModuleItem module) async {
+    if (!mounted) return;
     if (module.id == 'module-01') {
       Navigator.of(context).push<void>(MaterialPageRoute<void>(
         builder: (_) => PubertyQuizPage(
@@ -448,7 +440,7 @@ class _LearnPageState extends State<LearnPage> {
               module.id.contains(a.slug),
           orElse: () => assessments.first,
         );
-        if (context.mounted) {
+        if (mounted) {
           Navigator.of(context).push<void>(MaterialPageRoute<void>(
             builder: (_) => AssessmentSessionPage(
               summary: matched,
@@ -461,7 +453,7 @@ class _LearnPageState extends State<LearnPage> {
       }
     } catch (_) {}
 
-    if (context.mounted) {
+    if (mounted) {
       _openQuizInfo(context, module);
     }
   }
@@ -497,7 +489,7 @@ class _LearnPageState extends State<LearnPage> {
                   padding: const EdgeInsets.fromLTRB(16, 6, 16, 28),
                   child: ListenableBuilder(
                     listenable: widget.progressController,
-                    builder: (context, _) {
+                    builder: (_, __) {
                       final completed = widget
                               .progressController.progress?.articles
                               .map((a) => a.articleId)
@@ -505,8 +497,8 @@ class _LearnPageState extends State<LearnPage> {
                           const <String>{};
                       return LearningModulesCarousel(
                         completedModuleIds: completed,
-                        onOpenModule: (m) => _handleOpenModule(context, m),
-                        onOpenQuiz: (m) => _handleOpenQuiz(context, m),
+                        onOpenModule: _handleOpenModule,
+                        onOpenQuiz: _handleOpenQuiz,
                       );
                     },
                   ),

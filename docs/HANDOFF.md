@@ -1,5 +1,20 @@
 # Handoff
 
+## Mobile Element Tree Navigation Stability & Admin Mentors/Clubs UX Architecture (2026-11-06)
+
+- **Mobile Learning & Quiz Navigation (`lib/src/learning/learn_pages.dart`)**:
+  - Eliminated framework assertion crash (`framework.dart:6430` ancestor element lookup and `line 6281: _dependents.isEmpty`) when launching the puberty quiz.
+  - Replaced closure-injected navigation with route-local `BuildContext` navigation inside `PubertyDetailPage`, guarded by `mounted` checks.
+  - Added regression test in `test/puberty_page_test.dart`.
+  - Tested live on physical Android emulator (`Medium_Phone_API_37.0`): Quiz navigates cleanly across all 4 questions and pops cleanly back to carousel.
+- **Admin Mentors & Clubs Experience (`admin-web/src/pages/`)**:
+  - `MentorsPage.tsx`: Live search across counselor name, affiliation, phone, Telegram, and specialties; status filter pills (All, Available Now, Offline, Verified Only); 1-click UTF-8 CSV exporter with toast alert; 0-result empty search state.
+  - `ClubsPage.tsx`: Live search across club name, category, venue, schedule, and description; approval filter pills (All Chapters, Approved, Pending Approval); filtered CSV export; 0-result empty search state.
+- **Verification**:
+  - `cd admin-web && npm run build`: 1,600 modules transformed, 0 errors in 9.40s.
+  - `flutter analyze --no-pub`: 0 issues found (28.9s).
+  - `flutter test`: All 9 learning & puberty tests passed.
+
 ## Live Database Dashboard Telemetry & Real Metrics Engine (2026-11-06)
 
 - **Eliminated Fake Multipliers**:

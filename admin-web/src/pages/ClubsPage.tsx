@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   GraduationCap,
   Plus,
@@ -11,6 +11,7 @@ import {
   CheckCircle2,
   Clock,
   Download,
+  Search,
   X,
 } from 'lucide-react';
 import { StudentClub } from '../types/index.js';
@@ -36,6 +37,8 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
   onToggleApproval,
 }) => {
   const { toast } = useToast();
+  const [search, setSearch] = useState('');
+  const [approvalFilter, setApprovalFilter] = useState<'all' | 'approved' | 'pending'>('all');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingClub, setEditingClub] = useState<StudentClub | null>(null);
   const [clubToDelete, setClubToDelete] = useState<StudentClub | null>(null);
@@ -53,6 +56,31 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
     meetingTime: '',
     isApproved: true,
   });
+
+  // Filter computation
+  const filteredClubs = useMemo(() => {
+    return clubs.filter((c) => {
+      const q = search.trim().toLowerCase();
+      const matchesSearch =
+        !q ||
+        c.name.toLowerCase().includes(q) ||
+        c.category.toLowerCase().includes(q) ||
+        (c.venue && c.venue.toLowerCase().includes(q)) ||
+        (c.meetingTime && c.meetingTime.toLowerCase().includes(q)) ||
+        (c.description && c.description.toLowerCase().includes(q));
+
+      const matchesApproval =
+        approvalFilter === 'all' ||
+        (approvalFilter === 'approved' && c.isApproved) ||
+        (approvalFilter === 'pending' && !c.isApproved);
+
+      return matchesSearch && matchesApproval;
+    });
+  }, [clubs, search, approvalFilter]);
+
+  const totalCount = clubs.length;
+  const approvedCount = useMemo(() => clubs.filter((c) => c.isApproved).length, [clubs]);
+  const pendingCount = useMemo(() => clubs.filter((c) => !c.isApproved).length, [clubs]);
 
   const openCreateModal = () => {
     setEditingClub(null);
@@ -107,7 +135,11 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
         { header: 'Approval Status', accessor: (c) => (c.isApproved ? 'APPROVED' : 'PENDING') },
         { header: 'Description', accessor: (c) => c.description },
       ],
-      clubs
+      filteredClubs
+    );
+    toast.success(
+      lang === 'am' ? 'የክለቦች ሪፖርት ወደ CSV በተሳካ ሁኔታ ወርዷል' : 'Student clubs roster exported successfully',
+      lang === 'am' ? 'ሪፖርት ተዘጋጅቷል' : 'Export Ready'
     );
   };
 
@@ -145,6 +177,76 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
         </div>
       </div>
 
+      {/* Search & Filter Bar */}
+      {clubs.length > 0 && (
+        <div className="bg-white dark:bg-slate-900 p-4 md:p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-4">
+          <div className="flex flex-col md:flex-row gap-3">
+            <div className="relative flex-1">
+              <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder={
+                  lang === 'am'
+                    ? 'በክለብ ስም፣ በምድብ፣ በመሰብሰቢያ ቦታ ወይም በመርሃ-ግብር ፈልግ...'
+                    : 'Search clubs by name, category, venue, schedule, or description...'
+                }
+                className="w-full pl-9 pr-9 py-2 text-xs md:text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl focus:bg-white dark:focus:bg-slate-850 focus:border-brand-500 focus:outline-none transition-all placeholder:text-slate-400"
+              />
+              {search && (
+                <button
+                  onClick={() => setSearch('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
+                  aria-label="Clear search"
+                >
+                  <X size={15} />
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Approval Filter Pills */}
+          <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-slate-100 dark:border-slate-800">
+            <span className="text-xs font-bold text-slate-400 dark:text-slate-500 mr-1">
+              {lang === 'am' ? 'ሁኔታ:' : 'Approval:'}
+            </span>
+            <button
+              onClick={() => setApprovalFilter('all')}
+              className={`px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                approvalFilter === 'all'
+                  ? 'bg-slate-900 dark:bg-brand-600 text-white shadow-xs'
+                  : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200/80 dark:hover:bg-slate-700'
+              }`}
+            >
+              {lang === 'am' ? 'ሁሉም ክለቦች' : 'All Chapters'} ({totalCount})
+            </button>
+            <button
+              onClick={() => setApprovalFilter('approved')}
+              className={`px-3 py-1 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                approvalFilter === 'approved'
+                  ? 'bg-emerald-600 text-white shadow-xs'
+                  : 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 border border-emerald-200/60 dark:border-emerald-800'
+              }`}
+            >
+              <CheckCircle2 size={13} />
+              <span>{lang === 'am' ? 'የተፈቀዱ' : 'Approved'}</span> ({approvedCount})
+            </button>
+            <button
+              onClick={() => setApprovalFilter('pending')}
+              className={`px-3 py-1 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                approvalFilter === 'pending'
+                  ? 'bg-amber-600 text-white shadow-xs'
+                  : 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-amber-900/60 border border-amber-200/60 dark:border-amber-800'
+              }`}
+            >
+              <Clock size={13} />
+              <span>{lang === 'am' ? 'በመጠባበቅ ላይ' : 'Pending Approval'}</span> ({pendingCount})
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Clubs Grid or Empty State */}
       {clubs.length === 0 ? (
         <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs">
@@ -160,9 +262,32 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
             onAction={openCreateModal}
           />
         </div>
+      ) : filteredClubs.length === 0 ? (
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-12 text-center shadow-xs">
+          <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center mx-auto mb-3">
+            <Search size={22} />
+          </div>
+          <h4 className="text-base font-extrabold text-slate-900 dark:text-white mb-1">
+            {lang === 'am' ? 'ምንም ክለብ አልተገኘም' : 'No Chapters Match Your Filters'}
+          </h4>
+          <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto mb-4">
+            {lang === 'am'
+              ? 'የተጠቀምከውን የፍለጋ ቃል ወይም ማጣሪያ ቀይረህ እንደገና ሞክር።'
+              : 'Try adjusting your search query or switching to "All Chapters" to see full results.'}
+          </p>
+          <button
+            onClick={() => {
+              setSearch('');
+              setApprovalFilter('all');
+            }}
+            className="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl transition-all cursor-pointer"
+          >
+            {lang === 'am' ? 'ማጣሪያዎችን አጽዳ' : 'Reset Filters'}
+          </button>
+        </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {clubs.map((c) => (
+          {filteredClubs.map((c) => (
             <div
               key={c.id}
               className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-5 shadow-xs hover:shadow-md transition-all flex flex-col justify-between"
