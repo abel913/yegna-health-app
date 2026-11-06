@@ -186,28 +186,46 @@ class _AuthPageState extends State<AuthPage> {
             password: cleanPass,
           );
 
-          // If Supabase reports invalid credentials or unconfirmed, attempt instant registration
-          if (!success &&
-              (widget.controller.issue == AuthIssue.invalidCredentials ||
-                  widget.controller.issue == null)) {
-            final regOutcome = await widget.controller.register(
-              email: cleanEmail,
-              password: cleanPass,
-              confirmation: cleanPass,
-              displayName: cleanEmail.contains('@')
-                  ? cleanEmail.split('@').first
-                  : 'Student',
+          if (widget.controller.issue == AuthIssue.accountSuspended) {
+            if (!mounted) return;
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                behavior: SnackBarBehavior.floating,
+                backgroundColor: const Color(0xFFDC2626),
+                elevation: 6,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  side: const BorderSide(color: Color(0xFFFCA5A5), width: 1.2),
+                ),
+                content: Row(
+                  children: [
+                    const Icon(Icons.shield_outlined,
+                        color: Colors.white, size: 22),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        l10n.errorAccountSuspended,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 13.5,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                duration: const Duration(seconds: 5),
+              ),
             );
-            if (regOutcome == RegistrationOutcome.signedIn ||
-                widget.controller.isAuthenticated) {
-              success = true;
-            }
+            return;
           }
         }
 
         // 3. FALLBACK FOR LOCAL / DEMO STUDENT USERS
-        // When Supabase is unavailable, offline, or rejects testing credentials:
-        if (!success && cleanPass.length >= 6) {
+        // Strictly blocked when account is suspended; allowed for testing fallback:
+        if (!success &&
+            widget.controller.issue != AuthIssue.accountSuspended &&
+            cleanPass.length >= 6) {
           final rawName = cleanEmail.contains('@')
               ? cleanEmail.split('@').first
               : 'Student';
@@ -1277,6 +1295,8 @@ class _AuthPageState extends State<AuthPage> {
         AuthIssue.recoveryExpired => l10n.errorRecoveryExpired,
         AuthIssue.sessionUnavailable => l10n.errorSessionUnavailable,
         AuthIssue.unexpected => l10n.errorUnexpected,
+        AuthIssue.accountSuspended => l10n.errorAccountSuspended,
+        AuthIssue.emailAlreadyInUse => l10n.errorEmailAlreadyInUse,
       };
 }
 
@@ -1715,6 +1735,8 @@ String _issueMessage(AppLocalizations l10n, AuthIssue issue) => switch (issue) {
       AuthIssue.recoveryExpired => l10n.errorRecoveryExpired,
       AuthIssue.sessionUnavailable => l10n.errorSessionUnavailable,
       AuthIssue.unexpected => l10n.errorUnexpected,
+      AuthIssue.accountSuspended => l10n.errorAccountSuspended,
+      AuthIssue.emailAlreadyInUse => l10n.errorEmailAlreadyInUse,
     };
 
 class _Notice extends StatelessWidget {
