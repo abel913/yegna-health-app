@@ -65,6 +65,8 @@
   "errorRecoveryExpired": "This recovery link has expired. Request a new one.",
   "errorSessionUnavailable": "Your session is no longer available. Sign in again.",
   "errorUnexpected": "Something went wrong. Please try again.",
+  "errorAccountSuspended": "This account has been suspended by community safety. Please contact an administrator.",
+  "errorEmailAlreadyInUse": "An account with this email address already exists. Try signing in instead.",
   "errorTitle": "Account request could not be completed",
   "sessionEnded": "Your session ended. Sign in again to view your profile.",
   "profileDescription": "Your profile details are private to your signed-in account.",

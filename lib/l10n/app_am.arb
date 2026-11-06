@@ -65,6 +65,8 @@
   "errorRecoveryExpired": "ይህ የመመለሻ አገናኝ ጊዜው አልፎበታል። አዲስ ይጠይቁ።",
   "errorSessionUnavailable": "የመግቢያ ጊዜዎ አልቋል። እንደገና ይግቡ።",
   "errorUnexpected": "አንድ ችግር ተፈጥሯል። እባክዎ እንደገና ይሞክሩ።",
+  "errorAccountSuspended": "ይህ መለያ በማህበረሰብ ደህንነት ምክንያት ታግዷል። እባክዎ አስተዳዳሪውን ያነጋግሩ።",
+  "errorEmailAlreadyInUse": "በዚህ የኢሜይል አድራሻ የተመዘገበ መለያ አስቀድሞ አለ። እባክዎ ይግቡ።",
   "errorTitle": "የመለያ ጥያቄው አልተሳካም",
   "sessionEnded": "የመግቢያ ጊዜዎ አልቋል። መገለጫዎን ለማየት እንደገና ይግቡ።",
   "profileDescription": "የመገለጫ ዝርዝሮችዎ በገቡት መለያ ብቻ ይታያሉ።",
