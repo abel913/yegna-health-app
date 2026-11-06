@@ -8,6 +8,7 @@ import {
   X,
 } from 'lucide-react';
 import { QuizQuestion, Module } from '../types/index.js';
+import { ConfirmModal } from '../components/common/ConfirmModal.js';
 
 interface QuizzesPageProps {
   questions: QuizQuestion[];
@@ -26,6 +27,7 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingQuestion, setEditingQuestion] = useState<QuizQuestion | null>(null);
+  const [questionToDelete, setQuestionToDelete] = useState<QuizQuestion | null>(null);
   const [formData, setFormData] = useState({
     moduleId: modules[0]?.id || '',
     questionEn: '',
@@ -119,13 +121,9 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
                   <Edit2 size={15} />
                 </button>
                 <button
-                  onClick={() => {
-                    if (confirm(lang === 'am' ? 'ይህን ጥያቄ መሰረዝ ይፈልጋሉ?' : 'Delete this question?')) {
-                      onDeleteQuestion(q.id);
-                    }
-                  }}
-                  className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
-                  title={lang === 'am' ? 'ሰርዝ' : 'Delete question'}
+                  onClick={() => setQuestionToDelete(q)}
+                  className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+                  title={lang === 'am' ? 'ጥያቄውን ሰርዝ' : 'Delete question'}
                 >
                   <Trash2 size={15} />
                 </button>
@@ -308,6 +306,24 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
           </div>
         </div>
       )}
+      {/* Delete Confirmation Modal */}
+      <ConfirmModal
+        isOpen={Boolean(questionToDelete)}
+        onClose={() => setQuestionToDelete(null)}
+        onConfirm={async () => {
+          if (questionToDelete) {
+            await onDeleteQuestion(questionToDelete.id);
+          }
+        }}
+        title={lang === 'am' ? 'የፈተና ጥያቄው ይሰረዝ?' : 'Delete Quiz Question?'}
+        itemName={questionToDelete ? (lang === 'am' ? questionToDelete.questionAm || questionToDelete.questionEn : questionToDelete.questionEn) : ''}
+        message={
+          lang === 'am'
+            ? 'ይህ ጥያቄ ከፈተናው ማህደር በቋሚነት ይሰረዛል። ተማሪዎች ይህንን ጥያቄ በፈተና ወቅት አያገኙትም።'
+            : 'This multiple-choice clinical question and its explanation will be permanently deleted from the assessment bank.'
+        }
+        lang={lang}
+      />
     </div>
   );
 };

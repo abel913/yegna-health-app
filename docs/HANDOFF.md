@@ -1,5 +1,21 @@
 # Handoff
 
+## SaaS Delete Confirmation Modal Engine Architecture (2026-11-05)
+
+- **Modal Component (`admin-web/src/components/common/ConfirmModal.tsx`)**:
+  - Reusable glassmorphic confirmation dialog replacing browser `window.confirm(...)`.
+  - Item name highlight chip, danger alert badge, bilingual warning subtext, and loading state.
+  - Keyboard accessibility with `Escape` dismiss and body scroll lock.
+- **Pages Integrated**:
+  - `FacilitiesPage.tsx`: Replaced native confirm on clinic deletions.
+  - `MentorsPage.tsx`: Replaced native confirm on peer mentor deletions.
+  - `LearningCmsPage.tsx`: Replaced native confirm on curriculum module deletions.
+  - `QuizzesPage.tsx`: Replaced native confirm on quiz question deletions.
+  - `ClubsPage.tsx`: Replaced native confirm on student club deletions.
+- **Verification**:
+  - `cd admin-web && npm run build`: 1,600 modules transformed, 0 errors in 19.15s.
+  - `flutter analyze --no-pub`: 0 issues found (61.9s).
+
 ## Live Telemetry & System Health Indicator Architecture (2026-11-05)
 
 - **Backend Health Check (`server/src/routes/index.ts`)**:

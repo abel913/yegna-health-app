@@ -18,6 +18,7 @@ import { api } from '../services/api.js';
 import { exportToCsv } from '../utils/csvExport.js';
 import { useToast } from '../context/ToastContext.js';
 import { EmptyState } from '../components/common/EmptyState.js';
+import { ConfirmModal } from '../components/common/ConfirmModal.js';
 
 interface ClubsPageProps {
   clubs: StudentClub[];
@@ -37,6 +38,7 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
   const { toast } = useToast();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingClub, setEditingClub] = useState<StudentClub | null>(null);
+  const [clubToDelete, setClubToDelete] = useState<StudentClub | null>(null);
   const [rosterModal, setRosterModal] = useState<{ open: boolean; clubName: string; members: any[] }>({
     open: false,
     clubName: '',
@@ -206,13 +208,9 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
 
                     {/* Delete Button */}
                     <button
-                      onClick={() => {
-                        if (confirm(lang === 'am' ? `ክለብ "${c.name}" ይሰረዝ?` : `Delete club "${c.name}"?`)) {
-                          onDeleteClub(c.id);
-                        }
-                      }}
+                      onClick={() => setClubToDelete(c)}
                       className="p-1.5 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition-colors cursor-pointer"
-                      title={lang === 'am' ? 'ሰርዝ' : 'Delete club'}
+                      title={lang === 'am' ? 'ክለቡን ሰርዝ' : 'Delete club'}
                     >
                       <Trash2 size={14} />
                     </button>
@@ -414,6 +412,24 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
           </div>
         </div>
       )}
+      {/* Delete Confirmation Modal */}
+      <ConfirmModal
+        isOpen={Boolean(clubToDelete)}
+        onClose={() => setClubToDelete(null)}
+        onConfirm={async () => {
+          if (clubToDelete) {
+            await onDeleteClub(clubToDelete.id);
+          }
+        }}
+        title={lang === 'am' ? 'የተማሪዎች ክለብ ይሰረዝ?' : 'Delete Student Health Club?'}
+        itemName={clubToDelete?.name || ''}
+        message={
+          lang === 'am'
+            ? 'ይህ እርምጃ ክለቡንና የአባላት መዝገብን በቋሚነት ያጠፋል። ተማሪዎች ይህንን ክለብ በካምፓስ ማህበር ውስጥ አያገኙትም።'
+            : 'This will permanently remove the student club chapter, its meeting schedule, and member roster.'
+        }
+        lang={lang}
+      />
     </div>
   );
 };

@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { Module } from '../types/index.js';
 import { exportToCsv } from '../utils/csvExport.js';
+import { ConfirmModal } from '../components/common/ConfirmModal.js';
 
 interface LearningCmsPageProps {
   modules: Module[];
@@ -33,6 +34,7 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingModule, setEditingModule] = useState<Module | null>(null);
+  const [moduleToDelete, setModuleToDelete] = useState<Module | null>(null);
   const [activeTab, setActiveTab] = useState<'en' | 'am'>('en');
   const [previewMode, setPreviewMode] = useState<'edit' | 'preview'>('edit');
 
@@ -204,13 +206,9 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
                     <Edit2 size={14} />
                   </button>
                   <button
-                    onClick={() => {
-                      if (confirm(lang === 'am' ? `ሞጁል "${m.titleEn}" ይሰረዝ?` : `Delete module "${m.titleEn}"?`)) {
-                        onDelete(m.id);
-                      }
-                    }}
+                    onClick={() => setModuleToDelete(m)}
                     className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg cursor-pointer transition-colors"
-                    title={lang === 'am' ? 'ሰርዝ' : 'Delete module'}
+                    title={lang === 'am' ? 'ሞጁሉን ሰርዝ' : 'Delete module'}
                   >
                     <Trash2 size={14} />
                   </button>
@@ -547,6 +545,24 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
           </div>
         </div>
       )}
+      {/* Delete Confirmation Modal */}
+      <ConfirmModal
+        isOpen={Boolean(moduleToDelete)}
+        onClose={() => setModuleToDelete(null)}
+        onConfirm={async () => {
+          if (moduleToDelete) {
+            await onDelete(moduleToDelete.id);
+          }
+        }}
+        title={lang === 'am' ? 'የትምህርት ሞጁሉ ይሰረዝ?' : 'Delete Health Curriculum Module?'}
+        itemName={moduleToDelete ? (lang === 'am' ? moduleToDelete.titleAm || moduleToDelete.titleEn : moduleToDelete.titleEn) : ''}
+        message={
+          lang === 'am'
+            ? 'ይህ እርምጃ ሞጁሉንና በውስጡ ያሉትን ትምህርቶች ከመዝገቡ በቋሚነት ያጠፋል። ተማሪዎች ይህንን ይዘት በሞባይል መተግበሪያቸው ማግኘት አይችሉም።'
+            : 'This module and all its authored lessons will be permanently deleted. Students will no longer see this topic in their reading feed.'
+        }
+        lang={lang}
+      />
     </div>
   );
 };

@@ -18,6 +18,7 @@ import { Facility } from '../types/index.js';
 import { exportToCsv } from '../utils/csvExport.js';
 import { SortableHeader, SortOrder } from '../components/common/SortableHeader.js';
 import { EmptyState } from '../components/common/EmptyState.js';
+import { ConfirmModal } from '../components/common/ConfirmModal.js';
 
 interface FacilitiesPageProps {
   facilities: Facility[];
@@ -70,6 +71,7 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
   const [selectedSubCity, setSelectedSubCity] = useState('All');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingFacility, setEditingFacility] = useState<Facility | null>(null);
+  const [facilityToDelete, setFacilityToDelete] = useState<Facility | null>(null);
 
   // Form State
   const [formData, setFormData] = useState({
@@ -545,11 +547,7 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
                         <Edit2 size={15} />
                       </button>
                       <button
-                        onClick={() => {
-                          if (confirm(lang === 'am' ? `ተቋም "${f.nameEn}" ይሰረዝ?` : `Delete facility "${f.nameEn}"?`)) {
-                            onDelete(f.id);
-                          }
-                        }}
+                        onClick={() => setFacilityToDelete(f)}
                         className="p-1.5 text-slate-500 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition-colors cursor-pointer"
                         title={lang === 'am' ? 'ሰርዝ' : 'Delete Facility'}
                       >
@@ -853,6 +851,24 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
           </div>
         </div>
       )}
+      {/* Delete Confirmation Modal */}
+      <ConfirmModal
+        isOpen={Boolean(facilityToDelete)}
+        onClose={() => setFacilityToDelete(null)}
+        onConfirm={async () => {
+          if (facilityToDelete) {
+            await onDelete(facilityToDelete.id);
+          }
+        }}
+        title={lang === 'am' ? 'የጤና ተቋሙ ይሰረዝ?' : 'Delete Healthcare Facility?'}
+        itemName={facilityToDelete ? (lang === 'am' ? facilityToDelete.nameAm || facilityToDelete.nameEn : facilityToDelete.nameEn) : ''}
+        message={
+          lang === 'am'
+            ? 'ይህ እርምጃ የተቋሙን መረጃ፣ የአገልግሎት ዝርዝርና የመገኛ ካርታ ከመዝገቡ በቋሚነት ያጠፋል።'
+            : 'This will permanently remove the clinic, its operating hours, and location from the youth healthcare network.'
+        }
+        lang={lang}
+      />
     </div>
   );
 };
