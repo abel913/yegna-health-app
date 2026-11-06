@@ -14,6 +14,8 @@ enum AuthIssue {
   recoveryExpired,
   sessionUnavailable,
   unexpected,
+  accountSuspended,
+  emailAlreadyInUse,
 }
 
 enum RegistrationOutcome { verificationPending, signedIn }
@@ -24,12 +26,16 @@ class AuthUser {
     required this.email,
     required this.emailVerified,
     this.displayName = '',
+    this.role,
+    this.isSuspended = false,
   });
 
   final String id;
   final String email;
   final bool emailVerified;
   final String displayName;
+  final String? role;
+  final bool isSuspended;
 }
 
 class AuthSnapshot {
