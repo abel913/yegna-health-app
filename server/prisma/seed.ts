@@ -12,12 +12,13 @@ async function main() {
 
   const admin = await prisma.user.upsert({
     where: { email: 'admin@yegnahealth.org' },
-    update: { passwordHash, role: 'SUPER_ADMIN' },
+    update: { passwordHash, role: 'SUPER_ADMIN', isEmailVerified: true },
     create: {
       email: 'admin@yegnahealth.org',
       displayName: 'Natnael Z. (SuperAdmin)',
       passwordHash,
       role: 'SUPER_ADMIN',
+      isEmailVerified: true,
     },
   });
   console.log('Admin account seeded:', admin.email);
@@ -25,12 +26,13 @@ async function main() {
   // Also seed alternate admin alias matching mobile user testing
   await prisma.user.upsert({
     where: { email: 'natnaelzemene21@gmail.com' },
-    update: { passwordHash, role: 'SUPER_ADMIN' },
+    update: { passwordHash, role: 'SUPER_ADMIN', isEmailVerified: true },
     create: {
       email: 'natnaelzemene21@gmail.com',
       displayName: 'Natnael Zemene (Executive Admin)',
       passwordHash,
       role: 'SUPER_ADMIN',
+      isEmailVerified: true,
     },
   });
 
