@@ -8,9 +8,8 @@ import 'l10n/app_localizations.dart';
 import 'src/account/app_settings_controller.dart';
 import 'src/app.dart';
 import 'src/auth/auth_controller.dart';
-import 'src/auth/auth_repository.dart';
+import 'src/auth/backend_auth_repository.dart';
 import 'src/auth/secure_auth_storage.dart';
-import 'src/auth/supabase_auth_repository.dart';
 import 'src/chatbot/chatbot_repository.dart';
 import 'src/chatbot/composite_chatbot_repository.dart';
 import 'src/chatbot/supabase_gemini_chatbot_repository.dart';
@@ -62,9 +61,11 @@ Future<void> main() async {
   );
 
   final supabaseClient = await _initializeSupabase();
-  final authRepository = supabaseClient == null
-      ? const UnconfiguredAuthRepository()
-      : SupabaseAuthRepository(supabaseClient);
+  final authRepository = BackendAuthRepository(
+    apiClient: apiClient,
+    preferences: preferences,
+  );
+  unawaited(authRepository.init());
   final authController = AuthController(authRepository);
   final chatbotRepository = CompositeChatbotRepository(
     remoteRepository: supabaseClient == null
