@@ -652,28 +652,28 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
                   onChange={(e) => handleLocationPresetChange(e.target.value)}
                   className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:border-brand-500 focus:outline-none bg-white font-medium text-slate-800"
                 >
-                  <optgroup label="🏛️ University of Gondar Campuses">
+                  <optgroup label="University of Gondar Campuses">
                     {LOCATION_PRESETS.filter((p) => p.category === 'uog').map((p) => (
                       <option key={p.id} value={p.id}>
                         {p.nameEn} ({p.nameAm})
                       </option>
                     ))}
                   </optgroup>
-                  <optgroup label="🏙️ Regional Cities & Health Hubs">
+                  <optgroup label="Regional Cities & Health Hubs">
                     {LOCATION_PRESETS.filter((p) => p.category === 'regional').map((p) => (
                       <option key={p.id} value={p.id}>
                         {p.nameEn} ({p.nameAm})
                       </option>
                     ))}
                   </optgroup>
-                  <optgroup label="🏢 Addis Ababa Sub-Cities">
+                  <optgroup label="Addis Ababa Sub-Cities">
                     {LOCATION_PRESETS.filter((p) => p.category === 'addis').map((p) => (
                       <option key={p.id} value={p.id}>
                         {p.nameEn} ({p.nameAm})
                       </option>
                     ))}
                   </optgroup>
-                  <optgroup label="✨ Custom Location">
+                  <optgroup label="Custom Location">
                     <option value="__custom__">
                       {lang === 'am' ? '+ የተለየ ካምፓስ ወይም ከተማ በጽሑፍ ጻፍ...' : '+ Custom Campus / City Name...'}
                     </option>
