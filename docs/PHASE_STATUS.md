@@ -1,5 +1,97 @@
 # Phase status
 
+## Live Database Dashboard Telemetry & Real Metrics Engine (2026-11-06)
+
+**Status: Completed & 100% Verified.**
+- **Elimination of Artificial Multipliers**:
+  - Eliminated the `* 1240` fake multiplier in `DashboardPage.tsx` that inflated 5 registered database users to 6,200.
+  - The `Registered Users` card now displays the exact database count (`5`), with real role breakdowns (`3 Students • 1 Peer Mentor • 1 Super Admin`), matching the sidebar badge.
+- **Backend Analytics Engine (`dashboard.controller.ts`)**:
+  - Enhanced `GET /api/admin/dashboard` to aggregate:
+    - Real user role counts (`students`, `mentors`, `admins`, `authors`).
+    - Real clinic regional distribution (`addis`, `gondar`, `other`).
+    - Real event timelines (`7D`, `30D`, `12M`) grouping `User.createdAt` and `AuditLog.timestamp` into live date buckets.
+- **Live Interactive Engagement Trends Chart**:
+  - Replaced static dummy data (`1,120 reads`, `24,000 in 12M`) with live database events.
+  - Line 1 (Cyan): Actual user signups per day/week/month.
+  - Line 2 (Purple): Actual audit logs and verification operations.
+  - Hover tooltips show exact calendar dates, signup counts, and system action counts.
+- **Real Curriculum Module Inventory**:
+  - Replaced fake static read figures (`9,440 reads`) with the actual 4 published modules from SQLite (`Understanding Puberty`, `SRH Foundations`, `HIV & AIDS Prevention`, `Youth Mental Health`), detailing real reading durations and quiz counts.
+- **Dynamic Clinic Geographic Distribution**:
+  - Replaced hardcoded percentages with dynamic calculations from `Facility` records (4 Addis Ababa clinics = 66.7%, 2 University of Gondar clinics = 33.3%).
+- **Exact Executive CSV Export**:
+  - Exported report uses exact database figures with 0 multipliers.
+- **Quality Gates & Verification**:
+  - `admin-web` build (`tsc && vite build`): **1,600 modules transformed, 0 errors in 4.44s**.
+  - `server` build (`tsc`): **0 errors**.
+  - Root Flutter static analysis (`dart analyze lib test`): **0 issues found**.
+  - Full mobile test suite (`flutter test --no-pub`): **All 191 tests passed**.
+
+## High-End SaaS User Management & Layout Redesign (2026-11-06)
+
+**Status: Completed & 100% Verified.**
+- **Admin Layout & Navigation Architecture (`AdminLayout.tsx`)**:
+  - Implemented the sleek `[ Quick actions   ⌘K   / ]` pill under the logo header for instant access to the Command Palette.
+  - Grouped sidebar navigation into three clear semantic sections:
+    - **General**: `Dashboard`, `Health Clinics`, `Peer Mentors`
+    - **Curriculum & Clubs**: `Learning CMS`, `Quizzes & Tests`, `Student Clubs`
+    - **Governance**: `User Management` (with dynamic live user count badge), `Audit Logs`
+  - Integrated Free Plan / Zero-Knowledge Privacy status indicator and upgraded user card with sign-out.
+- **Dashboard Header Optimization (`DashboardPage.tsx`)**:
+  - Removed the bulky dark welcome hero card taking up vertical space, replacing it with a sleek SaaS page header with breadcrumbs (`Yegna Platform / Dashboard`) and inline `Export KPI Report (CSV)` button.
+  - Positioned the 4 primary KPI cards directly at the top of the viewport for zero-scroll instant visibility.
+- **Brand Iconography & Vector Standardization (`BrandLogo.tsx`)**:
+  - Eliminated cartoonish emoji placeholders (stethoscope `🩺`, rainbow gradient borders) and replaced them with a custom geometric vector SVG emblem (`BrandLogo.tsx` with precision cross and vital pulse geometry) across the sidebar, header, and login page.
+  - Replaced unicode emojis in table headers (`👤`, `✦`, `📅`, `🛡️`, `⚙`) with sleek, standardized Lucide SVG vector icons (`AtSign`, `Shield`, `Activity`, `Calendar`, `KeyRound`).
+  - Removed emoji icons from location selector optgroups in `FacilitiesPage.tsx`.
+- **Redesigned User Management Page (`UsersPage.tsx`)**:
+  - **Breadcrumbs & Header**: `Yegna Platform / 👥 User management`, bold title with dynamic inline count badge (`{count}`), and subtitle.
+  - **Top Toolbar**: Segmented view mode switcher (`⊞ Table`, `▥ Board`, `:= List`), instant search with `/` keyboard focus shortcut, CSV export, and `+ Add User` primary button.
+  - **Filter Pills Strip**: Direct pill dropdowns (`Role ⌵`, `Status ⌵`, `2F / Email: {verified} ⌵`, and `Reset filters`).
+  - **Table View**: Checkbox multi-select, generated pastel color avatars with initials, click-to-copy email with toast, bullet dot status (`● Active` in emerald, `● Suspended` in rose), formatted joined date, 2F Auth pill (`Enabled` vs `Pending`), and ghost outline action buttons (`Edit`, `Delete`).
+  - **Board & List Views**: Kanban columns by role (`Students`, `Peer Mentors`, `Content Authors`, `Admins & Governance`) and compact list layout.
+  - **Modern Pagination Bar**: `Rows per page [ 15 ⌵ ]`, range counter `1-15 of {total} rows`, and numbered pagination controls `« < 1 2 ... > »`.
+  - **Add User Modal**: Full Name, Email, Role dropdown, auto-generate password option, and pre-verify email toggle.
+  - **Floating Toast System**: Instant feedback matching reference design with auto-dismiss.
+- **Backend & Client Integration**:
+  - Added `POST /api/admin/users` in `server/src/controllers/users.controller.ts` with bcrypt hashing and audit logging.
+  - Added `api.createUser` in `admin-web/src/services/api.ts` and wired into `App.tsx`.
+- **Quality Gates & Verification**:
+  - `admin-web` build (`tsc && vite build`): **1,599 modules transformed, 0 errors in 6.07s**.
+  - `server` build (`tsc`): **0 errors**.
+  - Root Flutter static analysis (`dart analyze lib test`): **0 issues found**.
+  - Full mobile test suite (`flutter test --no-pub`): **All 191 tests passed**.
+
+## Production Backend User Authentication & Desktop Web Admin Governance (2026-11-06)
+
+**Status: Completed & 100% Verified.**
+- **Backend Email Confirmation & Verification Pipeline (`server/`)**:
+  - Added `isEmailVerified`, `verificationCode`, and `verificationToken` to the Prisma `User` model.
+  - Implemented `sendVerificationEmail` utility (`server/src/utils/mailer.ts`) supporting SMTP delivery with automatic fallback to high-visibility formatted console logging for development/offline testing.
+  - Updated `register` to create users with `isEmailVerified: false`, dispatch verification emails with a 6-digit code and secure confirmation link, and return `verificationPending: true` without auto-logging in.
+  - Updated `login` to strictly reject unverified accounts with `403 EMAIL_NOT_CONFIRMED`.
+  - Added `GET /api/auth/verify-email?token=...` (interactive confirmation link) and `POST /api/auth/verify-email` (6-digit code validation).
+  - Added `PUT /api/admin/users/:id/verify-email` allowing administrators in the web portal to 1-click verify any student email.
+- **Desktop Web Admin Portal Governance UI (`admin-web/`)**:
+  - Rebuilt `UsersPage.tsx` with responsive search, multi-role filtering (`STUDENT`, `MENTOR`, `CONTENT_AUTHOR`, `ADMIN`, `SUPER_ADMIN`), and status filtering (`Active`, `Suspended`).
+  - Added live **Email Verification Badges** (`✓ Verified` vs `Pending Email`) and a 1-click **Manual Verify** action button.
+  - Added **Reset Password Modal** with manual input or 1-tap random password generator.
+  - Added **Delete User Modal** with confirmation and SuperAdmin protection.
+  - Added 1-click **Suspend / Reinstate** actions with instantaneous visual status badge updates and toast feedback.
+  - Added filtered CSV user roster export and pagination.
+  - Production TypeScript & Vite build: **1,599 modules transformed, 0 errors**.
+- **Flutter Mobile App Integration & Unified Backend Sync (`lib/`)**:
+  - Configured `lib/main.dart` to consistently use `BackendAuthRepository`, ensuring every registration and login writes directly to the Node.js SQLite database and immediately synchronizes with the Admin Portal.
+  - Integrated `verificationPending` state: upon registration, the app transitions smoothly to the verification pending view without auto-logging in.
+  - When unverified users attempt sign-in, the app captures `EMAIL_NOT_CONFIRMED` and presents the localized notice to check their inbox.
+  - Updated `ApiClient` with `verifyEmail` and `resendVerificationEmail`.
+- **Quality Gates & Verification**:
+  - `dart analyze lib test`: **0 issues found**.
+  - `admin-web` build (`tsc && vite build`): **0 errors**.
+  - Unit tests in `test/backend_auth_test.dart`: **12/12 tests passed**.
+  - Full mobile test suite: **All 191 tests passed**.
+
 ## Live Telemetry & System Health Indicator Architecture (2026-11-05)
 
 **Status: Completed & 100% Verified.**

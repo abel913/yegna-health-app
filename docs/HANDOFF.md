@@ -1,5 +1,83 @@
 # Handoff
 
+## Live Database Dashboard Telemetry & Real Metrics Engine (2026-11-06)
+
+- **Eliminated Fake Multipliers**:
+  - Removed `* 1240` multiplier from `DashboardPage.tsx`. The `Registered Users` metric card directly reflects the live database total (`5`), with real role breakdowns (`3 Students • 1 Peer Mentor • 1 Super Admin`), perfectly synchronizing with the sidebar badge.
+- **Backend Analytics Engine (`server/src/controllers/dashboard.controller.ts`)**:
+  - `GET /api/admin/dashboard` computes live role distributions, clinic regional breakdowns (Addis Ababa vs Gondar), and real timeline aggregates (`7D`, `30D`, `12M`) for `User.createdAt` and `AuditLog.timestamp`.
+- **Live Trend Chart**:
+  - Replaced static dummy arrays with live SQLite events (Cyan for signups, Purple for audit operations), with exact date and count tooltips.
+- **Real Curriculum Module Inventory**:
+  - Renders the 4 real database modules with their actual reading durations and quiz question counts.
+- **Dynamic Clinic Geographic Distribution**:
+  - Dynamically calculates clinic shares (4 Addis Ababa clinics = 66.7%, 2 University of Gondar clinics = 33.3%).
+- **Verification**:
+  - `cd admin-web && npm run build`: 1,600 modules transformed, 0 errors in 4.44s.
+  - `cd server && npm run build`: 0 errors.
+  - `dart analyze lib test`: 0 issues found.
+  - `flutter test --no-pub`: All 191 tests passed.
+
+## High-End SaaS User Management & Layout Redesign (2026-11-06)
+
+- **Admin Layout & Navigation Architecture (`AdminLayout.tsx`)**:
+  - Implemented the sleek `[ Quick actions   ⌘K   / ]` pill under the logo header for instant access to the Command Palette.
+  - Grouped sidebar navigation into three clear semantic sections:
+    - **General**: `Dashboard`, `Health Clinics`, `Peer Mentors`
+    - **Curriculum & Clubs**: `Learning CMS`, `Quizzes & Tests`, `Student Clubs`
+    - **Governance**: `User Management` (with dynamic live user count badge), `Audit Logs`
+  - Integrated Free Plan / Zero-Knowledge Privacy status indicator and upgraded user card with sign-out.
+- **Dashboard Header Optimization (`DashboardPage.tsx`)**:
+  - Removed the bulky dark welcome hero card taking up vertical space, replacing it with a sleek SaaS page header with breadcrumbs (`Yegna Platform / Dashboard`) and inline `Export KPI Report (CSV)` button.
+  - Positioned the 4 primary KPI cards directly at the top of the viewport for zero-scroll instant visibility.
+- **Brand Iconography & Vector Standardization (`BrandLogo.tsx`)**:
+  - Eliminated cartoonish emoji placeholders (stethoscope `🩺`, rainbow gradient borders) and replaced them with a custom geometric vector SVG emblem (`BrandLogo.tsx` with precision cross and vital pulse geometry) across the sidebar, header, and login page.
+  - Replaced unicode emojis in table headers (`👤`, `✦`, `📅`, `🛡️`, `⚙`) with sleek, standardized Lucide SVG vector icons (`AtSign`, `Shield`, `Activity`, `Calendar`, `KeyRound`).
+  - Removed emoji icons from location selector optgroups in `FacilitiesPage.tsx`.
+- **Redesigned User Management Page (`UsersPage.tsx`)**:
+  - **Breadcrumbs & Header**: `Yegna Platform / 👥 User management`, bold title with dynamic inline count badge (`{count}`), and subtitle.
+  - **Top Toolbar**: Segmented view mode switcher (`⊞ Table`, `▥ Board`, `:= List`), instant search with `/` keyboard focus shortcut, CSV export, and `+ Add User` primary button.
+  - **Filter Pills Strip**: Direct pill dropdowns (`Role ⌵`, `Status ⌵`, `2F / Email: {verified} ⌵`, and `Reset filters`).
+  - **Table View**: Checkbox multi-select, generated pastel color avatars with initials, click-to-copy email with toast, bullet dot status (`● Active` in emerald, `● Suspended` in rose), formatted joined date, 2F Auth pill (`Enabled` vs `Pending`), and ghost outline action buttons (`Edit`, `Delete`).
+  - **Board & List Views**: Kanban columns by role (`Students`, `Peer Mentors`, `Content Authors`, `Admins & Governance`) and compact list layout.
+  - **Modern Pagination Bar**: `Rows per page [ 15 ⌵ ]`, range counter `1-15 of {total} rows`, and numbered pagination controls `« < 1 2 ... > »`.
+  - **Add User Modal**: Full Name, Email, Role dropdown, auto-generate password option, and pre-verify email toggle.
+  - **Floating Toast System**: Instant feedback matching reference design with auto-dismiss.
+- **Backend & Client Integration**:
+  - Added `POST /api/admin/users` in `server/src/controllers/users.controller.ts` with bcrypt hashing and audit logging.
+  - Added `api.createUser` in `admin-web/src/services/api.ts` and wired into `App.tsx`.
+- **Verification**:
+  - `cd admin-web && npm run build`: 1,599 modules transformed, 0 errors.
+  - `cd server && npm run build`: 0 errors.
+  - `dart analyze lib test`: 0 issues found.
+  - `flutter test --no-pub`: All 191 tests passed.
+
+## Production Backend User Authentication & Desktop Web Admin Governance (2026-11-06)
+
+- **Backend Authentication & Email Verification (`server/`)**:
+  - `prisma/schema.prisma`: Added `isEmailVerified`, `verificationCode`, and `verificationToken` to `User`.
+  - `utils/mailer.ts`: Implemented email dispatching via `nodemailer` (supporting SMTP configurations with automatic development console fallback).
+  - `auth.controller.ts`: Registration creates unverified user and returns `verificationPending: true` without auto-login. Sign in strictly rejects unverified accounts with `403 EMAIL_NOT_CONFIRMED`.
+  - Added `verifyEmail` (`GET /api/auth/verify-email?token=...` and `POST /api/auth/verify-email`), and `resendVerification`.
+  - `users.controller.ts`: Added `PUT /api/admin/users/:id/verify-email` allowing administrators to 1-click verify any student email.
+- **Desktop Web Admin Portal Governance UI (`admin-web/`)**:
+  - Rebuilt `UsersPage.tsx` with responsive search, multi-role filter (`STUDENT`, `MENTOR`, `CONTENT_AUTHOR`, `ADMIN`, `SUPER_ADMIN`), and status filter (`Active`, `Suspended`).
+  - Added email status badges (`✓ Verified` vs `Pending Email`) and 1-click manual verification action.
+  - Implemented **Reset Password Modal** with manual input and 1-tap random password generator.
+  - Implemented **Delete User Modal** with confirmation dialog and SuperAdmin guard.
+  - Implemented 1-click **Suspend / Reinstate** actions with immediate status updates and audit logs.
+  - Added filtered CSV user roster export and pagination.
+  - `cd admin-web && npm run build`: 1,599 modules transformed, 0 errors.
+- **Flutter Mobile App Integration & Unified Backend Sync (`lib/`)**:
+  - `lib/main.dart`: Wired `BackendAuthRepository` exclusively, eliminating split-brain Supabase behavior and ensuring every mobile registration directly hits the local SQLite backend.
+  - Registration displays the verification pending screen; sign-in surfaces localized inbox verification notices when unconfirmed.
+  - Updated `ApiClient` with `verifyEmail` and `resendVerificationEmail`.
+- **Verification**:
+  - `dart analyze lib test`: 0 issues found.
+  - `cd admin-web && npm run build`: 0 errors.
+  - `flutter test test/backend_auth_test.dart --no-pub`: 12/12 passed.
+  - `flutter test --no-pub`: All 191 tests passed.
+
 ## Live Telemetry & System Health Indicator Architecture (2026-11-05)
 
 - **Backend Health Check (`server/src/routes/index.ts`)**:
