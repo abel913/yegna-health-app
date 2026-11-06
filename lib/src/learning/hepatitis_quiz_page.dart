@@ -1,24 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../l10n/app_localizations.dart';
+import 'dynamic_quiz_helper.dart';
 import 'learning_progress_controller.dart';
 
-class _QuizQuestion {
-  const _QuizQuestion({
-    required this.id,
-    required this.category,
-    required this.questionText,
-    required this.options,
-    required this.correctIndex,
-    required this.insight,
-  });
-
-  final String id;
-  final String Function(AppLocalizations) category;
-  final String Function(AppLocalizations) questionText;
-  final List<String Function(AppLocalizations)> options;
-  final int correctIndex;
-  final String Function(AppLocalizations) insight;
-}
+typedef _QuizQuestion = QuizQuestionModel;
 
 final List<_QuizQuestion> _kHepatitisQuizQuestions = [
   // 1. Organ Affected (Multiple Choice)
@@ -79,20 +64,43 @@ final List<_QuizQuestion> _kHepatitisQuizQuestions = [
 class HepatitisQuizPage extends StatefulWidget {
   const HepatitisQuizPage({
     required this.progressController,
+    this.questions,
     super.key,
   });
 
   final LearningProgressController progressController;
+  final List<QuizQuestionModel>? questions;
 
   @override
   State<HepatitisQuizPage> createState() => _HepatitisQuizPageState();
 }
 
 class _HepatitisQuizPageState extends State<HepatitisQuizPage> {
+  late List<QuizQuestionModel> _questions;
   int _currentIndex = 0;
   final Map<int, int> _selectedAnswers = {};
   bool _isFinished = false;
   bool _isReviewing = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _questions = widget.questions ?? _kHepatitisQuizQuestions;
+    _loadDynamicQuestions();
+  }
+
+  Future<void> _loadDynamicQuestions() async {
+    if (widget.questions != null) return;
+    final cached = await DynamicQuizHelper.loadFromCache(
+      moduleId: 'module-03',
+      category: 'hepatitis',
+    );
+    if (cached != null && cached.isNotEmpty && mounted) {
+      setState(() {
+        _questions = cached;
+      });
+    }
+  }
 
   void _handleOptionSelected(int optionIndex) {
     if (_isFinished && !_isReviewing) return;
@@ -114,7 +122,7 @@ class _HepatitisQuizPageState extends State<HepatitisQuizPage> {
       return;
     }
 
-    if (_currentIndex < _kHepatitisQuizQuestions.length - 1) {
+    if (_currentIndex < _questions.length - 1) {
       setState(() {
         _currentIndex++;
       });
@@ -153,8 +161,8 @@ class _HepatitisQuizPageState extends State<HepatitisQuizPage> {
 
   int _calculateScore() {
     int score = 0;
-    for (int i = 0; i < _kHepatitisQuizQuestions.length; i++) {
-      if (_selectedAnswers[i] == _kHepatitisQuizQuestions[i].correctIndex) {
+    for (int i = 0; i < _questions.length; i++) {
+      if (_selectedAnswers[i] == _questions[i].correctIndex) {
         score++;
       }
     }
@@ -206,9 +214,9 @@ class _HepatitisQuizPageState extends State<HepatitisQuizPage> {
   }
 
   Widget _buildQuestionView(BuildContext context, AppLocalizations l10n) {
-    final question = _kHepatitisQuizQuestions[_currentIndex];
+    final question = _questions[_currentIndex];
     final selectedOption = _selectedAnswers[_currentIndex];
-    final total = _kHepatitisQuizQuestions.length;
+    final total = _questions.length;
     final isLast = _currentIndex == total - 1;
 
     return Column(
@@ -567,7 +575,7 @@ class _HepatitisQuizPageState extends State<HepatitisQuizPage> {
 
   Widget _buildCelebrationView(BuildContext context, AppLocalizations l10n) {
     final score = _calculateScore();
-    final total = _kHepatitisQuizQuestions.length;
+    final total = _questions.length;
     final percent = ((score / total) * 100).round();
 
     return Center(
