@@ -3,15 +3,41 @@ import { z } from 'zod';
 import { prisma } from '../config/index.js';
 import { AuthRequest } from '../middleware/auth.middleware.js';
 
-const questionSchema = z.object({
+const baseQuestionSchema = z.object({
   moduleId: z.string().min(1),
+  type: z.enum(['MULTIPLE_CHOICE', 'TRUE_FALSE']).default('MULTIPLE_CHOICE'),
   questionEn: z.string().min(3),
   questionAm: z.string().min(3),
-  optionsEn: z.array(z.string()).length(4),
-  optionsAm: z.array(z.string()).length(4),
+  optionsEn: z.array(z.string()).min(2).max(4),
+  optionsAm: z.array(z.string()).min(2).max(4),
   correctIndex: z.number().min(0).max(3),
   explanationEn: z.string().min(5),
   explanationAm: z.string().min(5),
+});
+
+const questionSchema = baseQuestionSchema.refine((data) => {
+  if (data.type === 'TRUE_FALSE') {
+    return data.optionsEn.length === 2 && data.optionsAm.length === 2 && data.correctIndex <= 1;
+  }
+  return data.optionsEn.length === 4 && data.optionsAm.length === 4 && data.correctIndex <= 3;
+}, {
+  message: 'True/False questions must have exactly 2 options with correct index 0 or 1. Multiple Choice must have 4 options with index 0-3.',
+});
+
+const updateQuestionSchema = baseQuestionSchema.partial().refine((data) => {
+  if (data.type === 'TRUE_FALSE') {
+    if (data.optionsEn && data.optionsEn.length !== 2) return false;
+    if (data.optionsAm && data.optionsAm.length !== 2) return false;
+    if (data.correctIndex !== undefined && data.correctIndex > 1) return false;
+  }
+  if (data.type === 'MULTIPLE_CHOICE') {
+    if (data.optionsEn && data.optionsEn.length !== 4) return false;
+    if (data.optionsAm && data.optionsAm.length !== 4) return false;
+    if (data.correctIndex !== undefined && data.correctIndex > 3) return false;
+  }
+  return true;
+}, {
+  message: 'True/False questions must have exactly 2 options with correct index 0 or 1. Multiple Choice must have 4 options with index 0-3.',
 });
 
 export async function getAllQuestions(req: Request, res: Response) {
@@ -46,6 +72,7 @@ export async function createQuestion(req: AuthRequest, res: Response) {
     const question = await prisma.quizQuestion.create({
       data: {
         moduleId: data.moduleId,
+        type: data.type || 'MULTIPLE_CHOICE',
         questionEn: data.questionEn,
         questionAm: data.questionAm,
         optionsEn: JSON.stringify(data.optionsEn),
@@ -82,7 +109,7 @@ export async function createQuestion(req: AuthRequest, res: Response) {
 export async function updateQuestion(req: AuthRequest, res: Response) {
   try {
     const { id } = req.params;
-    const data = questionSchema.partial().parse(req.body);
+    const data = updateQuestionSchema.parse(req.body);
 
     const updateData: any = { ...data };
     if (data.optionsEn !== undefined) {
