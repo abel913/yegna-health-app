@@ -1,5 +1,33 @@
 # Technical decisions
 
+## 2026-11-06 — Supabase PostgreSQL Cloud Database Transition
+
+- **Cloud Database Provider & Schema Isolation Strategy**:
+  - Transitioned the backend server datasource from a local prototyping SQLite database to the linked cloud Supabase PostgreSQL instance (`yegna-health-amharic`, project ref: `oflkhtjskpsedsuczfkj`, region `eu-north-1`).
+  - Isolated application models into a dedicated PostgreSQL schema (`yegna`) using Prisma's `multiSchema` preview feature.
+  - *Rationale*: Isolating tables into the `yegna` schema prevents Prisma schema synchronization from conflicting with Supabase's internal auth engine (`auth.users`, `auth.sessions`, etc.) or legacy Phase 3 tables, guaranteeing zero data loss, safe programmatic migrations, and clean namespace management.
+- **Connection Architecture**:
+  - Standard transaction queries route through Supabase Supavisor connection pooler on port `6543` with `?pgbouncer=true`.
+  - Direct schema pushes and administrative introspection connect through port `5432` (`DIRECT_URL`).
+- **Data Integrity & Seeding**:
+  - Seeded all 8 adolescent health learning modules, complete True/False and Multiple Choice question banks, verified youth health facilities across Addis Ababa and Gondar, certified mentors, and student clubs directly to Supabase Cloud.
+  - Zero-Knowledge student privacy is strictly preserved: sensitive youth health surveys, period logs, chat transcripts, and quiz attempts stay private and encrypted on the client device.
+
+## 2026-11-06 — Module Quiz Management & Dynamic Mobile Sync Architecture
+
+- **Flexible Question Format Engine (`type: 'MULTIPLE_CHOICE' | 'TRUE_FALSE'`)**:
+  - Added native support for both **True / False (2 Options)** and **Multiple Choice (4 Options)** question models in Prisma (`QuizQuestion.type`) and REST APIs.
+  - In `QuizzesPage.tsx`, added an interactive format switcher:
+    - In True/False mode: auto-populates localized binary choices (`True/False` and `እውነት/ሐሰት`) and renders a high-visibility 2-button card selector (`✓ True / እውነት` vs `✗ False / ሐሰት`) to set the correct answer.
+    - In Multiple Choice mode: provides 4 customizable options in English and Amharic with radio button selection (A, B, C, D).
+- **Backend Schema & Validation Separation**:
+  - Implemented `baseQuestionSchema` with `.refine()` in Zod to decouple partial schema parsing for updates (`updateQuestionSchema`) from strict creation rules, ensuring True/False questions strictly enforce 2 options and index `0..1`, while Multiple Choice enforces 4 options and index `0..3`.
+  - Expanded `server/prisma/seed.ts` to seed all 8 curriculum modules (`module-01` through `module-08`) with realistic questions matching official adolescent health curricula.
+- **Dynamic Mobile Sync & Zero-Knowledge Client Evaluation**:
+  - Engineered `DynamicQuizHelper.loadFromCache()` to read synced questions from `OfflineSyncStore` (`yegna_offline_quizzes_v1`) by module ID or category.
+  - Upgraded all 8 module quiz pages to dynamically resolve and render questions, supporting variable option count (2 for True/False, 4 for Multiple Choice) without breaking bundled offline fallbacks or unit tests.
+  - Evaluation and scoring strictly remain on the student's mobile device, preserving 100% Zero-Knowledge student privacy.
+
 ## 2026-11-06 — High-End SaaS User Management & Layout Redesign
 
 - **Modern SaaS Layout & Design Tokens Adoption (`AdminLayout.tsx` & `UsersPage.tsx`)**:
