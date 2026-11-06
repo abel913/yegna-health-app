@@ -1,5 +1,46 @@
 # Handoff
 
+## Supabase PostgreSQL Cloud Database Transition (2026-11-06)
+
+- **Supabase Cloud Project**:
+  - Connected backend to linked Supabase cloud instance: `yegna-health-amharic` (`oflkhtjskpsedsuczfkj`, `eu-north-1`).
+  - Set up Supavisor connection pooler (`aws-0-eu-north-1.pooler.supabase.com:6543`) with `pgbouncer=true` for transaction pooling and direct session URL on port `5432`.
+- **Database Architecture & Multi-Schema Isolation**:
+  - Implemented schema namespace isolation using a dedicated PostgreSQL schema (`yegna`) in Supabase.
+  - All 8 tables (`User`, `Facility`, `Mentor`, `Module`, `QuizQuestion`, `StudentClub`, `ClubMember`, `AuditLog`) are hosted under the `yegna` schema, avoiding any collision with Supabase's internal `auth` schema or legacy Phase 3 tables.
+  - Successfully ran `npx prisma db push` and `npm run prisma:seed` to populate verified clinics, mentors, all 8 learning modules, and complete bilingual quiz banks.
+- **REST API & Zero-Knowledge Verification**:
+  - Verified backend endpoints (`GET /api/quizzes`, `POST /api/auth/login`, `GET /api/admin/dashboard`) returning live cloud data.
+  - Student quiz answers, period logs, and chatbot history continue to be evaluated locally on device in accordance with Zero-Knowledge student privacy.
+- **Verification Results**:
+  - `cd server && npm run build`: 0 errors.
+  - `cd admin-web && npm run build`: 1,601 modules transformed, 0 errors in 9.19s.
+  - `dart analyze lib test`: 0 issues found.
+  - `flutter test --no-pub`: All 194 tests passed.
+
+## Module Quiz Management & Dynamic Mobile Sync Architecture (2026-11-06)
+
+- **Admin Web True/False & Multiple Choice Studio (`admin-web/src/pages/QuizzesPage.tsx`)**:
+  - Added a dedicated Question Format toggle allowing administrators to choose between **True / False (2 Options)** and **Multiple Choice (4 Options)** for any of the 8 curriculum topics.
+  - In True/False mode: automatically sets English (`True`, `False`) and Amharic (`እውነት`, `ሐሰት`) options, rendering an intuitive 2-card selector (`✓ True / እውነት` vs `✗ False / ሐሰት`) to pick the correct answer with 1 click.
+  - In Multiple Choice mode: provides 4 bilingual option fields with radio button selection (A, B, C, D).
+  - Module and Question Type filter strip: filters by any of the 8 learning modules or by format (`All Formats`, `True / False`, `Multiple Choice`).
+  - Interactive Student Test Player Studio: allows administrators to test both True/False and Multiple Choice questions directly in the browser with real-time score verification, Geez/English translation switching, and medical explanations.
+  - Deletion handled with accessible `ConfirmModal`.
+- **Backend Prisma & REST API Engine (`server/`)**:
+  - `QuizQuestion` schema updated with `type: 'MULTIPLE_CHOICE' | 'TRUE_FALSE'` (`@default("MULTIPLE_CHOICE")`).
+  - Zod validation in `quizzes.controller.ts` validates 2 options for True/False and 4 options for Multiple Choice.
+  - `prisma/seed.ts` seeds all 8 modules (`module-01` through `module-08`) with clinically verified True/False and Multiple Choice questions.
+- **Flutter Dynamic Sync Engine (`lib/`)**:
+  - Created `DynamicQuizHelper.loadFromCache()` in `lib/src/learning/dynamic_quiz_helper.dart` to read `yegna_offline_quizzes_v1` and map questions dynamically.
+  - All 8 module quiz pages (`PubertyQuizPage`, `SrhQuizPage`, `HivQuizPage`, `MentalHealthQuizPage`, `GbvQuizPage`, `HepatitisQuizPage`, `StiQuizPage`, `SubstanceAbuseQuizPage`) dynamically load cached questions while preserving graceful bundled fallback.
+  - Zero-Knowledge student privacy strictly maintained: evaluation occurs 100% on device.
+- **Verification Results**:
+  - `cd server && npm run build`: 0 errors.
+  - `cd admin-web && npm run build`: 1,601 modules transformed, 0 errors in 11.92s.
+  - `dart analyze lib test`: 0 issues found.
+  - `flutter test --no-pub`: All 194 tests passed.
+
 ## Mobile Element Tree Navigation Stability & Admin Mentors/Clubs UX Architecture (2026-11-06)
 
 - **Mobile Learning & Quiz Navigation (`lib/src/learning/learn_pages.dart`)**:
