@@ -13,8 +13,10 @@ import {
   PlayCircle,
   RotateCcw,
   Sparkles,
-  BookOpen,
   Filter,
+  Check,
+  AlertCircle,
+  Layers,
 } from 'lucide-react';
 import { QuizQuestion, Module } from '../types/index.js';
 import { ConfirmModal } from '../components/common/ConfirmModal.js';
@@ -40,10 +42,12 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingQuestion, setEditingQuestion] = useState<QuizQuestion | null>(null);
   const [questionToDelete, setQuestionToDelete] = useState<QuizQuestion | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Search & Filter States
   const [search, setSearch] = useState('');
   const [selectedModuleId, setSelectedModuleId] = useState<string>('all');
+  const [selectedType, setSelectedType] = useState<'all' | 'MULTIPLE_CHOICE' | 'TRUE_FALSE'>('all');
 
   // Interactive Student Preview Player States
   const [previewQuestion, setPreviewQuestion] = useState<QuizQuestion | null>(null);
@@ -51,8 +55,19 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
   const [previewRevealed, setPreviewRevealed] = useState(false);
   const [previewLang, setPreviewLang] = useState<'en' | 'am'>(lang);
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    moduleId: string;
+    type: 'MULTIPLE_CHOICE' | 'TRUE_FALSE';
+    questionEn: string;
+    questionAm: string;
+    optionsEn: string[];
+    optionsAm: string[];
+    correctIndex: number;
+    explanationEn: string;
+    explanationAm: string;
+  }>({
     moduleId: modules[0]?.id || '',
+    type: 'MULTIPLE_CHOICE',
     questionEn: '',
     questionAm: '',
     optionsEn: ['', '', '', ''],
@@ -84,12 +99,24 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
     return q.module || modules.find((m) => m.id === q.moduleId);
   };
 
-  // Filtered Questions with Search & Module Selector
+  // Helper to determine if question is True/False
+  const isQuestionTrueFalse = (q: QuizQuestion) => {
+    return q.type === 'TRUE_FALSE' || q.optionsEn?.length === 2;
+  };
+
+  // Filtered Questions with Search, Module & Type Selector
   const filteredQuestions = useMemo(() => {
     return questions.filter((q) => {
       // Module Filter
       if (selectedModuleId !== 'all' && q.moduleId !== selectedModuleId) {
         return false;
+      }
+
+      // Question Type Filter
+      if (selectedType !== 'all') {
+        const isTf = isQuestionTrueFalse(q);
+        if (selectedType === 'TRUE_FALSE' && !isTf) return false;
+        if (selectedType === 'MULTIPLE_CHOICE' && isTf) return false;
       }
 
       // Keyword Search Filter
@@ -115,12 +142,22 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
 
       return true;
     });
-  }, [questions, modules, selectedModuleId, search]);
+  }, [questions, modules, selectedModuleId, selectedType, search]);
+
+  // Total counts for statistics chips
+  const totalTfCount = useMemo(() => {
+    return questions.filter((q) => isQuestionTrueFalse(q)).length;
+  }, [questions]);
+
+  const totalMcCount = useMemo(() => {
+    return questions.filter((q) => !isQuestionTrueFalse(q)).length;
+  }, [questions]);
 
   const openCreateModal = () => {
     setEditingQuestion(null);
     setFormData({
-      moduleId: modules[0]?.id || '',
+      moduleId: selectedModuleId !== 'all' ? selectedModuleId : (modules[0]?.id || ''),
+      type: 'MULTIPLE_CHOICE',
       questionEn: '',
       questionAm: '',
       optionsEn: ['', '', '', ''],
@@ -134,23 +171,77 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
 
   const openEditModal = (q: QuizQuestion) => {
     setEditingQuestion(q);
+    const qType: 'MULTIPLE_CHOICE' | 'TRUE_FALSE' =
+      q.type === 'TRUE_FALSE' || q.optionsEn?.length === 2 ? 'TRUE_FALSE' : 'MULTIPLE_CHOICE';
+
     setFormData({
       moduleId: q.moduleId,
+      type: qType,
       questionEn: q.questionEn,
       questionAm: q.questionAm,
-      optionsEn: [...q.optionsEn],
-      optionsAm: [...q.optionsAm],
-      correctIndex: q.correctIndex,
+      optionsEn:
+        qType === 'TRUE_FALSE'
+          ? q.optionsEn?.length === 2
+            ? [...q.optionsEn]
+            : ['True', 'False']
+          : q.optionsEn?.length === 4
+          ? [...q.optionsEn]
+          : [...(q.optionsEn || []), '', '', ''].slice(0, 4),
+      optionsAm:
+        qType === 'TRUE_FALSE'
+          ? q.optionsAm?.length === 2
+            ? [...q.optionsAm]
+            : ['እውነት', 'ሐሰት']
+          : q.optionsAm?.length === 4
+          ? [...q.optionsAm]
+          : [...(q.optionsAm || []), '', '', ''].slice(0, 4),
+      correctIndex: q.correctIndex >= 0 ? q.correctIndex : 0,
       explanationEn: q.explanationEn,
       explanationAm: q.explanationAm,
     });
     setIsModalOpen(true);
   };
 
+  const handleTypeChange = (newType: 'MULTIPLE_CHOICE' | 'TRUE_FALSE') => {
+    if (newType === 'TRUE_FALSE') {
+      setFormData((prev) => ({
+        ...prev,
+        type: 'TRUE_FALSE',
+        optionsEn: ['True', 'False'],
+        optionsAm: ['እውነት', 'ሐሰት'],
+        correctIndex: prev.correctIndex > 1 ? 0 : prev.correctIndex,
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        type: 'MULTIPLE_CHOICE',
+        optionsEn: prev.optionsEn.length === 4 ? prev.optionsEn : ['', '', '', ''],
+        optionsAm: prev.optionsAm.length === 4 ? prev.optionsAm : ['', '', '', ''],
+        correctIndex: prev.correctIndex,
+      }));
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await onSaveQuestion(formData, editingQuestion ? editingQuestion.id : undefined);
-    setIsModalOpen(false);
+    setIsSubmitting(true);
+    try {
+      const payload: Partial<QuizQuestion> = {
+        moduleId: formData.moduleId,
+        type: formData.type,
+        questionEn: formData.questionEn.trim(),
+        questionAm: formData.questionAm.trim(),
+        optionsEn: formData.optionsEn.map((o) => o.trim()),
+        optionsAm: formData.optionsAm.map((o) => o.trim()),
+        correctIndex: formData.correctIndex,
+        explanationEn: formData.explanationEn.trim(),
+        explanationAm: formData.explanationAm.trim(),
+      };
+      await onSaveQuestion(payload, editingQuestion ? editingQuestion.id : undefined);
+      setIsModalOpen(false);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // Student Preview Player Handlers
@@ -181,6 +272,7 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
         { header: 'Module Category', accessor: (q) => getModuleForQuestion(q)?.category || 'Curriculum' },
         { header: 'Module Title (EN)', accessor: (q) => getModuleForQuestion(q)?.titleEn || '' },
         { header: 'Module Title (AM)', accessor: (q) => getModuleForQuestion(q)?.titleAm || '' },
+        { header: 'Format / Type', accessor: (q) => isQuestionTrueFalse(q) ? 'TRUE_FALSE' : 'MULTIPLE_CHOICE' },
         { header: 'Question (English)', accessor: (q) => q.questionEn },
         { header: 'Question (Amharic)', accessor: (q) => q.questionAm },
         { header: 'Option 1 (EN)', accessor: (q) => q.optionsEn[0] || '' },
@@ -191,8 +283,14 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
         { header: 'Option 3 (AM)', accessor: (q) => q.optionsAm[2] || '' },
         { header: 'Option 4 (EN)', accessor: (q) => q.optionsEn[3] || '' },
         { header: 'Option 4 (AM)', accessor: (q) => q.optionsAm[3] || '' },
-        { header: 'Correct Index (0-3)', accessor: (q) => q.correctIndex },
-        { header: 'Correct Letter', accessor: (q) => ['A', 'B', 'C', 'D'][q.correctIndex] || '' },
+        { header: 'Correct Index', accessor: (q) => q.correctIndex },
+        {
+          header: 'Correct Letter / Option',
+          accessor: (q) =>
+            isQuestionTrueFalse(q)
+              ? q.correctIndex === 0 ? 'True' : 'False'
+              : ['A', 'B', 'C', 'D'][q.correctIndex] || '',
+        },
         { header: 'Correct Answer (EN)', accessor: (q) => q.optionsEn[q.correctIndex] || '' },
         { header: 'Correct Answer (AM)', accessor: (q) => q.optionsAm[q.correctIndex] || '' },
         { header: 'Clinical Explanation (EN)', accessor: (q) => q.explanationEn },
@@ -213,8 +311,8 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
           </h2>
           <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 mt-1">
             {lang === 'am'
-              ? 'ለእያንዳንዱ የትምህርት ሞጁል 4 አማራጭ ያላቸውን የፈተና ጥያቄዎችና የትምህርት ማብራሪያዎችን ያስተዳድሩ እና ይፈትሹ።'
-              : 'Create, test, and moderate multiple-choice clinical self-assessments with instant explanations for students.'}
+              ? 'ለእያንዳንዱ የትምህርት ሞጁል እውነት/ሐሰት ወይም ባለ 4 ምርጫ የፈተና ጥያቄዎችንና ክሊኒካዊ ማብራሪያዎችን ያስተዳድሩ እና ይፈትሹ።'
+              : 'Create, test, and moderate True/False and Multiple-Choice clinical self-assessments with instant explanations.'}
           </p>
         </div>
         <div className="flex items-center gap-2 self-start sm:self-auto">
@@ -265,7 +363,7 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
           </div>
 
           {/* Module Selector */}
-          <div className="relative min-w-[220px]">
+          <div className="relative min-w-[210px]">
             <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
               <Filter size={14} />
             </div>
@@ -290,6 +388,31 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
               ▼
             </div>
           </div>
+
+          {/* Question Type Filter */}
+          <div className="relative min-w-[170px]">
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+              <Layers size={14} />
+            </div>
+            <select
+              value={selectedType}
+              onChange={(e) => setSelectedType(e.target.value as any)}
+              className="w-full pl-8 pr-8 py-2 text-xs md:text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 text-slate-900 dark:text-white font-medium focus:outline-hidden focus:border-brand-500 transition-colors cursor-pointer appearance-none"
+            >
+              <option value="all">
+                {lang === 'am' ? `ሁሉም አይነቶች (${questions.length})` : `All Formats (${questions.length})`}
+              </option>
+              <option value="TRUE_FALSE">
+                {lang === 'am' ? `እውነት / ሐሰት (${totalTfCount})` : `True / False (${totalTfCount})`}
+              </option>
+              <option value="MULTIPLE_CHOICE">
+                {lang === 'am' ? `ባለ 4 ምርጫ (${totalMcCount})` : `Multiple Choice (${totalMcCount})`}
+              </option>
+            </select>
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 text-xs">
+              ▼
+            </div>
+          </div>
         </div>
 
         {/* Counter and Clear Filter Pill */}
@@ -300,11 +423,12 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
               : `Showing ${filteredQuestions.length} of ${questions.length} questions`}
           </span>
 
-          {(search || selectedModuleId !== 'all') && (
+          {(search || selectedModuleId !== 'all' || selectedType !== 'all') && (
             <button
               onClick={() => {
                 setSearch('');
                 setSelectedModuleId('all');
+                setSelectedType('all');
               }}
               className="text-xs font-bold text-brand-600 dark:text-cyan-400 hover:underline cursor-pointer"
             >
@@ -321,32 +445,41 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
             icon={HelpCircle}
             title={
               questions.length === 0
-                ? (lang === 'am' ? 'ምንም የፈተና ጥያቄዎች አልተፈጠሩም' : 'No Quiz Questions Found')
-                : (lang === 'am' ? 'ከፍለጋው ጋር የሚዛመድ ጥያቄ አልተገኘም' : 'No Matching Questions Found')
+                ? lang === 'am'
+                  ? 'ምንም የፈተና ጥያቄዎች አልተፈጠሩም'
+                  : 'No Quiz Questions Found'
+                : lang === 'am'
+                ? 'ከፍለጋው ጋር የሚዛመድ ጥያቄ አልተገኘም'
+                : 'No Matching Questions Found'
             }
             description={
               questions.length === 0
-                ? (lang === 'am'
-                    ? 'ተማሪዎች የጤና ግንዛቤያቸውን እንዲፈትሹ ጥያቄዎችንና ክሊኒካዊ ማብራሪያዎችን በማስገባት ይጀምሩ።'
-                    : 'Create multiple-choice self-assessments with clinical explanations for students.')
-                : (lang === 'am'
-                    ? 'የፍለጋ ቃላትን ይቀይሩ ወይም ሁሉንም የትምህርት ሞጁሎች ይምረጡ።'
-                    : 'Try adjusting your search query or selecting a different health module filter.')
+                ? lang === 'am'
+                  ? 'ተማሪዎች የጤና ግንዛቤያቸውን እንዲፈትሹ ጥያቄዎችንና ክሊኒካዊ ማብራሪያዎችን በማስገባት ይጀምሩ።'
+                  : 'Create True/False or Multiple Choice self-assessments with clinical explanations for students.'
+                : lang === 'am'
+                ? 'የፍለጋ ቃላትን ይቀይሩ ወይም ሁሉንም የትምህርት ሞጁሎች ይምረጡ።'
+                : 'Try adjusting your search query or resetting your filters.'
             }
             actionLabel={
               questions.length === 0
-                ? (lang === 'am' ? '+ አዲስ ጥያቄ ጨምር' : '+ Add Quiz Question')
+                ? lang === 'am'
+                  ? '+ አዲስ ጥያቄ ጨምር'
+                  : '+ Add Quiz Question'
                 : undefined
             }
             onAction={questions.length === 0 ? openCreateModal : undefined}
             clearLabel={
-              questions.length > 0 && (search || selectedModuleId !== 'all')
-                ? (lang === 'am' ? 'ሁሉንም ጥያቄዎች አሳይ' : 'Clear Filters')
+              questions.length > 0 && (search || selectedModuleId !== 'all' || selectedType !== 'all')
+                ? lang === 'am'
+                  ? 'ሁሉንም ጥያቄዎች አሳይ'
+                  : 'Clear Filters'
                 : undefined
             }
             onClear={() => {
               setSearch('');
               setSelectedModuleId('all');
+              setSelectedType('all');
             }}
           />
         </div>
@@ -354,6 +487,7 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
         <div className="space-y-4">
           {filteredQuestions.map((q, idx) => {
             const parentMod = getModuleForQuestion(q);
+            const isTf = isQuestionTrueFalse(q);
             return (
               <div
                 key={q.id}
@@ -364,9 +498,24 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
                     <span className="w-6 h-6 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-xs flex items-center justify-center">
                       {idx + 1}
                     </span>
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-brand-50 dark:bg-brand-950/60 text-brand-700 dark:text-cyan-400 border border-brand-100 dark:border-brand-900/40">
+
+                    {/* Question Format Badge */}
+                    {isTf ? (
+                      <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-900/40 flex items-center gap-1">
+                        <span>●</span>
+                        <span>{lang === 'am' ? 'እውነት / ሐሰት' : 'True / False'}</span>
+                      </span>
+                    ) : (
+                      <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-cyan-50 dark:bg-cyan-950/60 text-cyan-700 dark:text-cyan-400 border border-cyan-200 dark:border-cyan-900/40 flex items-center gap-1">
+                        <span>●</span>
+                        <span>{lang === 'am' ? 'ባለ 4 ምርጫ' : 'Multiple Choice'}</span>
+                      </span>
+                    )}
+
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
                       {parentMod?.category || 'Curriculum'}
                     </span>
+
                     {parentMod && (
                       <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
                         • {lang === 'am' ? parentMod.titleAm : parentMod.titleEn}
@@ -412,17 +561,21 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
                   {lang === 'am' ? q.questionEn : q.questionAm}
                 </p>
 
-                {/* Options Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-3">
+                {/* Options Grid (2 tiles for True/False, 4 tiles for Multiple Choice) */}
+                <div
+                  className={`grid gap-2 mb-3 ${
+                    isTf ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1 sm:grid-cols-2'
+                  }`}
+                >
                   {(lang === 'am' ? q.optionsAm : q.optionsEn).map((opt, oIdx) => {
                     const isCorrect = oIdx === q.correctIndex;
-                    const letter = ['A', 'B', 'C', 'D'][oIdx];
+                    const letter = isTf ? (oIdx === 0 ? 'T' : 'F') : ['A', 'B', 'C', 'D'][oIdx];
                     return (
                       <div
                         key={oIdx}
                         className={`p-2.5 rounded-xl text-xs font-semibold flex items-center justify-between border transition-colors ${
                           isCorrect
-                            ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800 text-emerald-900 dark:text-emerald-200 font-bold'
+                            ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-300 dark:border-emerald-800 text-emerald-900 dark:text-emerald-200 font-bold'
                             : 'bg-slate-50 dark:bg-slate-800/60 border-slate-200/70 dark:border-slate-700/60 text-slate-700 dark:text-slate-300'
                         }`}
                       >
@@ -482,171 +635,130 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
                 </div>
                 <div>
                   <h3 className="text-base md:text-lg font-extrabold text-slate-900 dark:text-white">
-                    {lang === 'am' ? 'የተማሪ የፈተና ቅድመ-እይታ' : 'Interactive Assessment Studio Player'}
+                    {previewLang === 'am' ? 'የተማሪ የፈተና ቅድመ-እይታ' : 'Interactive Assessment Studio Player'}
                   </h3>
                   <p className="text-xs text-slate-500 dark:text-slate-400">
-                    {lang === 'am'
+                    {previewLang === 'am'
                       ? 'የተማሪዎችን ፈተና ቅድመ-እይታ እና ፈጣን ማብራሪያዎችን ይሞክሩ'
                       : 'Simulate student test taking with instant scoring and clinical feedback'}
                   </p>
                 </div>
               </div>
-              <button
-                onClick={() => setPreviewQuestion(null)}
-                className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
-              >
-                <X size={20} />
-              </button>
-            </div>
-
-            {/* Language Switcher Pill for Preview */}
-            <div className="mt-4 flex items-center justify-between">
-              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-brand-50 dark:bg-brand-950/60 text-brand-700 dark:text-cyan-400 border border-brand-100 dark:border-brand-900/40">
-                {getModuleForQuestion(previewQuestion)?.category || 'Health Assessment'}
-              </span>
-
-              <div className="flex items-center bg-slate-100 dark:bg-slate-800 rounded-xl p-0.5 border border-slate-200 dark:border-slate-700">
+              <div className="flex items-center gap-2">
                 <button
                   type="button"
-                  onClick={() => setPreviewLang('en')}
-                  className={`px-2.5 py-1 text-xs font-bold rounded-lg transition-all cursor-pointer ${
-                    previewLang === 'en'
-                      ? 'bg-white dark:bg-slate-700 text-brand-600 dark:text-cyan-300 shadow-2xs'
-                      : 'text-slate-500 dark:text-slate-400 hover:text-slate-800'
-                  }`}
+                  onClick={() => setPreviewLang(previewLang === 'en' ? 'am' : 'en')}
+                  className="px-2.5 py-1 text-xs font-bold rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer"
                 >
-                  English
+                  {previewLang === 'en' ? 'አማርኛ' : 'English'}
                 </button>
                 <button
-                  type="button"
-                  onClick={() => setPreviewLang('am')}
-                  className={`px-2.5 py-1 text-xs font-bold rounded-lg transition-all cursor-pointer ${
-                    previewLang === 'am'
-                      ? 'bg-white dark:bg-slate-700 text-brand-600 dark:text-cyan-300 shadow-2xs'
-                      : 'text-slate-500 dark:text-slate-400 hover:text-slate-800'
-                  }`}
+                  onClick={() => setPreviewQuestion(null)}
+                  className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
                 >
-                  አማርኛ
+                  <X size={20} />
                 </button>
               </div>
             </div>
 
-            {/* Question Text */}
-            <div className="mt-4">
-              <h4 className="text-sm md:text-base font-extrabold text-slate-900 dark:text-white leading-snug">
+            {/* Question Details in Player */}
+            <div className="mt-5 space-y-4">
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-brand-50 dark:bg-brand-950/60 text-brand-700 dark:text-cyan-400 border border-brand-100 dark:border-brand-900/40">
+                  {getModuleForQuestion(previewQuestion)?.category || 'Curriculum'}
+                </span>
+                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-900/40">
+                  {isQuestionTrueFalse(previewQuestion)
+                    ? previewLang === 'am' ? 'እውነት / ሐሰት' : 'True / False'
+                    : previewLang === 'am' ? 'ባለ 4 ምርጫ' : 'Multiple Choice'}
+                </span>
+              </div>
+
+              <h4 className="text-base md:text-lg font-bold text-slate-900 dark:text-white leading-snug">
                 {previewLang === 'am' ? previewQuestion.questionAm : previewQuestion.questionEn}
               </h4>
-              <p className="text-xs text-slate-400 dark:text-slate-500 mt-1 italic">
-                {previewLang === 'am' ? previewQuestion.questionEn : previewQuestion.questionAm}
-              </p>
-            </div>
 
-            {/* Interactive Options List */}
-            <div className="mt-5 space-y-2.5">
-              {(previewLang === 'am' ? previewQuestion.optionsAm : previewQuestion.optionsEn).map((opt, oIdx) => {
-                const letter = ['A', 'B', 'C', 'D'][oIdx];
-                const isSelected = previewSelectedIdx === oIdx;
-                const isCorrect = oIdx === previewQuestion.correctIndex;
+              {/* Options to click */}
+              <div className="space-y-2.5 pt-2">
+                {(previewLang === 'am' ? previewQuestion.optionsAm : previewQuestion.optionsEn).map(
+                  (optText, optIdx) => {
+                    const isSelected = previewSelectedIdx === optIdx;
+                    const isCorrect = optIdx === previewQuestion.correctIndex;
+                    const isTf = isQuestionTrueFalse(previewQuestion);
+                    const letter = isTf ? (optIdx === 0 ? 'T' : 'F') : ['A', 'B', 'C', 'D'][optIdx];
 
-                let buttonStyle =
-                  'bg-white dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 hover:border-brand-500 dark:hover:border-cyan-400 hover:bg-brand-50/20';
+                    let btnStyle =
+                      'bg-slate-50 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700/80 text-slate-800 dark:text-slate-200 hover:border-brand-500 hover:bg-brand-50/40 dark:hover:bg-brand-950/30';
+                    let badgeStyle = 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300';
 
-                if (previewRevealed) {
-                  if (isCorrect) {
-                    buttonStyle =
-                      'bg-emerald-50 dark:bg-emerald-950/60 border-emerald-500 dark:border-emerald-500 text-emerald-950 dark:text-emerald-100 shadow-xs ring-1 ring-emerald-500/30';
-                  } else if (isSelected && !isCorrect) {
-                    buttonStyle =
-                      'bg-rose-50 dark:bg-rose-950/60 border-rose-500 dark:border-rose-500 text-rose-950 dark:text-rose-100 ring-1 ring-rose-500/30';
-                  } else {
-                    buttonStyle =
-                      'bg-slate-50 dark:bg-slate-800/30 border-slate-200/50 dark:border-slate-800 text-slate-400 dark:text-slate-500 opacity-60';
-                  }
-                }
+                    if (previewRevealed) {
+                      if (isCorrect) {
+                        btnStyle =
+                          'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-500 text-emerald-900 dark:text-emerald-100 font-bold';
+                        badgeStyle = 'bg-emerald-500 text-white';
+                      } else if (isSelected && !isCorrect) {
+                        btnStyle =
+                          'bg-rose-50 dark:bg-rose-950/40 border-rose-500 text-rose-900 dark:text-rose-100 font-bold';
+                        badgeStyle = 'bg-rose-500 text-white';
+                      } else {
+                        btnStyle =
+                          'bg-slate-50 dark:bg-slate-800/40 border-slate-200 dark:border-slate-800 text-slate-400 dark:text-slate-500 opacity-60';
+                      }
+                    }
 
-                return (
-                  <button
-                    key={oIdx}
-                    type="button"
-                    onClick={() => handleSelectOption(oIdx)}
-                    className={`w-full p-3.5 rounded-2xl text-xs md:text-sm font-semibold flex items-center justify-between border text-left transition-all cursor-pointer ${buttonStyle}`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <span
-                        className={`w-6 h-6 rounded-lg flex items-center justify-center text-xs font-black transition-colors ${
-                          previewRevealed && isCorrect
-                            ? 'bg-emerald-600 text-white'
-                            : previewRevealed && isSelected && !isCorrect
-                            ? 'bg-rose-600 text-white'
-                            : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200'
-                        }`}
+                    return (
+                      <button
+                        key={optIdx}
+                        type="button"
+                        disabled={previewRevealed}
+                        onClick={() => handleSelectOption(optIdx)}
+                        className={`w-full p-3.5 rounded-2xl border text-left text-xs md:text-sm font-medium transition-all flex items-center justify-between gap-3 cursor-pointer disabled:cursor-default ${btnStyle}`}
                       >
-                        {letter}
-                      </span>
-                      <span>{opt}</span>
-                    </div>
+                        <div className="flex items-center gap-3">
+                          <span
+                            className={`w-7 h-7 rounded-xl flex items-center justify-center font-bold text-xs flex-shrink-0 transition-all ${badgeStyle}`}
+                          >
+                            {letter}
+                          </span>
+                          <span>{optText}</span>
+                        </div>
 
-                    {previewRevealed && isCorrect && (
-                      <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 text-xs font-bold">
-                        <CheckCircle2 size={16} />
-                        <span>{previewLang === 'am' ? 'ትክክለኛ' : 'Correct'}</span>
-                      </span>
-                    )}
+                        {previewRevealed && isCorrect && (
+                          <div className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 text-xs font-bold flex-shrink-0">
+                            <Check size={16} />
+                            <span>{previewLang === 'am' ? 'ትክክለኛ' : 'Correct'}</span>
+                          </div>
+                        )}
 
-                    {previewRevealed && isSelected && !isCorrect && (
-                      <span className="flex items-center gap-1 text-rose-600 dark:text-rose-400 text-xs font-bold">
-                        <XCircle size={16} />
-                        <span>{previewLang === 'am' ? 'የተሳሳተ' : 'Incorrect'}</span>
-                      </span>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Real-time Feedback Banner */}
-            {previewRevealed && (
-              <div
-                className={`mt-4 p-3.5 rounded-2xl border text-xs md:text-sm font-bold flex items-start gap-2.5 animate-in fade-in duration-200 ${
-                  previewSelectedIdx === previewQuestion.correctIndex
-                    ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800 text-emerald-900 dark:text-emerald-200'
-                    : 'bg-rose-50 dark:bg-rose-950/40 border-rose-200 dark:border-rose-800 text-rose-900 dark:text-rose-200'
-                }`}
-              >
-                {previewSelectedIdx === previewQuestion.correctIndex ? (
-                  <CheckCircle2 size={18} className="text-emerald-600 dark:text-emerald-400 flex-shrink-0 mt-0.5" />
-                ) : (
-                  <XCircle size={18} className="text-rose-600 dark:text-rose-400 flex-shrink-0 mt-0.5" />
+                        {previewRevealed && isSelected && !isCorrect && (
+                          <div className="flex items-center gap-1 text-rose-600 dark:text-rose-400 text-xs font-bold flex-shrink-0">
+                            <AlertCircle size={16} />
+                            <span>{previewLang === 'am' ? 'ስህተት' : 'Incorrect'}</span>
+                          </div>
+                        )}
+                      </button>
+                    );
+                  }
                 )}
-                <div>
-                  <p>
-                    {previewSelectedIdx === previewQuestion.correctIndex
-                      ? (previewLang === 'am'
-                          ? 'ትክክል! የተረጋገጠ ክሊኒካዊ የጤና ትምህርት መልስ ነው።'
-                          : 'Spot on! Clinically validated guidance and correct choice.')
-                      : (previewLang === 'am'
-                          ? 'ትክክል አይደለም። ከዚህ በታች ያለውን የዶክተር ማብራሪያ ያንብቡ።'
-                          : 'Not quite. Please review the clinical reasoning below.')}
+              </div>
+
+              {/* Instant Clinical Explanation Reveal */}
+              {previewRevealed && (
+                <div className="p-4 rounded-2xl bg-brand-50/60 dark:bg-brand-950/40 border border-brand-200 dark:border-brand-900/60 text-xs md:text-sm text-slate-800 dark:text-slate-200 space-y-1 animate-in fade-in">
+                  <div className="flex items-center gap-1.5 font-bold text-brand-900 dark:text-cyan-300">
+                    <Sparkles size={16} className="text-amber-500" />
+                    <span>{previewLang === 'am' ? 'ክሊኒካዊ ማብራሪያ፡' : 'Medical Insight & Clinical Rationale:'}</span>
+                  </div>
+                  <p className="leading-relaxed text-slate-700 dark:text-slate-300">
+                    {previewLang === 'am'
+                      ? previewQuestion.explanationAm
+                      : previewQuestion.explanationEn}
                   </p>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
 
-            {/* Revealed Clinical Explanation */}
-            {previewRevealed && (
-              <div className="mt-3 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200/80 dark:border-slate-800 text-xs md:text-sm text-slate-700 dark:text-slate-300 leading-relaxed animate-in fade-in duration-200">
-                <div className="font-extrabold text-slate-900 dark:text-white flex items-center gap-1.5 mb-1.5">
-                  <BookOpen size={16} className="text-brand-600 dark:text-cyan-400" />
-                  <span>{previewLang === 'am' ? 'የዶክተር ክሊኒካዊ ማብራሪያ' : 'Clinical Explanation & Rationale'}</span>
-                </div>
-                <p>{previewLang === 'am' ? previewQuestion.explanationAm : previewQuestion.explanationEn}</p>
-                <p className="mt-2 text-xs text-slate-400 dark:text-slate-500 italic">
-                  {previewLang === 'am' ? previewQuestion.explanationEn : previewQuestion.explanationAm}
-                </p>
-              </div>
-            )}
-
-            {/* Preview Controls */}
+            {/* Modal Actions */}
             <div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-3">
               <button
                 type="button"
@@ -677,8 +789,12 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
             <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
               <h3 className="text-lg font-extrabold text-slate-900 dark:text-white">
                 {editingQuestion
-                  ? (lang === 'am' ? 'የፈተና ጥያቄን አርትዕ' : 'Edit Quiz Question')
-                  : (lang === 'am' ? 'አዲስ የፈተና ጥያቄ ጨምር' : 'Add New Quiz Question')}
+                  ? lang === 'am'
+                    ? 'የፈተና ጥያቄን አርትዕ'
+                    : 'Edit Quiz Question'
+                  : lang === 'am'
+                  ? 'አዲስ የፈተና ጥያቄ ጨምር'
+                  : 'Add New Quiz Question'}
               </h3>
               <button
                 onClick={() => setIsModalOpen(false)}
@@ -688,7 +804,8 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="mt-4 space-y-3.5 text-xs md:text-sm">
+            <form onSubmit={handleSubmit} className="mt-4 space-y-4 text-xs md:text-sm">
+              {/* Parent Module Selector */}
               <div>
                 <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
                   {lang === 'am' ? 'የትምህርት ሞጁል' : 'Parent Health Module'}
@@ -696,7 +813,7 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
                 <select
                   value={formData.moduleId}
                   onChange={(e) => setFormData({ ...formData, moduleId: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:outline-hidden focus:border-brand-500"
+                  className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:outline-hidden focus:border-brand-500 cursor-pointer"
                 >
                   {modules.map((m) => (
                     <option key={m.id} value={m.id}>
@@ -706,6 +823,40 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
                 </select>
               </div>
 
+              {/* Question Format Toggle (Multiple Choice vs True/False) */}
+              <div>
+                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                  {lang === 'am' ? 'የጥያቄው አይነት' : 'Question Format & Type'}
+                </label>
+                <div className="grid grid-cols-2 gap-2 p-1 bg-slate-100 dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700">
+                  <button
+                    type="button"
+                    onClick={() => handleTypeChange('MULTIPLE_CHOICE')}
+                    className={`py-2 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                      formData.type === 'MULTIPLE_CHOICE'
+                        ? 'bg-white dark:bg-slate-900 text-brand-600 dark:text-cyan-400 shadow-xs border border-slate-200/60 dark:border-slate-700'
+                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    }`}
+                  >
+                    <HelpCircle size={14} />
+                    <span>{lang === 'am' ? 'ባለ 4 ምርጫ' : 'Multiple Choice (4 Options)'}</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleTypeChange('TRUE_FALSE')}
+                    className={`py-2 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                      formData.type === 'TRUE_FALSE'
+                        ? 'bg-white dark:bg-slate-900 text-purple-600 dark:text-purple-400 shadow-xs border border-slate-200/60 dark:border-slate-700'
+                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    }`}
+                  >
+                    <CheckCircle2 size={14} />
+                    <span>{lang === 'am' ? 'እውነት / ሐሰት' : 'True / False (2 Options)'}</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Question Prompts */}
               <div>
                 <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
                   Question (English)
@@ -734,62 +885,138 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
                 />
               </div>
 
-              <div className="space-y-2 pt-2">
-                <div className="flex items-center justify-between">
-                  <label className="block font-bold text-slate-700 dark:text-slate-300">
-                    4 Multiple Choice Options (English)
-                  </label>
-                  <span className="text-[11px] text-slate-400">Select radio for correct answer</span>
+              {/* Conditional Options Editor based on format */}
+              {formData.type === 'TRUE_FALSE' ? (
+                /* True / False Visual Correct Answer Selector */
+                <div className="space-y-2 pt-1">
+                  <div className="flex items-center justify-between">
+                    <label className="block font-bold text-slate-700 dark:text-slate-300">
+                      {lang === 'am' ? 'ትክክለኛውን መልስ ይምረጡ' : 'Select Correct Answer'}
+                    </label>
+                    <span className="text-[11px] text-slate-400">
+                      {lang === 'am' ? 'ትክክለኛውን መልስ ካርድ ይጫኑ' : 'Click the valid answer card'}
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setFormData({ ...formData, correctIndex: 0 })}
+                      className={`p-3.5 rounded-2xl border-2 text-center transition-all cursor-pointer ${
+                        formData.correctIndex === 0
+                          ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-900 dark:text-emerald-200 shadow-xs font-black'
+                          : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 text-slate-700 dark:text-slate-300 font-bold'
+                      }`}
+                    >
+                      <div className="flex items-center justify-center gap-2 text-sm">
+                        <CheckCircle
+                          size={18}
+                          className={
+                            formData.correctIndex === 0
+                              ? 'text-emerald-600 dark:text-emerald-400'
+                              : 'text-slate-400'
+                          }
+                        />
+                        <span>True / እውነት</span>
+                      </div>
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
+                        {formData.correctIndex === 0
+                          ? lang === 'am' ? '✓ ትክክለኛ መልስ' : '✓ Marked as correct'
+                          : lang === 'am' ? 'ለመምረጥ ይጫኑ' : 'Click to set correct'}
+                      </p>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setFormData({ ...formData, correctIndex: 1 })}
+                      className={`p-3.5 rounded-2xl border-2 text-center transition-all cursor-pointer ${
+                        formData.correctIndex === 1
+                          ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-900 dark:text-emerald-200 shadow-xs font-black'
+                          : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 text-slate-700 dark:text-slate-300 font-bold'
+                      }`}
+                    >
+                      <div className="flex items-center justify-center gap-2 text-sm">
+                        <XCircle
+                          size={18}
+                          className={
+                            formData.correctIndex === 1
+                              ? 'text-emerald-600 dark:text-emerald-400'
+                              : 'text-slate-400'
+                          }
+                        />
+                        <span>False / ሐሰት</span>
+                      </div>
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
+                        {formData.correctIndex === 1
+                          ? lang === 'am' ? '✓ ትክክለኛ መልስ' : '✓ Marked as correct'
+                          : lang === 'am' ? 'ለመምረጥ ይጫኑ' : 'Click to set correct'}
+                      </p>
+                    </button>
+                  </div>
                 </div>
-                {formData.optionsEn.map((opt, i) => (
-                  <div key={i} className="flex items-center gap-2">
-                    <input
-                      type="radio"
-                      name="correctIdx"
-                      checked={formData.correctIndex === i}
-                      onChange={() => setFormData({ ...formData, correctIndex: i })}
-                      title="Mark as correct answer"
-                      className="accent-brand-600 cursor-pointer"
-                    />
-                    <input
-                      type="text"
-                      required
-                      placeholder={`Option ${i + 1} (${['A', 'B', 'C', 'D'][i]})`}
-                      value={opt}
-                      onChange={(e) => {
-                        const next = [...formData.optionsEn];
-                        next[i] = e.target.value;
-                        setFormData({ ...formData, optionsEn: next });
-                      }}
-                      className="flex-1 px-3 py-1.5 border border-slate-200 dark:border-slate-700 rounded-lg text-xs bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-hidden focus:border-brand-500"
-                    />
+              ) : (
+                /* Multiple Choice 4 Options Editor */
+                <>
+                  <div className="space-y-2 pt-1">
+                    <div className="flex items-center justify-between">
+                      <label className="block font-bold text-slate-700 dark:text-slate-300">
+                        4 Multiple Choice Options (English)
+                      </label>
+                      <span className="text-[11px] text-slate-400">
+                        Select radio for correct answer
+                      </span>
+                    </div>
+                    {formData.optionsEn.map((opt, i) => (
+                      <div key={i} className="flex items-center gap-2">
+                        <input
+                          type="radio"
+                          name="correctIdx"
+                          checked={formData.correctIndex === i}
+                          onChange={() => setFormData({ ...formData, correctIndex: i })}
+                          title="Mark as correct answer"
+                          className="accent-brand-600 cursor-pointer"
+                        />
+                        <input
+                          type="text"
+                          required
+                          placeholder={`Option ${i + 1} (${['A', 'B', 'C', 'D'][i]})`}
+                          value={opt}
+                          onChange={(e) => {
+                            const next = [...formData.optionsEn];
+                            next[i] = e.target.value;
+                            setFormData({ ...formData, optionsEn: next });
+                          }}
+                          className="flex-1 px-3 py-1.5 border border-slate-200 dark:border-slate-700 rounded-lg text-xs bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-hidden focus:border-brand-500"
+                        />
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
 
-              <div className="space-y-2 pt-2">
-                <label className="block font-bold text-slate-700 dark:text-slate-300">
-                  4 አማራጮች (በአማርኛ)
-                </label>
-                {formData.optionsAm.map((opt, i) => (
-                  <div key={i} className="flex items-center gap-2">
-                    <span className="text-xs text-slate-400 font-bold w-4">#{i + 1}</span>
-                    <input
-                      type="text"
-                      required
-                      placeholder={`አማራጭ ${i + 1} (${['ሀ', 'ለ', 'ሐ', 'መ'][i]})`}
-                      value={opt}
-                      onChange={(e) => {
-                        const next = [...formData.optionsAm];
-                        next[i] = e.target.value;
-                        setFormData({ ...formData, optionsAm: next });
-                      }}
-                      className="flex-1 px-3 py-1.5 border border-slate-200 dark:border-slate-700 rounded-lg text-xs bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-hidden focus:border-brand-500"
-                    />
+                  <div className="space-y-2 pt-1">
+                    <label className="block font-bold text-slate-700 dark:text-slate-300">
+                      4 አማራጮች (በአማርኛ)
+                    </label>
+                    {formData.optionsAm.map((opt, i) => (
+                      <div key={i} className="flex items-center gap-2">
+                        <span className="text-xs text-slate-400 font-bold w-4">#{i + 1}</span>
+                        <input
+                          type="text"
+                          required
+                          placeholder={`አማራጭ ${i + 1} (${['ሀ', 'ለ', 'ሐ', 'መ'][i]})`}
+                          value={opt}
+                          onChange={(e) => {
+                            const next = [...formData.optionsAm];
+                            next[i] = e.target.value;
+                            setFormData({ ...formData, optionsAm: next });
+                          }}
+                          className="flex-1 px-3 py-1.5 border border-slate-200 dark:border-slate-700 rounded-lg text-xs bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-hidden focus:border-brand-500"
+                        />
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
+                </>
+              )}
 
+              {/* Clinical Explanations */}
               <div>
                 <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
                   Clinical Explanation (English)
@@ -818,6 +1045,7 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
                 />
               </div>
 
+              {/* Modal Buttons */}
               <div className="pt-4 flex items-center justify-end gap-3 border-t border-slate-100 dark:border-slate-800">
                 <button
                   type="button"
@@ -828,11 +1056,14 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl shadow-md shadow-brand-600/20 cursor-pointer"
+                  disabled={isSubmitting}
+                  className="px-5 py-2 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl shadow-md shadow-brand-600/20 cursor-pointer disabled:opacity-50"
                 >
-                  {editingQuestion
-                    ? (lang === 'am' ? 'ለውጦችን መዝግብ' : 'Save Changes')
-                    : (lang === 'am' ? 'ጥያቄውን መዝግብ' : 'Save Question')}
+                  {isSubmitting
+                    ? lang === 'am' ? 'በመመዝገብ ላይ...' : 'Saving...'
+                    : editingQuestion
+                    ? lang === 'am' ? 'ለውጦችን መዝግብ' : 'Save Changes'
+                    : lang === 'am' ? 'ጥያቄውን መዝግብ' : 'Save Question'}
                 </button>
               </div>
             </form>
@@ -850,11 +1081,17 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
           }
         }}
         title={lang === 'am' ? 'የፈተና ጥያቄው ይሰረዝ?' : 'Delete Quiz Question?'}
-        itemName={questionToDelete ? (lang === 'am' ? questionToDelete.questionAm || questionToDelete.questionEn : questionToDelete.questionEn) : ''}
+        itemName={
+          questionToDelete
+            ? lang === 'am'
+              ? questionToDelete.questionAm || questionToDelete.questionEn
+              : questionToDelete.questionEn
+            : ''
+        }
         message={
           lang === 'am'
             ? 'ይህ ጥያቄ ከፈተናው ማህደር በቋሚነት ይሰረዛል። ተማሪዎች ይህንን ጥያቄ በፈተና ወቅት አያገኙትም።'
-            : 'This multiple-choice clinical question and its explanation will be permanently deleted from the assessment bank.'
+            : 'This clinical self-assessment question and its explanation will be permanently deleted from the assessment bank.'
         }
         lang={lang}
       />
