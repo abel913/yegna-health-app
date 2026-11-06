@@ -6,7 +6,7 @@ import {
   BookOpen,
   HelpCircle,
   GraduationCap,
-  ShieldAlert,
+  Users,
   History,
   LogOut,
   ShieldCheck,
@@ -19,10 +19,12 @@ import {
   Moon,
   ChevronLeft,
   ChevronRight,
+  Command,
 } from 'lucide-react';
 import { AdminUser } from '../../types/index.js';
 import { useTheme } from '../../context/ThemeContext.js';
 import { SystemHealthIndicator } from '../common/SystemHealthIndicator.js';
+import { BrandLogo } from '../common/BrandLogo.js';
 
 interface AdminLayoutProps {
   currentTab: string;
@@ -33,6 +35,7 @@ interface AdminLayoutProps {
   onToggleLang: () => void;
   onQuickAction?: () => void;
   onOpenCommandPalette?: () => void;
+  userCount?: number;
   children: React.ReactNode;
 }
 
@@ -45,22 +48,43 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
   onToggleLang,
   onQuickAction,
   onOpenCommandPalette,
+  userCount,
   children,
 }) => {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const { toggleTheme, isDark } = useTheme();
 
-  // Navigation Items
-  const navItems = [
-    { id: 'dashboard', label: lang === 'am' ? 'ዳሽቦርድ' : 'Dashboard', icon: LayoutDashboard },
-    { id: 'facilities', label: lang === 'am' ? 'የጤና ተቋማት' : 'Health Clinics', icon: Hospital },
-    { id: 'mentors', label: lang === 'am' ? 'አማካሪዎች' : 'Peer Mentors', icon: Users2 },
-    { id: 'modules', label: lang === 'am' ? 'የትምህርት ሞጁሎች' : 'Learning CMS', icon: BookOpen },
-    { id: 'quizzes', label: lang === 'am' ? 'ፈተናዎች' : 'Quizzes & Tests', icon: HelpCircle },
-    { id: 'clubs', label: lang === 'am' ? 'የተማሪዎች ክለቦች' : 'Student Clubs', icon: GraduationCap },
-    { id: 'users', label: lang === 'am' ? 'ተጠቃሚዎች' : 'User Safety', icon: ShieldAlert },
-    { id: 'audit', label: lang === 'am' ? 'የቁጥጥር መዝገብ' : 'Audit Logs', icon: History },
+  // Navigation Categorized Sections
+  const navSections = [
+    {
+      category: lang === 'am' ? 'አጠቃላይ' : 'General',
+      items: [
+        { id: 'dashboard', label: lang === 'am' ? 'ዳሽቦርድ' : 'Dashboard', icon: LayoutDashboard },
+        { id: 'facilities', label: lang === 'am' ? 'የጤና ተቋማት' : 'Health Clinics', icon: Hospital },
+        { id: 'mentors', label: lang === 'am' ? 'አማካሪዎች' : 'Peer Mentors', icon: Users2 },
+      ],
+    },
+    {
+      category: lang === 'am' ? 'ትምህርት እና ክለቦች' : 'Curriculum & Clubs',
+      items: [
+        { id: 'modules', label: lang === 'am' ? 'የትምህርት ሞጁሎች' : 'Learning CMS', icon: BookOpen },
+        { id: 'quizzes', label: lang === 'am' ? 'ፈተናዎች' : 'Quizzes & Tests', icon: HelpCircle },
+        { id: 'clubs', label: lang === 'am' ? 'የተማሪዎች ክለቦች' : 'Student Clubs', icon: GraduationCap },
+      ],
+    },
+    {
+      category: lang === 'am' ? 'አስተዳደር እና ቁጥጥር' : 'Governance',
+      items: [
+        {
+          id: 'users',
+          label: lang === 'am' ? 'የተጠቃሚ አስተዳደር' : 'User Management',
+          icon: Users,
+          badge: userCount !== undefined ? userCount : undefined,
+        },
+        { id: 'audit', label: lang === 'am' ? 'የቁጥጥር መዝገብ' : 'Audit Logs', icon: History },
+      ],
+    },
   ];
 
   // Lock body scroll when mobile drawer is open
@@ -113,7 +137,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
           mobileDrawerOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        <div className="flex flex-col h-full justify-between">
+        <div className="flex flex-col h-full justify-between overflow-y-auto">
           <div>
             {/* Mobile Drawer Header */}
             <div className="h-16 flex items-center justify-between px-4 border-b border-slate-100 dark:border-slate-800">
@@ -121,11 +145,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
                 className="flex items-center gap-3 cursor-pointer"
                 onClick={() => handleSelectTab('dashboard')}
               >
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 via-blue-500 to-pink-500 p-0.5 shadow-md shadow-cyan-500/20 flex-shrink-0 flex items-center justify-center">
-                  <div className="w-full h-full bg-white dark:bg-slate-900 rounded-[10px] flex items-center justify-center">
-                    <span className="text-xl">🩺</span>
-                  </div>
-                </div>
+                <BrandLogo size="md" />
                 <div>
                   <h1 className="font-bold text-slate-900 dark:text-white text-base leading-tight tracking-tight">
                     Yegna Health
@@ -146,29 +166,63 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
               </button>
             </div>
 
-            {/* Mobile Navigation Links */}
-            <nav className="p-3 space-y-1 overflow-y-auto max-h-[calc(100vh-230px)]">
-              {navItems.map((item) => {
-                const Icon = item.icon;
-                const isActive = currentTab === item.id;
-                return (
-                  <button
-                    key={item.id}
-                    onClick={() => handleSelectTab(item.id)}
-                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${
-                      isActive
-                        ? 'bg-brand-50 dark:bg-brand-950/60 text-brand-700 dark:text-cyan-300 shadow-xs font-bold border border-brand-200/50 dark:border-cyan-800/40'
-                        : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/70 hover:text-slate-900 dark:hover:text-white'
-                    }`}
-                  >
-                    <Icon
-                      size={20}
-                      className={isActive ? 'text-brand-600 dark:text-cyan-400' : 'text-slate-400 dark:text-slate-500'}
-                    />
-                    <span className="truncate">{item.label}</span>
-                  </button>
-                );
-              })}
+            {/* Quick Actions Search Pill (Mobile) */}
+            <div className="p-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileDrawerOpen(false);
+                  onOpenCommandPalette?.();
+                }}
+                className="w-full flex items-center justify-between px-3 py-2 bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800/80 dark:hover:bg-slate-750 border border-slate-200 dark:border-slate-700/80 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-200 transition-all cursor-pointer shadow-2xs"
+              >
+                <span className="flex items-center gap-2">
+                  <Command size={14} className="text-slate-400" />
+                  <span>{lang === 'am' ? 'ፈጣን እርምጃዎች' : 'Quick actions'}</span>
+                </span>
+                <span className="px-1.5 py-0.5 rounded bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-[10px] text-slate-500 dark:text-slate-300 font-bold">
+                  ⌘K
+                </span>
+              </button>
+            </div>
+
+            {/* Mobile Navigation Links Grouped */}
+            <nav className="px-3 pb-3 space-y-4">
+              {navSections.map((section) => (
+                <div key={section.category} className="space-y-1">
+                  <div className="px-2 text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                    {section.category}
+                  </div>
+                  {section.items.map((item) => {
+                    const Icon = item.icon;
+                    const isActive = currentTab === item.id;
+                    return (
+                      <button
+                        key={item.id}
+                        onClick={() => handleSelectTab(item.id)}
+                        className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-medium transition-all cursor-pointer ${
+                          isActive
+                            ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold shadow-2xs'
+                            : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2.5 truncate">
+                          <Icon
+                            size={18}
+                            className={isActive ? 'text-slate-900 dark:text-white' : 'text-slate-400 dark:text-slate-500'}
+                          />
+                          <span className="truncate">{item.label}</span>
+                        </div>
+                        {item.badge !== undefined && (
+                          <span className="ml-2 px-2 py-0.5 text-xs font-bold rounded-full bg-slate-200/80 dark:bg-slate-700 text-slate-700 dark:text-slate-200">
+                            {item.badge}
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              ))}
             </nav>
           </div>
 
@@ -204,17 +258,6 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
               </button>
             </div>
 
-            {/* Mobile In-Drawer Live Telemetry Bar */}
-            <div className="flex items-center justify-between px-2.5 py-1.5 rounded-xl bg-slate-100/80 dark:bg-slate-800/60 border border-slate-200/50 dark:border-slate-700/50 text-[11px] font-bold text-slate-600 dark:text-slate-300">
-              <span className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span>{lang === 'am' ? 'የሲስተም ጤና' : 'API & Telemetry'}</span>
-              </span>
-              <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-mono">
-                Online • SQLite Synced
-              </span>
-            </div>
-
             {/* User Profile & Sign Out Card */}
             <div className="flex items-center justify-between p-2 rounded-xl bg-white dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60">
               <div className="flex items-center gap-2.5 min-w-0">
@@ -247,25 +290,22 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
           collapsed ? 'w-20' : 'w-64'
         }`}
       >
-        <div>
-          {/* Logo & Brand */}
+        <div className="flex-1 overflow-y-auto">
+          {/* Logo & Brand Header */}
           <div className="h-16 flex items-center justify-between px-4 border-b border-slate-100 dark:border-slate-800">
             <div
               className="flex items-center gap-3 overflow-hidden cursor-pointer"
               onClick={() => onTabChange('dashboard')}
             >
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 via-blue-500 to-pink-500 p-0.5 shadow-md shadow-cyan-500/20 flex-shrink-0 flex items-center justify-center">
-                <div className="w-full h-full bg-white dark:bg-slate-900 rounded-[10px] flex items-center justify-center">
-                  <span className="text-xl">🩺</span>
-                </div>
-              </div>
+              <BrandLogo size="md" />
               {!collapsed && (
-                <div>
-                  <h1 className="font-bold text-slate-900 dark:text-white text-base leading-tight tracking-tight">
-                    Yegna Health
+                <div className="min-w-0">
+                  <h1 className="font-bold text-slate-900 dark:text-white text-sm leading-tight tracking-tight flex items-center gap-1.5">
+                    <span>Yegna Health</span>
+                    <span className="text-[10px] text-slate-400">▾</span>
                   </h1>
-                  <span className="text-[11px] font-semibold text-brand-600 dark:text-cyan-400 uppercase tracking-wider">
-                    Admin Portal
+                  <span className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">
+                    Youth Platform
                   </span>
                 </div>
               )}
@@ -273,57 +313,118 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
             <button
               onClick={() => setCollapsed(!collapsed)}
               title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-              className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+              className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer shrink-0"
             >
-              {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
+              {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
             </button>
           </div>
 
-          {/* Navigation Links */}
-          <nav className="p-3 space-y-1">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = currentTab === item.id;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => onTabChange(item.id)}
-                  title={collapsed ? item.label : undefined}
-                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${
-                    isActive
-                      ? 'bg-brand-50 dark:bg-brand-950/60 text-brand-700 dark:text-cyan-300 shadow-xs font-bold border border-brand-200/50 dark:border-cyan-800/40'
-                      : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/70 hover:text-slate-900 dark:hover:text-white'
-                  }`}
-                >
-                  <Icon
-                    size={20}
-                    className={isActive ? 'text-brand-600 dark:text-cyan-400' : 'text-slate-400 dark:text-slate-500'}
-                  />
-                  {!collapsed && <span className="truncate">{item.label}</span>}
-                </button>
-              );
-            })}
+          {/* Quick Actions Search Pill (Desktop) */}
+          <div className="p-3">
+            {!collapsed ? (
+              <button
+                type="button"
+                onClick={onOpenCommandPalette}
+                className="w-full flex items-center justify-between px-3 py-2 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800/60 dark:hover:bg-slate-800 border border-slate-200/90 dark:border-slate-700/80 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-200 transition-all cursor-pointer shadow-2xs group"
+              >
+                <span className="flex items-center gap-2">
+                  <Command size={14} className="text-slate-400 group-hover:text-brand-600 dark:group-hover:text-cyan-400" />
+                  <span className="text-xs">{lang === 'am' ? 'ፈጣን እርምጃዎች' : 'Quick actions'}</span>
+                </span>
+                <div className="flex items-center gap-1 text-[10px] text-slate-400 dark:text-slate-400 font-mono">
+                  <span className="px-1.5 py-0.5 rounded bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 font-bold">
+                    ⌘K
+                  </span>
+                  <span className="px-1.5 py-0.5 rounded bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 font-bold">
+                    /
+                  </span>
+                </div>
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={onOpenCommandPalette}
+                title="Quick actions (⌘K)"
+                className="w-full flex items-center justify-center p-2 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200/80 cursor-pointer"
+              >
+                <Command size={16} />
+              </button>
+            )}
+          </div>
+
+          {/* Grouped Navigation Links */}
+          <nav className="px-3 pb-3 space-y-4">
+            {navSections.map((section) => (
+              <div key={section.category} className="space-y-0.5">
+                {!collapsed && (
+                  <div className="px-2.5 pt-1 pb-1 text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                    {section.category}
+                  </div>
+                )}
+                {section.items.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = currentTab === item.id;
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => onTabChange(item.id)}
+                      title={collapsed ? item.label : undefined}
+                      className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer ${
+                        isActive
+                          ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-bold shadow-2xs'
+                          : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5 truncate">
+                        <Icon
+                          size={18}
+                          className={isActive ? 'text-slate-900 dark:text-white' : 'text-slate-400 dark:text-slate-500'}
+                        />
+                        {!collapsed && <span className="truncate">{item.label}</span>}
+                      </div>
+                      {!collapsed && item.badge !== undefined && (
+                        <span className="ml-2 px-2 py-0.5 text-[11px] font-bold rounded-full bg-slate-200/80 dark:bg-slate-700 text-slate-700 dark:text-slate-200">
+                          {item.badge}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            ))}
           </nav>
         </div>
 
-        {/* Desktop Admin Footer & Logout */}
-        <div className="p-3 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
-          <div className="flex items-center gap-3 p-2 rounded-xl">
-            <div className="w-9 h-9 rounded-full bg-slate-900 dark:bg-brand-600 text-white font-bold flex items-center justify-center text-xs flex-shrink-0 shadow-sm">
+        {/* Desktop Admin Footer with Free Plan Indicator & User Card */}
+        <div className="p-3 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 space-y-2">
+          {!collapsed && (
+            <div className="flex items-center justify-between px-2 text-[11px] text-slate-500 dark:text-slate-400">
+              <span className="flex items-center gap-1.5 cursor-pointer hover:text-slate-700 dark:hover:text-slate-300">
+                <HelpCircle size={13} />
+                <span>Help & Docs</span>
+              </span>
+              <span className="inline-flex items-center gap-1 font-semibold text-brand-600 dark:text-cyan-400">
+                <span>↑</span> Free Plan
+              </span>
+            </div>
+          )}
+
+          <div className="flex items-center gap-2.5 p-1.5 rounded-xl bg-white dark:bg-slate-800/70 border border-slate-200/60 dark:border-slate-700/60">
+            <div className="w-8 h-8 rounded-full bg-slate-900 dark:bg-brand-600 text-white font-bold flex items-center justify-center text-xs flex-shrink-0 shadow-2xs">
               {user.displayName.slice(0, 2).toUpperCase()}
             </div>
             {!collapsed && (
               <div className="min-w-0 flex-1">
                 <p className="text-xs font-bold text-slate-900 dark:text-white truncate">{user.displayName}</p>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium truncate">{user.role}</p>
+                <p className="text-[10px] text-slate-400 dark:text-slate-500 font-medium truncate">{user.role}</p>
               </div>
             )}
             <button
               onClick={onLogout}
               title="Sign Out"
-              className="p-1.5 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
+              className="p-1 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer shrink-0"
             >
-              <LogOut size={16} />
+              <LogOut size={15} />
             </button>
           </div>
         </div>
@@ -348,13 +449,8 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
             </button>
 
             {/* Mobile Brand Icon (on tiny screens) */}
-            <div
-              className="sm:hidden w-8 h-8 rounded-lg bg-gradient-to-tr from-cyan-500 via-blue-500 to-pink-500 p-0.5 shadow-2xs flex-shrink-0 flex items-center justify-center cursor-pointer"
-              onClick={() => onTabChange('dashboard')}
-            >
-              <div className="w-full h-full bg-white dark:bg-slate-900 rounded-[6px] flex items-center justify-center text-sm">
-                🩺
-              </div>
+            <div className="sm:hidden cursor-pointer" onClick={() => onTabChange('dashboard')}>
+              <BrandLogo size="sm" />
             </div>
 
             {/* Global Search Bar / Command Palette Trigger */}
@@ -435,7 +531,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
         </header>
 
         {/* Scrollable Page Body with Responsive Padding */}
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 bg-slate-50 dark:bg-slate-950 transition-colors duration-200">
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 bg-slate-50/60 dark:bg-slate-950 transition-colors duration-200">
           <div className="max-w-7xl mx-auto">{children}</div>
         </main>
       </div>
