@@ -1,5 +1,42 @@
 # Technical decisions
 
+## 2026-11-06 — High-End SaaS User Management & Layout Redesign
+
+- **Modern SaaS Layout & Design Tokens Adoption (`AdminLayout.tsx` & `UsersPage.tsx`)**:
+  - Adopted the clean, uncluttered SaaS design language inspired by top-tier enterprise platforms (e.g. Linear, Supabase, Tailwind UI):
+    - Subdued category labels (`General`, `Curriculum & Clubs`, `Governance`) replacing unstructured lists.
+    - Added high-visibility `[ Quick actions   ⌘K   / ]` pill shortcut in sidebar for immediate command palette access.
+    - Breadcrumbs (`Yegna Platform / 👥 User management`) with muted hierarchy and active path highlight.
+    - Header with inline dynamic count badge (`{users.length}`) and clear context subtitle.
+    - Segmented view mode switcher (`⊞ Table`, `▥ Board`, `:= List`) allowing administrators to switch between detailed tabular rows, Kanban boards grouped by role, and compact lists.
+    - Floating filter pills strip directly beneath the toolbar (`Role ⌵`, `Status ⌵`, `2F / Email: {verified} ⌵`, and `Reset filters`) replacing bulky filter cards.
+    - Clean table layout with multi-select checkboxes, hashed pastel circle avatars, click-to-copy email with toast notifications, status bullet dots (`● Active` in emerald, `● Suspended` in rose), formatted joined timestamps, and ghost outline action buttons (`Edit`, `Delete`).
+    - Standardized bottom pagination bar featuring rows per page selector, range counter (`1-15 of {total} rows`), and numbered pagination buttons.
+- **Backend Admin User Creation Endpoint (`POST /api/admin/users`)**:
+  - Implemented secure administrative user creation in `server/src/controllers/users.controller.ts` with bcrypt password hashing, default role assignment, optional email pre-verification, and structured audit trail logging (`USER_CREATED_BY_ADMIN`).
+- **Zero-Knowledge Student Privacy Retention**:
+  - Maintained complete confidentiality: student assessments, mental health chatbot logs, and private surveys remain on-device and are strictly omitted from administrative queries and data models.
+
+## 2026-11-06 — Production Backend User Authentication & Desktop Web Admin Governance
+
+- **Self-Hosted Backend Authentication Architecture (`BackendAuthRepository`)**:
+  - Implemented `BackendAuthRepository` connecting the Flutter mobile app directly to the Node.js + Express + Prisma backend (`server/`) without external Supabase dependencies.
+  - Implemented local session caching via `SharedPreferences` (`backend_auth_token`, `backend_auth_user_id`, `backend_auth_email`, `backend_auth_display_name`, `backend_auth_role`), enabling students to launch and navigate the app offline with their verified profile.
+  - Added background revalidation upon launch (`init()` -> `GET /api/auth/me`). If the user profile was updated remotely, local preferences are refreshed seamlessly; if network is unavailable, the local verified session is retained.
+- **Immediate Suspension Enforcement & Community Safety**:
+  - Enhanced backend error handling with explicit codes (`ACCOUNT_SUSPENDED`, `EMAIL_EXISTS`, `INVALID_CREDENTIALS`).
+  - Added `accountSuspended` and `emailAlreadyInUse` issues to `AuthIssue` enum and localizations in both English (`app_en.arb`) and Amharic (`app_am.arb`).
+  - If an administrator suspends a user in the web portal, the backend rejects further auth calls with `403 ACCOUNT_SUSPENDED`, and the mobile app immediately clears the local session and surfaces a localized floating safety notice.
+- **Full Administrative User Governance (`admin-web/`)**:
+  - Expanded Desktop Web Admin Portal (`UsersPage.tsx`) with search, role filters (`STUDENT`, `MENTOR`, `CONTENT_AUTHOR`, `ADMIN`, `SUPER_ADMIN`), and status filters (`Active`, `Suspended`).
+  - Added 1-click Account Suspension & Reinstatement with immediate audit logging.
+  - Added **Reset Password Modal** supporting custom password inputs and 1-tap cryptographically secure random password generation (`12-character uppercase/lowercase/numbers/symbols`).
+  - Added **Delete Account Dialog** with strict SuperAdmin deletion guards preventing accidental self-deletion or platform lockout.
+  - Added CSV user roster export and responsive client-side pagination.
+- **Zero-Knowledge Student Privacy Retention**:
+  - Retained strict Zero-Knowledge boundaries: user tables strictly store platform identity attributes (`id`, `email`, `displayName`, `role`, `isSuspended`).
+  - Sensitive personal learning history, self-assessment choices, and AI chatbot conversations remain local to the student's device and are never queryable in administrative views.
+
 ## 2026-11-05 — Offline-First Mobile Synchronization & Custom Node.js Backend Integration
 
 - **Offline-First Synchronization Architecture (Zero Blank Screens)**:
