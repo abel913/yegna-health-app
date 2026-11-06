@@ -183,7 +183,10 @@ export const api = {
       headers: getAuthHeaders(),
       body: JSON.stringify(data),
     });
-    if (!res.ok) throw new Error('Failed to create question');
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || err.error || 'Failed to create question');
+    }
     return res.json();
   },
 
@@ -193,7 +196,10 @@ export const api = {
       headers: getAuthHeaders(),
       body: JSON.stringify(data),
     });
-    if (!res.ok) throw new Error('Failed to update question');
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || err.error || 'Failed to update question');
+    }
     return res.json();
   },
 
