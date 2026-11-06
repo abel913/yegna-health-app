@@ -253,6 +253,25 @@ export const api = {
     return res.json();
   },
 
+  async createUser(data: {
+    email: string;
+    displayName: string;
+    password?: string;
+    role?: string;
+    isEmailVerified?: boolean;
+  }): Promise<{ user: ManagedUser }> {
+    const res = await fetch(`${API_BASE}/admin/users`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || err.error || 'Failed to create user');
+    }
+    return res.json();
+  },
+
   async updateUserRole(id: string, role: string): Promise<void> {
     const res = await fetch(`${API_BASE}/admin/users/${id}/role`, {
       method: 'PUT',
@@ -268,6 +287,37 @@ export const api = {
       headers: getAuthHeaders(),
     });
     if (!res.ok) throw new Error('Failed to toggle suspension');
+  },
+
+  async verifyUserEmail(id: string): Promise<void> {
+    const res = await fetch(`${API_BASE}/admin/users/${id}/verify-email`, {
+      method: 'PUT',
+      headers: getAuthHeaders(),
+    });
+    if (!res.ok) throw new Error('Failed to verify user email');
+  },
+
+  async resetUserPassword(id: string, newPassword: string): Promise<void> {
+    const res = await fetch(`${API_BASE}/admin/users/${id}/reset-password`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ newPassword }),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || 'Failed to reset user password');
+    }
+  },
+
+  async deleteUser(id: string): Promise<void> {
+    const res = await fetch(`${API_BASE}/admin/users/${id}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || 'Failed to delete user');
+    }
   },
 
   // Live System Telemetry & Health
