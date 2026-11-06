@@ -1,24 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../l10n/app_localizations.dart';
+import 'dynamic_quiz_helper.dart';
 import 'learning_progress_controller.dart';
 
-class _QuizQuestion {
-  const _QuizQuestion({
-    required this.id,
-    required this.category,
-    required this.questionText,
-    required this.options,
-    required this.correctIndex,
-    required this.insight,
-  });
-
-  final String id;
-  final String Function(AppLocalizations) category;
-  final String Function(AppLocalizations) questionText;
-  final List<String Function(AppLocalizations)> options;
-  final int correctIndex;
-  final String Function(AppLocalizations) insight;
-}
+typedef _QuizQuestion = QuizQuestionModel;
 
 final List<_QuizQuestion> _kGbvQuizQuestions = [
   // 1. Definition & Scope of GBV (True / False)
@@ -81,20 +66,43 @@ final List<_QuizQuestion> _kGbvQuizQuestions = [
 class GbvQuizPage extends StatefulWidget {
   const GbvQuizPage({
     required this.progressController,
+    this.questions,
     super.key,
   });
 
   final LearningProgressController progressController;
+  final List<QuizQuestionModel>? questions;
 
   @override
   State<GbvQuizPage> createState() => _GbvQuizPageState();
 }
 
 class _GbvQuizPageState extends State<GbvQuizPage> {
+  late List<QuizQuestionModel> _questions;
   int _currentIndex = 0;
   final Map<int, int> _selectedAnswers = {};
   bool _isFinished = false;
   bool _isReviewing = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _questions = widget.questions ?? _kGbvQuizQuestions;
+    _loadDynamicQuestions();
+  }
+
+  Future<void> _loadDynamicQuestions() async {
+    if (widget.questions != null) return;
+    final cached = await DynamicQuizHelper.loadFromCache(
+      moduleId: 'module-04',
+      category: 'gbv',
+    );
+    if (cached != null && cached.isNotEmpty && mounted) {
+      setState(() {
+        _questions = cached;
+      });
+    }
+  }
 
   void _handleOptionSelected(int optionIndex) {
     if (_isFinished && !_isReviewing) return;
@@ -116,7 +124,7 @@ class _GbvQuizPageState extends State<GbvQuizPage> {
       return;
     }
 
-    if (_currentIndex < _kGbvQuizQuestions.length - 1) {
+    if (_currentIndex < _questions.length - 1) {
       setState(() {
         _currentIndex++;
       });
@@ -155,8 +163,8 @@ class _GbvQuizPageState extends State<GbvQuizPage> {
 
   int _calculateScore() {
     int score = 0;
-    for (int i = 0; i < _kGbvQuizQuestions.length; i++) {
-      if (_selectedAnswers[i] == _kGbvQuizQuestions[i].correctIndex) {
+    for (int i = 0; i < _questions.length; i++) {
+      if (_selectedAnswers[i] == _questions[i].correctIndex) {
         score++;
       }
     }
@@ -208,9 +216,9 @@ class _GbvQuizPageState extends State<GbvQuizPage> {
   }
 
   Widget _buildQuestionView(BuildContext context, AppLocalizations l10n) {
-    final question = _kGbvQuizQuestions[_currentIndex];
+    final question = _questions[_currentIndex];
     final selectedOption = _selectedAnswers[_currentIndex];
-    final total = _kGbvQuizQuestions.length;
+    final total = _questions.length;
     final isLast = _currentIndex == total - 1;
 
     return Column(
@@ -569,7 +577,7 @@ class _GbvQuizPageState extends State<GbvQuizPage> {
 
   Widget _buildCelebrationView(BuildContext context, AppLocalizations l10n) {
     final score = _calculateScore();
-    final total = _kGbvQuizQuestions.length;
+    final total = _questions.length;
     final percent = ((score / total) * 100).round();
 
     return Center(
