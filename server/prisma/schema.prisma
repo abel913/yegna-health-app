@@ -8,14 +8,17 @@ generator client {
 }
 
 model User {
-  id           String       @id @default(uuid())
-  email        String       @unique
-  passwordHash String
-  displayName  String
-  role         String       @default("STUDENT") // STUDENT, MENTOR, ADMIN, SUPER_ADMIN
-  isSuspended  Boolean      @default(false)
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
+  id                String       @id @default(uuid())
+  email             String       @unique
+  passwordHash      String
+  displayName       String
+  role              String       @default("STUDENT") // STUDENT, MENTOR, ADMIN, SUPER_ADMIN
+  isSuspended       Boolean      @default(false)
+  isEmailVerified   Boolean      @default(false)
+  verificationCode  String?
+  verificationToken String?
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
 
   memberships  ClubMember[]
 }
