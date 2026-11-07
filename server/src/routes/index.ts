@@ -10,6 +10,7 @@ import * as quizzes from '../controllers/quizzes.controller.js';
 import * as clubs from '../controllers/clubs.controller.js';
 import * as users from '../controllers/users.controller.js';
 import * as dashboard from '../controllers/dashboard.controller.js';
+import * as learningAssessments from '../controllers/learning-assessments.controller.js';
 
 export const router = Router();
 
@@ -60,6 +61,7 @@ router.get('/modules', modules.getAllModules);
 router.get('/modules/:id', modules.getModuleById);
 
 router.get('/quizzes', quizzes.getAllQuestions);
+router.get('/learning-assessments', learningAssessments.getAll);
 
 router.get('/clubs', clubs.getAllClubs);
 router.post('/clubs/:id/join', authenticateToken as any, clubs.joinClub as any);
@@ -92,6 +94,8 @@ adminRouter.get('/quizzes', quizzes.getAllQuestions as any);
 adminRouter.post('/quizzes', quizzes.createQuestion as any);
 adminRouter.put('/quizzes/:id', quizzes.updateQuestion as any);
 adminRouter.delete('/quizzes/:id', quizzes.deleteQuestion as any);
+adminRouter.post('/learning-assessments', learningAssessments.save as any);
+adminRouter.delete('/learning-assessments/:id', learningAssessments.remove as any);
 
 // Student Clubs
 adminRouter.post('/clubs', clubs.createClub as any);

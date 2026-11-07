@@ -73,6 +73,13 @@ export interface QuizQuestion {
   };
 }
 
+export interface LearningAssessment {
+  id: string;
+  moduleId: string;
+  module: { titleEn: string; titleAm: string; category: string };
+  questions: { id: string; position: number; promptEn: string; promptAm: string; choices: { id: string; position: number; labelEn: string; labelAm: string; score: number }[] }[];
+}
+
 export interface StudentClub {
   id: string;
   name: string;
