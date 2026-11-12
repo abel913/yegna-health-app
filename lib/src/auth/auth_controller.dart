@@ -146,6 +146,37 @@ class AuthController extends ChangeNotifier {
     return _issue == null;
   }
 
+  void setVerificationEmail(String email) {
+    _verificationEmail = email.trim();
+    notifyListeners();
+  }
+
+  Future<bool> verifyEmailCode({
+    required String email,
+    required String code,
+  }) async {
+    if (code.trim().isEmpty) {
+      _issue = AuthIssue.invalidVerificationCode;
+      notifyListeners();
+      return false;
+    }
+    await _run(() => _repository.verifyEmailCode(
+          email: email.trim(),
+          code: code.trim(),
+        ));
+    return _issue == null;
+  }
+
+  Future<bool> resendVerification(String email) async {
+    await _run(() => _repository.resendVerification(email.trim()));
+    return _issue == null;
+  }
+
+  Future<bool> deleteAccount() async {
+    await _run(_repository.deleteAccount);
+    return _issue == null;
+  }
+
   Future<void> _run(Future<void> Function() action) async {
     if (!isConfigured) {
       _issue = AuthIssue.configurationMissing;

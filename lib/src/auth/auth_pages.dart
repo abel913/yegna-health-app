@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 
@@ -7,6 +8,7 @@ import '../admin/admin_dashboard_page.dart';
 import '../admin/admin_repository.dart';
 import '../notifications/notification_controller.dart';
 import '../onboarding/onboarding_survey_dialog.dart';
+import '../onboarding/onboarding_survey_repository.dart';
 import 'auth_controller.dart';
 import 'auth_models.dart';
 import 'auth_validation.dart';
@@ -50,10 +52,15 @@ class _AuthPageState extends State<AuthPage> {
   final _password = TextEditingController();
   final _confirmation = TextEditingController();
   final _displayName = TextEditingController();
+  final _verificationCode = TextEditingController();
   late AuthPageMode _mode = widget.initialMode;
   bool _recoverySent = false;
   bool _obscurePassword = true;
   bool _obscureConfirmation = true;
+  bool _isVerifyingCode = false;
+  bool _isResendingCode = false;
+  int _resendCooldownSeconds = 0;
+  Timer? _resendCooldownTimer;
 
   @override
   void initState() {
@@ -64,11 +71,30 @@ class _AuthPageState extends State<AuthPage> {
   @override
   void dispose() {
     widget.controller.removeListener(_onAuthChanged);
+    _resendCooldownTimer?.cancel();
     _email.dispose();
     _password.dispose();
     _confirmation.dispose();
     _displayName.dispose();
+    _verificationCode.dispose();
     super.dispose();
+  }
+
+  void _startResendCooldownTimer() {
+    _resendCooldownTimer?.cancel();
+    setState(() => _resendCooldownSeconds = 60);
+    _resendCooldownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+      if (_resendCooldownSeconds <= 1) {
+        timer.cancel();
+        setState(() => _resendCooldownSeconds = 0);
+      } else {
+        setState(() => _resendCooldownSeconds--);
+      }
+    });
   }
 
   void _onAuthChanged() {
@@ -220,23 +246,42 @@ class _AuthPageState extends State<AuthPage> {
             );
             return;
           }
-        }
 
-        // 3. FALLBACK FOR LOCAL / DEMO STUDENT USERS
-        // Strictly blocked when account is suspended; allowed for testing fallback:
-        if (!success &&
-            widget.controller.issue != AuthIssue.accountSuspended &&
-            cleanPass.length >= 6) {
-          final rawName = cleanEmail.contains('@')
-              ? cleanEmail.split('@').first
-              : 'Student';
-          widget.controller.signInDirectly(
-            id: 'usr_${DateTime.now().millisecondsSinceEpoch}',
-            email: cleanEmail,
-            displayName: rawName,
-          );
-          widget.controller.clearIssue();
-          success = true;
+          if (widget.controller.issue == AuthIssue.emailNotConfirmed) {
+            if (!mounted) return;
+            widget.controller.setVerificationEmail(cleanEmail);
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                behavior: SnackBarBehavior.floating,
+                backgroundColor: const Color(0xFF0F172A),
+                elevation: 6,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  side: const BorderSide(color: Color(0xFF0284C7), width: 1.2),
+                ),
+                content: Row(
+                  children: [
+                    const Icon(Icons.mark_email_unread_rounded,
+                        color: Colors.white, size: 22),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        l10n.emailNotConfirmedBanner,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 13.5,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                duration: const Duration(seconds: 4),
+              ),
+            );
+            setState(() => _mode = AuthPageMode.verificationPending);
+            return;
+          }
         }
 
         if (success && mounted) {
@@ -1029,62 +1074,335 @@ class _AuthPageState extends State<AuthPage> {
     );
   }
 
-  Widget _verificationPending(AppLocalizations l10n) => Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: const BoxDecoration(
+  Future<void> _handleVerifyCode() async {
+    final code = _verificationCode.text.trim();
+    final l10n = AppLocalizations.of(context);
+    final targetEmail =
+        widget.controller.verificationEmail ?? _email.text.trim();
+
+    if (code.length != 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: const Color(0xFFDC2626),
+          content: Text(l10n.invalidCodeError),
+        ),
+      );
+      return;
+    }
+
+    setState(() => _isVerifyingCode = true);
+    try {
+      final success = await widget.controller.verifyEmailCode(
+        email: targetEmail,
+        code: code,
+      );
+
+      if (!mounted) return;
+
+      if (success) {
+        final rawName = widget.controller.user?.displayName.trim();
+        final name = (rawName != null && rawName.isNotEmpty)
+            ? rawName
+            : (targetEmail.contains('@')
+                ? targetEmail.split('@').first
+                : 'User');
+        final isAmharic = Localizations.localeOf(context).languageCode == 'am';
+        widget.notificationController?.addAccountCreatedNotification(
+          name,
+          isAmharic: isAmharic,
+          verificationPending: false,
+        );
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: const Color(0xFF0F172A),
+            elevation: 6,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+              side: const BorderSide(color: Color(0xFF10B981), width: 1.2),
+            ),
+            content: Row(
+              children: [
+                Container(
+                  width: 32,
+                  height: 32,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF10B981),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.check_circle_outline_rounded,
+                      color: Colors.white, size: 18),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    l10n.welcomeBackMessage(name),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 13.5,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            duration: const Duration(seconds: 4),
+          ),
+        );
+
+        Navigator.of(context).pop();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: const Color(0xFFDC2626),
+            elevation: 6,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+              side: const BorderSide(color: Color(0xFFFCA5A5), width: 1.2),
+            ),
+            content: Row(
+              children: [
+                const Icon(Icons.error_outline_rounded,
+                    color: Colors.white, size: 20),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    l10n.invalidCodeError,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 13.5,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            duration: const Duration(seconds: 4),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isVerifyingCode = false);
+    }
+  }
+
+  Future<void> _handleResendCode() async {
+    if (_resendCooldownSeconds > 0 || _isResendingCode) return;
+    final targetEmail =
+        widget.controller.verificationEmail ?? _email.text.trim();
+    if (targetEmail.isEmpty) return;
+
+    final l10n = AppLocalizations.of(context);
+    setState(() => _isResendingCode = true);
+    try {
+      final success = await widget.controller.resendVerification(targetEmail);
+      if (!mounted) return;
+      if (success) {
+        _startResendCooldownTimer();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: const Color(0xFF0F172A),
+            elevation: 6,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+              side: const BorderSide(color: Color(0xFF0284C7), width: 1.2),
+            ),
+            content: Row(
+              children: [
+                const Icon(Icons.mark_email_read_rounded,
+                    color: Color(0xFF38BDF8), size: 20),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    l10n.codeResentSuccess,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 13.5,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            duration: const Duration(seconds: 4),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: const Color(0xFFDC2626),
+            content: Text(l10n.errorNetwork),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isResendingCode = false);
+    }
+  }
+
+  Widget _verificationPending(AppLocalizations l10n) {
+    final targetEmail =
+        widget.controller.verificationEmail ?? _email.text.trim();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Center(
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Color(0xFFE0F2FE),
+              color: const Color(0xFFE0F2FE),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFF0284C7).withValues(alpha: 0.15),
+                  blurRadius: 20,
+                  spreadRadius: 4,
+                ),
+              ],
             ),
             child: const Icon(
-              Icons.mark_email_unread_outlined,
-              size: 48,
+              Icons.shield_outlined,
+              size: 44,
               color: Color(0xFF0284C7),
             ),
           ),
-          const SizedBox(height: 16),
-          Text(
-            l10n.verificationPendingTitle,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w800,
-              color: Color(0xFF08264A),
-            ),
+        ),
+        const SizedBox(height: 18),
+        Text(
+          l10n.verificationPendingTitle,
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.w800,
+            color: Color(0xFF08264A),
+            letterSpacing: -0.3,
           ),
-          const SizedBox(height: 8),
-          Text(
-            l10n.verificationPendingBody(
-                widget.controller.verificationEmail ?? _email.text.trim()),
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 13.5,
-              height: 1.5,
-              color: Color(0xFF26435F),
-            ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          l10n.enterVerificationCodePrompt(
+              targetEmail.isNotEmpty ? targetEmail : 'your email'),
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            fontSize: 13.5,
+            height: 1.5,
+            color: Color(0xFF334155),
           ),
-          const SizedBox(height: 20),
-          FilledButton(
-            style: FilledButton.styleFrom(
-              backgroundColor: const Color(0xFF0284C7),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
+        ),
+        const SizedBox(height: 24),
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.4),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.03),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
               ),
-              padding: const EdgeInsets.symmetric(vertical: 13),
+            ],
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          child: TextField(
+            controller: _verificationCode,
+            keyboardType: TextInputType.number,
+            textAlign: TextAlign.center,
+            maxLength: 6,
+            style: const TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 10,
+              color: Color(0xFF0F172A),
             ),
+            decoration: InputDecoration(
+              counterText: '',
+              hintText: '000000',
+              hintStyle: TextStyle(
+                color: const Color(0xFF94A3B8).withValues(alpha: 0.5),
+                letterSpacing: 10,
+              ),
+              border: InputBorder.none,
+            ),
+          ),
+        ),
+        const SizedBox(height: 20),
+        FilledButton(
+          style: FilledButton.styleFrom(
+            backgroundColor: const Color(0xFF0284C7),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            padding: const EdgeInsets.symmetric(vertical: 14),
+            elevation: 2,
+          ),
+          onPressed: _isVerifyingCode ? null : _handleVerifyCode,
+          child: _isVerifyingCode
+              ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2.2,
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  ),
+                )
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.check_circle_outline_rounded, size: 18),
+                    const SizedBox(width: 8),
+                    Text(
+                      l10n.verifyCodeButton,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
+        ),
+        const SizedBox(height: 12),
+        Center(
+          child: TextButton.icon(
+            onPressed: _resendCooldownSeconds > 0 || _isResendingCode
+                ? null
+                : _handleResendCode,
+            icon: _isResendingCode
+                ? const SizedBox(
+                    width: 14,
+                    height: 14,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Icon(Icons.refresh_rounded, size: 16),
+            label: Text(
+              _resendCooldownSeconds > 0
+                  ? l10n.resendCooldown(_resendCooldownSeconds)
+                  : l10n.resendCodeButton,
+              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+            ),
+          ),
+        ),
+        Center(
+          child: TextButton(
             onPressed: () => _changeMode(AuthPageMode.signIn),
             child: Text(
-              l10n.signIn,
+              l10n.changeEmailAction,
               style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF64748B),
               ),
             ),
           ),
-        ],
-      );
+        ),
+      ],
+    );
+  }
 
   Widget _recoverySentView(AppLocalizations l10n) => Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1298,6 +1616,8 @@ class _AuthPageState extends State<AuthPage> {
         AuthIssue.unexpected => l10n.errorUnexpected,
         AuthIssue.accountSuspended => l10n.errorAccountSuspended,
         AuthIssue.emailAlreadyInUse => l10n.errorEmailAlreadyInUse,
+        AuthIssue.invalidVerificationCode => l10n.invalidCodeError,
+        AuthIssue.verificationFailed => l10n.invalidCodeError,
       };
 }
 
@@ -1349,6 +1669,106 @@ class _ProfilePageState extends State<ProfilePage> {
   Future<void> _signOut() async {
     final success = await widget.controller.signOut();
     if (mounted && success) Navigator.of(context).pop();
+  }
+
+  Future<void> _deleteAccount() async {
+    final l10n = AppLocalizations.of(context);
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Row(
+          children: [
+            const Icon(Icons.warning_amber_rounded,
+                color: Color(0xFFDC2626), size: 26),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                l10n.deleteAccountTitle,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                  color: Color(0xFF0F172A),
+                ),
+              ),
+            ),
+          ],
+        ),
+        content: Text(
+          l10n.deleteAccountConfirm,
+          style: const TextStyle(
+            fontSize: 14,
+            height: 1.5,
+            color: Color(0xFF334155),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: Text(MaterialLocalizations.of(ctx).cancelButtonLabel),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: const Color(0xFFDC2626),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: Text(
+              l10n.deleteAccountButton,
+              style: const TextStyle(fontWeight: FontWeight.w700),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && mounted) {
+      final success = await widget.controller.deleteAccount();
+      if (mounted) {
+        if (success) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              behavior: SnackBarBehavior.floating,
+              backgroundColor: const Color(0xFF0F172A),
+              elevation: 6,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+                side: const BorderSide(color: Color(0xFF10B981), width: 1.2),
+              ),
+              content: Row(
+                children: [
+                  const Icon(Icons.check_circle_outline_rounded,
+                      color: Color(0xFF10B981), size: 20),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      l10n.accountDeletedSuccess,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 13.5,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              duration: const Duration(seconds: 4),
+            ),
+          );
+          Navigator.of(context).pop();
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              behavior: SnackBarBehavior.floating,
+              backgroundColor: const Color(0xFFDC2626),
+              content: Text(l10n.errorNetwork),
+            ),
+          );
+        }
+      }
+    }
   }
 
   @override
@@ -1673,90 +2093,135 @@ class _ProfilePageState extends State<ProfilePage> {
                                         ),
                                 ),
                               ),
-                              const SizedBox(height: 12),
-                              // Student Baseline Survey Section
-                              Material(
-                                color: Colors.transparent,
-                                child: InkWell(
-                                  borderRadius: BorderRadius.circular(16),
-                                  onTap: () {
-                                    showGeneralDialog(
-                                      context: context,
-                                      barrierDismissible: true,
-                                      barrierLabel: 'Dismiss Survey',
-                                      barrierColor: Colors.black.withValues(alpha: 0.38),
-                                      transitionDuration: const Duration(milliseconds: 320),
-                                      pageBuilder: (dialogCtx, anim1, anim2) {
-                                        return BackdropFilter(
-                                          filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
-                                          child: const OnboardingSurveyDialog(),
-                                        );
-                                      },
-                                      transitionBuilder: (dialogCtx, anim, _, child) {
-                                        return ScaleTransition(
-                                          scale: CurvedAnimation(parent: anim, curve: Curves.easeOutBack),
-                                          child: FadeTransition(opacity: anim, child: child),
-                                        );
-                                      },
-                                    );
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xFF0284C7).withValues(alpha: 0.08),
-                                      borderRadius: BorderRadius.circular(16),
-                                      border: Border.all(
-                                        color: const Color(0xFF0284C7).withValues(alpha: 0.20),
-                                        width: 1.2,
+                              // Student Baseline Survey Section (disappears completely once filled)
+                              FutureBuilder<bool>(
+                                future: OnboardingSurveyRepository()
+                                    .isCompleted(user: user),
+                                builder: (context, snapshot) {
+                                  if (snapshot.data == true) {
+                                    return const SizedBox.shrink();
+                                  }
+                                  return Column(
+                                    children: [
+                                      const SizedBox(height: 12),
+                                      Material(
+                                        color: Colors.transparent,
+                                        child: InkWell(
+                                          borderRadius:
+                                              BorderRadius.circular(16),
+                                          onTap: () {
+                                            showGeneralDialog(
+                                              context: context,
+                                              barrierDismissible: true,
+                                              barrierLabel: 'Dismiss Survey',
+                                              barrierColor: Colors.black
+                                                  .withValues(alpha: 0.38),
+                                              transitionDuration:
+                                                  const Duration(
+                                                      milliseconds: 320),
+                                              pageBuilder:
+                                                  (dialogCtx, anim1, anim2) {
+                                                return BackdropFilter(
+                                                  filter: ImageFilter.blur(
+                                                      sigmaX: 14, sigmaY: 14),
+                                                  child: OnboardingSurveyDialog(
+                                                    userId: user.id,
+                                                    onCompleted: (_) {
+                                                      if (mounted) {
+                                                        setState(() {});
+                                                      }
+                                                    },
+                                                  ),
+                                                );
+                                              },
+                                              transitionBuilder:
+                                                  (dialogCtx, anim, _, child) {
+                                                return ScaleTransition(
+                                                  scale: CurvedAnimation(
+                                                      parent: anim,
+                                                      curve:
+                                                          Curves.easeOutBack),
+                                                  child: FadeTransition(
+                                                      opacity: anim,
+                                                      child: child),
+                                                );
+                                              },
+                                            );
+                                          },
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 14, vertical: 12),
+                                            decoration: BoxDecoration(
+                                              color: const Color(0xFF0284C7)
+                                                  .withValues(alpha: 0.08),
+                                              borderRadius:
+                                                  BorderRadius.circular(16),
+                                              border: Border.all(
+                                                color: const Color(0xFF0284C7)
+                                                    .withValues(alpha: 0.20),
+                                                width: 1.2,
+                                              ),
+                                            ),
+                                            child: Row(
+                                              children: [
+                                                Container(
+                                                  width: 38,
+                                                  height: 38,
+                                                  decoration: BoxDecoration(
+                                                    color:
+                                                        const Color(0xFF0284C7)
+                                                            .withValues(
+                                                                alpha: 0.15),
+                                                    shape: BoxShape.circle,
+                                                  ),
+                                                  child: const Icon(
+                                                    Icons.assignment_outlined,
+                                                    color: Color(0xFF0284C7),
+                                                    size: 20,
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 12),
+                                                Expanded(
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Text(
+                                                        l10n.onboardingSurveySubtitle,
+                                                        style: const TextStyle(
+                                                          fontSize: 14,
+                                                          fontWeight:
+                                                              FontWeight.w700,
+                                                          color:
+                                                              Color(0xFF08264A),
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        l10n.onboardingSurveyTitle,
+                                                        style: const TextStyle(
+                                                          fontSize: 11,
+                                                          color:
+                                                              Color(0xFF475569),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                const Icon(
+                                                  Icons
+                                                      .arrow_forward_ios_rounded,
+                                                  size: 14,
+                                                  color: Color(0xFF0284C7),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Container(
-                                          width: 38,
-                                          height: 38,
-                                          decoration: BoxDecoration(
-                                            color: const Color(0xFF0284C7).withValues(alpha: 0.15),
-                                            shape: BoxShape.circle,
-                                          ),
-                                          child: const Icon(
-                                            Icons.assignment_outlined,
-                                            color: Color(0xFF0284C7),
-                                            size: 20,
-                                          ),
-                                        ),
-                                        const SizedBox(width: 12),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                l10n.onboardingSurveySubtitle,
-                                                style: const TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w700,
-                                                  color: Color(0xFF08264A),
-                                                ),
-                                              ),
-                                              Text(
-                                                l10n.onboardingSurveyTitle,
-                                                style: const TextStyle(
-                                                  fontSize: 11,
-                                                  color: Color(0xFF475569),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        const Icon(
-                                          Icons.arrow_forward_ios_rounded,
-                                          size: 14,
-                                          color: Color(0xFF0284C7),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
+                                    ],
+                                  );
+                                },
                               ),
                               const SizedBox(height: 12),
                               OutlinedButton.icon(
@@ -1786,6 +2251,30 @@ class _ProfilePageState extends State<ProfilePage> {
                                     fontSize: 14,
                                     fontWeight: FontWeight.w700,
                                     color: Color(0xFFDC2626),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              TextButton.icon(
+                                style: TextButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 10, horizontal: 16),
+                                  foregroundColor: const Color(0xFF94A3B8),
+                                ),
+                                onPressed: widget.controller.isBusy
+                                    ? null
+                                    : _deleteAccount,
+                                icon: const Icon(
+                                  Icons.delete_forever_rounded,
+                                  color: Color(0xFFEF4444),
+                                  size: 18,
+                                ),
+                                label: Text(
+                                  l10n.deleteAccountAction,
+                                  style: const TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
+                                    color: Color(0xFFEF4444),
                                   ),
                                 ),
                               ),
@@ -1823,6 +2312,8 @@ String _issueMessage(AppLocalizations l10n, AuthIssue issue) => switch (issue) {
       AuthIssue.unexpected => l10n.errorUnexpected,
       AuthIssue.accountSuspended => l10n.errorAccountSuspended,
       AuthIssue.emailAlreadyInUse => l10n.errorEmailAlreadyInUse,
+      AuthIssue.invalidVerificationCode => l10n.invalidCodeError,
+      AuthIssue.verificationFailed => l10n.invalidCodeError,
     };
 
 class _Notice extends StatelessWidget {
