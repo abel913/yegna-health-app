@@ -5,7 +5,6 @@ import {
   Users2,
   BookOpen,
   HelpCircle,
-  ClipboardList,
   GraduationCap,
   Users,
   History,
@@ -21,6 +20,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Command,
+  BarChart2,
 } from 'lucide-react';
 import { AdminUser } from '../../types/index.js';
 import { useTheme } from '../../context/ThemeContext.js';
@@ -71,7 +71,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
       items: [
         { id: 'modules', label: lang === 'am' ? 'የትምህርት ሞጁሎች' : 'Learning CMS', icon: BookOpen },
         { id: 'quizzes', label: lang === 'am' ? 'ፈተናዎች' : 'Quizzes & Tests', icon: HelpCircle },
-        { id: 'learning-assessments', label: lang === 'am' ? 'የሞጁል ምዘናዎች' : 'Learning Assessments', icon: ClipboardList },
+        { id: 'assessments', label: lang === 'am' ? 'ምዘናዎች እና ቅኝቶች' : 'Assessments & Surveys', icon: BarChart2 },
         { id: 'clubs', label: lang === 'am' ? 'የተማሪዎች ክለቦች' : 'Student Clubs', icon: GraduationCap },
       ],
     },

@@ -6,7 +6,7 @@ import { FacilitiesPage } from './pages/FacilitiesPage.js';
 import { MentorsPage } from './pages/MentorsPage.js';
 import { LearningCmsPage } from './pages/LearningCmsPage.js';
 import { QuizzesPage } from './pages/QuizzesPage.js';
-import { LearningAssessmentsPage } from './pages/LearningAssessmentsPage.js';
+import { AssessmentsPage } from './pages/AssessmentsPage.js';
 import { ClubsPage } from './pages/ClubsPage.js';
 import { UsersPage } from './pages/UsersPage.js';
 import { AuditLogsPage } from './pages/AuditLogsPage.js';
@@ -441,7 +441,15 @@ export function App() {
             onDeleteQuestion={handleDeleteQuestion}
           />
         )}
-        {currentTab === 'learning-assessments' && <LearningAssessmentsPage modules={modules} assessments={learningAssessments} lang={lang} onSave={saveLearningAssessment} onDelete={deleteLearningAssessment} />}
+        {(currentTab === 'assessments' || currentTab === 'learning-assessments') && (
+          <AssessmentsPage
+            modules={modules}
+            assessments={learningAssessments}
+            lang={lang}
+            onSaveAssessment={saveLearningAssessment}
+            onDeleteAssessment={deleteLearningAssessment}
+          />
+        )}
         {currentTab === 'clubs' && (
           <ClubsPage
             clubs={clubs}

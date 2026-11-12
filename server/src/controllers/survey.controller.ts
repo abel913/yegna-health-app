@@ -58,7 +58,7 @@ export async function getSurveyStats(req: Request, res: Response): Promise<void>
   try {
     const totalResponses = await prisma.baselineSurveyResponse.count();
 
-    const [byAge, byYear, byDisability, byGondarSrh] = await Promise.all([
+    const [byAge, byYear, byDisability, byGondarSrh, recentSubmissions] = await Promise.all([
       prisma.baselineSurveyResponse.groupBy({
         by: ['ageGroup'],
         _count: { _all: true },
@@ -78,6 +78,18 @@ export async function getSurveyStats(req: Request, res: Response): Promise<void>
         by: ['knowsGondarSrh'],
         _count: { _all: true },
         orderBy: { _count: { knowsGondarSrh: 'desc' } },
+      }),
+      prisma.baselineSurveyResponse.findMany({
+        take: 100,
+        orderBy: { submittedAt: 'desc' },
+        select: {
+          id: true,
+          ageGroup: true,
+          yearOfStudy: true,
+          disabilityNeed: true,
+          knowsGondarSrh: true,
+          submittedAt: true,
+        },
       }),
     ]);
 
@@ -105,6 +117,7 @@ export async function getSurveyStats(req: Request, res: Response): Promise<void>
           percentage: totalResponses > 0 ? Math.round((item._count._all / totalResponses) * 100) : 0,
         })),
       },
+      recentSubmissions,
     });
   } catch (err: any) {
     console.error('Error fetching baseline survey statistics:', err);

@@ -10,6 +10,7 @@ import {
   ManagedUser,
   AuditLog,
   SystemTelemetry,
+  BaselineSurveyStats,
 } from '../types/index.js';
 
 const API_BASE = '/api';
@@ -57,15 +58,7 @@ export const api = {
     return res.json();
   },
 
-  async getSurveyStats(): Promise<{
-    totalResponses: number;
-    breakdown: {
-      byAge: Array<{ ageGroup: string; count: number; percentage: number }>;
-      byYearOfStudy: Array<{ yearOfStudy: string; count: number; percentage: number }>;
-      byDisabilityNeed: Array<{ disabilityNeed: string; count: number; percentage: number }>;
-      byGondarSrhAwareness: Array<{ knowsGondarSrh: string; count: number; percentage: number }>;
-    };
-  }> {
+  async getSurveyStats(): Promise<BaselineSurveyStats> {
     const res = await fetch(`${API_BASE}/admin/survey/stats`, { headers: getAuthHeaders() });
     if (!res.ok) throw new Error('Failed to load baseline survey stats');
     return res.json();

@@ -160,3 +160,23 @@ export interface SystemTelemetry {
   timestamp: string;
   clientRoundtripMs: number;
 }
+
+export interface BaselineSurveySubmission {
+  id: string;
+  ageGroup: string;
+  yearOfStudy: string;
+  disabilityNeed: string;
+  knowsGondarSrh: string;
+  submittedAt: string;
+}
+
+export interface BaselineSurveyStats {
+  totalResponses: number;
+  breakdown: {
+    byAge: Array<{ ageGroup: string; count: number; percentage: number }>;
+    byYearOfStudy: Array<{ yearOfStudy: string; count: number; percentage: number }>;
+    byDisabilityNeed: Array<{ disabilityNeed: string; count: number; percentage: number }>;
+    byGondarSrhAwareness: Array<{ knowsGondarSrh: string; count: number; percentage: number }>;
+  };
+  recentSubmissions?: BaselineSurveySubmission[];
+}
