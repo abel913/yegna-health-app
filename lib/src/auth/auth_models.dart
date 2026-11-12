@@ -16,6 +16,8 @@ enum AuthIssue {
   unexpected,
   accountSuspended,
   emailAlreadyInUse,
+  invalidVerificationCode,
+  verificationFailed,
 }
 
 enum RegistrationOutcome { verificationPending, signedIn }
@@ -28,6 +30,7 @@ class AuthUser {
     this.displayName = '',
     this.role,
     this.isSuspended = false,
+    this.hasCompletedSurvey = false,
   });
 
   final String id;
@@ -36,6 +39,7 @@ class AuthUser {
   final String displayName;
   final String? role;
   final bool isSuspended;
+  final bool hasCompletedSurvey;
 }
 
 class AuthSnapshot {

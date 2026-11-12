@@ -161,17 +161,61 @@ export interface SystemTelemetry {
   clientRoundtripMs: number;
 }
 
+export interface SurveyQuestionOption {
+  id?: string;
+  position?: number;
+  value: string;
+  labelEn: string;
+  labelAm: string;
+}
+
+export interface SurveyQuestion {
+  id: string;
+  position: number;
+  key: string;
+  titleEn: string;
+  titleAm: string;
+  descriptionEn?: string | null;
+  descriptionAm?: string | null;
+  type: 'SINGLE_CHOICE' | 'MULTI_CHOICE';
+  isRequired: boolean;
+  isActive: boolean;
+  options: SurveyQuestionOption[];
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface DynamicSurveyStatOption {
+  id?: string;
+  value: string;
+  labelEn: string;
+  labelAm: string;
+  count: number;
+  percentage: number;
+}
+
+export interface DynamicSurveyStatQuestion {
+  id: string;
+  key: string;
+  titleEn: string;
+  titleAm: string;
+  type: string;
+  options: DynamicSurveyStatOption[];
+}
+
 export interface BaselineSurveySubmission {
   id: string;
   ageGroup: string;
   yearOfStudy: string;
   disabilityNeed: string;
   knowsGondarSrh: string;
+  answers?: Record<string, any>;
   submittedAt: string;
 }
 
 export interface BaselineSurveyStats {
   totalResponses: number;
+  questions?: DynamicSurveyStatQuestion[];
   breakdown: {
     byAge: Array<{ ageGroup: string; count: number; percentage: number }>;
     byYearOfStudy: Array<{ yearOfStudy: string; count: number; percentage: number }>;
