@@ -92,8 +92,7 @@ class OfflineSyncStore {
       if (jsonStr == null || jsonStr.isEmpty) return null;
       final list = jsonDecode(jsonStr) as List<dynamic>;
       return list
-          .map((e) =>
-              StudentClub.fromJson(Map<String, Object?>.from(e as Map)))
+          .map((e) => StudentClub.fromJson(Map<String, Object?>.from(e as Map)))
           .toList();
     } catch (_) {
       return null;
@@ -260,7 +259,8 @@ class OfflineSyncStore {
     );
 
     return Facility(
-      id: map['id']?.toString() ?? 'fac_${DateTime.now().millisecondsSinceEpoch}',
+      id: map['id']?.toString() ??
+          'fac_${DateTime.now().millisecondsSinceEpoch}',
       nameEn: map['nameEn'] as String? ?? 'Youth Health Clinic',
       nameAm: map['nameAm'] as String? ?? 'የወጣቶች ጤና ክሊኒክ',
       subCityEn: subCityEn,
@@ -324,7 +324,8 @@ class OfflineSyncStore {
     final organizationAm =
         map['organizationAm'] as String? ?? rawOrg ?? 'የወጣቶች ጤና ጥረት';
 
-    final isAvailable = map['isAvailable'] as bool? ?? map['isOnline'] as bool? ?? true;
+    final isAvailable =
+        map['isAvailable'] as bool? ?? map['isOnline'] as bool? ?? true;
     final isVerified = map['isVerified'] as bool? ?? true;
 
     // Parse topics from specialties or stored topic names
@@ -367,14 +368,16 @@ class OfflineSyncStore {
 
     // Avatar color
     final colorVal = map['avatarColor'] as int?;
-    final avatarColor = colorVal != null
-        ? Color(colorVal)
-        : const Color(0xFF0284C7);
+    final avatarColor =
+        colorVal != null ? Color(colorVal) : const Color(0xFF0284C7);
 
-    final phone = map['phoneNumber'] as String? ?? map['phone'] as String? ?? '+251911234567';
+    final phone = map['phoneNumber'] as String? ??
+        map['phone'] as String? ??
+        '+251911234567';
 
     return Mentor(
-      id: map['id']?.toString() ?? 'men_${DateTime.now().millisecondsSinceEpoch}',
+      id: map['id']?.toString() ??
+          'men_${DateTime.now().millisecondsSinceEpoch}',
       nameEn: nameEn,
       nameAm: nameAm,
       titleEn: map['titleEn'] as String? ?? 'Certified Youth Peer Counselor',
@@ -421,12 +424,14 @@ class OfflineSyncStore {
     }
 
     final name = map['name'] as String? ?? 'Student Club';
-    final desc = map['description'] as String? ?? 'Youth health engagement club';
+    final desc =
+        map['description'] as String? ?? 'Youth health engagement club';
     final venue = map['venue'] as String? ?? 'Youth Center';
     final meetingTime = map['meetingTime'] as String? ?? 'Saturdays 10:00 AM';
 
     return StudentClub(
-      id: map['id']?.toString() ?? 'club_${DateTime.now().millisecondsSinceEpoch}',
+      id: map['id']?.toString() ??
+          'club_${DateTime.now().millisecondsSinceEpoch}',
       nameEn: name,
       nameAm: map['nameAm'] as String? ?? name,
       descriptionEn: desc,

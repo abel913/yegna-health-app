@@ -10,7 +10,7 @@ class ApiClient {
   ApiClient({
     String? baseUrl,
     http.Client? httpClient,
-    this.timeout = const Duration(seconds: 4),
+    this.timeout = const Duration(seconds: 25),
   })  : _client = httpClient ?? http.Client(),
         _configuredBaseUrl = baseUrl;
 
@@ -44,6 +44,24 @@ class ApiClient {
       return res.statusCode == 200;
     } catch (_) {
       return false;
+    }
+  }
+
+  /// Fetches published baseline survey questions from `GET /api/survey/questions`.
+  Future<List<Map<String, dynamic>>?> fetchSurveyQuestions() async {
+    try {
+      final uri = Uri.parse('$baseUrl/survey/questions');
+      final res = await _client.get(uri).timeout(timeout);
+      if (res.statusCode == 200) {
+        final data = jsonDecode(res.body) as Map<String, dynamic>;
+        final list = data['questions'] as List<dynamic>?;
+        if (list != null) {
+          return list.map((e) => Map<String, dynamic>.from(e as Map)).toList();
+        }
+      }
+      return null;
+    } catch (_) {
+      return null;
     }
   }
 
@@ -145,8 +163,7 @@ class ApiClient {
         'Content-Type': 'application/json',
         if (token != null) 'Authorization': 'Bearer $token',
       };
-      final res =
-          await _client.post(uri, headers: headers).timeout(timeout);
+      final res = await _client.post(uri, headers: headers).timeout(timeout);
       return res.statusCode == 200 || res.statusCode == 201;
     } catch (_) {
       return false;
@@ -240,19 +257,134 @@ class ApiClient {
     }
   }
 
+  /// Verifies a student's 6-digit confirmation code against `POST /api/auth/verify-email`.
+  Future<AuthApiResponse> verifyEmailCode({
+    required String email,
+    required String code,
+  }) async {
+    try {
+      final uri = Uri.parse('$baseUrl/auth/verify-email');
+      final res = await _client
+          .post(
+            uri,
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({
+              'email': email.trim().toLowerCase(),
+              'code': code.trim(),
+            }),
+          )
+          .timeout(timeout);
+
+      final data = jsonDecode(res.body) as Map<String, dynamic>? ?? {};
+      if (res.statusCode == 200 || res.statusCode == 201) {
+        return AuthApiResponse(
+          success: true,
+          token: data['token'] as String?,
+          user: data['user'] as Map<String, dynamic>?,
+          statusCode: res.statusCode,
+        );
+      }
+      return AuthApiResponse(
+        success: false,
+        errorCode: data['error'] as String?,
+        errorMessage: data['message'] as String?,
+        statusCode: res.statusCode,
+      );
+    } catch (e) {
+      return AuthApiResponse(
+        success: false,
+        errorCode: 'NETWORK_ERROR',
+        errorMessage: e.toString(),
+      );
+    }
+  }
+
+  /// Resends a 6-digit verification code against `POST /api/auth/resend-verification`.
+  Future<AuthApiResponse> resendVerification({
+    required String email,
+  }) async {
+    try {
+      final uri = Uri.parse('$baseUrl/auth/resend-verification');
+      final res = await _client
+          .post(
+            uri,
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({
+              'email': email.trim().toLowerCase(),
+            }),
+          )
+          .timeout(timeout);
+
+      final data = jsonDecode(res.body) as Map<String, dynamic>? ?? {};
+      if (res.statusCode == 200) {
+        return AuthApiResponse(
+          success: true,
+          statusCode: res.statusCode,
+        );
+      }
+      return AuthApiResponse(
+        success: false,
+        errorCode: data['error'] as String?,
+        errorMessage: data['message'] as String?,
+        statusCode: res.statusCode,
+      );
+    } catch (e) {
+      return AuthApiResponse(
+        success: false,
+        errorCode: 'NETWORK_ERROR',
+        errorMessage: e.toString(),
+      );
+    }
+  }
+
+  /// Permanently deletes the authenticated student account against `DELETE /api/auth/me`.
+  /// Apple App Store Guideline 5.1.1(v) compliant.
+  Future<AuthApiResponse> deleteAccount({
+    required String token,
+  }) async {
+    try {
+      final uri = Uri.parse('$baseUrl/auth/me');
+      final res = await _client.delete(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      ).timeout(timeout);
+
+      final data = jsonDecode(res.body) as Map<String, dynamic>? ?? {};
+      if (res.statusCode == 200) {
+        return AuthApiResponse(
+          success: true,
+          statusCode: res.statusCode,
+        );
+      }
+      return AuthApiResponse(
+        success: false,
+        errorCode: data['error'] as String?,
+        errorMessage: data['message'] as String?,
+        statusCode: res.statusCode,
+      );
+    } catch (e) {
+      return AuthApiResponse(
+        success: false,
+        errorCode: 'NETWORK_ERROR',
+        errorMessage: e.toString(),
+      );
+    }
+  }
+
   /// Fetches current user session profile against `GET /api/auth/me`.
   Future<AuthApiResponse> getCurrentUser(String token) async {
     try {
       final uri = Uri.parse('$baseUrl/auth/me');
-      final res = await _client
-          .get(
-            uri,
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': 'Bearer $token',
-            },
-          )
-          .timeout(timeout);
+      final res = await _client.get(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      ).timeout(timeout);
 
       final data = jsonDecode(res.body) as Map<String, dynamic>? ?? {};
       if (res.statusCode == 200) {
@@ -359,25 +491,37 @@ class ApiClient {
   }
 
   /// Submits anonymous student baseline survey responses to `POST /api/survey/baseline`.
-  /// Strictly avoids attaching any user token, name, or identifiable data.
+  /// While the survey answers themselves remain strictly anonymous (zero PII),
+  /// an optional [authToken] can be attached so the backend marks survey completion
+  /// on the student's profile to prevent future prompts across devices.
   Future<bool> submitAnonymousBaselineSurvey({
     required String ageGroup,
     required String yearOfStudy,
     required String disabilityNeed,
     required String knowsGondarSrh,
+    Map<String, String>? answers,
+    String? authToken,
   }) async {
     try {
       final uri = Uri.parse('$baseUrl/survey/baseline');
+      final headers = <String, String>{'Content-Type': 'application/json'};
+      if (authToken != null && authToken.isNotEmpty) {
+        headers['Authorization'] = 'Bearer $authToken';
+      }
+      final payload = <String, dynamic>{
+        'ageGroup': ageGroup,
+        'yearOfStudy': yearOfStudy,
+        'disabilityNeed': disabilityNeed,
+        'knowsGondarSrh': knowsGondarSrh,
+      };
+      if (answers != null && answers.isNotEmpty) {
+        payload['answers'] = answers;
+      }
       final res = await _client
           .post(
             uri,
-            headers: {'Content-Type': 'application/json'},
-            body: jsonEncode({
-              'ageGroup': ageGroup,
-              'yearOfStudy': yearOfStudy,
-              'disabilityNeed': disabilityNeed,
-              'knowsGondarSrh': knowsGondarSrh,
-            }),
+            headers: headers,
+            body: jsonEncode(payload),
           )
           .timeout(timeout);
       return res.statusCode == 201;
