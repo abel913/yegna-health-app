@@ -3511,4 +3511,113 @@ class AppLocalizationsAm extends AppLocalizations {
 
   @override
   String get assignedMentorLabel => 'የክበቡ መሪ እና አማካሪ';
+
+  @override
+  String get onboardingSurveyTitle => 'አጠቃላይ የግል መረጃ';
+
+  @override
+  String get onboardingSurveySubtitle => 'የተማሪዎች የመግቢያ መጠይቅ';
+
+  @override
+  String get onboardingSurveyPrivacyNotice =>
+      'ምላሾችዎ ማንነትን የማይገልጹ እና የዩኒቨርሲቲውን የወጣቶች ጤና አገልግሎት ለማሻሻል ብቻ የሚውሉ ናቸው።';
+
+  @override
+  String get onboardingSurveySelectOnlyOne => 'አንዱን ብቻ ይምረጡ';
+
+  @override
+  String onboardingSurveyQuestionNumber(String number) {
+    return 'ጥያቄ $number';
+  }
+
+  @override
+  String get onboardingSurveyAgeTitle => 'ዕድሜዎ ስንት ነው?';
+
+  @override
+  String get onboardingSurveyAgeOpt1 => '18–20';
+
+  @override
+  String get onboardingSurveyAgeOpt2 => '21–24';
+
+  @override
+  String get onboardingSurveyAgeOpt3 => '25–29';
+
+  @override
+  String get onboardingSurveyAgeOpt4 => '30 እና ከዚያ በላይ';
+
+  @override
+  String get onboardingSurveyYearTitle => 'በምን ዓመት የትምህርት ደረጃ ላይ ይገኛሉ?';
+
+  @override
+  String get onboardingSurveyYearOpt1 => '1ኛ ዓመት';
+
+  @override
+  String get onboardingSurveyYearOpt2 => '2ኛ ዓመት';
+
+  @override
+  String get onboardingSurveyYearOpt3 => '3ኛ ዓመት';
+
+  @override
+  String get onboardingSurveyYearOpt4 => '4ኛ ዓመት እና ከዚያ በላይ';
+
+  @override
+  String get onboardingSurveyYearOpt5 => 'የድህረ-ምረቃ';
+
+  @override
+  String get onboardingSurveyDisabilityTitle =>
+      'የአካል ጉዳት ወይም የተለየ የተደራሽነት ፍላጎት አለዎት?';
+
+  @override
+  String get onboardingSurveyDisabilityOptNone => 'የለብኝም';
+
+  @override
+  String get onboardingSurveyDisabilityOptVisual => 'የእይታ ድጋፍ';
+
+  @override
+  String get onboardingSurveyDisabilityOptHearing => 'የመስማት ድጋፍ';
+
+  @override
+  String get onboardingSurveyDisabilityOptPhysical => 'የእንቅስቃሴ ድጋፍ';
+
+  @override
+  String get onboardingSurveyDisabilityOptOther => 'መግለጽ አልፈልግም';
+
+  @override
+  String get onboardingSurveyGondarSrhTitle =>
+      'በጎንደር ዩኒቨርሲቲ የጾታዊና የስነ-ተዋልዶ ጤና አገልግሎት የት እንደሚገኝ ያውቃሉ?';
+
+  @override
+  String get onboardingSurveyGondarSrhOptYes => 'አዎ አውቃለሁ';
+
+  @override
+  String get onboardingSurveyGondarSrhOptNo => 'አልያውቅም';
+
+  @override
+  String get onboardingSurveyGondarSrhOptUnsure => 'እርግጠኛ አይደለሁም';
+
+  @override
+  String get onboardingSurveyNext => 'ቀጣይ';
+
+  @override
+  String get onboardingSurveyBack => 'ተመለስ';
+
+  @override
+  String get onboardingSurveyFinish => 'ጨርስ';
+
+  @override
+  String get onboardingSurveySkip => 'ለአሁኑ ዝለል';
+
+  @override
+  String get onboardingSurveyCompletedTitle => 'እናመሰግናለን!';
+
+  @override
+  String get onboardingSurveyCompletedBody =>
+      'ማንነትዎ የማይታወቅባቸው ምላሾችዎ የካምፓስ ጤና አገልግሎትን ለማሻሻል ይረዳሉ።';
+
+  @override
+  String get onboardingSurveyViewGondarClinic =>
+      'የጎንደር ዩኒቨርሲቲ ክሊኒክን በካርታው ተመልከት';
+
+  @override
+  String get onboardingSurveyTakeSurveyPrompt => 'የተማሪ የመግቢያ መጠይቁን ይሙሉ';
 }

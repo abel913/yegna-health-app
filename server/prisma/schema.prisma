@@ -138,3 +138,15 @@ model AuditLog {
 
   @@schema("yegna")
 }
+
+model BaselineSurveyResponse {
+  id             String   @id @default(uuid())
+  ageGroup       String   // "18–20", "21–24", "25–29", "30+"
+  yearOfStudy    String   // "1st Year", "2nd Year", "3rd Year", "4th Year and above", "Postgraduate"
+  disabilityNeed String   // "NONE", "VISUAL", "HEARING", "PHYSICAL", "PREFER_NOT_TO_SAY"
+  knowsGondarSrh String   // "YES", "NO", "NOT_SURE"
+  submittedAt    DateTime @default(now())
+
+  @@schema("yegna")
+}
+

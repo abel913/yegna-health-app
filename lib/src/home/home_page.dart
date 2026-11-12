@@ -9,6 +9,8 @@ import '../learning/education_repository.dart';
 import '../learning/hiv_module_page.dart';
 import '../learning/learning_modules_carousel.dart';
 import '../learning/learning_progress_controller.dart';
+import '../onboarding/onboarding_survey_dialog.dart';
+import '../onboarding/onboarding_survey_repository.dart';
 import '../theme/app_glass_theme.dart';
 
 class HomePage extends StatefulWidget {
@@ -48,6 +50,189 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkAndPromptOnboardingSurvey();
+    });
+  }
+
+  Future<void> _checkAndPromptOnboardingSurvey() async {
+    final repo = OnboardingSurveyRepository();
+    final isDone = await repo.isCompleted();
+    if (!isDone && mounted) {
+      _showOnboardingSurveyModal(context);
+    }
+  }
+
+  void _showOnboardingSurveyModal(BuildContext context) {
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: 'Dismiss Onboarding Survey',
+      barrierColor: Colors.black.withValues(alpha: 0.38),
+      transitionDuration: const Duration(milliseconds: 320),
+      pageBuilder: (dialogCtx, anim1, anim2) {
+        return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
+          child: OnboardingSurveyDialog(
+            onOpenFacilities: widget.onOpenFacilities,
+            onCompleted: (_) {
+              if (mounted) setState(() {});
+            },
+          ),
+        );
+      },
+      transitionBuilder: (dialogCtx, anim, _, child) {
+        return ScaleTransition(
+          scale: CurvedAnimation(parent: anim, curve: Curves.easeOutBack),
+          child: FadeTransition(opacity: anim, child: child),
+        );
+      },
+    );
+  }
+
+  Widget _buildSurveyBanner(BuildContext context, AppLocalizations l10n) {
+    final glass = context.glassTheme;
+    final isDark = glass.isDark;
+
+    return FutureBuilder<bool>(
+      future: OnboardingSurveyRepository().isCompleted(),
+      builder: (context, snapshot) {
+        final isCompleted = snapshot.data ?? false;
+
+        return _DeepGlassContainer(
+          borderRadius: 22,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          onTap: () => _showOnboardingSurveyModal(context),
+          child: Row(
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  gradient: isCompleted
+                      ? const LinearGradient(
+                          colors: [Color(0xFF10B981), Color(0xFF059669)],
+                        )
+                      : const LinearGradient(
+                          colors: [Color(0xFFFF7A59), Color(0xFFFF5252)],
+                        ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: (isCompleted
+                              ? const Color(0xFF10B981)
+                              : const Color(0xFFFF5252))
+                          .withValues(alpha: 0.35),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Icon(
+                  isCompleted
+                      ? Icons.check_circle_outline_rounded
+                      : Icons.assignment_outlined,
+                  color: Colors.white,
+                  size: 26,
+                ),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            l10n.onboardingSurveySubtitle,
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w800,
+                              color: isDark ? Colors.white : const Color(0xFF0F172A),
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: isCompleted
+                                ? const Color(0xFF10B981).withValues(alpha: 0.15)
+                                : const Color(0xFFFF7A59).withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            isCompleted ? '✓' : '1 min',
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w700,
+                              color: isCompleted
+                                  ? const Color(0xFF10B981)
+                                  : const Color(0xFFFF7A59),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      l10n.onboardingSurveyTitle,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: isDark ? Colors.white70 : const Color(0xFF64748B),
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? const Color(0xFF1E293B)
+                      : const Color(0xFF0F172A),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      isCompleted
+                          ? (l10n.localeName == 'am' ? 'ተመልከት' : 'View')
+                          : (l10n.localeName == 'am' ? 'ጀምር' : 'Start'),
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    const Icon(
+                      Icons.arrow_forward_rounded,
+                      size: 14,
+                      color: Colors.white,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   Future<void> _refresh() async {
     setState(() {});
   }
@@ -589,7 +774,11 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     // 1. Dynamic Greeting & Profile Card (Single clean Account CTA)
                     buildGreetingHeader(),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 14),
+
+                    // Student Baseline Survey Banner (1-tap to open popup anytime)
+                    _buildSurveyBanner(context, l10n),
+                    const SizedBox(height: 18),
 
                     // 2. Section Heading: Explore Services
                     _GlassSectionHeader(

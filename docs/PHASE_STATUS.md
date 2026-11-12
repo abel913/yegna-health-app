@@ -1,5 +1,26 @@
 # Phase status
 
+## Anonymous Student Baseline Survey & Stacked Card Modal (2026-11-07)
+
+**Status: Completed & 100% Verified.**
+- **Mobile Stacked-Card Popup Modal (`OnboardingSurveyDialog`)**:
+  - Implemented the single-question stacked card modal popup inspired by the user's reference design, with layered cards rotated in the background, rounded corners, and drop shadows.
+  - Automatically triggered on the live `HomePage` over a Gaussian blur backdrop (`BackdropFilter` with $\sigma = 14$ and translucent scrim).
+  - Presents 1 question per card with 4-dash segmented gradient progress bar, uppercase question counter (`Q.01`..`Q.04`), and custom circular radio indicators with checkmark (`✓`) on active selection.
+  - Fully bilingual with zero hardcoded text: dynamically renders in English or Amharic depending on active app language.
+  - Skip / close `(✕)` button allows students to explore the app immediately without answering.
+- **Anonymous Database Storage & Zero PII Protection (`BaselineSurveyResponse`)**:
+  - Pushed dedicated `BaselineSurveyResponse` table in PostgreSQL schema `yegna` on Supabase Cloud.
+  - Records zero personal identifiers (no user foreign key, no name, no email, no device ID).
+  - API endpoint `POST /api/survey/baseline` stores categorical survey choices.
+  - API endpoint `GET /api/admin/survey/stats` computes real-time aggregated counts and percentage distributions for administrators and researchers.
+- **Verification Gates**:
+  - Flutter widget tests (`test/onboarding_survey_widget_test.dart`): **All 5 tests passed**.
+  - Backend server (`tsc`): **0 errors**.
+  - Database schema: pushed and verified on cloud Supabase PostgreSQL.
+  - Live API submission & admin stats query: verified via PowerShell test calls with 100% accurate aggregations.
+
+
 
 
 

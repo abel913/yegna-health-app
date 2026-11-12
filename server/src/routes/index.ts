@@ -10,6 +10,7 @@ import * as quizzes from '../controllers/quizzes.controller.js';
 import * as clubs from '../controllers/clubs.controller.js';
 import * as users from '../controllers/users.controller.js';
 import * as dashboard from '../controllers/dashboard.controller.js';
+import * as survey from '../controllers/survey.controller.js';
 
 export const router = Router();
 
@@ -108,4 +109,10 @@ adminRouter.put('/users/:id/verify-email', users.verifyUserEmail as any);
 adminRouter.post('/users/:id/reset-password', users.resetUserPassword as any);
 adminRouter.delete('/users/:id', users.deleteUser as any);
 
+// Anonymous Student Baseline Survey Analytics
+adminRouter.get('/survey/stats', survey.getSurveyStats as any);
+
 router.use('/admin', adminRouter);
+
+// Anonymous Student Baseline Survey Submission (Zero-Knowledge, No PII)
+router.post('/survey/baseline', survey.submitSurvey);

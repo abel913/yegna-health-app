@@ -3587,4 +3587,114 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get assignedMentorLabel => 'Club Lead & Mentor';
+
+  @override
+  String get onboardingSurveyTitle => 'Personal & General Information';
+
+  @override
+  String get onboardingSurveySubtitle => 'Student Baseline Survey';
+
+  @override
+  String get onboardingSurveyPrivacyNotice =>
+      'Your answers are anonymous and used solely to improve campus youth health services.';
+
+  @override
+  String get onboardingSurveySelectOnlyOne => 'SELECT ONLY 1';
+
+  @override
+  String onboardingSurveyQuestionNumber(String number) {
+    return 'Q.$number';
+  }
+
+  @override
+  String get onboardingSurveyAgeTitle => 'What is your age?';
+
+  @override
+  String get onboardingSurveyAgeOpt1 => '18–20';
+
+  @override
+  String get onboardingSurveyAgeOpt2 => '21–24';
+
+  @override
+  String get onboardingSurveyAgeOpt3 => '25–29';
+
+  @override
+  String get onboardingSurveyAgeOpt4 => '30 and above';
+
+  @override
+  String get onboardingSurveyYearTitle => 'What is your current year of study?';
+
+  @override
+  String get onboardingSurveyYearOpt1 => '1st Year';
+
+  @override
+  String get onboardingSurveyYearOpt2 => '2nd Year';
+
+  @override
+  String get onboardingSurveyYearOpt3 => '3rd Year';
+
+  @override
+  String get onboardingSurveyYearOpt4 => '4th Year and above';
+
+  @override
+  String get onboardingSurveyYearOpt5 => 'Postgraduate';
+
+  @override
+  String get onboardingSurveyDisabilityTitle =>
+      'Do you have a disability or special accessibility need?';
+
+  @override
+  String get onboardingSurveyDisabilityOptNone => 'None / No disability';
+
+  @override
+  String get onboardingSurveyDisabilityOptVisual => 'Visual impairment';
+
+  @override
+  String get onboardingSurveyDisabilityOptHearing => 'Hearing impairment';
+
+  @override
+  String get onboardingSurveyDisabilityOptPhysical =>
+      'Physical / Mobility assistance';
+
+  @override
+  String get onboardingSurveyDisabilityOptOther => 'Prefer not to say';
+
+  @override
+  String get onboardingSurveyGondarSrhTitle =>
+      'Do you know where to access sexual & reproductive health services at the University of Gondar?';
+
+  @override
+  String get onboardingSurveyGondarSrhOptYes => 'Yes, I know';
+
+  @override
+  String get onboardingSurveyGondarSrhOptNo => 'No, not yet';
+
+  @override
+  String get onboardingSurveyGondarSrhOptUnsure => 'Not sure';
+
+  @override
+  String get onboardingSurveyNext => 'Next';
+
+  @override
+  String get onboardingSurveyBack => 'Back';
+
+  @override
+  String get onboardingSurveyFinish => 'Finish';
+
+  @override
+  String get onboardingSurveySkip => 'Skip for now';
+
+  @override
+  String get onboardingSurveyCompletedTitle => 'Thank You!';
+
+  @override
+  String get onboardingSurveyCompletedBody =>
+      'Your anonymous responses help tailor campus health support.';
+
+  @override
+  String get onboardingSurveyViewGondarClinic => 'View Gondar Campus Clinic';
+
+  @override
+  String get onboardingSurveyTakeSurveyPrompt =>
+      'Complete Student Baseline Survey';
 }

@@ -1,5 +1,28 @@
 # Handoff
 
+## Anonymous Student Baseline Survey & Stacked Card Modal (2026-11-07)
+
+- **Mobile Onboarding Flow & Modal Experience (`lib/src/onboarding/`)**:
+  - Engineered `OnboardingSurveyDialog` featuring a tactile 3-layer card stack with subtle rotational offsets (`Matrix4.rotationZ`), shadows, and rounded borders matching the user's reference sample.
+  - Automatically triggered upon first landing on `HomePage` over a Gaussian-blurred backdrop (`BackdropFilter(sigmaX: 14, sigmaY: 14)`).
+  - Presents 1 question at a time across 4 steps:
+    1. **Age Group**: `18–20`, `21–24`, `25–29`, `30 and above`
+    2. **Year of Study**: `1st Year`, `2nd Year`, `3rd Year`, `4th Year and above`, `Postgraduate`
+    3. **Accessibility / Disability Needs**: `None`, `Visual`, `Hearing`, `Physical`, `Prefer not to say`
+    4. **University of Gondar SRH Service Awareness**: `Yes, I know`, `No, not yet`, `Not sure`
+  - Fully bilingual with zero hardcoded strings: renders in English if locale is `en`, and in Amharic if locale is `am` via `AppLocalizations`.
+  - Radio options render custom circular indicators with solid indigo fill and white checkmark `✓` when selected.
+  - Includes progress dash indicators, `Back` navigation, `Skip / (✕)` dismiss, and post-survey shortcut to Gondar campus clinic.
+- **Anonymous Database Storage & Admin Analytics (`server/`)**:
+  - Added `BaselineSurveyResponse` table in PostgreSQL schema `yegna` with zero PII (no user foreign keys, no names, no emails).
+  - `POST /api/survey/baseline`: stores anonymous categorical responses.
+  - `GET /api/admin/survey/stats`: computes aggregated response counts and percentage distributions per question for campus health administrators.
+- **Verification Results**:
+  - `test/onboarding_survey_widget_test.dart`: 5/5 tests passed (English/Amharic rendering, checkmarks, navigation, submission, and dismiss).
+  - Backend API: `POST /api/survey/baseline` and `GET /api/admin/survey/stats` verified with live PostgreSQL queries.
+  - `admin-web`: TypeScript build passed (1,601 modules transformed).
+
+
 ## Supabase PostgreSQL Cloud Database Transition (2026-11-06)
 
 - **Supabase Cloud Project**:

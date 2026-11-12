@@ -1,5 +1,24 @@
 # Technical decisions
 
+## 2026-11-07 — Anonymous Student Baseline Survey & Stacked Card Modal Architecture
+
+- **Onboarding Stacked-Card Popup Modal (`OnboardingSurveyDialog`)**:
+  - Implemented single-question stacked card modal popup over a blurred Home dashboard (`BackdropFilter` with Gaussian blur $\sigma = 14$ and translucent scrim).
+  - Features a tactile 3-layer card deck aesthetic with rotational offsets (`Matrix4.rotationZ`) and rounded corners, matching the approved reference design.
+  - Interactive radio selectors with filled circular indigo accent and checkmark `✓` icon on active selection.
+  - Multi-step flow: 4-segment gradient progress dash bar, monospace question tracking (`Q.01`..`Q.04`), and responsive `Back` / `Next` / `Finish` controls.
+  - Dismiss/Skip button `(✕)` safely marks the survey as skipped in local storage so students are never blocked from exploring the app.
+- **Dynamic Bilingual Localization**:
+  - Automatically switches all questions, options, and button labels between English (`lib/l10n/app_en.arb`) and Amharic (`lib/l10n/app_am.arb`) using Flutter's official `AppLocalizations`.
+  - Zero hardcoded English/Amharic strings.
+- **Anonymous Database Persistence & Zero PII Storage (`BaselineSurveyResponse`)**:
+  - Responses are saved in PostgreSQL schema `yegna.BaselineSurveyResponse` without any `userId`, `email`, `displayName`, or student identifiers.
+  - Endpoint `POST /api/survey/baseline` stores strictly categorical data (`ageGroup`, `yearOfStudy`, `disabilityNeed`, `knowsGondarSrh`, and `submittedAt`).
+  - Endpoint `GET /api/admin/survey/stats` computes real-time aggregated totals and percentages across all 4 questions, empowering university health administrators and researchers to measure population metrics and SRH awareness while honoring 100% student confidentiality.
+- **Post-Survey Actionable Continuity**:
+  - If a student indicates they do not know where sexual & reproductive health services are located at the University of Gondar, the completion dialog surfaces a 1-tap shortcut directly to the campus health clinic on the map.
+
+
 ## 2026-11-06 — Supabase PostgreSQL Cloud Database Transition
 
 - **Cloud Database Provider & Schema Isolation Strategy**:

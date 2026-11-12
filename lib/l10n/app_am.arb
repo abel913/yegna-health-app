@@ -1127,6 +1127,47 @@
   "exploreAllClubsTab": "ሁሉንም አስስ",
   "meetingScheduleLabel": "የስብሰባ ሰዓት",
   "meetingLocationLabel": "የመሰብሰቢያ ቦታ",
-  "assignedMentorLabel": "የክበቡ መሪ እና አማካሪ"
+  "assignedMentorLabel": "የክበቡ መሪ እና አማካሪ",
+  "onboardingSurveyTitle": "አጠቃላይ የግል መረጃ",
+  "onboardingSurveySubtitle": "የተማሪዎች የመግቢያ መጠይቅ",
+  "onboardingSurveyPrivacyNotice": "ምላሾችዎ ማንነትን የማይገልጹ እና የዩኒቨርሲቲውን የወጣቶች ጤና አገልግሎት ለማሻሻል ብቻ የሚውሉ ናቸው።",
+  "onboardingSurveySelectOnlyOne": "አንዱን ብቻ ይምረጡ",
+  "onboardingSurveyQuestionNumber": "ጥያቄ {number}",
+  "@onboardingSurveyQuestionNumber": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "onboardingSurveyAgeTitle": "ዕድሜዎ ስንት ነው?",
+  "onboardingSurveyAgeOpt1": "18–20",
+  "onboardingSurveyAgeOpt2": "21–24",
+  "onboardingSurveyAgeOpt3": "25–29",
+  "onboardingSurveyAgeOpt4": "30 እና ከዚያ በላይ",
+  "onboardingSurveyYearTitle": "በምን ዓመት የትምህርት ደረጃ ላይ ይገኛሉ?",
+  "onboardingSurveyYearOpt1": "1ኛ ዓመት",
+  "onboardingSurveyYearOpt2": "2ኛ ዓመት",
+  "onboardingSurveyYearOpt3": "3ኛ ዓመት",
+  "onboardingSurveyYearOpt4": "4ኛ ዓመት እና ከዚያ በላይ",
+  "onboardingSurveyYearOpt5": "የድህረ-ምረቃ",
+  "onboardingSurveyDisabilityTitle": "የአካል ጉዳት ወይም የተለየ የተደራሽነት ፍላጎት አለዎት?",
+  "onboardingSurveyDisabilityOptNone": "የለብኝም",
+  "onboardingSurveyDisabilityOptVisual": "የእይታ ድጋፍ",
+  "onboardingSurveyDisabilityOptHearing": "የመስማት ድጋፍ",
+  "onboardingSurveyDisabilityOptPhysical": "የእንቅስቃሴ ድጋፍ",
+  "onboardingSurveyDisabilityOptOther": "መግለጽ አልፈልግም",
+  "onboardingSurveyGondarSrhTitle": "በጎንደር ዩኒቨርሲቲ የጾታዊና የስነ-ተዋልዶ ጤና አገልግሎት የት እንደሚገኝ ያውቃሉ?",
+  "onboardingSurveyGondarSrhOptYes": "አዎ አውቃለሁ",
+  "onboardingSurveyGondarSrhOptNo": "አልያውቅም",
+  "onboardingSurveyGondarSrhOptUnsure": "እርግጠኛ አይደለሁም",
+  "onboardingSurveyNext": "ቀጣይ",
+  "onboardingSurveyBack": "ተመለስ",
+  "onboardingSurveyFinish": "ጨርስ",
+  "onboardingSurveySkip": "ለአሁኑ ዝለል",
+  "onboardingSurveyCompletedTitle": "እናመሰግናለን!",
+  "onboardingSurveyCompletedBody": "ማንነትዎ የማይታወቅባቸው ምላሾችዎ የካምፓስ ጤና አገልግሎትን ለማሻሻል ይረዳሉ።",
+  "onboardingSurveyViewGondarClinic": "የጎንደር ዩኒቨርሲቲ ክሊኒክን በካርታው ተመልከት",
+  "onboardingSurveyTakeSurveyPrompt": "የተማሪ የመግቢያ መጠይቁን ይሙሉ"
 }
 

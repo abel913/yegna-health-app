@@ -358,6 +358,34 @@ class ApiClient {
     }
   }
 
+  /// Submits anonymous student baseline survey responses to `POST /api/survey/baseline`.
+  /// Strictly avoids attaching any user token, name, or identifiable data.
+  Future<bool> submitAnonymousBaselineSurvey({
+    required String ageGroup,
+    required String yearOfStudy,
+    required String disabilityNeed,
+    required String knowsGondarSrh,
+  }) async {
+    try {
+      final uri = Uri.parse('$baseUrl/survey/baseline');
+      final res = await _client
+          .post(
+            uri,
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({
+              'ageGroup': ageGroup,
+              'yearOfStudy': yearOfStudy,
+              'disabilityNeed': disabilityNeed,
+              'knowsGondarSrh': knowsGondarSrh,
+            }),
+          )
+          .timeout(timeout);
+      return res.statusCode == 201;
+    } catch (_) {
+      return false;
+    }
+  }
+
   void dispose() {
     _client.close();
   }

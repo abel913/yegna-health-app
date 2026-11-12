@@ -1171,6 +1171,47 @@
   "exploreAllClubsTab": "Explore All",
   "meetingScheduleLabel": "Meeting Schedule",
   "meetingLocationLabel": "Meeting Location",
-  "assignedMentorLabel": "Club Lead & Mentor"
+  "assignedMentorLabel": "Club Lead & Mentor",
+  "onboardingSurveyTitle": "Personal & General Information",
+  "onboardingSurveySubtitle": "Student Baseline Survey",
+  "onboardingSurveyPrivacyNotice": "Your answers are anonymous and used solely to improve campus youth health services.",
+  "onboardingSurveySelectOnlyOne": "SELECT ONLY 1",
+  "onboardingSurveyQuestionNumber": "Q.{number}",
+  "@onboardingSurveyQuestionNumber": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "onboardingSurveyAgeTitle": "What is your age?",
+  "onboardingSurveyAgeOpt1": "18–20",
+  "onboardingSurveyAgeOpt2": "21–24",
+  "onboardingSurveyAgeOpt3": "25–29",
+  "onboardingSurveyAgeOpt4": "30 and above",
+  "onboardingSurveyYearTitle": "What is your current year of study?",
+  "onboardingSurveyYearOpt1": "1st Year",
+  "onboardingSurveyYearOpt2": "2nd Year",
+  "onboardingSurveyYearOpt3": "3rd Year",
+  "onboardingSurveyYearOpt4": "4th Year and above",
+  "onboardingSurveyYearOpt5": "Postgraduate",
+  "onboardingSurveyDisabilityTitle": "Do you have a disability or special accessibility need?",
+  "onboardingSurveyDisabilityOptNone": "None / No disability",
+  "onboardingSurveyDisabilityOptVisual": "Visual impairment",
+  "onboardingSurveyDisabilityOptHearing": "Hearing impairment",
+  "onboardingSurveyDisabilityOptPhysical": "Physical / Mobility assistance",
+  "onboardingSurveyDisabilityOptOther": "Prefer not to say",
+  "onboardingSurveyGondarSrhTitle": "Do you know where to access sexual & reproductive health services at the University of Gondar?",
+  "onboardingSurveyGondarSrhOptYes": "Yes, I know",
+  "onboardingSurveyGondarSrhOptNo": "No, not yet",
+  "onboardingSurveyGondarSrhOptUnsure": "Not sure",
+  "onboardingSurveyNext": "Next",
+  "onboardingSurveyBack": "Back",
+  "onboardingSurveyFinish": "Finish",
+  "onboardingSurveySkip": "Skip for now",
+  "onboardingSurveyCompletedTitle": "Thank You!",
+  "onboardingSurveyCompletedBody": "Your anonymous responses help tailor campus health support.",
+  "onboardingSurveyViewGondarClinic": "View Gondar Campus Clinic",
+  "onboardingSurveyTakeSurveyPrompt": "Complete Student Baseline Survey"
 }
 

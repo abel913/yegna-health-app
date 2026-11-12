@@ -6199,6 +6199,210 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Club Lead & Mentor'**
   String get assignedMentorLabel;
+
+  /// No description provided for @onboardingSurveyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal & General Information'**
+  String get onboardingSurveyTitle;
+
+  /// No description provided for @onboardingSurveySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Student Baseline Survey'**
+  String get onboardingSurveySubtitle;
+
+  /// No description provided for @onboardingSurveyPrivacyNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Your answers are anonymous and used solely to improve campus youth health services.'**
+  String get onboardingSurveyPrivacyNotice;
+
+  /// No description provided for @onboardingSurveySelectOnlyOne.
+  ///
+  /// In en, this message translates to:
+  /// **'SELECT ONLY 1'**
+  String get onboardingSurveySelectOnlyOne;
+
+  /// No description provided for @onboardingSurveyQuestionNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Q.{number}'**
+  String onboardingSurveyQuestionNumber(String number);
+
+  /// No description provided for @onboardingSurveyAgeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What is your age?'**
+  String get onboardingSurveyAgeTitle;
+
+  /// No description provided for @onboardingSurveyAgeOpt1.
+  ///
+  /// In en, this message translates to:
+  /// **'18–20'**
+  String get onboardingSurveyAgeOpt1;
+
+  /// No description provided for @onboardingSurveyAgeOpt2.
+  ///
+  /// In en, this message translates to:
+  /// **'21–24'**
+  String get onboardingSurveyAgeOpt2;
+
+  /// No description provided for @onboardingSurveyAgeOpt3.
+  ///
+  /// In en, this message translates to:
+  /// **'25–29'**
+  String get onboardingSurveyAgeOpt3;
+
+  /// No description provided for @onboardingSurveyAgeOpt4.
+  ///
+  /// In en, this message translates to:
+  /// **'30 and above'**
+  String get onboardingSurveyAgeOpt4;
+
+  /// No description provided for @onboardingSurveyYearTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What is your current year of study?'**
+  String get onboardingSurveyYearTitle;
+
+  /// No description provided for @onboardingSurveyYearOpt1.
+  ///
+  /// In en, this message translates to:
+  /// **'1st Year'**
+  String get onboardingSurveyYearOpt1;
+
+  /// No description provided for @onboardingSurveyYearOpt2.
+  ///
+  /// In en, this message translates to:
+  /// **'2nd Year'**
+  String get onboardingSurveyYearOpt2;
+
+  /// No description provided for @onboardingSurveyYearOpt3.
+  ///
+  /// In en, this message translates to:
+  /// **'3rd Year'**
+  String get onboardingSurveyYearOpt3;
+
+  /// No description provided for @onboardingSurveyYearOpt4.
+  ///
+  /// In en, this message translates to:
+  /// **'4th Year and above'**
+  String get onboardingSurveyYearOpt4;
+
+  /// No description provided for @onboardingSurveyYearOpt5.
+  ///
+  /// In en, this message translates to:
+  /// **'Postgraduate'**
+  String get onboardingSurveyYearOpt5;
+
+  /// No description provided for @onboardingSurveyDisabilityTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Do you have a disability or special accessibility need?'**
+  String get onboardingSurveyDisabilityTitle;
+
+  /// No description provided for @onboardingSurveyDisabilityOptNone.
+  ///
+  /// In en, this message translates to:
+  /// **'None / No disability'**
+  String get onboardingSurveyDisabilityOptNone;
+
+  /// No description provided for @onboardingSurveyDisabilityOptVisual.
+  ///
+  /// In en, this message translates to:
+  /// **'Visual impairment'**
+  String get onboardingSurveyDisabilityOptVisual;
+
+  /// No description provided for @onboardingSurveyDisabilityOptHearing.
+  ///
+  /// In en, this message translates to:
+  /// **'Hearing impairment'**
+  String get onboardingSurveyDisabilityOptHearing;
+
+  /// No description provided for @onboardingSurveyDisabilityOptPhysical.
+  ///
+  /// In en, this message translates to:
+  /// **'Physical / Mobility assistance'**
+  String get onboardingSurveyDisabilityOptPhysical;
+
+  /// No description provided for @onboardingSurveyDisabilityOptOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Prefer not to say'**
+  String get onboardingSurveyDisabilityOptOther;
+
+  /// No description provided for @onboardingSurveyGondarSrhTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Do you know where to access sexual & reproductive health services at the University of Gondar?'**
+  String get onboardingSurveyGondarSrhTitle;
+
+  /// No description provided for @onboardingSurveyGondarSrhOptYes.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, I know'**
+  String get onboardingSurveyGondarSrhOptYes;
+
+  /// No description provided for @onboardingSurveyGondarSrhOptNo.
+  ///
+  /// In en, this message translates to:
+  /// **'No, not yet'**
+  String get onboardingSurveyGondarSrhOptNo;
+
+  /// No description provided for @onboardingSurveyGondarSrhOptUnsure.
+  ///
+  /// In en, this message translates to:
+  /// **'Not sure'**
+  String get onboardingSurveyGondarSrhOptUnsure;
+
+  /// No description provided for @onboardingSurveyNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get onboardingSurveyNext;
+
+  /// No description provided for @onboardingSurveyBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get onboardingSurveyBack;
+
+  /// No description provided for @onboardingSurveyFinish.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish'**
+  String get onboardingSurveyFinish;
+
+  /// No description provided for @onboardingSurveySkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip for now'**
+  String get onboardingSurveySkip;
+
+  /// No description provided for @onboardingSurveyCompletedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Thank You!'**
+  String get onboardingSurveyCompletedTitle;
+
+  /// No description provided for @onboardingSurveyCompletedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your anonymous responses help tailor campus health support.'**
+  String get onboardingSurveyCompletedBody;
+
+  /// No description provided for @onboardingSurveyViewGondarClinic.
+  ///
+  /// In en, this message translates to:
+  /// **'View Gondar Campus Clinic'**
+  String get onboardingSurveyViewGondarClinic;
+
+  /// No description provided for @onboardingSurveyTakeSurveyPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete Student Baseline Survey'**
+  String get onboardingSurveyTakeSurveyPrompt;
 }
 
 class _AppLocalizationsDelegate
