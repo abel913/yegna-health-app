@@ -142,6 +142,42 @@ class SupabaseAuthRepository implements AuthRepository {
   }
 
   @override
+  Future<void> verifyEmailCode(
+      {required String email, required String code}) async {
+    try {
+      await _client.auth.verifyOTP(
+        email: email.trim(),
+        token: code.trim(),
+        type: OtpType.signup,
+      );
+    } on AuthException catch (error) {
+      throw AuthFailure(_mapAuthException(error));
+    } catch (_) {
+      throw const AuthFailure(AuthIssue.unexpected);
+    }
+  }
+
+  @override
+  Future<void> resendVerification(String email) async {
+    try {
+      await _client.auth.resend(
+        type: OtpType.signup,
+        email: email.trim(),
+      );
+    } on AuthException catch (error) {
+      throw AuthFailure(_mapAuthException(error));
+    } catch (_) {
+      throw const AuthFailure(AuthIssue.unexpected);
+    }
+  }
+
+  @override
+  Future<void> deleteAccount() async {
+    _requireVerifiedUser();
+    await signOut();
+  }
+
+  @override
   Future<void> signOut() async {
     try {
       await _client.auth.signOut();
@@ -169,11 +205,13 @@ class SupabaseAuthRepository implements AuthRepository {
   AuthUser? _toAuthUser(User? user) {
     if (user == null) return null;
     final displayName = user.userMetadata?['display_name'];
+    final surveyCompleted = user.userMetadata?['survey_completed'] == true;
     return AuthUser(
       id: user.id,
       email: user.email ?? '',
       emailVerified: user.emailConfirmedAt != null,
       displayName: displayName is String ? displayName : '',
+      hasCompletedSurvey: surveyCompleted,
     );
   }
 

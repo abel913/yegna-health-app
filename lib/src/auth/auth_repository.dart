@@ -12,6 +12,9 @@ abstract interface class AuthRepository {
   });
 
   Future<void> signIn({required String email, required String password});
+  Future<void> verifyEmailCode({required String email, required String code});
+  Future<void> resendVerification(String email);
+  Future<void> deleteAccount();
   Future<void> sendPasswordRecovery(String email);
   Future<void> updatePassword(String password);
   Future<void> updateDisplayName(String displayName);
@@ -46,6 +49,17 @@ class UnconfiguredAuthRepository implements AuthRepository {
   Future<void> signIn(
           {required String email, required String password}) async =>
       _unavailable();
+
+  @override
+  Future<void> verifyEmailCode(
+          {required String email, required String code}) async =>
+      _unavailable();
+
+  @override
+  Future<void> resendVerification(String email) async => _unavailable();
+
+  @override
+  Future<void> deleteAccount() async => _unavailable();
 
   @override
   Future<void> sendPasswordRecovery(String email) async => _unavailable();

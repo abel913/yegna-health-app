@@ -21,6 +21,7 @@ class BackendAuthRepository implements AuthRepository {
   static const String keyEmail = 'backend_auth_email';
   static const String keyDisplayName = 'backend_auth_display_name';
   static const String keyRole = 'backend_auth_role';
+  static const String keySurveyCompleted = 'backend_auth_survey_completed';
 
   final ApiClient _apiClient;
   final SharedPreferences _preferences;
@@ -45,6 +46,7 @@ class BackendAuthRepository implements AuthRepository {
     final email = _preferences.getString(keyEmail);
     final displayName = _preferences.getString(keyDisplayName) ?? '';
     final role = _preferences.getString(keyRole) ?? 'STUDENT';
+    final surveyCompleted = _preferences.getBool(keySurveyCompleted) ?? false;
 
     if (token != null && token.isNotEmpty && userId != null && email != null) {
       _snapshot = AuthSnapshot(
@@ -54,6 +56,7 @@ class BackendAuthRepository implements AuthRepository {
           displayName: displayName,
           role: role,
           emailVerified: true,
+          hasCompletedSurvey: surveyCompleted,
         ),
       );
       _changes.add(_snapshot);
@@ -85,8 +88,10 @@ class BackendAuthRepository implements AuthRepository {
     if (user != null) {
       final updatedName = user['displayName'] as String? ?? '';
       final updatedRole = user['role'] as String? ?? 'STUDENT';
+      final updatedSurvey = user['hasCompletedSurvey'] as bool? ?? false;
       await _preferences.setString(keyDisplayName, updatedName);
       await _preferences.setString(keyRole, updatedRole);
+      await _preferences.setBool(keySurveyCompleted, updatedSurvey);
 
       final current = _snapshot.user;
       if (current != null) {
@@ -97,6 +102,7 @@ class BackendAuthRepository implements AuthRepository {
             displayName: updatedName,
             role: updatedRole,
             emailVerified: true,
+            hasCompletedSurvey: updatedSurvey,
           ),
         );
         _changes.add(_snapshot);
@@ -124,12 +130,14 @@ class BackendAuthRepository implements AuthRepository {
         final userEmail = user['email'] as String;
         final name = (user['displayName'] as String?) ?? displayName;
         final role = (user['role'] as String?) ?? 'STUDENT';
+        final surveyCompleted = user['hasCompletedSurvey'] as bool? ?? false;
 
         await _preferences.setString(keyToken, token);
         await _preferences.setString(keyUserId, id);
         await _preferences.setString(keyEmail, userEmail);
         await _preferences.setString(keyDisplayName, name);
         await _preferences.setString(keyRole, role);
+        await _preferences.setBool(keySurveyCompleted, surveyCompleted);
 
         _snapshot = AuthSnapshot(
           user: AuthUser(
@@ -138,6 +146,7 @@ class BackendAuthRepository implements AuthRepository {
             displayName: name,
             role: role,
             emailVerified: true,
+            hasCompletedSurvey: surveyCompleted,
           ),
         );
         _changes.add(_snapshot);
@@ -174,12 +183,14 @@ class BackendAuthRepository implements AuthRepository {
       final userEmail = user['email'] as String;
       final name = (user['displayName'] as String?) ?? '';
       final role = (user['role'] as String?) ?? 'STUDENT';
+      final surveyCompleted = user['hasCompletedSurvey'] as bool? ?? false;
 
       await _preferences.setString(keyToken, token);
       await _preferences.setString(keyUserId, id);
       await _preferences.setString(keyEmail, userEmail);
       await _preferences.setString(keyDisplayName, name);
       await _preferences.setString(keyRole, role);
+      await _preferences.setBool(keySurveyCompleted, surveyCompleted);
 
       _snapshot = AuthSnapshot(
         user: AuthUser(
@@ -188,6 +199,7 @@ class BackendAuthRepository implements AuthRepository {
           displayName: name,
           role: role,
           emailVerified: true,
+          hasCompletedSurvey: surveyCompleted,
         ),
       );
       _changes.add(_snapshot);
@@ -210,6 +222,75 @@ class BackendAuthRepository implements AuthRepository {
       throw const AuthFailure(AuthIssue.networkUnavailable);
     }
     throw const AuthFailure(AuthIssue.unexpected);
+  }
+
+  @override
+  Future<void> verifyEmailCode({
+    required String email,
+    required String code,
+  }) async {
+    final res = await _apiClient.verifyEmailCode(
+      email: email,
+      code: code,
+    );
+
+    if (res.success && res.token != null && res.user != null) {
+      final token = res.token!;
+      final user = res.user!;
+      final id = user['id'] as String;
+      final userEmail = user['email'] as String;
+      final name = (user['displayName'] as String?) ?? '';
+      final role = (user['role'] as String?) ?? 'STUDENT';
+      final surveyCompleted = user['hasCompletedSurvey'] as bool? ?? false;
+
+      await _preferences.setString(keyToken, token);
+      await _preferences.setString(keyUserId, id);
+      await _preferences.setString(keyEmail, userEmail);
+      await _preferences.setString(keyDisplayName, name);
+      await _preferences.setString(keyRole, role);
+      await _preferences.setBool(keySurveyCompleted, surveyCompleted);
+
+      _snapshot = AuthSnapshot(
+        user: AuthUser(
+          id: id,
+          email: userEmail,
+          displayName: name,
+          role: role,
+          emailVerified: true,
+          hasCompletedSurvey: surveyCompleted,
+        ),
+      );
+      _changes.add(_snapshot);
+      return;
+    }
+
+    if (res.errorCode == 'INVALID_CODE' || res.statusCode == 400) {
+      throw const AuthFailure(AuthIssue.invalidVerificationCode);
+    }
+    if (res.errorCode == 'NETWORK_ERROR') {
+      throw const AuthFailure(AuthIssue.networkUnavailable);
+    }
+    throw const AuthFailure(AuthIssue.verificationFailed);
+  }
+
+  @override
+  Future<void> resendVerification(String email) async {
+    final res = await _apiClient.resendVerification(email: email);
+    if (!res.success) {
+      if (res.errorCode == 'NETWORK_ERROR') {
+        throw const AuthFailure(AuthIssue.networkUnavailable);
+      }
+      throw const AuthFailure(AuthIssue.unexpected);
+    }
+  }
+
+  @override
+  Future<void> deleteAccount() async {
+    final token = _preferences.getString(keyToken);
+    if (token != null && token.isNotEmpty) {
+      await _apiClient.deleteAccount(token: token);
+    }
+    await signOut();
   }
 
   @override
@@ -284,6 +365,7 @@ class BackendAuthRepository implements AuthRepository {
     await _preferences.remove(keyEmail);
     await _preferences.remove(keyDisplayName);
     await _preferences.remove(keyRole);
+    await _preferences.remove(keySurveyCompleted);
 
     _snapshot = const AuthSnapshot(user: null);
     _changes.add(_snapshot);
