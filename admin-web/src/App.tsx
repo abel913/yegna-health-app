@@ -6,6 +6,7 @@ import { FacilitiesPage } from './pages/FacilitiesPage.js';
 import { MentorsPage } from './pages/MentorsPage.js';
 import { LearningCmsPage } from './pages/LearningCmsPage.js';
 import { QuizzesPage } from './pages/QuizzesPage.js';
+import { LearningAssessmentsPage } from './pages/LearningAssessmentsPage.js';
 import { ClubsPage } from './pages/ClubsPage.js';
 import { UsersPage } from './pages/UsersPage.js';
 import { AuditLogsPage } from './pages/AuditLogsPage.js';
@@ -18,6 +19,7 @@ import {
   Mentor,
   Module,
   QuizQuestion,
+  LearningAssessment,
   StudentClub,
   ManagedUser,
   AuditLog,
@@ -39,6 +41,7 @@ export function App() {
   const [mentors, setMentors] = useState<Mentor[]>([]);
   const [modules, setModules] = useState<Module[]>([]);
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
+  const [learningAssessments, setLearningAssessments] = useState<LearningAssessment[]>([]);
   const [clubs, setClubs] = useState<StudentClub[]>([]);
   const [users, setUsers] = useState<ManagedUser[]>([]);
   const [logs, setLogs] = useState<AuditLog[]>([]);
@@ -46,7 +49,7 @@ export function App() {
   const loadAllData = async () => {
     if (!user) return;
     try {
-      const [dashData, facData, menData, modData, qData, clubData, userData, logData] =
+      const [dashData, facData, menData, modData, qData, clubData, userData, logData, assessmentData] =
         await Promise.all([
           api.getDashboard().catch(() => ({ metrics: null, recentActivity: [] })),
           api.getFacilities().catch(() => ({ facilities: [] })),
@@ -56,6 +59,7 @@ export function App() {
           api.getClubs().catch(() => ({ clubs: [] })),
           api.getUsers().catch(() => ({ users: [] })),
           api.getAuditLogs().catch(() => ({ logs: [] })),
+          api.getLearningAssessments().catch(() => ({ assessments: [] })),
         ]);
 
       if (dashData.metrics) {
@@ -66,6 +70,7 @@ export function App() {
       setMentors(menData.mentors || []);
       setModules(modData.modules || []);
       setQuestions(qData.questions || []);
+      setLearningAssessments(assessmentData.assessments || []);
       setClubs(clubData.clubs || []);
       setUsers(userData.users || []);
       setLogs(logData.logs || []);
@@ -225,6 +230,15 @@ export function App() {
     } catch (err: any) {
       toast.error(err.message || 'Failed to delete question', 'Error');
     }
+  };
+
+  const saveLearningAssessment = async (data: { moduleId: string; questions: { promptEn: string; promptAm: string; choices: { labelEn: string; labelAm: string; score: number }[] }[] }) => {
+    try { await api.saveLearningAssessment(data); toast.success(lang === 'am' ? 'ምዘናው ተቀምጧል' : 'Learning assessment saved', 'Learning Assessments'); await loadAllData(); }
+    catch (err: any) { toast.error(err.message || 'Failed to save assessment', 'Error'); }
+  };
+  const deleteLearningAssessment = async (id: string) => {
+    try { await api.deleteLearningAssessment(id); toast.info(lang === 'am' ? 'ምዘናው ተሰርዟል' : 'Learning assessment deleted', 'Removed'); await loadAllData(); }
+    catch (err: any) { toast.error(err.message || 'Failed to delete assessment', 'Error'); }
   };
 
   // Club Actions
@@ -427,6 +441,7 @@ export function App() {
             onDeleteQuestion={handleDeleteQuestion}
           />
         )}
+        {currentTab === 'learning-assessments' && <LearningAssessmentsPage modules={modules} assessments={learningAssessments} lang={lang} onSave={saveLearningAssessment} onDelete={deleteLearningAssessment} />}
         {currentTab === 'clubs' && (
           <ClubsPage
             clubs={clubs}

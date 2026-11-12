@@ -5,6 +5,7 @@ import {
   Mentor,
   Module,
   QuizQuestion,
+  LearningAssessment,
   StudentClub,
   ManagedUser,
   AuditLog,
@@ -223,6 +224,20 @@ export const api = {
       headers: getAuthHeaders(),
     });
     if (!res.ok) throw new Error('Failed to delete question');
+  },
+
+  async getLearningAssessments(): Promise<{ assessments: LearningAssessment[] }> {
+    const res = await fetch(`${API_BASE}/learning-assessments`, { headers: getAuthHeaders() });
+    if (!res.ok) throw new Error('Failed to load learning assessments');
+    return res.json();
+  },
+  async saveLearningAssessment(data: { moduleId: string; questions: { promptEn: string; promptAm: string; choices: { labelEn: string; labelAm: string; score: number }[] }[] }): Promise<void> {
+    const res = await fetch(`${API_BASE}/admin/learning-assessments`, { method: 'POST', headers: getAuthHeaders(), body: JSON.stringify(data) });
+    if (!res.ok) { const body = await res.json().catch(() => ({})); throw new Error(body.error || 'Failed to save learning assessment'); }
+  },
+  async deleteLearningAssessment(id: string): Promise<void> {
+    const res = await fetch(`${API_BASE}/admin/learning-assessments/${id}`, { method: 'DELETE', headers: getAuthHeaders() });
+    if (!res.ok) throw new Error('Failed to delete learning assessment');
   },
 
   // Clubs

@@ -79,6 +79,50 @@ model Module {
   createdAt   DateTime       @default(now())
 
   quizzes     QuizQuestion[]
+  assessments LearningAssessment[]
+
+  @@schema("yegna")
+}
+
+model LearningAssessment {
+  id        String   @id @default(uuid())
+  moduleId  String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  module    Module                   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  questions LearningAssessmentQuestion[]
+
+  @@schema("yegna")
+}
+
+model LearningAssessmentQuestion {
+  id           String   @id @default(uuid())
+  assessmentId String
+  position     Int      @default(0)
+  promptEn     String
+  promptAm     String
+  createdAt    DateTime @default(now())
+
+  assessment LearningAssessment       @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  choices    LearningAssessmentChoice[]
+
+  @@index([assessmentId, position])
+
+  @@schema("yegna")
+}
+
+model LearningAssessmentChoice {
+  id         String   @id @default(uuid())
+  questionId String
+  position   Int
+  labelEn    String
+  labelAm    String
+  score      Int      @default(0)
+
+  question LearningAssessmentQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([questionId, position])
 
   @@schema("yegna")
 }
