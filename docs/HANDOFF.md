@@ -1,5 +1,27 @@
 # Handoff
 
+## Unified Assessments Hub in Desktop Web Admin Portal (2026-11-12)
+
+- **Unified Assessments Page (`admin-web/src/pages/AssessmentsPage.tsx`)**:
+  - Built a comprehensive, high-performance Assessments Hub with a 2-mode segmented switcher:
+    1. **General Baseline Survey (Tab 1)**:
+       - 4 Top KPI Cards: Total Respondents, Clinic Awareness Rate %, Accessibility Support Rate %, Primary Cohort.
+       - 4 Question Breakdown Cards: Age Distribution, Year of Study, Accessibility Needs, University of Gondar SRH Awareness.
+       - Recent Anonymous Submissions Table with search, filtering by awareness, and UTF-8 BOM CSV export (`exportToCsv`).
+       - Zero-Knowledge student privacy guarantee: `● 100% Anonymous (Zero PII)` badges.
+    2. **Module Learning Assessments (Tab 2)**:
+       - Integrated Abel's module assessment builder (`LearningAssessmentsPage.tsx`) with draft question generation, scoring, and module deletion.
+- **Sidebar Integration (`AdminLayout.tsx`)**:
+  - Replaced fragmented sidebar entries with a single unified entry: `Assessments & Surveys` (`ምዘናዎች እና ቅኝቶች`).
+- **Backend Survey Analytics Expansion (`server/src/controllers/survey.controller.ts`)**:
+  - `GET /api/admin/survey/stats`: Expanded to return both aggregated breakdowns and recent chronological submissions.
+- **Verification Results**:
+  - `admin-web` build: `tsc && vite build`: **1,603 modules transformed, 0 errors in 6.08s**.
+  - `server` build: `tsc`: **0 errors**.
+  - Live API verified: returns total responses, question-by-question aggregations, and individual anonymous records.
+  - Changes committed and pushed to `origin/main`.
+
+
 ## Anonymous Student Baseline Survey & Stacked Card Modal (2026-11-07)
 
 - **Mobile Onboarding Flow & Modal Experience (`lib/src/onboarding/`)**:

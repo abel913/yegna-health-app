@@ -1,5 +1,16 @@
 # Technical decisions
 
+## 2026-11-12 — Unified Assessments Hub Architecture in Admin Web Portal
+
+- **Consolidated Assessments Hub (`AssessmentsPage.tsx`)**:
+  - Combined the **General Baseline Survey** analytics and the **Module Learning Assessment Editor** under one unified top-level sidebar route: `assessments` (`Assessments & Surveys` / `ምዘናዎች እና ቅኝቶች`).
+  - *Rationale*: Eliminates sidebar fragmentation, grouping all evaluation and survey mechanisms together. Administrators can seamlessly switch between population-level baseline surveys and module-specific educational tests with zero page reloads.
+- **Zero-Knowledge Anonymous Analytics Engine**:
+  - Displays real-time aggregated metrics across all 4 baseline questions (Age distribution, Study year breakdown, Accessibility accommodations, University of Gondar SRH clinic awareness).
+  - Protects student privacy: the data table only surfaces categorical values with a `● 100% Anonymous (Zero PII)` badge, with no user IDs or contact information.
+  - Added 1-click UTF-8 BOM CSV export for academic and clinic administration reporting.
+
+
 ## 2026-11-07 — Anonymous Student Baseline Survey & Stacked Card Modal Architecture
 
 - **Onboarding Stacked-Card Popup Modal (`OnboardingSurveyDialog`)**:

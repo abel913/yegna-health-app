@@ -1,5 +1,21 @@
 # Phase status
 
+## Unified Assessments Hub in Desktop Web Admin Portal (2026-11-12)
+
+**Status: Completed & 100% Verified.**
+- **Admin Assessments Hub (`AssessmentsPage.tsx`)**:
+  - Implemented the unified Assessments Hub with 2-mode tab switching (`General Baseline Survey` vs `Module Learning Assessments`).
+  - Integrated 4 glass KPI stat cards (Total Respondents, Gondar Clinic Awareness, Accessibility Support, Primary Cohort).
+  - Integrated 4 question breakdown cards with real-time percentage progress bars matching the approved Dribbble mockup.
+  - Added Recent Anonymous Submissions table with live search, filters, and 1-click UTF-8 BOM CSV export.
+  - Integrated Abel's Module Learning Assessment builder under Tab 2.
+- **Verification Gates**:
+  - `admin-web` build: `tsc && vite build`: **1,603 modules transformed, 0 errors**.
+  - `server` build: `tsc`: **0 errors**.
+  - Live API verification: `GET /api/admin/survey/stats` returning live Supabase PostgreSQL data with real-time response counts and breakdown.
+  - Git: Committed and pushed to `origin/main` (`f2a5f7e`).
+
+
 ## Anonymous Student Baseline Survey & Stacked Card Modal (2026-11-07)
 
 **Status: Completed & 100% Verified.**
