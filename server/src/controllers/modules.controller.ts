@@ -69,6 +69,19 @@ export async function getModuleById(req: Request, res: Response) {
 export async function createModule(req: AuthRequest, res: Response) {
   try {
     const data = moduleSchema.parse(req.body);
+
+    // Debounce duplicate submissions (within last 15 seconds)
+    const recentDuplicate = await prisma.module.findFirst({
+      where: {
+        titleEn: data.titleEn,
+        createdAt: { gte: new Date(Date.now() - 15000) },
+      },
+    });
+
+    if (recentDuplicate) {
+      return res.status(200).json({ module: recentDuplicate, duplicatePrevented: true });
+    }
+
     const mod = await prisma.module.create({ data });
 
     await prisma.auditLog.create({
@@ -118,13 +131,27 @@ export async function updateModule(req: AuthRequest, res: Response) {
 export async function deleteModule(req: AuthRequest, res: Response) {
   try {
     const { id } = req.params;
-    const mod = await prisma.module.delete({ where: { id } });
+
+    const existingMod = await prisma.module.findUnique({
+      where: { id },
+    });
+
+    if (!existingMod) {
+      return res.status(404).json({ error: 'Module not found' });
+    }
+
+    // Safe cascade deletion: delete related quizzes and assessments first in transaction
+    await prisma.$transaction(async (tx) => {
+      await tx.quizQuestion.deleteMany({ where: { moduleId: id } });
+      await tx.learningAssessment.deleteMany({ where: { moduleId: id } });
+      await tx.module.delete({ where: { id } });
+    });
 
     await prisma.auditLog.create({
       data: {
         action: 'MODULE_DELETED',
         adminEmail: req.user?.email || 'admin@yegnahealth.org',
-        details: `Deleted health module: ${mod.titleEn}`,
+        details: `Deleted health module: ${existingMod.titleEn}`,
       },
     });
 
