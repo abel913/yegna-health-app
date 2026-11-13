@@ -1,5 +1,29 @@
 # Handoff
 
+## Dynamic Learning Modules CMS & Offline Mobile Sync (2026-11-13)
+
+- **Admin CMS Module Management**:
+  - `admin-web/src/pages/LearningCmsPage.tsx`: Full CRUD on modules with Markdown preview, category tagging, read time, order index, author attribution, and bilingual tabs (English & Amharic).
+  - Protected with `isSubmitting` spinner to prevent double-clicks.
+  - Safe confirmation dialog (`ConfirmModal`) before deletion.
+- **Backend Cascading Deletions**:
+  - `server/src/controllers/modules.controller.ts`: In `deleteModule`, safely deletes linked `QuizQuestion` and `LearningAssessment` records in a Prisma transaction before deleting the module, preventing foreign key 500 errors.
+  - Added 15-second debounce protection on `createModule`.
+- **Mobile Offline Storage & Sync**:
+  - `OfflineSyncStore`: Persists modules in local storage (`SharedPreferences`).
+  - `SyncEducationRepository.getCurriculumModuleItems()`: Offline-first retrieval. Uses local cache; falls back to bundled modules if cold install; revalidates with `/api/modules` in background when online.
+- **Mobile UI Preservation & Dynamic Module Detail Page**:
+  - Preserved the rich UI, illustrations, and expandable sections of the 8 standard modules (`PubertyDetailPage`, `StiModuleDetailPage`, etc.).
+  - Added `DynamicModuleDetailPage` for admin-created modules (Module 09, 10...) with the exact same visual styling: hero banner, doctor's note container, dynamic expandable sections parsed from Markdown, `ModuleAssessmentLauncherCard`, and quiz launcher.
+  - Updated `LearningModulesCarousel` and home page carousel to display dynamic modules.
+- **Verification**:
+  - `dart analyze lib test`: 0 issues found.
+  - `flutter test`: 201/201 passed.
+  - `npm run build --prefix server`: 0 errors.
+  - `npm run build --prefix admin-web`: 0 errors.
+  - Live Flutter Web hot-restarted on Chrome.
+
+
 ## Double-Submission Prevention & Professional WhatsApp / Email Channel Display (2026-11-13)
 
 - **Double-Click Prevention**:
