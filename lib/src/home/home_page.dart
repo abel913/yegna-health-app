@@ -9,6 +9,7 @@ import '../learning/education_repository.dart';
 import '../learning/hiv_module_page.dart';
 import '../learning/learning_modules_carousel.dart';
 import '../learning/learning_progress_controller.dart';
+import '../learning/sync_education_repository.dart';
 import '../onboarding/onboarding_survey_dialog.dart';
 import '../onboarding/onboarding_survey_repository.dart';
 import '../theme/app_glass_theme.dart';
@@ -1093,6 +1094,7 @@ class _HomePageState extends State<HomePage> {
                     const SizedBox(height: 12),
                     _DeepGlassLearningModulesCarousel(
                       locale: widget.locale,
+                      educationRepository: widget.educationRepository,
                       progressController: widget.progressController,
                       assessmentRepository: widget.assessmentRepository,
                       onOpenLearning: widget.onOpenLearning,
@@ -1663,6 +1665,7 @@ class _DeepGlassLearningModulesCarousel extends StatelessWidget {
     required this.locale,
     required this.onOpenLearning,
     required this.onOpenArticle,
+    this.educationRepository,
     this.progressController,
     this.assessmentRepository,
   });
@@ -1670,6 +1673,7 @@ class _DeepGlassLearningModulesCarousel extends StatelessWidget {
   final Locale locale;
   final VoidCallback onOpenLearning;
   final ValueChanged<String> onOpenArticle;
+  final EducationRepository? educationRepository;
   final LearningProgressController? progressController;
   final AssessmentRepository? assessmentRepository;
 
@@ -1868,19 +1872,27 @@ class _DeepGlassLearningModulesCarousel extends StatelessWidget {
     final isAmharic = locale.languageCode == 'am';
 
     Widget buildCarousel(Set<String> completedIds) {
-      return SizedBox(
-        height: 255,
-        child: ListView.separated(
-          scrollDirection: Axis.horizontal,
-          itemCount: kLearningModules.length,
-          separatorBuilder: (_, __) => const SizedBox(width: 14),
-          itemBuilder: (context, index) {
-            final module = kLearningModules[index];
-            final isCompleted = completedIds.contains(module.id);
+      return FutureBuilder<List<LearningModuleItem>>(
+        future: (educationRepository is SyncEducationRepository)
+            ? (educationRepository as SyncEducationRepository)
+                .getCurriculumModuleItems()
+            : null,
+        initialData: kLearningModules,
+        builder: (context, snapshot) {
+          final modules = snapshot.data ?? kLearningModules;
+          return SizedBox(
+            height: 255,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: modules.length,
+              separatorBuilder: (_, __) => const SizedBox(width: 14),
+              itemBuilder: (context, index) {
+                final module = modules[index];
+                final isCompleted = completedIds.contains(module.id);
 
-            return SizedBox(
-              width: 275,
-              child: _DeepGlassContainer(
+                return SizedBox(
+                  width: 275,
+                  child: _DeepGlassContainer(
                 borderRadius: 22,
                 padding: EdgeInsets.zero,
                 onTap: () => _handleModuleTap(context, module),
@@ -2079,7 +2091,9 @@ class _DeepGlassLearningModulesCarousel extends StatelessWidget {
           },
         ),
       );
-    }
+    },
+  );
+}
 
     Set<String> getCompletedIds() {
       return progressController?.progress?.articles
