@@ -11,6 +11,7 @@ import {
   AuditLog,
   SystemTelemetry,
   BaselineSurveyStats,
+  SurveyQuestion,
 } from '../types/index.js';
 
 const API_BASE = '/api';
@@ -62,6 +63,74 @@ export const api = {
     const res = await fetch(`${API_BASE}/admin/survey/stats`, { headers: getAuthHeaders() });
     if (!res.ok) throw new Error('Failed to load baseline survey stats');
     return res.json();
+  },
+
+  async deleteSurveyResponse(id: string): Promise<void> {
+    const res = await fetch(`${API_BASE}/admin/survey/responses/${id}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(),
+    });
+    if (!res.ok) throw new Error('Failed to delete survey response');
+  },
+
+  async clearSurveyResponses(): Promise<void> {
+    const res = await fetch(`${API_BASE}/admin/survey/responses`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(),
+    });
+    if (!res.ok) throw new Error('Failed to clear survey responses');
+  },
+
+  async getSurveyQuestions(params?: { section?: number | string; moduleKey?: string }): Promise<{ questions: SurveyQuestion[] }> {
+    const query = new URLSearchParams();
+    if (params?.section !== undefined && params.section !== 'ALL') {
+      query.append('section', params.section.toString());
+    }
+    if (params?.moduleKey && params.moduleKey !== 'ALL') {
+      query.append('moduleKey', params.moduleKey);
+    }
+    const qStr = query.toString();
+    const url = qStr ? `${API_BASE}/admin/survey/questions?${qStr}` : `${API_BASE}/admin/survey/questions`;
+    const res = await fetch(url, { headers: getAuthHeaders() });
+    if (!res.ok) throw new Error('Failed to load survey questions');
+    return res.json();
+  },
+
+  async createSurveyQuestion(data: Partial<SurveyQuestion>): Promise<{ success: boolean; question: SurveyQuestion }> {
+    const res = await fetch(`${API_BASE}/admin/survey/questions`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || err.error || 'Failed to create question');
+    }
+    return res.json();
+  },
+
+  async updateSurveyQuestion(id: string, data: Partial<SurveyQuestion>): Promise<{ success: boolean; question: SurveyQuestion }> {
+    const res = await fetch(`${API_BASE}/admin/survey/questions/${id}`, {
+      method: 'PUT',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || err.error || 'Failed to update question');
+    }
+    return res.json();
+  },
+
+  async deleteSurveyQuestion(id: string): Promise<void> {
+    const res = await fetch(`${API_BASE}/admin/survey/questions/${id}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || err.error || 'Failed to delete question');
+    }
   },
 
   async getAuditLogs(): Promise<{ logs: AuditLog[] }> {

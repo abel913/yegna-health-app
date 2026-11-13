@@ -26,9 +26,19 @@ export interface Mentor {
   id: string;
   name: string;
   organization: string;
+  campus?: string;
+  roleTitleEn?: string;
+  roleTitleAm?: string;
   phone: string;
+  whatsapp?: string;
   telegramHandle?: string;
   email?: string;
+  experienceYears?: number;
+  sessionsCount?: number;
+  workingHoursEn?: string;
+  workingHoursAm?: string;
+  bioEn?: string;
+  bioAm?: string;
   languages: string[];
   specialties: string[];
   isAvailable: boolean;
@@ -172,6 +182,11 @@ export interface SurveyQuestionOption {
 export interface SurveyQuestion {
   id: string;
   position: number;
+  sectionNumber?: number;
+  sectionKey?: string;
+  sectionTitleEn?: string;
+  sectionTitleAm?: string;
+  moduleKey?: string | null;
   key: string;
   titleEn: string;
   titleAm: string;
