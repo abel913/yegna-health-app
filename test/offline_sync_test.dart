@@ -273,7 +273,8 @@ void main() {
   });
 
   group('SyncClubRepository Offline Tests', () {
-    test('Allows joining a club offline and persists to local roster', () async {
+    test('Allows joining a club offline and persists to local roster',
+        () async {
       final store = OfflineSyncStore();
       final localRepo = LocalClubRepository();
       final repo = SyncClubRepository(

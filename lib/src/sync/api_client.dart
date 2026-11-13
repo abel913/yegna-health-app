@@ -47,10 +47,25 @@ class ApiClient {
     }
   }
 
-  /// Fetches published baseline survey questions from `GET /api/survey/questions`.
-  Future<List<Map<String, dynamic>>?> fetchSurveyQuestions() async {
+  /// Fetches published baseline or modular survey questions from `GET /api/survey/questions`.
+  Future<List<Map<String, dynamic>>?> fetchSurveyQuestions({
+    int? sectionNumber,
+    String? moduleKey,
+  }) async {
     try {
-      final uri = Uri.parse('$baseUrl/survey/questions');
+      final queryParams = <String, String>{};
+      if (sectionNumber != null) {
+        queryParams['section'] = sectionNumber.toString();
+      }
+      if (moduleKey != null && moduleKey.isNotEmpty) {
+        queryParams['moduleKey'] = moduleKey;
+      }
+
+      final baseUri = Uri.parse('$baseUrl/survey/questions');
+      final uri = queryParams.isNotEmpty
+          ? baseUri.replace(queryParameters: queryParams)
+          : baseUri;
+
       final res = await _client.get(uri).timeout(timeout);
       if (res.statusCode == 200) {
         final data = jsonDecode(res.body) as Map<String, dynamic>;
