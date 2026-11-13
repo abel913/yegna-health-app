@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../l10n/app_localizations.dart';
+import '../assessment/module_assessment_launcher_card.dart';
 import 'assessment_repository.dart';
 import 'hiv_quiz_page.dart';
 import 'in_app_video_embed.dart';
@@ -989,6 +990,17 @@ class _HivModuleDetailPageState extends State<HivModuleDetailPage> {
                           );
                         },
                   ),
+                ),
+                const SizedBox(height: 14),
+                const ModuleAssessmentLauncherCard(
+                  sectionNumber: 3,
+                  sectionKey: 'section_3',
+                  moduleKey: 'hiv',
+                  titleEn: 'HIV & STIs Self-Assessment',
+                  titleAm: 'የኤችአይቪ እና አባለዘር በሽታዎች ምዘና',
+                  questionRangeTextEn: 'Q.13–Q.20 • 8 Questions',
+                  questionRangeTextAm: 'ጥያቄ 13–20 • 8 ጥያቄዎች',
+                  badgeColor: Color(0xFF0284C7),
                 ),
               ],
             ),
