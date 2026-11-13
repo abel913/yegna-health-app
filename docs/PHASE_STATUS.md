@@ -1,5 +1,35 @@
 # Phase status
 
+## Dynamic Learning Modules CMS & Offline Mobile Sync (2026-11-13)
+
+**Status: Completed & 100% Verified.**
+- **Backend & PostgreSQL API (`server/src/controllers/modules.controller.ts`)**:
+  - Implemented safe transactional cascade deletion in `deleteModule`: deletes linked `QuizQuestion` and `LearningAssessment` records first before deleting the `Module`, preventing foreign key constraint violations and server 500 errors.
+  - Enhanced `createModule` with 15-second debounce protection against accidental duplicate submissions.
+  - Added comprehensive audit logging for module creations, updates, and deletions.
+- **Admin Web CMS (`admin-web/src/pages/LearningCmsPage.tsx`)**:
+  - Enabled full editing and creation of modules with dual-tab bilingual (English & Amharic) Markdown support.
+  - Added `isSubmitting` state guard to disable the save button, show a loading spinner, and prevent double submission.
+  - Added full topic categories: `puberty`, `srh`, `sti`, `hiv`, `hepatitis`, `mental_health`, `gbv`, `substance`.
+  - Added safe `ConfirmModal` for module deletions.
+- **Mobile Offline Synchronization (`OfflineSyncStore` & `SyncEducationRepository`)**:
+  - Enhanced `LearningModuleItem` model with `fromMap` factory, dynamic category-based asset resolution, and fallback string resolution.
+  - Added `getCurriculumModuleItems({bool forceRefresh = false})` to `SyncEducationRepository`:
+    - Reads from `OfflineSyncStore.getCachedModules()`.
+    - If cache empty (fresh install with zero connectivity), gracefully defaults to bundled `kLearningModules` (zero blank screens).
+    - If connected, background revalidation fetches latest modules from `/api/modules` and updates local cache.
+- **Mobile UI Preservation & Universal Dynamic Module Detail Page**:
+  - Preserved the rich UI, custom illustrations, expandable accordion sections, and contents of the 8 core module detail pages (`PubertyDetailPage`, `StiModuleDetailPage`, `HepatitisDetailPage`, `GenderBasedViolenceDetailPage`, `SrhDetailPage`, `MentalHealthDetailPage`, `HivModuleDetailPage`, and `SubstanceAbuseDetailPage`) 100% intact.
+  - Created `lib/src/learning/dynamic_module_detail_page.dart` for newly created or custom modules (Module 09, 10, etc.), featuring the exact same optical glass visual design, doctor's note container, dynamic expandable sections parsed from Markdown, `ModuleAssessmentLauncherCard`, quiz launcher, and completion tracking.
+  - Connected `LearningModulesCarousel` in `learn_pages.dart` and the home page horizontal carousel to dynamically display all active modules.
+- **Quality Gates & Verification**:
+  - `dart analyze lib test`: **0 issues found**.
+  - `flutter test`: **All 201 tests passed**.
+  - `npm run build --prefix server`: **0 errors**.
+  - `npm run build --prefix admin-web`: **0 errors**.
+  - Live Flutter Web hot-restarted on Chrome (Port 8080).
+
+
 ## Double-Submission Prevention & Professional WhatsApp / Email Channel Display (2026-11-13)
 
 **Status: Completed & 100% Verified.**
