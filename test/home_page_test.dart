@@ -230,6 +230,6 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(SelfAssessmentPage), findsOneWidget);
-    expect(find.text('Question 1 of 12'), findsOneWidget);
+    expect(find.text('SRHR Self-Assessment Hub'), findsOneWidget);
   });
 }
