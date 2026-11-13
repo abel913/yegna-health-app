@@ -41,14 +41,17 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
   const [moduleToDelete, setModuleToDelete] = useState<Module | null>(null);
   const [activeTab, setActiveTab] = useState<'en' | 'am'>('en');
   const [previewMode, setPreviewMode] = useState<'edit' | 'preview'>('edit');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const categories = ['All', 'puberty', 'srh', 'hiv', 'mental_health', 'gbv', 'substance'];
+  const categories = ['All', 'puberty', 'srh', 'sti', 'hiv', 'hepatitis', 'mental_health', 'gbv', 'substance'];
 
   const categoryLabels: Record<string, { en: string; am: string }> = {
     All: { en: 'All Topics', am: 'ሁሉም ዘርፎች' },
     puberty: { en: 'Puberty & Growth', am: 'ጉርምስና' },
     srh: { en: 'Reproductive Health', am: 'ሥነ-ተዋልዶ' },
+    sti: { en: 'STI Prevention', am: 'የአባላዘር በሽታዎች' },
     hiv: { en: 'HIV & AIDS Prevention', am: 'ኤች.አይ.ቪ' },
+    hepatitis: { en: 'Viral Hepatitis', am: 'የጉበት ቫይረስ' },
     mental_health: { en: 'Mental Health & Stress', am: 'አእምሮ ጤና' },
     gbv: { en: 'GBV & Consent', am: 'ጾታዊ ጥቃት' },
     substance: { en: 'Substance Abuse', am: 'የሱስ መከላከል' },
@@ -190,8 +193,14 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await onSave(formData, editingModule ? editingModule.id : undefined);
-    setIsModalOpen(false);
+    if (isSubmitting) return;
+    try {
+      setIsSubmitting(true);
+      await onSave(formData, editingModule ? editingModule.id : undefined);
+      setIsModalOpen(false);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -715,11 +724,19 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl shadow-md shadow-brand-600/20 cursor-pointer"
+                  disabled={isSubmitting}
+                  className="px-5 py-2 bg-brand-600 hover:bg-brand-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-xl shadow-md shadow-brand-600/20 cursor-pointer flex items-center gap-2"
                 >
-                  {editingModule
-                    ? (lang === 'am' ? 'ለውጦችን መዝግብ' : 'Save Changes')
-                    : (lang === 'am' ? 'ሞጁል ፍጠር' : 'Publish Module')}
+                  {isSubmitting && (
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  )}
+                  <span>
+                    {isSubmitting
+                      ? (lang === 'am' ? 'በመመዝገብ ላይ...' : 'Saving...')
+                      : editingModule
+                      ? (lang === 'am' ? 'ለውጦችን መዝግብ' : 'Save Changes')
+                      : (lang === 'am' ? 'ሞጁል ፍጠር' : 'Publish Module')}
+                  </span>
                 </button>
               </div>
             </form>
