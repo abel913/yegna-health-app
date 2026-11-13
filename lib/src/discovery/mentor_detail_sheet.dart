@@ -157,6 +157,36 @@ class MentorDetailSheet extends StatelessWidget {
                                 color: Color(0xFF64748B),
                               ),
                             ),
+                            const SizedBox(height: 4),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 3),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFEEF2FF),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                  color: const Color(0xFFC7D2FE),
+                                  width: 0.8,
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(Icons.location_on_outlined,
+                                      size: 12, color: Color(0xFF4F46E5)),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    mentor.localizedCampus(isAmharic),
+                                    style: const TextStyle(
+                                      fontFamily: 'PlusJakartaSans',
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w700,
+                                      color: Color(0xFF4338CA),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -315,7 +345,7 @@ class MentorDetailSheet extends StatelessWidget {
                                       ),
                                     ),
                                     Text(
-                                      '@${mentor.telegramHandle}',
+                                      '@${mentor.cleanTelegramHandle}',
                                       style: const TextStyle(
                                         fontFamily: 'PlusJakartaSans',
                                         fontSize: 11.5,
@@ -332,11 +362,11 @@ class MentorDetailSheet extends StatelessWidget {
                                     size: 17, color: Color(0xFF16A34A)),
                                 onPressed: () {
                                   Clipboard.setData(ClipboardData(
-                                      text: '@${mentor.telegramHandle}'));
+                                      text: '@${mentor.cleanTelegramHandle}'));
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       content: Text(
-                                          '${l10n.copyHandleSuccess} (@${mentor.telegramHandle})'),
+                                          '${l10n.copyHandleSuccess} (@${mentor.cleanTelegramHandle})'),
                                       behavior: SnackBarBehavior.floating,
                                     ),
                                   );
@@ -369,7 +399,107 @@ class MentorDetailSheet extends StatelessWidget {
                         ),
                         const SizedBox(height: 10),
 
-                        // Channel 2: Direct Phone Call & SMS
+                        // Channel 2: WhatsApp Consultation (if configured)
+                        if (mentor.hasWhatsapp) ...[
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFF0FDF4),
+                              borderRadius: BorderRadius.circular(14),
+                              border: Border.all(
+                                color: const Color(0xFF86EFAC),
+                                width: 1,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 36,
+                                  height: 36,
+                                  decoration: const BoxDecoration(
+                                    color: Color(0xFF16A34A),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(
+                                    Icons.chat_bubble_rounded,
+                                    color: Colors.white,
+                                    size: 16,
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        isAmharic ? 'ዋትስአፕ' : 'WhatsApp Chat',
+                                        style: const TextStyle(
+                                          fontFamily: 'PlusJakartaSans',
+                                          fontSize: 12.5,
+                                          fontWeight: FontWeight.w700,
+                                          color: Color(0xFF14532D),
+                                        ),
+                                      ),
+                                      Text(
+                                        mentor.whatsapp!,
+                                        style: const TextStyle(
+                                          fontFamily: 'PlusJakartaSans',
+                                          fontSize: 11.5,
+                                          fontWeight: FontWeight.w600,
+                                          color: Color(0xFF16A34A),
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                IconButton(
+                                  tooltip: l10n.copyWhatsappSuccess,
+                                  icon: const Icon(Icons.copy_rounded,
+                                      size: 17, color: Color(0xFF16A34A)),
+                                  onPressed: () {
+                                    Clipboard.setData(ClipboardData(
+                                        text: mentor.whatsapp!));
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                            '${l10n.copyWhatsappSuccess} (${mentor.whatsapp})'),
+                                        behavior: SnackBarBehavior.floating,
+                                      ),
+                                    );
+                                  },
+                                ),
+                                ElevatedButton(
+                                  onPressed: () => MentorCard.launchWhatsApp(
+                                      context, mentor.whatsapp!, l10n),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFF16A34A),
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10, vertical: 8),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    elevation: 0,
+                                  ),
+                                  child: Text(
+                                    l10n.whatsappChatAction,
+                                    style: const TextStyle(
+                                      fontFamily: 'PlusJakartaSans',
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                        ],
+
+                        // Channel 3: Direct Phone Call & SMS
                         Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
@@ -470,6 +600,106 @@ class MentorDetailSheet extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 10),
+
+                        // Channel 4: Email Consultation (if configured)
+                        if (mentor.hasEmail) ...[
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFF8FAFC),
+                              borderRadius: BorderRadius.circular(14),
+                              border: Border.all(
+                                color: const Color(0xFFCBD5E1),
+                                width: 1,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 36,
+                                  height: 36,
+                                  decoration: const BoxDecoration(
+                                    color: Color(0xFF475569),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(
+                                    Icons.mail_outline_rounded,
+                                    color: Colors.white,
+                                    size: 16,
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        l10n.emailConsultationHeading,
+                                        style: const TextStyle(
+                                          fontFamily: 'PlusJakartaSans',
+                                          fontSize: 12.5,
+                                          fontWeight: FontWeight.w700,
+                                          color: Color(0xFF1E293B),
+                                        ),
+                                      ),
+                                      Text(
+                                        mentor.email!,
+                                        style: const TextStyle(
+                                          fontFamily: 'PlusJakartaSans',
+                                          fontSize: 11.5,
+                                          fontWeight: FontWeight.w600,
+                                          color: Color(0xFF475569),
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                IconButton(
+                                  tooltip: l10n.copyEmailSuccess,
+                                  icon: const Icon(Icons.copy_rounded,
+                                      size: 17, color: Color(0xFF475569)),
+                                  onPressed: () {
+                                    Clipboard.setData(
+                                        ClipboardData(text: mentor.email!));
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                            '${l10n.copyEmailSuccess} (${mentor.email})'),
+                                        behavior: SnackBarBehavior.floating,
+                                      ),
+                                    );
+                                  },
+                                ),
+                                ElevatedButton(
+                                  onPressed: () => MentorCard.launchEmail(
+                                      context, mentor.email!, l10n),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFF334155),
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10, vertical: 8),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    elevation: 0,
+                                  ),
+                                  child: Text(
+                                    l10n.sendEmailAction,
+                                    style: const TextStyle(
+                                      fontFamily: 'PlusJakartaSans',
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                        ],
 
                         // Confidentiality Guarantee Footer
                         Container(
