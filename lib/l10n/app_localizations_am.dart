@@ -2993,6 +2993,9 @@ class AppLocalizationsAm extends AppLocalizations {
   String get telegramChatAction => 'በቴሌግራም ያውሩ';
 
   @override
+  String get whatsappChatAction => 'በዋትስአፕ ያውሩ';
+
+  @override
   String get directContactsHeading => 'ቀጥታ የመገናኛ መንገዶች';
 
   @override
@@ -3007,6 +3010,9 @@ class AppLocalizationsAm extends AppLocalizations {
   String get copyPhoneSuccess => 'ስልክ ቁጥር ተቀድቷል';
 
   @override
+  String get copyWhatsappSuccess => 'የዋትስአፕ ቁጥር ተቀድቷል';
+
+  @override
   String get sendSmsAction => 'የጽሑፍ መልዕክት';
 
   @override
@@ -3014,6 +3020,21 @@ class AppLocalizationsAm extends AppLocalizations {
 
   @override
   String get telegramUnavailable => 'ቴሌግራም መክፈት አልተቻለም';
+
+  @override
+  String get whatsappUnavailable => 'ዋትስአፕን በዚህ መሳሪያ ላይ መክፈት አልተቻለም';
+
+  @override
+  String get campusLabel => 'ግቢ';
+
+  @override
+  String get sendEmailAction => 'ኢሜይል ይላኩ';
+
+  @override
+  String get copyEmailSuccess => 'የኢሜይል አድራሻ ተቀድቷል';
+
+  @override
+  String get emailConsultationHeading => 'የኢሜይል አማካሪነት';
 
   @override
   String callHotlineAction(String number) {
@@ -3620,4 +3641,52 @@ class AppLocalizationsAm extends AppLocalizations {
 
   @override
   String get onboardingSurveyTakeSurveyPrompt => 'የተማሪ የመግቢያ መጠይቁን ይሙሉ';
+
+  @override
+  String enterVerificationCodePrompt(String email) {
+    return 'ወደ $email የተላከውን ባለ 6 አሃዝ የማረጋገጫ ኮድ ያስገቡ';
+  }
+
+  @override
+  String get verificationCodeLabel => 'ባለ 6 አሃዝ የማረጋገጫ ኮድ';
+
+  @override
+  String get verifyCodeButton => 'አረጋግጥና ግባ';
+
+  @override
+  String get resendCodeButton => 'ኮድ ደግመህ ላክ';
+
+  @override
+  String resendCooldown(int seconds) {
+    return 'በ$seconds ሰከንድ ውስጥ ደግመው ይላኩ';
+  }
+
+  @override
+  String get codeResentSuccess => 'አዲስ ባለ 6 አሃዝ የማረጋገጫ ኮድ ወደ ኢሜይልዎ ተልኳል።';
+
+  @override
+  String get invalidCodeError => 'የተተየበው የማረጋገጫ ኮድ የተሳሳተ ወይም ጊዜው ያለፈበት ነው።';
+
+  @override
+  String get changeEmailAction => 'ሌላ ኢሜይል ተጠቀም';
+
+  @override
+  String get emailNotConfirmedBanner =>
+      'መለያዎ እስካሁን አልተረጋገጠም። እባክዎ ወደ ኢሜይልዎ የተላከውን ባለ 6 አሃዝ ኮድ ያስገቡ።';
+
+  @override
+  String get deleteAccountAction => 'መለያ ሰርዝ';
+
+  @override
+  String get deleteAccountTitle => 'መለያዎን በቋሚነት መሰረዝ ይፈልጋሉ?';
+
+  @override
+  String get deleteAccountConfirm =>
+      'እርግጠኛ ነዎት መለያዎን በቋሚነት መሰረዝ ይፈልጋሉ? ይህ እርምጃ ሊቀለበስ አይችልም። ሁሉም የግል መረጃዎችዎ እና የአባልነት መረጃዎችዎ በቋሚነት ይጠፋሉ።';
+
+  @override
+  String get deleteAccountButton => 'መለያዬን በቋሚነት ሰርዝ';
+
+  @override
+  String get accountDeletedSuccess => 'መለያዎ በተሳካ ሁኔታ ተሰርዟል።';
 }

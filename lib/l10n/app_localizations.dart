@@ -5288,6 +5288,12 @@ abstract class AppLocalizations {
   /// **'Chat on Telegram'**
   String get telegramChatAction;
 
+  /// No description provided for @whatsappChatAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat on WhatsApp'**
+  String get whatsappChatAction;
+
   /// No description provided for @directContactsHeading.
   ///
   /// In en, this message translates to:
@@ -5312,6 +5318,12 @@ abstract class AppLocalizations {
   /// **'Phone number copied to clipboard'**
   String get copyPhoneSuccess;
 
+  /// No description provided for @copyWhatsappSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'WhatsApp number copied to clipboard'**
+  String get copyWhatsappSuccess;
+
   /// No description provided for @sendSmsAction.
   ///
   /// In en, this message translates to:
@@ -5329,6 +5341,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unable to open Telegram link'**
   String get telegramUnavailable;
+
+  /// No description provided for @whatsappUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to open WhatsApp on this device'**
+  String get whatsappUnavailable;
+
+  /// No description provided for @campusLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Campus'**
+  String get campusLabel;
+
+  /// No description provided for @sendEmailAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Send Email'**
+  String get sendEmailAction;
+
+  /// No description provided for @copyEmailSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Email address copied to clipboard'**
+  String get copyEmailSuccess;
+
+  /// No description provided for @emailConsultationHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Email Consultation'**
+  String get emailConsultationHeading;
 
   /// No description provided for @callHotlineAction.
   ///
@@ -6403,6 +6445,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Complete Student Baseline Survey'**
   String get onboardingSurveyTakeSurveyPrompt;
+
+  /// No description provided for @enterVerificationCodePrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the 6-digit verification code sent to {email}'**
+  String enterVerificationCodePrompt(String email);
+
+  /// No description provided for @verificationCodeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'6-Digit Verification Code'**
+  String get verificationCodeLabel;
+
+  /// No description provided for @verifyCodeButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify & Sign In'**
+  String get verifyCodeButton;
+
+  /// No description provided for @resendCodeButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend Code'**
+  String get resendCodeButton;
+
+  /// No description provided for @resendCooldown.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend code in {seconds}s'**
+  String resendCooldown(int seconds);
+
+  /// No description provided for @codeResentSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'A new 6-digit verification code has been sent to your email.'**
+  String get codeResentSuccess;
+
+  /// No description provided for @invalidCodeError.
+  ///
+  /// In en, this message translates to:
+  /// **'The verification code entered is incorrect or has expired.'**
+  String get invalidCodeError;
+
+  /// No description provided for @changeEmailAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Use a different email'**
+  String get changeEmailAction;
+
+  /// No description provided for @emailNotConfirmedBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account is not verified yet. Please enter the 6-digit code sent to your email.'**
+  String get emailNotConfirmedBanner;
+
+  /// No description provided for @deleteAccountAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Account'**
+  String get deleteAccountAction;
+
+  /// No description provided for @deleteAccountTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Permanently Delete Account?'**
+  String get deleteAccountTitle;
+
+  /// No description provided for @deleteAccountConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to permanently delete your account? This action cannot be undone. All your personal data, bookmarks, and club memberships will be permanently erased.'**
+  String get deleteAccountConfirm;
+
+  /// No description provided for @deleteAccountButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Permanently Delete My Account'**
+  String get deleteAccountButton;
+
+  /// No description provided for @accountDeletedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account has been deleted successfully.'**
+  String get accountDeletedSuccess;
 }
 
 class _AppLocalizationsDelegate

@@ -944,6 +944,7 @@
   "calculatingDistance": "Determining your location...",
   "callMentorAction": "Call Mentor",
   "telegramChatAction": "Chat on Telegram",
+  "whatsappChatAction": "Chat on WhatsApp",
   "directContactsHeading": "Direct Contact Channels",
   "workingHoursLabel": "Available Hours: {hours}",
   "@workingHoursLabel": {
@@ -955,9 +956,15 @@
   },
   "copyHandleSuccess": "Telegram username copied to clipboard",
   "copyPhoneSuccess": "Phone number copied to clipboard",
+  "copyWhatsappSuccess": "WhatsApp number copied to clipboard",
   "sendSmsAction": "Send SMS",
   "phoneCallUnavailable": "Unable to launch phone dialer on this device",
   "telegramUnavailable": "Unable to open Telegram link",
+  "whatsappUnavailable": "Unable to open WhatsApp on this device",
+  "campusLabel": "Campus",
+  "sendEmailAction": "Send Email",
+  "copyEmailSuccess": "Email address copied to clipboard",
+  "emailConsultationHeading": "Email Consultation",
   "callHotlineAction": "Call {number}",
   "@callHotlineAction": {
     "placeholders": {
@@ -1212,6 +1219,34 @@
   "onboardingSurveyCompletedTitle": "Thank You!",
   "onboardingSurveyCompletedBody": "Your anonymous responses help tailor campus health support.",
   "onboardingSurveyViewGondarClinic": "View Gondar Campus Clinic",
-  "onboardingSurveyTakeSurveyPrompt": "Complete Student Baseline Survey"
+  "onboardingSurveyTakeSurveyPrompt": "Complete Student Baseline Survey",
+  "enterVerificationCodePrompt": "Enter the 6-digit verification code sent to {email}",
+  "@enterVerificationCodePrompt": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "verificationCodeLabel": "6-Digit Verification Code",
+  "verifyCodeButton": "Verify & Sign In",
+  "resendCodeButton": "Resend Code",
+  "resendCooldown": "Resend code in {seconds}s",
+  "@resendCooldown": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "codeResentSuccess": "A new 6-digit verification code has been sent to your email.",
+  "invalidCodeError": "The verification code entered is incorrect or has expired.",
+  "changeEmailAction": "Use a different email",
+  "emailNotConfirmedBanner": "Your account is not verified yet. Please enter the 6-digit code sent to your email.",
+  "deleteAccountAction": "Delete Account",
+  "deleteAccountTitle": "Permanently Delete Account?",
+  "deleteAccountConfirm": "Are you sure you want to permanently delete your account? This action cannot be undone. All your personal data, bookmarks, and club memberships will be permanently erased.",
+  "deleteAccountButton": "Permanently Delete My Account",
+  "accountDeletedSuccess": "Your account has been deleted successfully."
 }
 

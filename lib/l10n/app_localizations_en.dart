@@ -3055,6 +3055,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get telegramChatAction => 'Chat on Telegram';
 
   @override
+  String get whatsappChatAction => 'Chat on WhatsApp';
+
+  @override
   String get directContactsHeading => 'Direct Contact Channels';
 
   @override
@@ -3069,6 +3072,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get copyPhoneSuccess => 'Phone number copied to clipboard';
 
   @override
+  String get copyWhatsappSuccess => 'WhatsApp number copied to clipboard';
+
+  @override
   String get sendSmsAction => 'Send SMS';
 
   @override
@@ -3077,6 +3083,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get telegramUnavailable => 'Unable to open Telegram link';
+
+  @override
+  String get whatsappUnavailable => 'Unable to open WhatsApp on this device';
+
+  @override
+  String get campusLabel => 'Campus';
+
+  @override
+  String get sendEmailAction => 'Send Email';
+
+  @override
+  String get copyEmailSuccess => 'Email address copied to clipboard';
+
+  @override
+  String get emailConsultationHeading => 'Email Consultation';
 
   @override
   String callHotlineAction(String number) {
@@ -3697,4 +3718,55 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get onboardingSurveyTakeSurveyPrompt =>
       'Complete Student Baseline Survey';
+
+  @override
+  String enterVerificationCodePrompt(String email) {
+    return 'Enter the 6-digit verification code sent to $email';
+  }
+
+  @override
+  String get verificationCodeLabel => '6-Digit Verification Code';
+
+  @override
+  String get verifyCodeButton => 'Verify & Sign In';
+
+  @override
+  String get resendCodeButton => 'Resend Code';
+
+  @override
+  String resendCooldown(int seconds) {
+    return 'Resend code in ${seconds}s';
+  }
+
+  @override
+  String get codeResentSuccess =>
+      'A new 6-digit verification code has been sent to your email.';
+
+  @override
+  String get invalidCodeError =>
+      'The verification code entered is incorrect or has expired.';
+
+  @override
+  String get changeEmailAction => 'Use a different email';
+
+  @override
+  String get emailNotConfirmedBanner =>
+      'Your account is not verified yet. Please enter the 6-digit code sent to your email.';
+
+  @override
+  String get deleteAccountAction => 'Delete Account';
+
+  @override
+  String get deleteAccountTitle => 'Permanently Delete Account?';
+
+  @override
+  String get deleteAccountConfirm =>
+      'Are you sure you want to permanently delete your account? This action cannot be undone. All your personal data, bookmarks, and club memberships will be permanently erased.';
+
+  @override
+  String get deleteAccountButton => 'Permanently Delete My Account';
+
+  @override
+  String get accountDeletedSuccess =>
+      'Your account has been deleted successfully.';
 }
