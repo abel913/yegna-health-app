@@ -87,23 +87,15 @@ class _DynamicModuleDetailPageState extends State<DynamicModuleDetailPage> {
       final block = rawBlocks[i].trim();
       if (block.isEmpty) continue;
 
-      if (i == 0 && !block.startsWith('##')) {
-        // First block may start with # or title
-        final lines = block.split(RegExp(r'\r?\n'));
-        final title = lines.first.replaceAll(RegExp(r'^#+\s*'), '').trim();
-        final rest = lines.skip(1).join('\n').trim();
-        if (title.isNotEmpty || rest.isNotEmpty) {
-          sections.add(_extractSection(
-            title.isNotEmpty ? title : (isAmharic ? 'መግቢያ' : 'Overview'),
-            rest,
-          ));
-        }
-      } else {
-        final lines = block.split(RegExp(r'\r?\n'));
-        final title = lines.first.trim();
-        final rest = lines.skip(1).join('\n').trim();
-        sections.add(_extractSection(title, rest));
-      }
+      final lines = block.split(RegExp(r'\r?\n'));
+      final title = lines.first.replaceAll(RegExp(r'^#+\s*'), '').trim();
+      final rest = lines.skip(1).join('\n').trim();
+      sections.add(_extractSection(
+        title.isNotEmpty
+            ? title
+            : (isAmharic ? 'ክፍል ${i + 1}' : 'Section ${i + 1}'),
+        rest,
+      ));
     }
 
     if (sections.isEmpty) {
