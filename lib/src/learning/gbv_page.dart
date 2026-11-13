@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../l10n/app_localizations.dart';
+import '../assessment/module_assessment_launcher_card.dart';
 import 'assessment_repository.dart';
 import 'gbv_quiz_page.dart';
 import 'learning_progress_controller.dart';
@@ -829,6 +830,17 @@ class _GenderBasedViolenceDetailPageState
                           );
                         },
                   ),
+                ),
+                const SizedBox(height: 14),
+                const ModuleAssessmentLauncherCard(
+                  sectionNumber: 6,
+                  sectionKey: 'section_6',
+                  moduleKey: 'gbv',
+                  titleEn: 'Consent, GBV & Safety Assessment',
+                  titleAm: 'የስምምነት፣ ጾታዊ ጥቃት እና ደህንነት ምዘና',
+                  questionRangeTextEn: 'Q.35–Q.40 • 6 Questions',
+                  questionRangeTextAm: 'ጥያቄ 35–40 • 6 ጥያቄዎች',
+                  badgeColor: Color(0xFFEF4444),
                 ),
               ],
             ),

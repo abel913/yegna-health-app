@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../l10n/app_localizations.dart';
+import '../assessment/module_assessment_launcher_card.dart';
 import 'assessment_repository.dart';
 import 'learning_progress_controller.dart';
 import 'mental_health_quiz_page.dart';
@@ -569,6 +570,28 @@ class _MentalHealthDetailPageState extends State<MentalHealthDetailPage> {
                           );
                         },
                   ),
+                ),
+                const SizedBox(height: 14),
+                const ModuleAssessmentLauncherCard(
+                  sectionNumber: 7,
+                  sectionKey: 'section_7',
+                  moduleKey: 'mental_health',
+                  titleEn: 'Mental Wellbeing & Service Access Assessment',
+                  titleAm: 'የአእምሮ ጤና እና የአገልግሎት ተደራሽነት ምዘና',
+                  questionRangeTextEn: 'Q.41–Q.44 • 4 Questions',
+                  questionRangeTextAm: 'ጥያቄ 41–44 • 4 ጥያቄዎች',
+                  badgeColor: Color(0xFF0284C7),
+                ),
+                const SizedBox(height: 10),
+                const ModuleAssessmentLauncherCard(
+                  sectionNumber: 8,
+                  sectionKey: 'section_8',
+                  moduleKey: 'support',
+                  titleEn: 'Support Needs & Service Preferences',
+                  titleAm: 'የድጋፍ ፍላጎት እና የአገልግሎት ምርጫዎች',
+                  questionRangeTextEn: 'Q.45–Q.50 • 6 Questions',
+                  questionRangeTextAm: 'ጥያቄ 45–50 • 6 ጥያቄዎች',
+                  badgeColor: Color(0xFF10B981),
                 ),
               ],
             ),

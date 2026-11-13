@@ -162,8 +162,7 @@ class _SubstanceAbuseQuizPageState extends State<SubstanceAbuseQuizPage> {
   int _calculateScore() {
     int score = 0;
     for (int i = 0; i < _questions.length; i++) {
-      if (_selectedAnswers[i] ==
-          _questions[i].correctIndex) {
+      if (_selectedAnswers[i] == _questions[i].correctIndex) {
         score++;
       }
     }

@@ -83,9 +83,8 @@ class SyncEducationRepository implements EducationRepository {
 
   @override
   Future<CachedValue<List<LearningCategory>>> categories(String locale) async {
-    final list = locale.startsWith('am')
-        ? _fallbackCategoriesAm
-        : _fallbackCategoriesEn;
+    final list =
+        locale.startsWith('am') ? _fallbackCategoriesAm : _fallbackCategoriesEn;
     return CachedValue(
       value: list,
       isStale: false,
@@ -106,14 +105,16 @@ class SyncEducationRepository implements EducationRepository {
     // 2. Fallback to bundled templates if cache empty
     if (rawModules == null || rawModules.isEmpty) {
       final templates = ContentTemplates.moduleTemplates;
-      rawModules = templates.map((m) => {
-        'id': m.id,
-        'titleEn': m.titleEn,
-        'titleAm': m.titleAm,
-        'summaryEn': m.descriptionEn,
-        'summaryAm': m.descriptionAm,
-        'category': 'puberty',
-      }).toList();
+      rawModules = templates
+          .map((m) => {
+                'id': m.id,
+                'titleEn': m.titleEn,
+                'titleAm': m.titleAm,
+                'summaryEn': m.descriptionEn,
+                'summaryAm': m.descriptionAm,
+                'category': 'puberty',
+              })
+          .toList();
       unawaited(_store.saveModules(rawModules));
     }
 
@@ -134,7 +135,8 @@ class SyncEducationRepository implements EducationRepository {
           : (m['summaryEn'] as String? ?? '');
       final cat = m['category'] as String? ?? 'cat_puberty';
 
-      if (categoryId == null || cat.toLowerCase().contains(categoryId.toLowerCase())) {
+      if (categoryId == null ||
+          cat.toLowerCase().contains(categoryId.toLowerCase())) {
         previews.add(ArticlePreview(
           id: id,
           slug: id,
@@ -179,8 +181,12 @@ class SyncEducationRepository implements EducationRepository {
             'titleAm': tm.titleAm,
             'summaryEn': tm.descriptionEn,
             'summaryAm': tm.descriptionAm,
-            'contentEn': tm.sections.map((s) => '## ${s.titleEn}\n\n${s.contentEn}').join('\n\n'),
-            'contentAm': tm.sections.map((s) => '## ${s.titleAm}\n\n${s.contentAm}').join('\n\n'),
+            'contentEn': tm.sections
+                .map((s) => '## ${s.titleEn}\n\n${s.contentEn}')
+                .join('\n\n'),
+            'contentAm': tm.sections
+                .map((s) => '## ${s.titleAm}\n\n${s.contentAm}')
+                .join('\n\n'),
             'category': 'puberty',
           };
           break;
@@ -197,7 +203,9 @@ class SyncEducationRepository implements EducationRepository {
         ? (match['summaryAm'] as String? ?? match['summaryEn'] as String? ?? '')
         : (match['summaryEn'] as String? ?? '');
     final bodyMarkdown = isAmharic
-        ? (match['contentAm'] as String? ?? match['contentEn'] as String? ?? summary)
+        ? (match['contentAm'] as String? ??
+            match['contentEn'] as String? ??
+            summary)
         : (match['contentEn'] as String? ?? summary);
 
     final article = EducationArticle(
@@ -271,7 +279,8 @@ class SyncAssessmentRepository implements AssessmentRepository {
           versionId: 'ver_srh_v1',
           slug: 'srh-safety',
           locale: locale,
-          title: isAmharic ? 'የስነ-ተዋልዶ ጤና ግንዛቤ' : 'Reproductive Health Assessment',
+          title:
+              isAmharic ? 'የስነ-ተዋልዶ ጤና ግንዛቤ' : 'Reproductive Health Assessment',
           description: isAmharic
               ? 'ስለ ጤናማ ግንኙነት፣ የአባለዘር በሽታዎች እና መከላከያ ዘዴዎች።'
               : 'Evaluate your knowledge on healthy relationships and prevention.',
@@ -328,7 +337,9 @@ class SyncAssessmentRepository implements AssessmentRepository {
           ? (q['questionAm'] as String? ?? q['questionEn'] as String? ?? '')
           : (q['questionEn'] as String? ?? '');
       final optionsRaw = isAmharic
-          ? (q['optionsAm'] as List<dynamic>? ?? q['optionsEn'] as List<dynamic>? ?? [])
+          ? (q['optionsAm'] as List<dynamic>? ??
+              q['optionsEn'] as List<dynamic>? ??
+              [])
           : (q['optionsEn'] as List<dynamic>? ?? []);
 
       final options = <AssessmentOption>[];
@@ -386,7 +397,8 @@ class SyncAssessmentRepository implements AssessmentRepository {
   }
 
   @override
-  Future<List<PendingAssessmentSubmission>> pendingSubmissions() async => const [];
+  Future<List<PendingAssessmentSubmission>> pendingSubmissions() async =>
+      const [];
 
   @override
   Future<AssessmentSubmission> submit({
@@ -401,7 +413,8 @@ class SyncAssessmentRepository implements AssessmentRepository {
     for (final q in assessment.questions) {
       final selected = selectedOptions[q.id];
       // First option (opt_0) or matching correct is treated as correct standard
-      final isCorrect = selected != null && (selected == 'opt_0' || selected == q.options.first.id);
+      final isCorrect = selected != null &&
+          (selected == 'opt_0' || selected == q.options.first.id);
       if (isCorrect) correctCount++;
 
       questionResults.add(QuestionResult(
