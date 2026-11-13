@@ -72,6 +72,75 @@ class MentorCard extends StatelessWidget {
     }
   }
 
+  static Future<void> launchWhatsApp(
+      BuildContext context, String rawInput, AppLocalizations l10n) async {
+    var cleanDigits = rawInput.replaceAll(RegExp(r'[^0-9]'), '');
+    if (cleanDigits.startsWith('09')) {
+      cleanDigits = '251${cleanDigits.substring(1)}';
+    } else if (cleanDigits.startsWith('9') && cleanDigits.length == 9) {
+      cleanDigits = '251$cleanDigits';
+    }
+
+    final Uri uri;
+    if (cleanDigits.length >= 7) {
+      uri = Uri.parse('https://wa.me/$cleanDigits');
+    } else {
+      final text = Uri.encodeComponent(rawInput.trim());
+      uri = Uri.parse('https://wa.me/?text=Hello%20$text');
+    }
+
+    final messenger = ScaffoldMessenger.maybeOf(context);
+    try {
+      final launched =
+          await launchUrl(uri, mode: LaunchMode.externalApplication);
+      if (!launched) {
+        await Clipboard.setData(ClipboardData(text: rawInput));
+        messenger?.showSnackBar(
+          SnackBar(
+            content: Text('${l10n.copyWhatsappSuccess} ($rawInput)'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } catch (_) {
+      await Clipboard.setData(ClipboardData(text: rawInput));
+      messenger?.showSnackBar(
+        SnackBar(
+          content: Text('${l10n.copyWhatsappSuccess} ($rawInput)'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
+  }
+
+  static Future<void> launchEmail(
+      BuildContext context, String email, AppLocalizations l10n) async {
+    final cleanEmail = email.trim();
+    final uri = Uri.parse('mailto:$cleanEmail');
+    final messenger = ScaffoldMessenger.maybeOf(context);
+    try {
+      final launched =
+          await launchUrl(uri, mode: LaunchMode.externalApplication);
+      if (!launched) {
+        await Clipboard.setData(ClipboardData(text: cleanEmail));
+        messenger?.showSnackBar(
+          SnackBar(
+            content: Text('${l10n.copyEmailSuccess} ($cleanEmail)'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } catch (_) {
+      await Clipboard.setData(ClipboardData(text: cleanEmail));
+      messenger?.showSnackBar(
+        SnackBar(
+          content: Text('${l10n.copyEmailSuccess} ($cleanEmail)'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -231,6 +300,36 @@ class MentorCard extends StatelessWidget {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
+                          const SizedBox(height: 3),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFEEF2FF),
+                              borderRadius: BorderRadius.circular(6),
+                              border: Border.all(
+                                color: const Color(0xFFC7D2FE),
+                                width: 0.8,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(Icons.location_on_outlined,
+                                    size: 11, color: Color(0xFF4F46E5)),
+                                const SizedBox(width: 3),
+                                Text(
+                                  mentor.localizedCampus(isAmharic),
+                                  style: const TextStyle(
+                                    fontFamily: 'PlusJakartaSans',
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w700,
+                                    color: Color(0xFF4338CA),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -369,7 +468,7 @@ class MentorCard extends StatelessWidget {
                                 size: 11, color: Color(0xFF16A34A)),
                             const SizedBox(width: 4),
                             Text(
-                              '@${mentor.telegramHandle}',
+                              '@${mentor.cleanTelegramHandle}',
                               style: const TextStyle(
                                 fontFamily: 'PlusJakartaSans',
                                 fontSize: 11.5,
@@ -474,6 +573,23 @@ class MentorCard extends StatelessWidget {
                         ),
                       ),
                     ),
+                    if (mentor.hasWhatsapp) ...[
+                      const SizedBox(width: 6),
+                      IconButton.filledTonal(
+                        tooltip: l10n.whatsappChatAction,
+                        onPressed: () =>
+                            launchWhatsApp(context, mentor.whatsapp!, l10n),
+                        icon: const Icon(Icons.chat_bubble_outline_rounded,
+                            size: 16, color: Color(0xFF16A34A)),
+                        style: IconButton.styleFrom(
+                          backgroundColor: const Color(0xFFDCFCE7),
+                          padding: const EdgeInsets.all(8),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ],
