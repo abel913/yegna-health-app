@@ -101,8 +101,7 @@ void main() {
           return http.Response(
             jsonEncode({
               'error': 'ACCOUNT_SUSPENDED',
-              'message':
-                  'This account has been suspended by community safety.',
+              'message': 'This account has been suspended by community safety.',
             }),
             403,
           );
@@ -171,8 +170,8 @@ void main() {
       expect(repo.snapshot.user!.id, 'usr-new-1');
       expect(repo.snapshot.user!.email, 'newuser@example.org');
       expect(repo.snapshot.user!.displayName, 'New Student');
-      expect(
-          prefs.getString(BackendAuthRepository.keyToken), 'jwt-registered-token-789');
+      expect(prefs.getString(BackendAuthRepository.keyToken),
+          'jwt-registered-token-789');
     });
 
     test(
@@ -286,7 +285,8 @@ void main() {
       expect(repo.snapshot.user, isNotNull);
       expect(repo.snapshot.user!.id, 'usr-login-1');
       expect(repo.snapshot.user!.email, 'student@example.org');
-      expect(prefs.getString(BackendAuthRepository.keyToken), 'jwt-login-token-999');
+      expect(prefs.getString(BackendAuthRepository.keyToken),
+          'jwt-login-token-999');
     });
 
     test('signIn with suspended account throws AuthIssue.accountSuspended',
@@ -295,8 +295,7 @@ void main() {
         return http.Response(
           jsonEncode({
             'error': 'ACCOUNT_SUSPENDED',
-            'message':
-                'This account has been suspended by community safety.',
+            'message': 'This account has been suspended by community safety.',
           }),
           403,
         );
@@ -333,8 +332,7 @@ void main() {
         return http.Response(
           jsonEncode({
             'error': 'EMAIL_NOT_CONFIRMED',
-            'message':
-                'Please confirm your email address before signing in.',
+            'message': 'Please confirm your email address before signing in.',
           }),
           403,
         );
@@ -462,6 +460,112 @@ void main() {
       expect(prefs.getString(BackendAuthRepository.keyToken), isNull);
       expect(prefs.getString(BackendAuthRepository.keyUserId), isNull);
       expect(prefs.getString(BackendAuthRepository.keyEmail), isNull);
+    });
+
+    test('verifyEmailCode stores tokens and sets verified user snapshot',
+        () async {
+      final mockClient = MockClient((request) async {
+        if (request.url.path.endsWith('/auth/verify-email')) {
+          final body = jsonDecode(request.body) as Map<String, dynamic>;
+          if (body['code'] == '123456') {
+            return http.Response(
+              jsonEncode({
+                'success': true,
+                'token': 'jwt-verified-token',
+                'user': {
+                  'id': 'usr-verified',
+                  'email': 'student@example.org',
+                  'displayName': 'Verified Student',
+                  'role': 'STUDENT',
+                  'hasCompletedSurvey': false,
+                },
+              }),
+              200,
+            );
+          }
+          return http.Response(
+            jsonEncode({
+              'error': 'INVALID_CODE',
+              'message': 'The verification code entered is incorrect.',
+            }),
+            400,
+          );
+        }
+        return http.Response('Not Found', 404);
+      });
+
+      final apiClient = ApiClient(
+        baseUrl: 'http://localhost:5000/api',
+        httpClient: mockClient,
+      );
+      final repo = BackendAuthRepository(
+        apiClient: apiClient,
+        preferences: prefs,
+      );
+
+      await repo.verifyEmailCode(
+        email: 'student@example.org',
+        code: '123456',
+      );
+
+      expect(repo.snapshot.user, isNotNull);
+      expect(repo.snapshot.user!.id, 'usr-verified');
+      expect(repo.snapshot.user!.emailVerified, isTrue);
+      expect(prefs.getString(BackendAuthRepository.keyToken),
+          'jwt-verified-token');
+
+      // Invalid code test
+      expect(
+        () => repo.verifyEmailCode(
+          email: 'student@example.org',
+          code: '000000',
+        ),
+        throwsA(
+          isA<AuthFailure>().having(
+            (f) => f.issue,
+            'issue',
+            AuthIssue.invalidVerificationCode,
+          ),
+        ),
+      );
+    });
+
+    test('deleteAccount calls delete endpoint and clears all credentials',
+        () async {
+      await prefs.setString(BackendAuthRepository.keyToken, 'token-to-delete');
+      await prefs.setString(BackendAuthRepository.keyUserId, 'usr-del');
+      await prefs.setString(BackendAuthRepository.keyEmail, 'del@example.org');
+
+      bool deleteEndpointCalled = false;
+      final mockClient = MockClient((request) async {
+        if (request.method == 'DELETE' &&
+            request.url.path.endsWith('/auth/me')) {
+          deleteEndpointCalled = true;
+          return http.Response(
+            jsonEncode({'success': true}),
+            200,
+          );
+        }
+        return http.Response('Not Found', 404);
+      });
+
+      final apiClient = ApiClient(
+        baseUrl: 'http://localhost:5000/api',
+        httpClient: mockClient,
+      );
+      final repo = BackendAuthRepository(
+        apiClient: apiClient,
+        preferences: prefs,
+      );
+
+      await repo.init();
+      expect(repo.snapshot.user, isNotNull);
+
+      await repo.deleteAccount();
+
+      expect(deleteEndpointCalled, isTrue);
+      expect(repo.snapshot.user, isNull);
+      expect(prefs.getString(BackendAuthRepository.keyToken), isNull);
     });
   });
 }

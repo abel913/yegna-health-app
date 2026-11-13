@@ -60,8 +60,37 @@ class FakeAuthRepository implements AuthRepository {
         email: email,
         emailVerified: true,
         displayName: 'Test User',
+        hasCompletedSurvey: true,
       ),
     ));
+  }
+
+  @override
+  Future<void> verifyEmailCode({
+    required String email,
+    required String code,
+  }) async {
+    _throwFailure();
+    emit(AuthSnapshot(
+      user: AuthUser(
+        id: 'user-verified-1',
+        email: email,
+        emailVerified: true,
+        displayName: 'Verified Student',
+        hasCompletedSurvey: false,
+      ),
+    ));
+  }
+
+  @override
+  Future<void> resendVerification(String email) async {
+    _throwFailure();
+  }
+
+  @override
+  Future<void> deleteAccount() async {
+    _throwFailure();
+    await signOut();
   }
 
   @override
@@ -86,6 +115,7 @@ class FakeAuthRepository implements AuthRepository {
           email: current.email,
           emailVerified: current.emailVerified,
           displayName: displayName,
+          hasCompletedSurvey: current.hasCompletedSurvey,
         ),
       ));
     }

@@ -316,8 +316,7 @@ void main() {
       adminController.dispose();
     });
 
-    testWidgets(
-        'role-based login accepts demo student credentials when unconfigured',
+    testWidgets('role-based login strictly rejects invalid student credentials',
         (tester) async {
       final fakeRepo = FakeAuthRepository(
         failure: AuthIssue.invalidCredentials,
@@ -347,8 +346,8 @@ void main() {
       await tester.tap(find.text(l10n.loginAction).last);
       await tester.pumpAndSettle();
 
-      expect(authController.isAuthenticated, isTrue);
-      expect(find.textContaining('Welcome back, student1!'), findsOneWidget);
+      expect(authController.isAuthenticated, isFalse);
+      expect(find.text(l10n.errorInvalidCredentials), findsOneWidget);
 
       authController.dispose();
     });
