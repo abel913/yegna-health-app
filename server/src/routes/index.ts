@@ -51,6 +51,8 @@ router.post('/auth/resend-verification', auth.resendVerification);
 router.get('/auth/me', authenticateToken as any, auth.me as any);
 router.put('/auth/profile', authenticateToken as any, auth.updateProfile as any);
 router.put('/auth/password', authenticateToken as any, auth.updatePassword as any);
+router.delete('/auth/me', authenticateToken as any, auth.deleteAccount as any);
+router.delete('/auth/account', authenticateToken as any, auth.deleteAccount as any);
 
 // --- 3. PUBLIC DIRECTORIES (FOR MOBILE APP & WEB) ---
 router.get('/facilities', facilities.getAllFacilities);
@@ -113,10 +115,17 @@ adminRouter.put('/users/:id/verify-email', users.verifyUserEmail as any);
 adminRouter.post('/users/:id/reset-password', users.resetUserPassword as any);
 adminRouter.delete('/users/:id', users.deleteUser as any);
 
-// Anonymous Student Baseline Survey Analytics
+// Anonymous Student Baseline Survey Analytics & Administration
 adminRouter.get('/survey/stats', survey.getSurveyStats as any);
+adminRouter.get('/survey/questions', survey.getAdminQuestions as any);
+adminRouter.post('/survey/questions', survey.createQuestionAdmin as any);
+adminRouter.put('/survey/questions/:id', survey.updateQuestionAdmin as any);
+adminRouter.delete('/survey/questions/:id', survey.deleteQuestionAdmin as any);
+adminRouter.delete('/survey/responses/:id', survey.deleteSurveyResponse as any);
+adminRouter.delete('/survey/responses', survey.clearSurveyResponses as any);
 
 router.use('/admin', adminRouter);
 
-// Anonymous Student Baseline Survey Submission (Zero-Knowledge, No PII)
+// Anonymous Student Baseline Survey Submission & Dynamic Questions (Zero-Knowledge, No PII)
+router.get('/survey/questions', survey.getPublicQuestions);
 router.post('/survey/baseline', survey.submitSurvey);

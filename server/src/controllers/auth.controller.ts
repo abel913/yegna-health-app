@@ -81,6 +81,7 @@ export async function login(req: Request, res: Response) {
         displayName: user.displayName,
         role: user.role,
         isEmailVerified: user.isEmailVerified,
+        hasCompletedSurvey: user.hasCompletedSurvey,
       },
     });
   } catch (err: any) {
@@ -153,6 +154,7 @@ export async function register(req: Request, res: Response) {
         displayName: user.displayName,
         role: user.role,
         isEmailVerified: false,
+        hasCompletedSurvey: false,
       },
     });
   } catch (err: any) {
@@ -351,6 +353,7 @@ export async function me(req: AuthRequest, res: Response) {
       displayName: true,
       role: true,
       isSuspended: true,
+      hasCompletedSurvey: true,
       createdAt: true,
     },
   });
@@ -420,3 +423,36 @@ export async function updatePassword(req: AuthRequest, res: Response) {
     return res.status(500).json({ error: err.message || 'Failed to update password' });
   }
 }
+
+export async function deleteAccount(req: AuthRequest, res: Response) {
+  if (!req.user) {
+    return res.status(401).json({ error: 'UNAUTHORIZED' });
+  }
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: req.user.id },
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: 'USER_NOT_FOUND', message: 'User not found.' });
+    }
+
+    await prisma.user.delete({
+      where: { id: req.user.id },
+    });
+
+    await prisma.auditLog.create({
+      data: {
+        action: 'USER_ACCOUNT_DELETED',
+        adminEmail: user.email,
+        details: `Student account deleted upon user request: ${user.email} (ID: ${user.id}). Apple App Store Guideline 5.1.1(v) compliant.`,
+      },
+    });
+
+    return res.json({ success: true, message: 'Account permanently deleted.' });
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message || 'Failed to delete account' });
+  }
+}
+
