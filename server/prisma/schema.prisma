@@ -18,6 +18,7 @@ model User {
   role              String       @default("STUDENT") // STUDENT, MENTOR, ADMIN, SUPER_ADMIN
   isSuspended       Boolean      @default(false)
   isEmailVerified   Boolean      @default(false)
+  hasCompletedSurvey Boolean     @default(false)
   verificationCode  String?
   verificationToken String?
   createdAt         DateTime     @default(now())
@@ -48,17 +49,27 @@ model Facility {
 }
 
 model Mentor {
-  id             String   @id @default(uuid())
-  name           String
-  organization   String
-  phone          String
-  telegramHandle String?
-  email          String?
-  languages      String   @default("[\"Amharic\",\"English\"]") // JSON string array
-  specialties    String   @default("[]") // JSON string array
-  isAvailable    Boolean  @default(true)
-  isVerified     Boolean  @default(true)
-  createdAt      DateTime @default(now())
+  id              String   @id @default(uuid())
+  name            String
+  organization    String
+  campus          String   @default("Atse Fasil Campus")
+  roleTitleEn     String   @default("Certified Youth Peer Counselor")
+  roleTitleAm     String   @default("የተረጋገጠ የወጣቶች አቻ አማካሪ")
+  phone           String
+  whatsapp        String?
+  telegramHandle  String?
+  email           String?
+  experienceYears Int      @default(2)
+  sessionsCount   Int      @default(120)
+  workingHoursEn  String   @default("Mon – Fri: 8:30 AM – 5:30 PM")
+  workingHoursAm  String   @default("ከሰኞ – ዓርብ፡ 2:30 – 11:30")
+  bioEn           String?
+  bioAm           String?
+  languages       String   @default("[\"Amharic\",\"English\"]") // JSON string array
+  specialties     String   @default("[\"#MentalHealth\",\"#SRH\"]") // JSON string array
+  isAvailable     Boolean  @default(true)
+  isVerified      Boolean  @default(true)
+  createdAt       DateTime @default(now())
 
   @@schema("yegna")
 }
@@ -183,12 +194,53 @@ model AuditLog {
   @@schema("yegna")
 }
 
+model SurveyQuestion {
+  id            String                 @id @default(uuid())
+  position      Int                    @default(0)
+  key           String                 @unique // unique identifier slug e.g. "age_group"
+  sectionNumber Int                    @default(1)
+  sectionKey    String                 @default("section_1")
+  sectionTitleEn String                @default("Personal & General Information")
+  sectionTitleAm String                @default("አጠቃላይ የግል መረጃ")
+  moduleKey     String?                // "general", "srh", "hiv", "contraception", "puberty", "gbv", "mental_health", "support"
+  titleEn       String
+  titleAm       String
+  descriptionEn String?
+  descriptionAm String?
+  type          String                 @default("SINGLE_CHOICE") // SINGLE_CHOICE, MULTI_CHOICE
+  isRequired    Boolean                @default(true)
+  isActive      Boolean                @default(true)
+  createdAt     DateTime               @default(now())
+  updatedAt     DateTime               @updatedAt
+
+  options       SurveyQuestionOption[]
+
+  @@index([sectionNumber, position])
+  @@schema("yegna")
+}
+
+model SurveyQuestionOption {
+  id         String         @id @default(uuid())
+  questionId String
+  position   Int            @default(0)
+  value      String
+  labelEn    String
+  labelAm    String
+  createdAt  DateTime       @default(now())
+
+  question   SurveyQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@index([questionId, position])
+  @@schema("yegna")
+}
+
 model BaselineSurveyResponse {
   id             String   @id @default(uuid())
-  ageGroup       String   // "18–20", "21–24", "25–29", "30+"
-  yearOfStudy    String   // "1st Year", "2nd Year", "3rd Year", "4th Year and above", "Postgraduate"
-  disabilityNeed String   // "NONE", "VISUAL", "HEARING", "PHYSICAL", "PREFER_NOT_TO_SAY"
-  knowsGondarSrh String   // "YES", "NO", "NOT_SURE"
+  ageGroup       String?  // Legacy column preserved for backward compatibility
+  yearOfStudy    String?
+  disabilityNeed String?
+  knowsGondarSrh String?
+  answers        Json?    // Dynamic answer mappings: { [questionIdOrKey]: value }
   submittedAt    DateTime @default(now())
 
   @@schema("yegna")
