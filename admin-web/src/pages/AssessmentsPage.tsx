@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import {
   BarChart2,
   BookOpen,
@@ -8,20 +8,25 @@ import {
   Hospital,
   Accessibility,
   GraduationCap,
-  CheckCircle2,
-  XCircle,
-  AlertCircle,
   Search,
   ShieldCheck,
-  Calendar,
   Layers,
+  Trash2,
+  Plus,
+  Edit3,
+  HelpCircle,
+  Check,
+  Sliders,
+  ChevronDown,
 } from 'lucide-react';
 import { api } from '../services/api.js';
 import {
   BaselineSurveyStats,
   BaselineSurveySubmission,
+  DynamicSurveyStatQuestion,
   LearningAssessment,
   Module,
+  SurveyQuestion,
 } from '../types/index.js';
 import { exportToCsv } from '../utils/csvExport.js';
 import { LearningAssessmentsPage } from './LearningAssessmentsPage.js';
@@ -30,6 +35,8 @@ interface AssessmentsPageProps {
   modules: Module[];
   assessments: LearningAssessment[];
   lang: 'en' | 'am';
+  activeSubTab?: 'baseline' | 'questions' | 'modules';
+  onSubTabChange?: (tab: 'baseline' | 'questions' | 'modules') => void;
   onSaveAssessment: (data: {
     moduleId: string;
     questions: Array<{
@@ -41,21 +48,86 @@ interface AssessmentsPageProps {
   onDeleteAssessment: (id: string) => Promise<void>;
 }
 
+const OPTION_COLOR_GRADIENTS = [
+  'from-emerald-500 to-teal-400',
+  'from-sky-500 to-blue-500',
+  'from-indigo-500 to-purple-500',
+  'from-amber-500 to-orange-400',
+  'from-rose-500 to-pink-500',
+  'from-cyan-500 to-emerald-400',
+  'from-violet-500 to-fuchsia-500',
+];
+
+export const UOG_SECTIONS_LIST = [
+  { num: 1, labelEn: 'Section 1: General Info (Q.01–04)', labelAm: 'ክፍል 1፡ አጠቃላይ የግል መረጃ', moduleKey: 'general' },
+  { num: 2, labelEn: 'Section 2: Sexual Behaviour (Q.05–12)', labelAm: 'ክፍል 2፡ የጾታዊ ባህሪ እና ተጋላጭነት', moduleKey: 'srh' },
+  { num: 3, labelEn: 'Section 3: HIV & STIs (Q.13–20)', labelAm: 'ክፍል 3፡ ኤችአይቪ እና አባለዘር በሽታዎች', moduleKey: 'hiv' },
+  { num: 4, labelEn: 'Section 4: Contraception (Q.21–26)', labelAm: 'ክፍል 4፡ የእርግዝና መከላከያ', moduleKey: 'contraception' },
+  { num: 5, labelEn: 'Section 5: Menstruation & Puberty (Q.27–34)', labelAm: 'ክፍል 5፡ የወር አበባ እና ስነ-ተዋልዶ', moduleKey: 'puberty' },
+  { num: 6, labelEn: 'Section 6: Consent, GBV & Safety (Q.35–40)', labelAm: 'ክፍል 6፡ ስምምነት እና ጾታዊ ጥቃት', moduleKey: 'gbv' },
+  { num: 7, labelEn: 'Section 7: Service Access (Q.41–44)', labelAm: 'ክፍል 7፡ የአገልግሎት ተደራሽነት', moduleKey: 'mental_health' },
+  { num: 8, labelEn: 'Section 8: Support Preferences (Q.45–50)', labelAm: 'ክፍል 8፡ የድጋፍ ፍላጎት እና ምርጫዎች', moduleKey: 'support' },
+];
+
 export const AssessmentsPage: React.FC<AssessmentsPageProps> = ({
   modules,
   assessments,
   lang,
+  activeSubTab = 'baseline',
+  onSubTabChange,
   onSaveAssessment,
   onDeleteAssessment,
 }) => {
-  const [activeSubTab, setActiveSubTab] = useState<'baseline' | 'modules'>('baseline');
+  const [currentSubTab, setCurrentSubTab] = useState<'baseline' | 'questions' | 'modules'>(activeSubTab);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
   const [surveyStats, setSurveyStats] = useState<BaselineSurveyStats | null>(null);
+  const [questions, setQuestions] = useState<SurveyQuestion[]>([]);
+  const [sectionFilter, setSectionFilter] = useState<'ALL' | number>('ALL');
   const [loading, setLoading] = useState<boolean>(true);
+  const [loadingQuestions, setLoadingQuestions] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [srhFilter, setSrhFilter] = useState<'ALL' | 'YES' | 'NO' | 'NOT_SURE'>('ALL');
 
+  // Question Modal State
+  const [isQuestionModalOpen, setIsQuestionModalOpen] = useState<boolean>(false);
+  const [editingQuestion, setEditingQuestion] = useState<SurveyQuestion | null>(null);
+  const [questionSection, setQuestionSection] = useState<number>(1);
+  const [questionTitleEn, setQuestionTitleEn] = useState<string>('');
+  const [questionTitleAm, setQuestionTitleAm] = useState<string>('');
+  const [questionType, setQuestionType] = useState<'SINGLE_CHOICE' | 'MULTI_CHOICE'>('SINGLE_CHOICE');
+  const [questionOptions, setQuestionOptions] = useState<
+    Array<{ id?: string; position: number; value: string; labelEn: string; labelAm: string }>
+  >([]);
+  const [savingQuestion, setSavingQuestion] = useState<boolean>(false);
+
   const isAm = lang === 'am';
+
+  // Sync with prop when parent navigates
+  useEffect(() => {
+    if (activeSubTab) {
+      setCurrentSubTab(activeSubTab);
+    }
+  }, [activeSubTab]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleSwitchTab = (tab: 'baseline' | 'questions' | 'modules') => {
+    setCurrentSubTab(tab);
+    setIsDropdownOpen(false);
+    onSubTabChange?.(tab);
+  };
 
   const loadStats = async (isManualRefresh = false) => {
     if (isManualRefresh) setRefreshing(true);
@@ -72,8 +144,29 @@ export const AssessmentsPage: React.FC<AssessmentsPageProps> = ({
     }
   };
 
+  const loadQuestions = async (sec?: 'ALL' | number) => {
+    setLoadingQuestions(true);
+    try {
+      const activeSec = sec !== undefined ? sec : sectionFilter;
+      const res = await api.getSurveyQuestions(
+        activeSec !== 'ALL' ? { section: activeSec } : undefined
+      );
+      setQuestions(res.questions || []);
+    } catch (err) {
+      console.error('Failed to load survey questions:', err);
+    } finally {
+      setLoadingQuestions(false);
+    }
+  };
+
+  const handleSectionFilterChange = (sec: 'ALL' | number) => {
+    setSectionFilter(sec);
+    loadQuestions(sec);
+  };
+
   useEffect(() => {
     loadStats();
+    loadQuestions();
   }, []);
 
   // Filtered submissions
@@ -109,10 +202,7 @@ export const AssessmentsPage: React.FC<AssessmentsPageProps> = ({
 
   // Export CSV
   const handleExportCsv = () => {
-    if (!surveyStats?.recentSubmissions || surveyStats.recentSubmissions.length === 0) {
-      alert(isAm ? 'ለማውረድ የሚገኝ መረጃ የለም' : 'No survey submissions to export.');
-      return;
-    }
+    if (!surveyStats?.recentSubmissions || surveyStats.recentSubmissions.length === 0) return;
 
     exportToCsv<BaselineSurveySubmission>(
       'student_baseline_surveys',
@@ -129,79 +219,334 @@ export const AssessmentsPage: React.FC<AssessmentsPageProps> = ({
     );
   };
 
+  // Delete single response
+  const handleDeleteSubmission = async (id: string) => {
+    if (
+      !window.confirm(
+        isAm
+          ? 'ይህን ማንነቱ ያልታወቀ ምላሽ መሰረዝ ይፈልጋሉ?'
+          : 'Are you sure you want to permanently delete this anonymous response?'
+      )
+    )
+      return;
+
+    try {
+      await api.deleteSurveyResponse(id);
+      await loadStats();
+    } catch (err) {
+      console.error('Failed to delete response:', err);
+      alert(isAm ? 'መሰረዝ አልተቻለም' : 'Failed to delete response');
+    }
+  };
+
+  // Clear all responses
+  const handleClearAll = async () => {
+    if (
+      !window.confirm(
+        isAm
+          ? 'ሁሉንም የሙከራ ምላሾች ማጽዳት ይፈልጋሉ? ይህ እርምጃ ሊቀለበስ አይችልም።'
+          : 'Are you sure you want to clear ALL survey responses? This action cannot be undone.'
+      )
+    )
+      return;
+
+    try {
+      await api.clearSurveyResponses();
+      await loadStats();
+    } catch (err) {
+      console.error('Failed to clear responses:', err);
+      alert(isAm ? 'ማጽዳት አልተቻለም' : 'Failed to clear responses');
+    }
+  };
+
+  // Question Management Handlers
+  const openCreateQuestionModal = () => {
+    setEditingQuestion(null);
+    setQuestionSection(typeof sectionFilter === 'number' ? sectionFilter : 1);
+    setQuestionTitleEn('');
+    setQuestionTitleAm('');
+    setQuestionType('SINGLE_CHOICE');
+    setQuestionOptions([
+      { position: 1, value: 'Option 1', labelEn: 'Option 1', labelAm: 'አማራጭ 1' },
+      { position: 2, value: 'Option 2', labelEn: 'Option 2', labelAm: 'አማራጭ 2' },
+    ]);
+    setIsQuestionModalOpen(true);
+  };
+
+  const openEditQuestionModal = (q: SurveyQuestion) => {
+    setEditingQuestion(q);
+    setQuestionSection(q.sectionNumber || 1);
+    setQuestionTitleEn(q.titleEn);
+    setQuestionTitleAm(q.titleAm);
+    setQuestionType(q.type);
+    setQuestionOptions(
+      q.options.map((opt, idx) => ({
+        id: opt.id,
+        position: opt.position ?? idx + 1,
+        value: opt.value,
+        labelEn: opt.labelEn,
+        labelAm: opt.labelAm,
+      }))
+    );
+    setIsQuestionModalOpen(true);
+  };
+
+  const handleAddOptionRow = () => {
+    const nextIdx = questionOptions.length + 1;
+    setQuestionOptions([
+      ...questionOptions,
+      {
+        position: nextIdx,
+        value: `Option ${nextIdx}`,
+        labelEn: `Option ${nextIdx}`,
+        labelAm: `አማራጭ ${nextIdx}`,
+      },
+    ]);
+  };
+
+  const handleRemoveOptionRow = (index: number) => {
+    if (questionOptions.length <= 2) {
+      alert(isAm ? 'ቢያንስ 2 አማራጮች መኖር አለባቸው' : 'A question must have at least 2 options.');
+      return;
+    }
+    setQuestionOptions(questionOptions.filter((_, idx) => idx !== index));
+  };
+
+  const handleSaveQuestion = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!questionTitleEn.trim()) {
+      alert('English question title is required');
+      return;
+    }
+    for (const opt of questionOptions) {
+      if (!opt.value.trim() || !opt.labelEn.trim()) {
+        alert('All options must have a value and an English label');
+        return;
+      }
+    }
+
+    const secInfo = UOG_SECTIONS_LIST.find((s) => s.num === questionSection) || UOG_SECTIONS_LIST[0];
+
+    setSavingQuestion(true);
+    try {
+      const payload: Partial<SurveyQuestion> = {
+        sectionNumber: secInfo.num,
+        sectionKey: `section_${secInfo.num}`,
+        sectionTitleEn: secInfo.labelEn,
+        sectionTitleAm: secInfo.labelAm,
+        moduleKey: secInfo.moduleKey,
+        titleEn: questionTitleEn.trim(),
+        titleAm: questionTitleAm.trim() || questionTitleEn.trim(),
+        type: questionType,
+        position: editingQuestion ? editingQuestion.position : questions.length + 1,
+        isRequired: true,
+        options: questionOptions.map((opt, idx) => ({
+          id: opt.id,
+          position: idx + 1,
+          value: opt.value.trim(),
+          labelEn: opt.labelEn.trim(),
+          labelAm: opt.labelAm.trim() || opt.labelEn.trim(),
+        })) as any,
+      };
+
+      if (editingQuestion) {
+        await api.updateSurveyQuestion(editingQuestion.id, payload);
+      } else {
+        await api.createSurveyQuestion(payload);
+      }
+
+      setIsQuestionModalOpen(false);
+      await loadQuestions(sectionFilter);
+      await loadStats();
+    } catch (err: any) {
+      console.error('Error saving question:', err);
+      alert(err.message || 'Failed to save question');
+    } finally {
+      setSavingQuestion(false);
+    }
+  };
+
+  const handleDeleteQuestion = async (id: string) => {
+    if (
+      !window.confirm(
+        isAm
+          ? 'ይህን ጥያቄ በእርግጥ መሰረዝ ይፈልጋሉ? የተያያዙ አማራጮች በሙሉ ይሰረዛሉ።'
+          : 'Are you sure you want to delete this question? All its choices will also be deleted.'
+      )
+    )
+      return;
+
+    try {
+      await api.deleteSurveyQuestion(id);
+      await loadQuestions();
+      await loadStats();
+    } catch (err: any) {
+      console.error('Error deleting question:', err);
+      alert(err.message || 'Failed to delete question');
+    }
+  };
+
+  const handleToggleQuestionActive = async (q: SurveyQuestion) => {
+    try {
+      await api.updateSurveyQuestion(q.id, { isActive: !q.isActive });
+      await loadQuestions();
+      await loadStats();
+    } catch (err: any) {
+      console.error('Error toggling question active status:', err);
+    }
+  };
+
+  const currentTabOption = [
+    {
+      id: 'baseline' as const,
+      label: isAm ? 'የመግቢያ አጠቃላይ ቅኝት' : 'Survey Insights',
+      icon: BarChart2,
+      desc: isAm ? 'የተማሪዎች አጠቃላይ ስታቲስቲክስና ዳታ' : 'Anonymous baseline student demographics',
+      color: 'text-emerald-500',
+    },
+    {
+      id: 'questions' as const,
+      label: isAm ? 'ጥያቄዎችን አስተዳድር' : 'Manage Questions',
+      icon: Sliders,
+      desc: isAm ? 'ተለዋዋጭ ጥያቄዎችን ማከል፣ ማረም እና ማስወገድ' : 'Create, edit, and reorder custom survey questions',
+      color: 'text-purple-500',
+    },
+    {
+      id: 'modules' as const,
+      label: isAm ? 'የትምህርት ሞጁል ምዘናዎች' : 'Module Tests',
+      icon: BookOpen,
+      desc: isAm ? 'የሞጁል ፈተናዎችና የትምህርት ጥያቄዎች' : 'Curriculum chapter tests and learning mastery',
+      color: 'text-sky-500',
+    },
+  ];
+
+  const activeOption = currentTabOption.find((o) => o.id === currentSubTab) || currentTabOption[0];
+  const ActiveIcon = activeOption.icon;
+
   return (
     <div className="space-y-6">
-      {/* 1. Header with Breadcrumbs & Action Controls */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      {/* 1. TOP HEADER & SUB-NAV CONTROLS */}
+      <div className="flex flex-col gap-4 border-b border-slate-200/80 pb-5 sm:flex-row sm:items-center sm:justify-between dark:border-slate-800">
         <div>
           <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
             <span>{isAm ? 'አስተዳደር' : 'Yegna Admin'}</span>
             <span>/</span>
-            <span className="text-sky-600 dark:text-sky-400">{isAm ? 'ምዘናዎች እና ቅኝቶች' : 'Assessments'}</span>
+            <span className="text-sky-600 dark:text-sky-400">{isAm ? 'ምዘናዎች እና ቅኝቶች' : 'Assessments & Surveys'}</span>
           </div>
           <h1 className="mt-1 text-2xl font-black text-slate-900 dark:text-white">
-            {isAm ? 'የተማሪዎች ምዘና ማዕከል' : 'Assessments & Student Surveys'}
+            {isAm ? 'የተማሪዎች ምዘናና መጠይቅ ማዕከል' : 'Assessments & Student Surveys Hub'}
           </h1>
           <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">
             {isAm
-              ? 'የተማሪዎች አጠቃላይ የመግቢያ ቅኝት እና የሞጁል ትምህርት ምዘናዎች'
-              : 'Anonymous student baseline insights and curriculum learning assessments'}
+              ? 'የተማሪዎች አጠቃላይ የመግቢያ ቅኝት፣ ተለዋዋጭ ጥያቄዎች እና የሞጁል ትምህርት ምዘናዎች'
+              : 'Anonymous student baseline insights, dynamic survey questions, and curriculum learning tests'}
           </p>
         </div>
 
-        {/* Top Segmented Tab Switcher */}
-        <div className="flex flex-wrap items-center gap-2">
-          <div className="inline-flex rounded-xl bg-slate-200/80 p-1 dark:bg-slate-800">
+        {/* Right side: Dropdown Selector + Context Actions */}
+        <div className="flex flex-wrap items-center gap-2.5">
+          {/* Executive View Switcher Dropdown */}
+          <div className="relative" ref={dropdownRef}>
             <button
-              onClick={() => setActiveSubTab('baseline')}
-              className={`inline-flex items-center gap-2 rounded-lg px-3.5 py-1.5 text-xs font-bold transition-all ${
-                activeSubTab === 'baseline'
-                  ? 'bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-white'
-                  : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
-              }`}
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              className="flex items-center gap-2.5 px-3.5 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xs text-xs font-bold text-slate-800 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-750 transition-all cursor-pointer"
             >
-              <BarChart2 size={15} className="text-emerald-500" />
-              {isAm ? 'የመግቢያ አጠቃላይ ቅኝት' : 'General Baseline Survey'}
+              <ActiveIcon size={16} className={activeOption.color} />
+              <div className="flex flex-col text-left">
+                <span className="text-[10px] uppercase font-semibold text-slate-400 leading-none">View</span>
+                <span className="text-xs font-bold leading-tight mt-0.5">{activeOption.label}</span>
+              </div>
+              <ChevronDown
+                size={14}
+                className={`ml-1 text-slate-400 transition-transform duration-200 ${
+                  isDropdownOpen ? 'rotate-180 text-slate-700 dark:text-slate-200' : ''
+                }`}
+              />
             </button>
-            <button
-              onClick={() => setActiveSubTab('modules')}
-              className={`inline-flex items-center gap-2 rounded-lg px-3.5 py-1.5 text-xs font-bold transition-all ${
-                activeSubTab === 'modules'
-                  ? 'bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-white'
-                  : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
-              }`}
-            >
-              <BookOpen size={15} className="text-sky-500" />
-              {isAm ? 'የትምህርት ሞጁል ምዘናዎች' : 'Module Assessments'}
-            </button>
+
+            {isDropdownOpen && (
+              <div className="absolute right-0 top-full mt-2 w-72 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200/90 dark:border-slate-800 z-50 p-2 space-y-1 animate-in fade-in zoom-in-95 duration-150">
+                <div className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                  {isAm ? 'ክፍል ይምረጡ' : 'Select Assessment Section'}
+                </div>
+                {currentTabOption.map((opt) => {
+                  const Icon = opt.icon;
+                  const isSelected = currentSubTab === opt.id;
+                  return (
+                    <button
+                      key={opt.id}
+                      onClick={() => handleSwitchTab(opt.id)}
+                      className={`w-full flex items-start gap-3 p-2.5 rounded-xl transition-all text-left cursor-pointer ${
+                        isSelected
+                          ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-bold'
+                          : 'hover:bg-slate-50 dark:hover:bg-slate-800/60 text-slate-600 dark:text-slate-300'
+                      }`}
+                    >
+                      <div className={`p-1.5 rounded-lg ${isSelected ? 'bg-white dark:bg-slate-700 shadow-xs' : 'bg-slate-100 dark:bg-slate-800'}`}>
+                        <Icon size={16} className={opt.color} />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between">
+                          <p className="text-xs font-bold truncate">{opt.label}</p>
+                          {isSelected && <Check size={14} className="text-sky-500 shrink-0" />}
+                        </div>
+                        <p className="text-[10px] text-slate-400 dark:text-slate-500 leading-tight mt-0.5 line-clamp-1">{opt.desc}</p>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
-          {activeSubTab === 'baseline' && (
+          {/* Context actions for baseline */}
+          {currentSubTab === 'baseline' && (
             <div className="flex items-center gap-2">
               <button
                 onClick={() => loadStats(true)}
                 disabled={refreshing}
-                className="inline-flex items-center gap-1.5 rounded-xl border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:opacity-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-xs transition hover:bg-slate-50 disabled:opacity-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700 cursor-pointer"
                 title="Refresh Live Data"
               >
-                <RefreshCw size={14} className={refreshing ? 'animate-spin text-sky-500' : ''} />
+                <RefreshCw size={13} className={refreshing ? 'animate-spin text-sky-500' : ''} />
                 <span className="hidden sm:inline">{isAm ? 'አድስ' : 'Refresh'}</span>
               </button>
               <button
                 onClick={handleExportCsv}
-                className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-3.5 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-slate-800 dark:bg-emerald-600 dark:hover:bg-emerald-700"
+                className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-3.5 py-2 text-xs font-semibold text-white shadow-xs transition hover:bg-slate-800 dark:bg-emerald-600 dark:hover:bg-emerald-700 cursor-pointer"
               >
-                <Download size={14} />
+                <Download size={13} />
                 <span>{isAm ? 'CSV አውርድ' : 'Export CSV'}</span>
               </button>
+              {totalSubmissions > 0 && (
+                <button
+                  onClick={handleClearAll}
+                  className="inline-flex items-center gap-1.5 rounded-xl border border-rose-300 bg-rose-50 px-3 py-2 text-xs font-semibold text-rose-700 shadow-xs transition hover:bg-rose-100 dark:border-rose-800 dark:bg-rose-950/40 dark:text-rose-400 dark:hover:bg-rose-950/70 cursor-pointer"
+                  title="Clear all test responses"
+                >
+                  <Trash2 size={13} />
+                  <span>{isAm ? 'የሙከራ መረጃዎችን አጽዳ' : 'Clear Test Data'}</span>
+                </button>
+              )}
             </div>
+          )}
+
+          {/* Context actions for questions */}
+          {currentSubTab === 'questions' && (
+            <button
+              onClick={openCreateQuestionModal}
+              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-600 px-4 py-2 text-xs font-bold text-white shadow-sm transition hover:from-sky-600 hover:to-indigo-700 cursor-pointer"
+            >
+              <Plus size={15} />
+              <span>{isAm ? 'አዲስ ጥያቄ ጨምር' : 'Add New Question'}</span>
+            </button>
           )}
         </div>
       </div>
 
       {/* 2. SUB-TAB CONTENT */}
-      {activeSubTab === 'modules' ? (
-        // Tab 2: Abel's Module Learning Assessments Page
+      {currentSubTab === 'modules' ? (
+        // Tab 3: Module Learning Assessments
         <LearningAssessmentsPage
           modules={modules}
           assessments={assessments}
@@ -209,429 +554,599 @@ export const AssessmentsPage: React.FC<AssessmentsPageProps> = ({
           onSave={onSaveAssessment}
           onDelete={onDeleteAssessment}
         />
-      ) : (
-        // Tab 1: General Baseline Survey Analytics
+      ) : currentSubTab === 'questions' ? (
+        // Tab 2: Manage Dynamic Survey Questions
         <div className="space-y-6">
-          {/* Top 4 KPI Stat Cards */}
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {/* KPI 1: Total Respondents */}
-            <div className="relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-900">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                  {isAm ? 'ጠቅላላ ምላሽ ሰጪዎች' : 'Total Respondents'}
-                </span>
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400">
-                  <Users size={18} />
-                </div>
-              </div>
-              <div className="mt-3 flex items-baseline gap-2">
-                <span className="text-3xl font-black text-slate-900 dark:text-white">
-                  {loading ? '...' : totalSubmissions}
-                </span>
-                <span className="rounded-md bg-emerald-100 px-1.5 py-0.5 text-[11px] font-bold text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400">
-                  {isAm ? 'ተማሪዎች' : 'Students'}
-                </span>
-              </div>
-              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                {isAm ? '100% ማንነትን ሳይገልጽ የተሰበሰበ' : 'Zero-Knowledge Verified Anonymous'}
-              </p>
-            </div>
-
-            {/* KPI 2: Gondar Clinic Awareness */}
-            <div className="relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-900">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                  {isAm ? 'የጎንደር ክሊኒክ ግንዛቤ' : 'Clinic Awareness Rate'}
-                </span>
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-500/10 text-sky-600 dark:bg-sky-500/20 dark:text-sky-400">
-                  <Hospital size={18} />
-                </div>
-              </div>
-              <div className="mt-3 flex items-baseline gap-2">
-                <span className="text-3xl font-black text-slate-900 dark:text-white">
-                  {loading ? '...' : `${awarePercent}%`}
-                </span>
-                <span
-                  className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${
-                    awarePercent >= 50
-                      ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400'
-                      : 'bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:text-rose-400'
-                  }`}
-                >
-                  {awarePercent >= 50 ? (isAm ? 'ጥሩ ደረጃ' : 'High') : (isAm ? 'ትኩረት ያስፈልጋል' : 'Needs Outreach')}
-                </span>
-              </div>
-              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                {isAm
-                  ? `${totalSubmissions - awareCount} ተማሪዎች አገልግሎቱ የሚገኝበትን አያውቁም`
-                  : `${totalSubmissions - awareCount} students unaware of campus clinic`}
-              </p>
-            </div>
-
-            {/* KPI 3: Accessibility Needs */}
-            <div className="relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-900">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                  {isAm ? 'የተደራሽነት ድጋፍ ፈላጊ' : 'Accessibility Support'}
-                </span>
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-purple-500/10 text-purple-600 dark:bg-purple-500/20 dark:text-purple-400">
-                  <Accessibility size={18} />
-                </div>
-              </div>
-              <div className="mt-3 flex items-baseline gap-2">
-                <span className="text-3xl font-black text-slate-900 dark:text-white">
-                  {loading ? '...' : `${needAssistancePercent}%`}
-                </span>
-                <span className="rounded-md bg-purple-100 px-1.5 py-0.5 text-[11px] font-bold text-purple-700 dark:bg-purple-950/60 dark:text-purple-400">
-                  {needAssistanceCount} {isAm ? 'ተማሪዎች' : 'Students'}
-                </span>
-              </div>
-              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                {isAm ? 'የእይታ፣ መስማት ወይም የእንቅስቃሴ ድጋፍ' : 'Visual, hearing, or mobility needs'}
-              </p>
-            </div>
-
-            {/* KPI 4: Primary Demographic */}
-            <div className="relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-900">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                  {isAm ? 'ዋና የተማሪ ስብስብ' : 'Primary Cohort'}
-                </span>
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400">
-                  <GraduationCap size={18} />
-                </div>
-              </div>
-              <div className="mt-3 flex items-baseline gap-2">
-                <span className="text-xl font-black text-slate-900 dark:text-white">
-                  {loading ? '...' : topAge}
-                </span>
-                <span className="rounded-md bg-amber-100 px-1.5 py-0.5 text-[11px] font-bold text-amber-700 dark:bg-amber-950/60 dark:text-amber-400">
-                  {topYear}
-                </span>
-              </div>
-              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                {isAm ? 'በጣም የተወከለው የዕድሜ እና የትምህርት ደረጃ' : 'Most represented student cohort'}
-              </p>
-            </div>
-          </div>
-
-          {/* 3. The 4 Question Breakdown Cards Grid */}
-          <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
-            {/* Q1: Age Group Breakdown */}
-            <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-3 dark:border-slate-800">
-                <div className="flex items-center gap-2">
-                  <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-emerald-100 text-xs font-bold text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400">
-                    Q1
-                  </span>
-                  <h3 className="font-extrabold text-slate-900 dark:text-white">
-                    {isAm ? 'ዕድሜዎ ስንት ነው? (የዕድሜ ክፍፍል)' : 'What is your age? (Age Distribution)'}
-                  </h3>
-                </div>
-                <span className="text-xs text-slate-500">
-                  {surveyStats?.breakdown.byAge.length || 0} {isAm ? 'ምድቦች' : 'Tiers'}
-                </span>
-              </div>
-
-              <div className="mt-4 space-y-3.5">
-                {surveyStats?.breakdown.byAge.map((item) => (
-                  <div key={item.ageGroup} className="space-y-1">
-                    <div className="flex items-center justify-between text-xs font-bold">
-                      <span className="text-slate-700 dark:text-slate-300">{item.ageGroup}</span>
-                      <span className="text-slate-500 dark:text-slate-400">
-                        {item.count} {isAm ? 'ተማሪ' : 'students'} ({item.percentage}%)
-                      </span>
-                    </div>
-                    <div className="h-2.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
-                      <div
-                        className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-teal-400 transition-all duration-500"
-                        style={{ width: `${Math.max(item.percentage, 3)}%` }}
-                      />
-                    </div>
-                  </div>
-                )) || <div className="py-4 text-center text-xs text-slate-400">{isAm ? 'መረጃ የለም' : 'No data yet'}</div>}
-              </div>
-            </div>
-
-            {/* Q2: Current Year of Study */}
-            <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-3 dark:border-slate-800">
-                <div className="flex items-center gap-2">
-                  <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-sky-100 text-xs font-bold text-sky-700 dark:bg-sky-950 dark:text-sky-400">
-                    Q2
-                  </span>
-                  <h3 className="font-extrabold text-slate-900 dark:text-white">
-                    {isAm ? 'በምን ዓመት የትምህርት ደረጃ ላይ ይገኛሉ?' : 'Current Year of Study'}
-                  </h3>
-                </div>
-                <span className="text-xs text-slate-500">
-                  {surveyStats?.breakdown.byYearOfStudy.length || 0} {isAm ? 'ደረጃዎች' : 'Levels'}
-                </span>
-              </div>
-
-              <div className="mt-4 space-y-3.5">
-                {surveyStats?.breakdown.byYearOfStudy.map((item) => (
-                  <div key={item.yearOfStudy} className="space-y-1">
-                    <div className="flex items-center justify-between text-xs font-bold">
-                      <span className="text-slate-700 dark:text-slate-300">{item.yearOfStudy}</span>
-                      <span className="text-slate-500 dark:text-slate-400">
-                        {item.count} {isAm ? 'ተማሪ' : 'students'} ({item.percentage}%)
-                      </span>
-                    </div>
-                    <div className="h-2.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
-                      <div
-                        className="h-full rounded-full bg-gradient-to-r from-sky-500 to-indigo-500 transition-all duration-500"
-                        style={{ width: `${Math.max(item.percentage, 3)}%` }}
-                      />
-                    </div>
-                  </div>
-                )) || <div className="py-4 text-center text-xs text-slate-400">{isAm ? 'መረጃ የለም' : 'No data yet'}</div>}
-              </div>
-            </div>
-
-            {/* Q3: Disability & Accessibility Needs */}
-            <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-3 dark:border-slate-800">
-                <div className="flex items-center gap-2">
-                  <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-purple-100 text-xs font-bold text-purple-700 dark:bg-purple-950 dark:text-purple-400">
-                    Q3
-                  </span>
-                  <h3 className="font-extrabold text-slate-900 dark:text-white">
-                    {isAm ? 'የተለየ የተደራሽነት ድጋፍ ፍላጎት' : 'Disability & Accessibility Needs'}
-                  </h3>
-                </div>
-                <span className="text-xs text-slate-500">
-                  {needAssistanceCount} {isAm ? 'ድጋፍ ፈላጊ' : 'Requested'}
-                </span>
-              </div>
-
-              <div className="mt-4 space-y-3.5">
-                {surveyStats?.breakdown.byDisabilityNeed.map((item) => {
-                  const isNone = item.disabilityNeed === 'NONE';
-                  return (
-                    <div key={item.disabilityNeed} className="space-y-1">
-                      <div className="flex items-center justify-between text-xs font-bold">
-                        <span className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300">
-                          <span
-                            className={`h-2 w-2 rounded-full ${
-                              isNone ? 'bg-emerald-500' : 'bg-purple-500'
-                            }`}
-                          />
-                          {item.disabilityNeed}
-                        </span>
-                        <span className="text-slate-500 dark:text-slate-400">
-                          {item.count} ({item.percentage}%)
-                        </span>
-                      </div>
-                      <div className="h-2.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
-                        <div
-                          className={`h-full rounded-full transition-all duration-500 ${
-                            isNone
-                              ? 'bg-slate-400 dark:bg-slate-600'
-                              : 'bg-gradient-to-r from-purple-500 to-pink-500'
-                          }`}
-                          style={{ width: `${Math.max(item.percentage, 3)}%` }}
-                        />
-                      </div>
-                    </div>
-                  );
-                }) || <div className="py-4 text-center text-xs text-slate-400">{isAm ? 'መረጃ የለም' : 'No data yet'}</div>}
-              </div>
-            </div>
-
-            {/* Q4: Gondar SRH Service Awareness */}
-            <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-3 dark:border-slate-800">
-                <div className="flex items-center gap-2">
-                  <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-rose-100 text-xs font-bold text-rose-700 dark:bg-rose-950 dark:text-rose-400">
-                    Q4
-                  </span>
-                  <h3 className="font-extrabold text-slate-900 dark:text-white">
-                    {isAm
-                      ? 'የጎንደር ዩኒቨርሲቲ የስነ-ተዋልዶ ጤና አገልግሎት ግንዛቤ'
-                      : 'University of Gondar SRH Awareness'}
-                  </h3>
-                </div>
-                <span className="rounded-md bg-rose-50 px-2 py-0.5 text-xs font-bold text-rose-600 dark:bg-rose-950/50 dark:text-rose-300">
-                  {awarePercent}% {isAm ? 'ግንዛቤ አላቸው' : 'Awareness'}
-                </span>
-              </div>
-
-              <div className="mt-4 space-y-3.5">
-                {surveyStats?.breakdown.byGondarSrhAwareness.map((item) => {
-                  const isYes = item.knowsGondarSrh === 'YES';
-                  const isNo = item.knowsGondarSrh === 'NO';
-                  return (
-                    <div key={item.knowsGondarSrh} className="space-y-1">
-                      <div className="flex items-center justify-between text-xs font-bold">
-                        <span className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300">
-                          {isYes && <CheckCircle2 size={13} className="text-emerald-500" />}
-                          {isNo && <XCircle size={13} className="text-rose-500" />}
-                          {!isYes && !isNo && <AlertCircle size={13} className="text-amber-500" />}
-                          {item.knowsGondarSrh === 'YES'
-                            ? isAm
-                              ? 'አዎ አውቃለሁ (Yes)'
-                              : 'Yes, I know'
-                            : item.knowsGondarSrh === 'NO'
-                            ? isAm
-                              ? 'አልያውቅም (No)'
-                              : 'No, not yet'
-                            : isAm
-                            ? 'እርግጠኛ አይደለሁም (Not sure)'
-                            : 'Not sure'}
-                        </span>
-                        <span className="text-slate-500 dark:text-slate-400">
-                          {item.count} ({item.percentage}%)
-                        </span>
-                      </div>
-                      <div className="h-2.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
-                        <div
-                          className={`h-full rounded-full transition-all duration-500 ${
-                            isYes
-                              ? 'bg-gradient-to-r from-emerald-500 to-teal-400'
-                              : isNo
-                              ? 'bg-gradient-to-r from-rose-500 to-red-400'
-                              : 'bg-gradient-to-r from-amber-500 to-yellow-400'
-                          }`}
-                          style={{ width: `${Math.max(item.percentage, 3)}%` }}
-                        />
-                      </div>
-                    </div>
-                  );
-                }) || <div className="py-4 text-center text-xs text-slate-400">{isAm ? 'መረጃ የለም' : 'No data yet'}</div>}
-              </div>
-            </div>
-          </div>
-
-          {/* 4. Recent Anonymous Submissions Table */}
-          <div className="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
-            {/* Table Header & Controls */}
-            <div className="flex flex-col gap-3 border-b border-slate-100 p-5 sm:flex-row sm:items-center sm:justify-between dark:border-slate-800">
-              <div className="flex items-center gap-2">
-                <Layers size={18} className="text-sky-500" />
-                <h3 className="font-extrabold text-slate-900 dark:text-white">
-                  {isAm ? 'የቅርብ ጊዜ ማንነት-የማይገልጹ ምላሾች' : 'Recent Anonymous Submissions'}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-purple-500/10 text-purple-600 dark:bg-purple-500/20 dark:text-purple-400">
+                <HelpCircle size={18} />
+              </span>
+              <div>
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+                  {isAm ? 'ተለዋዋጭ የመግቢያ ጥያቄዎች' : 'Baseline Assessment Questions'}
                 </h3>
-                <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-bold text-slate-600 dark:bg-slate-800 dark:text-slate-300">
-                  {filteredSubmissions.length}
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  {isAm
+                    ? 'በተማሪዎች ሞባይል አፕሊኬሽን የሚቀርቡትን ጥያቄዎች እና አማራጮች ያቀናብሩ'
+                    : 'Manage questions and choices rendered dynamically in the mobile onboarding survey modal'}
+                </p>
+              </div>
+            </div>
+
+            <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-700 dark:bg-slate-800 dark:text-slate-300">
+              {questions.length} {isAm ? 'ጥያቄዎች' : 'Questions'}
+            </span>
+          </div>
+
+          {/* Section Filter Pills */}
+          <div className="flex flex-wrap items-center gap-1.5 rounded-2xl bg-slate-50 p-2.5 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-800">
+            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider mr-1">
+              {isAm ? 'ክፍል፡' : 'Section:'}
+            </span>
+            <button
+              onClick={() => handleSectionFilterChange('ALL')}
+              className={`rounded-xl px-3 py-1.5 text-xs font-bold transition-all cursor-pointer ${
+                sectionFilter === 'ALL'
+                  ? 'bg-purple-600 text-white shadow-xs'
+                  : 'bg-white text-slate-700 hover:bg-slate-100 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700'
+              }`}
+            >
+              {isAm ? 'ሁሉም ክፍሎች (1-8)' : 'All Sections (1–8)'}
+            </button>
+            {UOG_SECTIONS_LIST.map((sec) => (
+              <button
+                key={sec.num}
+                onClick={() => handleSectionFilterChange(sec.num)}
+                className={`rounded-xl px-3 py-1.5 text-xs font-bold transition-all cursor-pointer ${
+                  sectionFilter === sec.num
+                    ? 'bg-purple-600 text-white shadow-xs'
+                    : 'bg-white text-slate-700 hover:bg-slate-100 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700'
+                }`}
+              >
+                Sec {sec.num}
+              </button>
+            ))}
+          </div>
+
+          {loadingQuestions ? (
+            <div className="flex h-48 items-center justify-center">
+              <RefreshCw className="h-6 w-6 animate-spin text-purple-500" />
+            </div>
+          ) : questions.length === 0 ? (
+            <div className="rounded-2xl border border-dashed border-slate-300 p-12 text-center dark:border-slate-700">
+              <Sliders className="mx-auto h-12 w-12 text-slate-400" />
+              <h4 className="mt-3 text-base font-bold text-slate-700 dark:text-slate-200">
+                {isAm ? 'ምንም ጥያቄ አልተገኘም' : 'No Survey Questions Found'}
+              </h4>
+              <p className="mt-1 text-xs text-slate-500">
+                {isAm ? 'አዲስ ጥያቄ ለማከል ከላይ ያለውን አዝራር ይጫኑ' : 'Click "+ Add New Question" to add your first baseline survey question.'}
+              </p>
+            </div>
+          ) : (
+            <div className="grid gap-4">
+              {questions.map((q, idx) => (
+                <div
+                  key={q.id}
+                  className="group relative rounded-2xl border border-slate-200/90 bg-white p-5 shadow-xs transition hover:border-purple-300 hover:shadow-md dark:border-slate-800 dark:bg-slate-900 dark:hover:border-purple-800"
+                >
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                    <div className="flex items-start gap-3.5">
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-purple-50 text-xs font-black text-purple-600 dark:bg-purple-950/60 dark:text-purple-300">
+                        #{idx + 1}
+                      </div>
+                      <div>
+                        <div className="flex flex-wrap items-center gap-2">
+                          {q.sectionNumber && (
+                            <span className="rounded-md bg-purple-50 px-2 py-0.5 text-[10px] font-bold text-purple-700 dark:bg-purple-950/40 dark:text-purple-300">
+                              Section {q.sectionNumber}
+                            </span>
+                          )}
+                          <h4 className="text-base font-bold text-slate-900 dark:text-white">
+                            {q.titleEn}
+                          </h4>
+                          <span
+                            className={`rounded-md px-2 py-0.5 text-[10px] font-bold ${
+                              q.isActive
+                                ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400'
+                                : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
+                            }`}
+                          >
+                            {q.isActive ? (isAm ? 'ንቁ' : 'Active') : (isAm ? 'የተደበቀ' : 'Hidden')}
+                          </span>
+                          <span className="rounded-md bg-sky-50 px-2 py-0.5 text-[10px] font-bold text-sky-700 dark:bg-sky-950/40 dark:text-sky-300">
+                            {q.type === 'SINGLE_CHOICE' ? 'Single Choice' : 'Multi Choice'}
+                          </span>
+                        </div>
+                        <p className="mt-1 text-sm font-medium text-slate-500 dark:text-slate-400">
+                          {q.titleAm}
+                        </p>
+
+                        {/* Options pills */}
+                        <div className="mt-3 flex flex-wrap gap-1.5">
+                          {q.options.map((opt) => (
+                            <span
+                              key={opt.id}
+                              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
+                            >
+                              <span className="font-mono text-[10px] text-purple-600 dark:text-purple-400">
+                                {opt.position}.
+                              </span>
+                              <span>{opt.labelEn}</span>
+                              {opt.labelAm && opt.labelAm !== opt.labelEn && (
+                                <span className="text-[10px] text-slate-400">({opt.labelAm})</span>
+                              )}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Action buttons */}
+                    <div className="flex items-center gap-1.5 sm:self-center">
+                      <button
+                        onClick={() => handleToggleQuestionActive(q)}
+                        className={`rounded-lg px-2.5 py-1 text-xs font-semibold transition cursor-pointer ${
+                          q.isActive
+                            ? 'text-amber-600 hover:bg-amber-50 dark:text-amber-400 dark:hover:bg-amber-950/40'
+                            : 'text-emerald-600 hover:bg-emerald-50 dark:text-emerald-400 dark:hover:bg-emerald-950/40'
+                        }`}
+                        title={q.isActive ? 'Hide from students' : 'Activate in survey'}
+                      >
+                        {q.isActive ? (isAm ? 'ደብቅ' : 'Hide') : (isAm ? 'አሳይ' : 'Activate')}
+                      </button>
+                      <button
+                        onClick={() => openEditQuestionModal(q)}
+                        className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-sky-600 dark:hover:bg-slate-800 dark:hover:text-sky-400 cursor-pointer"
+                        title="Edit question"
+                      >
+                        <Edit3 size={15} />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteQuestion(q.id)}
+                        className="rounded-lg p-1.5 text-slate-400 hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-950/40 dark:hover:text-rose-400 cursor-pointer"
+                        title="Delete question"
+                      >
+                        <Trash2 size={15} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      ) : (
+        // Tab 1: Survey Insights (Live Data & Charts)
+        <div className="space-y-6">
+          {/* Top KPI Summary Cards */}
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-xs dark:border-slate-800 dark:bg-slate-900">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                  {isAm ? 'ጠቅላላ ተሳታፊዎች' : 'Total Survey Respondents'}
+                </span>
+                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-50 text-sky-600 dark:bg-sky-950/60 dark:text-sky-400">
+                  <Users size={18} />
+                </span>
+              </div>
+              <p className="mt-3 text-3xl font-black text-slate-900 dark:text-white">
+                {totalSubmissions.toLocaleString()}
+              </p>
+              <div className="mt-2 flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400">
+                <ShieldCheck size={14} />
+                <span className="font-semibold">Zero-PII Privacy Protection</span>
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-xs dark:border-slate-800 dark:bg-slate-900">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                  {isAm ? 'የጎንደር SRH ክሊኒክ ግንዛቤ' : 'Gondar SRH Awareness'}
+                </span>
+                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400">
+                  <Hospital size={18} />
+                </span>
+              </div>
+              <p className="mt-3 text-3xl font-black text-emerald-600 dark:text-emerald-400">
+                {awarePercent}%
+              </p>
+              <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
+                {awareCount} {isAm ? 'ተማሪዎች አገልግሎቱን ያውቃሉ' : 'students fully aware'}
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-xs dark:border-slate-800 dark:bg-slate-900">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                  {isAm ? 'የተደራሽነት ድጋፍ ፍላጎት' : 'Accessibility Support Need'}
+                </span>
+                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-purple-50 text-purple-600 dark:bg-purple-950/60 dark:text-purple-400">
+                  <Accessibility size={18} />
+                </span>
+              </div>
+              <p className="mt-3 text-3xl font-black text-purple-600 dark:text-purple-400">
+                {needAssistancePercent}%
+              </p>
+              <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
+                {needAssistanceCount} {isAm ? 'ተማሪዎች ድጋፍ ይፈልጋሉ' : 'requesting specialized support'}
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-xs dark:border-slate-800 dark:bg-slate-900">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                  {isAm ? 'ዋና የዕድሜ / የትምህርት ቡድን' : 'Primary Cohort'}
+                </span>
+                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-50 text-amber-600 dark:bg-amber-950/60 dark:text-amber-400">
+                  <GraduationCap size={18} />
+                </span>
+              </div>
+              <p className="mt-3 text-xl font-black text-slate-900 dark:text-white truncate">
+                {topAge}
+              </p>
+              <p className="mt-2 text-xs text-slate-500 dark:text-slate-400 truncate">
+                {topYear}
+              </p>
+            </div>
+          </div>
+
+          {/* Dynamic Question Breakdown Charts */}
+          {surveyStats?.questions && surveyStats.questions.length > 0 && (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                  <Layers className="text-sky-500" size={18} />
+                  <span>{isAm ? 'የጥያቄዎች ምላሽ ስርጭት' : 'Question Response Distributions'}</span>
+                </h3>
+                <span className="text-xs text-slate-400">
+                  {surveyStats.questions.length} {isAm ? 'ንቁ ጥያቄዎች' : 'active survey metrics'}
                 </span>
               </div>
 
-              {/* Filters & Search */}
+              <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+                {surveyStats.questions.map((item: DynamicSurveyStatQuestion, idx: number) => (
+                  <div
+                    key={item.id}
+                    className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-xs dark:border-slate-800 dark:bg-slate-900"
+                  >
+                    <div className="flex items-start justify-between gap-2 border-b border-slate-100 pb-3 dark:border-slate-800">
+                      <div>
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-purple-600 dark:text-purple-400">
+                          Question #{idx + 1}
+                        </span>
+                        <h4 className="text-sm font-bold text-slate-900 dark:text-white mt-0.5">
+                          {isAm ? item.titleAm : item.titleEn}
+                        </h4>
+                        {item.titleAm && item.titleAm !== item.titleEn && (
+                          <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
+                            {isAm ? item.titleEn : item.titleAm}
+                          </p>
+                        )}
+                      </div>
+                      <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-[11px] font-bold text-slate-600 dark:bg-slate-800 dark:text-slate-300 shrink-0">
+                        {totalSubmissions} {isAm ? 'ምላሾች' : 'answers'}
+                      </span>
+                    </div>
+
+                    <div className="mt-4 space-y-3">
+                      {item.options.map((opt, oIdx) => {
+                        const gradient = OPTION_COLOR_GRADIENTS[oIdx % OPTION_COLOR_GRADIENTS.length];
+                        return (
+                          <div key={opt.value} className="space-y-1">
+                            <div className="flex items-center justify-between text-xs font-semibold">
+                              <span className="text-slate-700 dark:text-slate-200">
+                                {isAm ? opt.labelAm : opt.labelEn}
+                              </span>
+                              <span className="text-slate-500 font-mono text-[11px]">
+                                {opt.count} ({opt.percentage}%)
+                              </span>
+                            </div>
+                            <div className="h-2.5 w-full rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
+                              <div
+                                className={`h-full rounded-full bg-gradient-to-r ${gradient} transition-all duration-500`}
+                                style={{ width: `${opt.percentage}%` }}
+                              />
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Recent Anonymous Submissions Table */}
+          <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-xs dark:border-slate-800 dark:bg-slate-900">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-slate-100 pb-4 dark:border-slate-800">
+              <div>
+                <h3 className="text-base font-bold text-slate-900 dark:text-white">
+                  {isAm ? 'የቅርብ ጊዜ ምላሾች' : 'Recent Anonymous Responses'}
+                </h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  {filteredSubmissions.length} of {totalSubmissions} responses match filter
+                </p>
+              </div>
+
               <div className="flex flex-wrap items-center gap-2">
                 <div className="relative">
-                  <Search
-                    size={14}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-                  />
+                  <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-slate-400" />
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder={isAm ? 'በዕድሜ/ደረጃ ፈልግ...' : 'Search submissions...'}
-                    className="rounded-xl border border-slate-200 bg-slate-50 py-1.5 pl-8 pr-3 text-xs text-slate-900 outline-none transition focus:border-sky-500 focus:bg-white dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                    placeholder={isAm ? 'ፈልግ...' : 'Search responses...'}
+                    className="w-48 rounded-xl border border-slate-200 bg-slate-50 pl-8 pr-3 py-1.5 text-xs text-slate-800 outline-hidden transition focus:border-sky-500 focus:bg-white dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
                   />
                 </div>
 
                 <select
                   value={srhFilter}
                   onChange={(e) => setSrhFilter(e.target.value as any)}
-                  className="rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-xs font-semibold text-slate-700 outline-none dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
+                  className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-medium text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
                 >
-                  <option value="ALL">{isAm ? 'ሁሉንም ግንዛቤዎች' : 'All Awareness'}</option>
-                  <option value="YES">{isAm ? 'ያወቁ (Yes)' : 'Aware (Yes)'}</option>
-                  <option value="NO">{isAm ? 'ያላወቁ (No)' : 'Unaware (No)'}</option>
-                  <option value="NOT_SURE">{isAm ? 'እርግጠኛ ያልሆኑ' : 'Not Sure'}</option>
+                  <option value="ALL">{isAm ? 'ሁሉም ግንዛቤ' : 'All SRH Awareness'}</option>
+                  <option value="YES">{isAm ? 'ያውቃሉ' : 'Aware (Yes)'}</option>
+                  <option value="NO">{isAm ? 'አያውቁም' : 'Not Aware (No)'}</option>
+                  <option value="NOT_SURE">{isAm ? 'እርግጠኛ አይደሉም' : 'Unsure'}</option>
                 </select>
               </div>
             </div>
 
-            {/* Table Rows */}
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs">
-                <thead className="border-b border-slate-100 bg-slate-50/75 text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:border-slate-800 dark:bg-slate-800/40 dark:text-slate-400">
-                  <tr>
-                    <th className="py-3 pl-5 pr-3">{isAm ? 'የገባበት ቀን' : 'Timestamp'}</th>
-                    <th className="px-3 py-3">{isAm ? 'ዕድሜ' : 'Age Group'}</th>
-                    <th className="px-3 py-3">{isAm ? 'የትምህርት ዓመት' : 'Year of Study'}</th>
-                    <th className="px-3 py-3">{isAm ? 'የተደራሽነት ድጋፍ' : 'Accessibility Need'}</th>
-                    <th className="px-3 py-3">{isAm ? 'የጎንደር ክሊኒክ ግንዛቤ' : 'Gondar SRH Aware'}</th>
-                    <th className="py-3 pl-3 pr-5">{isAm ? 'የግላዊነት ሁኔታ' : 'Privacy Protection'}</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                  {filteredSubmissions.length > 0 ? (
-                    filteredSubmissions.map((sub) => {
-                      const isYes = sub.knowsGondarSrh === 'YES';
-                      const isNo = sub.knowsGondarSrh === 'NO';
-                      return (
-                        <tr
-                          key={sub.id}
-                          className="transition hover:bg-slate-50/80 dark:hover:bg-slate-800/40"
-                        >
-                          <td className="py-3.5 pl-5 pr-3 font-mono text-[11px] text-slate-500 dark:text-slate-400">
-                            <span className="flex items-center gap-1.5">
-                              <Calendar size={13} className="text-slate-400" />
-                              {new Date(sub.submittedAt).toLocaleDateString()}{' '}
-                              {new Date(sub.submittedAt).toLocaleTimeString([], {
-                                hour: '2-digit',
-                                minute: '2-digit',
-                              })}
-                            </span>
-                          </td>
-                          <td className="px-3 py-3.5 font-bold text-slate-800 dark:text-slate-200">
-                            <span className="rounded-md bg-slate-100 px-2 py-0.5 text-xs font-bold text-slate-700 dark:bg-slate-800 dark:text-slate-300">
-                              {sub.ageGroup}
-                            </span>
-                          </td>
-                          <td className="px-3 py-3.5 text-slate-700 dark:text-slate-300">
-                            {sub.yearOfStudy}
-                          </td>
-                          <td className="px-3 py-3.5">
-                            <span
-                              className={`rounded-md px-2 py-0.5 text-xs font-semibold ${
-                                sub.disabilityNeed === 'NONE'
-                                  ? 'text-slate-500'
-                                  : 'bg-purple-50 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300'
-                              }`}
-                            >
-                              {sub.disabilityNeed}
-                            </span>
-                          </td>
-                          <td className="px-3 py-3.5">
-                            <span
-                              className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-bold ${
-                                isYes
-                                  ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400'
-                                  : isNo
-                                  ? 'bg-rose-50 text-rose-700 dark:bg-rose-950/50 dark:text-rose-400'
-                                  : 'bg-amber-50 text-amber-700 dark:bg-amber-950/50 dark:text-amber-400'
-                              }`}
-                            >
-                              {isYes ? '✓ Yes' : isNo ? '✕ No' : '• Not Sure'}
-                            </span>
-                          </td>
-                          <td className="py-3.5 pl-3 pr-5">
-                            <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
-                              <ShieldCheck size={14} />
-                              100% Anonymous (Zero PII)
-                            </span>
-                          </td>
-                        </tr>
-                      );
-                    })
-                  ) : (
-                    <tr>
-                      <td colSpan={6} className="py-10 text-center text-xs text-slate-400">
-                        {isAm
-                          ? 'ምንም ምላሾች አልተገኙም ወይም ገና አልገቡም'
-                          : 'No baseline survey submissions found.'}
-                      </td>
+            {loading ? (
+              <div className="flex h-36 items-center justify-center">
+                <RefreshCw className="h-6 w-6 animate-spin text-sky-500" />
+              </div>
+            ) : filteredSubmissions.length === 0 ? (
+              <div className="py-12 text-center text-xs text-slate-400">
+                {isAm ? 'ምንም ምላሽ አልተገኘም' : 'No survey responses match your query.'}
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead>
+                    <tr className="border-b border-slate-100 text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:border-slate-800">
+                      <th className="py-3 px-3">Age Group</th>
+                      <th className="py-3 px-3">Year of Study</th>
+                      <th className="py-3 px-3">Accessibility Need</th>
+                      <th className="py-3 px-3">Gondar SRH Aware</th>
+                      <th className="py-3 px-3">Timestamp</th>
+                      <th className="py-3 px-3 text-right">Actions</th>
                     </tr>
-                  )}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                    {filteredSubmissions.map((sub) => (
+                      <tr key={sub.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/40">
+                        <td className="py-3 px-3 font-semibold text-slate-900 dark:text-white">
+                          {sub.ageGroup}
+                        </td>
+                        <td className="py-3 px-3 text-slate-600 dark:text-slate-300">
+                          {sub.yearOfStudy}
+                        </td>
+                        <td className="py-3 px-3">
+                          <span
+                            className={`rounded-md px-2 py-0.5 text-[10px] font-bold ${
+                              sub.disabilityNeed === 'NONE'
+                                ? 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
+                                : 'bg-purple-50 text-purple-700 dark:bg-purple-950/40 dark:text-purple-300'
+                            }`}
+                          >
+                            {sub.disabilityNeed}
+                          </span>
+                        </td>
+                        <td className="py-3 px-3">
+                          <span
+                            className={`rounded-md px-2 py-0.5 text-[10px] font-bold ${
+                              sub.knowsGondarSrh === 'YES'
+                                ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400'
+                                : sub.knowsGondarSrh === 'NO'
+                                ? 'bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-400'
+                                : 'bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-400'
+                            }`}
+                          >
+                            {sub.knowsGondarSrh}
+                          </span>
+                        </td>
+                        <td className="py-3 px-3 text-slate-400 font-mono text-[11px]">
+                          {new Date(sub.submittedAt).toLocaleDateString()}
+                        </td>
+                        <td className="py-3 px-3 text-right">
+                          <button
+                            onClick={() => handleDeleteSubmission(sub.id)}
+                            className="rounded-lg p-1.5 text-slate-400 hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-950/40 dark:hover:text-rose-400 cursor-pointer"
+                            title="Delete this record"
+                          >
+                            <Trash2 size={13} />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* 3. ADD / EDIT QUESTION MODAL */}
+      {isQuestionModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4 animate-in fade-in">
+          <div className="max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-3xl bg-white p-6 shadow-2xl dark:bg-slate-900 dark:border dark:border-slate-800">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-4 dark:border-slate-800">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+                {editingQuestion
+                  ? isAm
+                    ? 'ጥያቄ አርም'
+                    : 'Edit Survey Question'
+                  : isAm
+                  ? 'አዲስ ጥያቄ ፍጠር'
+                  : 'Add New Survey Question'}
+              </h3>
+              <button
+                onClick={() => setIsQuestionModalOpen(false)}
+                className="rounded-xl p-1.5 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
+              >
+                ✕
+              </button>
             </div>
+
+            <form onSubmit={handleSaveQuestion} className="mt-4 space-y-4">
+              {/* Question Section */}
+              <div>
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
+                  {isAm ? 'የምዘና ክፍል (Section)' : 'Assessment Section'} <span className="text-rose-500">*</span>
+                </label>
+                <select
+                  value={questionSection}
+                  onChange={(e) => setQuestionSection(Number(e.target.value))}
+                  className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-xs font-medium text-slate-800 outline-hidden transition focus:border-purple-500 focus:bg-white dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+                >
+                  {UOG_SECTIONS_LIST.map((sec) => (
+                    <option key={sec.num} value={sec.num}>
+                      {isAm ? sec.labelAm : sec.labelEn}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Question Title EN */}
+              <div>
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
+                  Question Prompt (English) <span className="text-rose-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={questionTitleEn}
+                  onChange={(e) => setQuestionTitleEn(e.target.value)}
+                  placeholder="e.g. Do you know where the Gondar campus clinic is?"
+                  className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-xs font-medium text-slate-800 outline-hidden transition focus:border-purple-500 focus:bg-white dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+                />
+              </div>
+
+              {/* Question Title AM */}
+              <div>
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
+                  የጥያቄው ርዕስ (አማርኛ)
+                </label>
+                <input
+                  type="text"
+                  value={questionTitleAm}
+                  onChange={(e) => setQuestionTitleAm(e.target.value)}
+                  placeholder="ለምሳሌ፡ የጎንደር ዩኒቨርሲቲ ክሊኒክ የት እንደሚገኝ ያውቃሉ?"
+                  className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-xs font-medium text-slate-800 outline-hidden transition focus:border-purple-500 focus:bg-white dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+                />
+              </div>
+
+              {/* Question Type */}
+              <div>
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
+                  Question Type
+                </label>
+                <select
+                  value={questionType}
+                  onChange={(e) => setQuestionType(e.target.value as any)}
+                  className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-xs font-medium text-slate-800 outline-hidden transition focus:border-purple-500 focus:bg-white dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+                >
+                  <option value="SINGLE_CHOICE">Single Choice (Radio Button)</option>
+                  <option value="MULTI_CHOICE">Multiple Choice (Checkboxes)</option>
+                </select>
+              </div>
+
+              {/* Choice Options List */}
+              <div className="space-y-2 border-t border-slate-100 pt-3 dark:border-slate-800">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                    Response Choices ({questionOptions.length})
+                  </label>
+                  <button
+                    type="button"
+                    onClick={handleAddOptionRow}
+                    className="inline-flex items-center gap-1 text-xs font-bold text-purple-600 hover:text-purple-700 dark:text-purple-400 cursor-pointer"
+                  >
+                    <Plus size={13} />
+                    <span>{isAm ? 'አማራጭ ጨምር' : 'Add Option'}</span>
+                  </button>
+                </div>
+
+                <div className="space-y-2">
+                  {questionOptions.map((opt, idx) => (
+                    <div
+                      key={idx}
+                      className="flex items-center gap-2 rounded-xl border border-slate-100 bg-slate-50/80 p-2.5 dark:border-slate-800 dark:bg-slate-800/40"
+                    >
+                      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-slate-200 text-[10px] font-bold text-slate-700 dark:bg-slate-700 dark:text-slate-300">
+                        {idx + 1}
+                      </span>
+                      <input
+                        type="text"
+                        placeholder="English Label"
+                        required
+                        value={opt.labelEn}
+                        onChange={(e) => {
+                          const updated = [...questionOptions];
+                          updated[idx].labelEn = e.target.value;
+                          if (!updated[idx].value || updated[idx].value.startsWith('Option ')) {
+                            updated[idx].value = e.target.value;
+                          }
+                          setQuestionOptions(updated);
+                        }}
+                        className="w-1/2 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-800 outline-hidden dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+                      />
+                      <input
+                        type="text"
+                        placeholder="የአማርኛ ስያሜ"
+                        value={opt.labelAm}
+                        onChange={(e) => {
+                          const updated = [...questionOptions];
+                          updated[idx].labelAm = e.target.value;
+                          setQuestionOptions(updated);
+                        }}
+                        className="w-1/2 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-800 outline-hidden dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveOptionRow(idx)}
+                        className="p-1 text-slate-400 hover:text-rose-500 cursor-pointer"
+                        title="Remove option"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Modal Buttons */}
+              <div className="flex items-center justify-end gap-2 border-t border-slate-100 pt-4 dark:border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setIsQuestionModalOpen(false)}
+                  className="rounded-xl border border-slate-200 px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800 cursor-pointer"
+                >
+                  {isAm ? 'ሰርዝ' : 'Cancel'}
+                </button>
+                <button
+                  type="submit"
+                  disabled={savingQuestion}
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-purple-600 px-5 py-2 text-xs font-bold text-white shadow-md transition hover:bg-purple-700 disabled:opacity-50 cursor-pointer"
+                >
+                  {savingQuestion && <RefreshCw size={12} className="animate-spin" />}
+                  <span>
+                    {savingQuestion
+                      ? isAm
+                        ? 'በማስቀመጥ ላይ...'
+                        : 'Saving...'
+                      : isAm
+                      ? 'አስቀምጥ'
+                      : 'Save Question'}
+                  </span>
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
