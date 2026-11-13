@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../l10n/app_localizations.dart';
 import '../locale_controller.dart';
 import 'assessment_repository.dart';
+import 'dynamic_module_detail_page.dart';
 import 'education_repository.dart';
 import 'gbv_page.dart';
 import 'gbv_quiz_page.dart';
@@ -23,6 +24,7 @@ import 'sti_module_page.dart';
 import 'sti_quiz_page.dart';
 import 'substance_abuse_page.dart';
 import 'substance_abuse_quiz_page.dart';
+import 'sync_education_repository.dart';
 
 class LearnPage extends StatefulWidget {
   const LearnPage({
@@ -44,11 +46,35 @@ class LearnPage extends StatefulWidget {
 
 class _LearnPageState extends State<LearnPage> {
   String _locale = '';
+  List<LearningModuleItem>? _dynamicModules;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadModules();
+  }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _locale = Localizations.localeOf(context).languageCode;
+    final newLocale = Localizations.localeOf(context).languageCode;
+    if (_locale != newLocale) {
+      _locale = newLocale;
+      _loadModules();
+    }
+  }
+
+  Future<void> _loadModules({bool forceRefresh = false}) async {
+    if (widget.educationRepository is SyncEducationRepository) {
+      final repo = widget.educationRepository as SyncEducationRepository;
+      final modules =
+          await repo.getCurriculumModuleItems(forceRefresh: forceRefresh);
+      if (mounted) {
+        setState(() {
+          _dynamicModules = modules;
+        });
+      }
+    }
   }
 
   Future<void> _reload() async {
@@ -56,110 +82,9 @@ class _LearnPageState extends State<LearnPage> {
       await Future.wait([
         widget.educationRepository.articles(_locale),
         widget.assessmentRepository.assessments(_locale),
+        _loadModules(forceRefresh: true),
       ]);
     } catch (_) {}
-  }
-
-  void _openModuleInfo(BuildContext context, LearningModuleItem module) {
-    final l10n = AppLocalizations.of(context);
-    showModalBottomSheet<void>(
-      context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      builder: (context) => Container(
-        padding: const EdgeInsets.fromLTRB(24, 20, 24, 32),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(
-              child: Container(
-                width: 44,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFCBD5E1),
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-            ),
-            const SizedBox(height: 18),
-            Text(
-              l10n.moduleLabel(module.number).toUpperCase(),
-              style: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w800,
-                color: Color(0xFF0284C7),
-              ),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              module.title(l10n),
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w800,
-                color: Color(0xFF0B2545),
-              ),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              module.description(l10n),
-              style: const TextStyle(
-                fontSize: 14,
-                height: 1.55,
-                color: Color(0xFF475569),
-              ),
-            ),
-            const SizedBox(height: 18),
-            Container(
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                color: const Color(0xFFF0F9FF),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: const Color(0xFFBAE6FD)),
-              ),
-              child: Row(
-                children: [
-                  const Icon(Icons.info_outline_rounded,
-                      color: Color(0xFF0284C7), size: 22),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      l10n.moduleComingSoon,
-                      style: const TextStyle(
-                        fontSize: 12.5,
-                        color: Color(0xFF005A71),
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () => Navigator.pop(context),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF005A71),
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                ),
-                child: const Text('OK',
-                    style: TextStyle(fontWeight: FontWeight.w700)),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 
   void _openQuizInfo(BuildContext context, LearningModuleItem module) {
@@ -339,27 +264,15 @@ class _LearnPageState extends State<LearnPage> {
       return;
     }
 
-    try {
-      final cachedArticles = await widget.educationRepository.articles(_locale);
-      final articles = cachedArticles.value;
-      if (articles.isNotEmpty) {
-        final matched = articles.firstWhere(
-          (a) =>
-              a.slug.contains(module.id) ||
-              a.id == module.id ||
-              module.id.contains(a.slug),
-          orElse: () => articles.first,
-        );
-        if (mounted) {
-          _openArticle(matched.id);
-          return;
-        }
-      }
-    } catch (_) {}
-
-    if (mounted) {
-      _openModuleInfo(context, module);
-    }
+    // Dynamic Admin-Created Module (Module 09, 10, etc.)
+    Navigator.of(context).push<void>(MaterialPageRoute<void>(
+      builder: (_) => DynamicModuleDetailPage(
+        module: module,
+        progressController: widget.progressController,
+        assessmentRepository: widget.assessmentRepository,
+        onOpenQuiz: () => _handleOpenQuiz(module),
+      ),
+    ));
   }
 
   Future<void> _handleOpenQuiz(LearningModuleItem module) async {
@@ -552,6 +465,7 @@ class _LearnPageState extends State<LearnPage> {
                           const <String>{};
                       return LearningModulesCarousel(
                         completedModuleIds: completed,
+                        modules: _dynamicModules,
                         onOpenModule: _handleOpenModule,
                         onOpenQuiz: _handleOpenQuiz,
                       );
@@ -564,17 +478,6 @@ class _LearnPageState extends State<LearnPage> {
         ),
       ),
     );
-  }
-
-  void _openArticle(String id) {
-    Navigator.of(context).push<void>(MaterialPageRoute<void>(
-      builder: (_) => ArticlePage(
-        articleId: id,
-        repository: widget.educationRepository,
-        progressController: widget.progressController,
-        localeController: widget.localeController,
-      ),
-    ));
   }
 }
 
