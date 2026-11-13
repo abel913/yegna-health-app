@@ -388,100 +388,69 @@ class _ClubsPageState extends State<ClubsPage> {
                                 widget.controller.loadClubs(widget.userId),
                             color: const Color(0xFF0284C7),
                             child: ListView.separated(
-                            padding: const EdgeInsets.fromLTRB(16, 10, 16, 24),
-                            itemCount: clubs.length,
-                            separatorBuilder: (_, __) =>
-                                const SizedBox(height: 12),
-                            itemBuilder: (context, index) {
-                              final club = clubs[index];
-                              final isJoined =
-                                  widget.controller.isJoined(club.id);
-                              final title =
-                                  isAmharic ? club.nameAm : club.nameEn;
-                              final desc = isAmharic
-                                  ? club.descriptionAm
-                                  : club.descriptionEn;
-                              final schedule = isAmharic
-                                  ? club.meetingScheduleAm
-                                  : club.meetingScheduleEn;
-                              final mentorName = isAmharic
-                                  ? club.mentorNameAm
-                                  : club.mentorNameEn;
+                              padding:
+                                  const EdgeInsets.fromLTRB(16, 10, 16, 24),
+                              itemCount: clubs.length,
+                              separatorBuilder: (_, __) =>
+                                  const SizedBox(height: 12),
+                              itemBuilder: (context, index) {
+                                final club = clubs[index];
+                                final isJoined =
+                                    widget.controller.isJoined(club.id);
+                                final title =
+                                    isAmharic ? club.nameAm : club.nameEn;
+                                final desc = isAmharic
+                                    ? club.descriptionAm
+                                    : club.descriptionEn;
+                                final schedule = isAmharic
+                                    ? club.meetingScheduleAm
+                                    : club.meetingScheduleEn;
+                                final mentorName = isAmharic
+                                    ? club.mentorNameAm
+                                    : club.mentorNameEn;
 
-                              return InkWell(
-                                onTap: () => ClubDetailSheet.show(
-                                  context,
-                                  club: club,
-                                  controller: widget.controller,
-                                  userId: widget.userId,
-                                  userEmail: widget.userEmail,
-                                  userName: widget.userName,
-                                  notificationController:
-                                      widget.notificationController,
-                                ),
-                                borderRadius: BorderRadius.circular(20),
-                                child: Container(
-                                  padding: const EdgeInsets.all(16),
-                                  decoration: BoxDecoration(
-                                    color: glass.cardBackground,
-                                    borderRadius: BorderRadius.circular(20),
-                                    border: Border.all(
-                                      color: isJoined
-                                          ? const Color(0xFF10B981)
-                                              .withValues(alpha: 0.5)
-                                          : glass.cardBorder,
-                                      width: isJoined ? 1.4 : 1.2,
-                                    ),
-                                    boxShadow: glass.cardShadow,
+                                return InkWell(
+                                  onTap: () => ClubDetailSheet.show(
+                                    context,
+                                    club: club,
+                                    controller: widget.controller,
+                                    userId: widget.userId,
+                                    userEmail: widget.userEmail,
+                                    userName: widget.userName,
+                                    notificationController:
+                                        widget.notificationController,
                                   ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      // Top Badges Row
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Container(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 9, vertical: 4),
-                                            decoration: BoxDecoration(
-                                              color: const Color(0xFF0284C7)
-                                                  .withValues(alpha: 0.15),
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                            ),
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Icon(
-                                                    _categoryIcon(
-                                                        club.category),
-                                                    size: 13,
-                                                    color: const Color(
-                                                        0xFF38BDF8)),
-                                                const SizedBox(width: 5),
-                                                Text(
-                                                  _categoryLabel(
-                                                      club.category, isAmharic),
-                                                  style: const TextStyle(
-                                                    fontSize: 10.5,
-                                                    fontWeight: FontWeight.w800,
-                                                    color: Color(0xFF38BDF8),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          if (isJoined)
+                                  borderRadius: BorderRadius.circular(20),
+                                  child: Container(
+                                    padding: const EdgeInsets.all(16),
+                                    decoration: BoxDecoration(
+                                      color: glass.cardBackground,
+                                      borderRadius: BorderRadius.circular(20),
+                                      border: Border.all(
+                                        color: isJoined
+                                            ? const Color(0xFF10B981)
+                                                .withValues(alpha: 0.5)
+                                            : glass.cardBorder,
+                                        width: isJoined ? 1.4 : 1.2,
+                                      ),
+                                      boxShadow: glass.cardShadow,
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        // Top Badges Row
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
                                             Container(
                                               padding:
                                                   const EdgeInsets.symmetric(
-                                                      horizontal: 8,
-                                                      vertical: 3),
+                                                      horizontal: 9,
+                                                      vertical: 4),
                                               decoration: BoxDecoration(
-                                                color: const Color(0xFF10B981)
+                                                color: const Color(0xFF0284C7)
                                                     .withValues(alpha: 0.15),
                                                 borderRadius:
                                                     BorderRadius.circular(8),
@@ -489,170 +458,210 @@ class _ClubsPageState extends State<ClubsPage> {
                                               child: Row(
                                                 mainAxisSize: MainAxisSize.min,
                                                 children: [
-                                                  const Icon(
-                                                      Icons
-                                                          .check_circle_rounded,
+                                                  Icon(
+                                                      _categoryIcon(
+                                                          club.category),
                                                       size: 13,
-                                                      color: Color(0xFF10B981)),
-                                                  const SizedBox(width: 4),
+                                                      color: const Color(
+                                                          0xFF38BDF8)),
+                                                  const SizedBox(width: 5),
                                                   Text(
-                                                    isAmharic
-                                                        ? 'አባል ነዎት'
-                                                        : 'Joined ✓',
+                                                    _categoryLabel(
+                                                        club.category,
+                                                        isAmharic),
                                                     style: const TextStyle(
                                                       fontSize: 10.5,
                                                       fontWeight:
                                                           FontWeight.w800,
-                                                      color: Color(0xFF10B981),
+                                                      color: Color(0xFF38BDF8),
                                                     ),
                                                   ),
                                                 ],
                                               ),
                                             ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 10),
-
-                                      // Title
-                                      Text(
-                                        title,
-                                        style: TextStyle(
-                                          fontSize: 16.5,
-                                          fontWeight: FontWeight.w800,
-                                          color: glass.titleText,
+                                            if (isJoined)
+                                              Container(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 8,
+                                                        vertical: 3),
+                                                decoration: BoxDecoration(
+                                                  color: const Color(0xFF10B981)
+                                                      .withValues(alpha: 0.15),
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                ),
+                                                child: Row(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    const Icon(
+                                                        Icons
+                                                            .check_circle_rounded,
+                                                        size: 13,
+                                                        color:
+                                                            Color(0xFF10B981)),
+                                                    const SizedBox(width: 4),
+                                                    Text(
+                                                      isAmharic
+                                                          ? 'አባል ነዎት'
+                                                          : 'Joined ✓',
+                                                      style: const TextStyle(
+                                                        fontSize: 10.5,
+                                                        fontWeight:
+                                                            FontWeight.w800,
+                                                        color:
+                                                            Color(0xFF10B981),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                          ],
                                         ),
-                                      ),
-                                      const SizedBox(height: 6),
+                                        const SizedBox(height: 10),
 
-                                      // Description
-                                      Text(
-                                        desc,
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          fontSize: 13,
-                                          height: 1.4,
-                                          color: glass.subtitleText,
+                                        // Title
+                                        Text(
+                                          title,
+                                          style: TextStyle(
+                                            fontSize: 16.5,
+                                            fontWeight: FontWeight.w800,
+                                            color: glass.titleText,
+                                          ),
                                         ),
-                                      ),
-                                      const SizedBox(height: 12),
+                                        const SizedBox(height: 6),
 
-                                      // Schedule & Mentor Row
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 10, vertical: 7),
-                                        decoration: BoxDecoration(
-                                          color: glass.isDark
-                                              ? const Color(0xFF0F172A)
-                                              : const Color(0xFFF1F5F9),
-                                          borderRadius:
-                                              BorderRadius.circular(10),
+                                        // Description
+                                        Text(
+                                          desc,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            fontSize: 13,
+                                            height: 1.4,
+                                            color: glass.subtitleText,
+                                          ),
                                         ),
-                                        child: Row(
-                                          children: [
-                                            const Icon(Icons.schedule_rounded,
-                                                size: 14,
-                                                color: Color(0xFF0284C7)),
-                                            const SizedBox(width: 6),
-                                            Expanded(
-                                              child: Text(
-                                                schedule,
+                                        const SizedBox(height: 12),
+
+                                        // Schedule & Mentor Row
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 10, vertical: 7),
+                                          decoration: BoxDecoration(
+                                            color: glass.isDark
+                                                ? const Color(0xFF0F172A)
+                                                : const Color(0xFFF1F5F9),
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              const Icon(Icons.schedule_rounded,
+                                                  size: 14,
+                                                  color: Color(0xFF0284C7)),
+                                              const SizedBox(width: 6),
+                                              Expanded(
+                                                child: Text(
+                                                  schedule,
+                                                  style: TextStyle(
+                                                    fontSize: 11.5,
+                                                    fontWeight: FontWeight.w700,
+                                                    color: glass.titleText,
+                                                  ),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                              const SizedBox(width: 8),
+                                              const Icon(Icons.person_rounded,
+                                                  size: 14,
+                                                  color: Color(0xFF10B981)),
+                                              const SizedBox(width: 4),
+                                              Text(
+                                                mentorName,
                                                 style: TextStyle(
                                                   fontSize: 11.5,
                                                   fontWeight: FontWeight.w700,
-                                                  color: glass.titleText,
+                                                  color: glass.subtitleText,
                                                 ),
-                                                overflow: TextOverflow.ellipsis,
                                               ),
-                                            ),
-                                            const SizedBox(width: 8),
-                                            const Icon(Icons.person_rounded,
-                                                size: 14,
-                                                color: Color(0xFF10B981)),
-                                            const SizedBox(width: 4),
+                                            ],
+                                          ),
+                                        ),
+                                        const SizedBox(height: 12),
+
+                                        // Member Count & Join Trigger Row
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
                                             Text(
-                                              mentorName,
+                                              '👥 ${club.memberCount} ${isAmharic ? "አባላት" : "members"}'
+                                              '${club.maxCapacity != null ? " / ${club.maxCapacity}" : ""}',
                                               style: TextStyle(
                                                 fontSize: 11.5,
-                                                fontWeight: FontWeight.w700,
+                                                fontWeight: FontWeight.w600,
                                                 color: glass.subtitleText,
+                                              ),
+                                            ),
+                                            ElevatedButton.icon(
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: isJoined
+                                                    ? const Color(0xFF10B981)
+                                                    : const Color(0xFF0284C7),
+                                                foregroundColor: Colors.white,
+                                                elevation: 0,
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 14,
+                                                        vertical: 8),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
+                                                ),
+                                              ),
+                                              icon: Icon(
+                                                isJoined
+                                                    ? Icons.check_rounded
+                                                    : Icons.add_rounded,
+                                                size: 16,
+                                              ),
+                                              label: Text(
+                                                isJoined
+                                                    ? (isAmharic
+                                                        ? 'ተቀላቅለዋል'
+                                                        : 'Joined')
+                                                    : (isAmharic
+                                                        ? 'ተቀላቀል'
+                                                        : 'Join'),
+                                                style: const TextStyle(
+                                                  fontSize: 12.5,
+                                                  fontWeight: FontWeight.w800,
+                                                ),
+                                              ),
+                                              onPressed: () =>
+                                                  ClubDetailSheet.show(
+                                                context,
+                                                club: club,
+                                                controller: widget.controller,
+                                                userId: widget.userId,
+                                                userEmail: widget.userEmail,
+                                                userName: widget.userName,
+                                                notificationController: widget
+                                                    .notificationController,
                                               ),
                                             ),
                                           ],
                                         ),
-                                      ),
-                                      const SizedBox(height: 12),
-
-                                      // Member Count & Join Trigger Row
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            '👥 ${club.memberCount} ${isAmharic ? "አባላት" : "members"}'
-                                            '${club.maxCapacity != null ? " / ${club.maxCapacity}" : ""}',
-                                            style: TextStyle(
-                                              fontSize: 11.5,
-                                              fontWeight: FontWeight.w600,
-                                              color: glass.subtitleText,
-                                            ),
-                                          ),
-                                          ElevatedButton.icon(
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor: isJoined
-                                                  ? const Color(0xFF10B981)
-                                                  : const Color(0xFF0284C7),
-                                              foregroundColor: Colors.white,
-                                              elevation: 0,
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 14,
-                                                      vertical: 8),
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(12),
-                                              ),
-                                            ),
-                                            icon: Icon(
-                                              isJoined
-                                                  ? Icons.check_rounded
-                                                  : Icons.add_rounded,
-                                              size: 16,
-                                            ),
-                                            label: Text(
-                                              isJoined
-                                                  ? (isAmharic
-                                                      ? 'ተቀላቅለዋል'
-                                                      : 'Joined')
-                                                  : (isAmharic
-                                                      ? 'ተቀላቀል'
-                                                      : 'Join'),
-                                              style: const TextStyle(
-                                                fontSize: 12.5,
-                                                fontWeight: FontWeight.w800,
-                                              ),
-                                            ),
-                                            onPressed: () =>
-                                                ClubDetailSheet.show(
-                                              context,
-                                              club: club,
-                                              controller: widget.controller,
-                                              userId: widget.userId,
-                                              userEmail: widget.userEmail,
-                                              userName: widget.userName,
-                                              notificationController:
-                                                  widget.notificationController,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              );
-                            },
+                                );
+                              },
+                            ),
                           ),
-                        ),
               ),
             ],
           );

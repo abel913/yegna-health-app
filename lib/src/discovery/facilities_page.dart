@@ -397,10 +397,11 @@ class _FacilitiesPageState extends State<FacilitiesPage> {
                                   onRefresh: _loadFacilities,
                                   color: const Color(0xFF0284C7),
                                   child: ListView.builder(
-                                    padding:
-                                        const EdgeInsets.fromLTRB(20, 6, 20, 24),
+                                    padding: const EdgeInsets.fromLTRB(
+                                        20, 6, 20, 24),
                                     itemCount: _facilities.length,
-                                    itemBuilder: (context, index) => FacilityCard(
+                                    itemBuilder: (context, index) =>
+                                        FacilityCard(
                                       facility: _facilities[index],
                                     ),
                                   ),
