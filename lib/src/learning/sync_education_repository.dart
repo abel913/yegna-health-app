@@ -6,6 +6,7 @@ import '../sync/offline_sync_store.dart';
 import 'assessment_repository.dart';
 import 'education_repository.dart';
 import 'learning_models.dart';
+import 'learning_modules_carousel.dart';
 
 /// Offline-first education repository that delivers curriculum articles and
 /// learning modules with zero blank screens, synchronized with the Node.js backend.
@@ -231,6 +232,41 @@ class SyncEducationRepository implements EducationRepository {
       isStale: false,
       fetchedAt: DateTime.now(),
     );
+  }
+
+  /// Retrieves dynamic curriculum modules for the carousel and detail screens.
+  /// Fully offline resilient: loads from local cache; if empty, falls back to
+  /// bundled kLearningModules; performs a background revalidation when online.
+  Future<List<LearningModuleItem>> getCurriculumModuleItems({
+    bool forceRefresh = false,
+  }) async {
+    if (forceRefresh && _apiClient != null) {
+      await _revalidateModules();
+    } else if (_apiClient != null) {
+      unawaited(_revalidateModules());
+    }
+
+    final raw = await _store.getCachedModules();
+    if (raw == null || raw.isEmpty) {
+      return kLearningModules;
+    }
+
+    final published = raw.where((m) => m['isPublished'] != false).toList();
+    if (published.isEmpty) {
+      return kLearningModules;
+    }
+
+    published.sort((a, b) {
+      final aIndex = (a['orderIndex'] as num?)?.toInt() ?? 0;
+      final bIndex = (b['orderIndex'] as num?)?.toInt() ?? 0;
+      return aIndex.compareTo(bIndex);
+    });
+
+    final items = <LearningModuleItem>[];
+    for (int i = 0; i < published.length; i++) {
+      items.add(LearningModuleItem.fromMap(published[i], i));
+    }
+    return items;
   }
 
   Future<void> _revalidateModules() async {
