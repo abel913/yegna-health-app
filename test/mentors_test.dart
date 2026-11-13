@@ -146,5 +146,146 @@ void main() {
       expect(find.text('ሰላማዊት ታደሰ'), findsOneWidget);
       expect(find.text(am.callMentorAction), findsWidgets);
     });
+
+    test('Mentor model cleanTelegramHandle, cleanWhatsapp, and campus localization', () {
+      const mentorWithAt = Mentor(
+        id: 'dr_hanna',
+        nameEn: 'Dr. Hanna Bekele',
+        nameAm: 'ዶ/ር ሃና በቀለ',
+        titleEn: 'Certified Youth Peer Counselor',
+        titleAm: 'የተረጋገጠ የወጣቶች አቻ አማካሪ',
+        organizationEn: 'Marie Stopes Ethiopia',
+        organizationAm: 'ማሪ ስቶፕስ ኢትዮጵያ',
+        campus: 'Atse Fasil Campus',
+        whatsapp: '+251913456789',
+        email: 'hanna@mariestopes.org.et',
+        telegramHandle: '@@dr_hanna_ms',
+        bioEn: 'Counselor bio',
+        bioAm: 'የአማካሪ መረጃ',
+        isVerified: true,
+        isOnline: true,
+        nextAvailableSlotEn: 'Available Now',
+        nextAvailableSlotAm: 'አሁን ይገኛሉ',
+        languages: ['English', 'Amharic'],
+        topics: [MentorTopic.mentalHealth],
+        sessionsCount: 150,
+        experienceYears: 4,
+        initials: 'HB',
+        avatarColor: Color(0xFF0284C7),
+      );
+
+      // Verify telegram handle stripping leading @@
+      expect(mentorWithAt.cleanTelegramHandle, 'dr_hanna_ms');
+      expect('@${mentorWithAt.cleanTelegramHandle}', '@dr_hanna_ms');
+
+      // Verify whatsapp
+      expect(mentorWithAt.hasWhatsapp, isTrue);
+      expect(mentorWithAt.cleanWhatsapp, '+251913456789');
+
+      // Verify email
+      expect(mentorWithAt.hasEmail, isTrue);
+      expect(mentorWithAt.email, 'hanna@mariestopes.org.et');
+
+      // Verify username whatsapp (like Nathy _Zemene)
+      const mentorWithUsernameWhatsapp = Mentor(
+        id: 'nathy_papa',
+        nameEn: 'Nathnael papa',
+        nameAm: 'ናትናኤል ፓፓ',
+        titleEn: 'Certified Youth Peer Counselor',
+        titleAm: 'የተረጋገጠ አማካሪ',
+        organizationEn: 'UoG',
+        organizationAm: 'ዩኦጂ',
+        bioEn: 'Counselor bio',
+        bioAm: 'የአማካሪ መረጃ',
+        whatsapp: 'Nathy _Zemene',
+        email: 'natnaelzemene21@gmail.com',
+        isVerified: true,
+        isOnline: true,
+        nextAvailableSlotEn: 'Available Now',
+        nextAvailableSlotAm: 'አሁን ይገኛሉ',
+        languages: ['English', 'Amharic'],
+        topics: [MentorTopic.mentalHealth],
+        sessionsCount: 120,
+        experienceYears: 2,
+        initials: 'NP',
+        avatarColor: Color(0xFF0284C7),
+      );
+      expect(mentorWithUsernameWhatsapp.hasWhatsapp, isTrue);
+      expect(mentorWithUsernameWhatsapp.whatsapp, 'Nathy _Zemene');
+      expect(mentorWithUsernameWhatsapp.hasEmail, isTrue);
+
+      // Verify campus localization
+      expect(mentorWithAt.localizedCampus(false), 'Atse Fasil Campus');
+      expect(mentorWithAt.localizedCampus(true), 'አጼ ፋሲል ግቢ');
+    });
+
+    testWidgets('MentorDetailSheet displays campus badge, WhatsApp card, email card, and single @',
+        (tester) async {
+      const testMentor = Mentor(
+        id: 'dr_hanna',
+        nameEn: 'Dr. Hanna Bekele',
+        nameAm: 'ዶ/ር ሃና በቀለ',
+        titleEn: 'Certified Youth Peer Counselor',
+        titleAm: 'የተረጋገጠ የወጣቶች አቻ አማካሪ',
+        organizationEn: 'Marie Stopes Ethiopia',
+        organizationAm: 'ማሪ ስቶፕስ ኢትዮጵያ',
+        campus: 'Atse Fasil Campus',
+        whatsapp: '+251913456789',
+        email: 'hanna@mariestopes.org.et',
+        telegramHandle: '@dr_hanna_ms',
+        bioEn: 'Certified youth mentor offering confidential guidance.',
+        bioAm: 'ሚስጥራዊ የአቻ ምክክር።',
+        isVerified: true,
+        isOnline: true,
+        nextAvailableSlotEn: 'Available Now',
+        nextAvailableSlotAm: 'አሁን ይገኛሉ',
+        languages: ['English', 'Amharic'],
+        topics: [MentorTopic.mentalHealth],
+        sessionsCount: 120,
+        experienceYears: 2,
+        initials: 'HB',
+        avatarColor: Color(0xFF0284C7),
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          supportedLocales: AppLocalizations.supportedLocales,
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          home: Scaffold(
+            body: Builder(
+              builder: (ctx) => ElevatedButton(
+                onPressed: () => MentorDetailSheet.show(ctx, testMentor),
+                child: const Text('Open Detail'),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('Open Detail'));
+      await tester.pumpAndSettle();
+
+      // Check campus badge
+      expect(find.text('Atse Fasil Campus'), findsOneWidget);
+
+      // Check single @ for telegram
+      expect(find.text('@dr_hanna_ms'), findsOneWidget);
+      expect(find.text('@@dr_hanna_ms'), findsNothing);
+
+      // Check WhatsApp card
+      expect(find.text('WhatsApp Chat'), findsOneWidget);
+      expect(find.text('+251913456789'), findsWidgets);
+      expect(find.text('Chat on WhatsApp'), findsOneWidget);
+
+      // Check Email Consultation card
+      expect(find.text('Email Consultation'), findsOneWidget);
+      expect(find.text('hanna@mariestopes.org.et'), findsOneWidget);
+      expect(find.text('Send Email'), findsOneWidget);
+    });
   });
 }

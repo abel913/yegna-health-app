@@ -80,8 +80,7 @@ class SyncMentorRepository implements MentorRepository {
     try {
       final remoteList = await _apiClient?.fetchMentors();
       if (remoteList != null && remoteList.isNotEmpty) {
-        final mentors =
-            remoteList.map(OfflineSyncStore.mentorFromMap).toList();
+        final mentors = remoteList.map(OfflineSyncStore.mentorFromMap).toList();
         await _store.saveMentors(mentors);
       }
     } catch (_) {
