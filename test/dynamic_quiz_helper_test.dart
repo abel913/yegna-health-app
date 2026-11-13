@@ -16,7 +16,9 @@ void main() {
       expect(result, isNull);
     });
 
-    test('resolves both True/False and Multiple Choice questions dynamically from cache', () async {
+    test(
+        'resolves both True/False and Multiple Choice questions dynamically from cache',
+        () async {
       final mockQuizzes = [
         {
           'id': 'q_tf_1',
@@ -41,7 +43,12 @@ void main() {
           'type': 'MULTIPLE_CHOICE',
           'questionEn': 'Which physical change is common for boys?',
           'questionAm': 'በወንዶች ላይ የሚታየው ለውጥ የትኛው ነው?',
-          'optionsEn': ['Voice deepening', 'Bone shrinking', 'Muscle loss', 'No sweat'],
+          'optionsEn': [
+            'Voice deepening',
+            'Bone shrinking',
+            'Muscle loss',
+            'No sweat'
+          ],
           'optionsAm': ['ድምፅ መጎርነን', 'አጥንት መቀነስ', 'ጡንቻ መቀነስ', 'ላብ አለመኖር'],
           'correctIndex': 0,
           'explanationEn': 'Testosterone deepens vocal cords.',

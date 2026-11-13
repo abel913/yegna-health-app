@@ -41,15 +41,18 @@ class DynamicQuizHelper {
       final targetCategory = category.toLowerCase().trim();
 
       final matched = rawList.where((item) {
-        final itemModId = item['moduleId']?.toString().toLowerCase().trim() ?? '';
+        final itemModId =
+            item['moduleId']?.toString().toLowerCase().trim() ?? '';
         final modInfo = item['module'] as Map<String, dynamic>?;
-        final itemCategory = modInfo?['category']?.toString().toLowerCase().trim() ?? '';
+        final itemCategory =
+            modInfo?['category']?.toString().toLowerCase().trim() ?? '';
 
         return itemModId == targetModId ||
             itemCategory == targetCategory ||
             itemModId == targetCategory ||
             (targetModId.isNotEmpty && itemModId.contains(targetModId)) ||
-            (targetCategory.isNotEmpty && itemCategory.contains(targetCategory));
+            (targetCategory.isNotEmpty &&
+                itemCategory.contains(targetCategory));
       }).toList();
 
       if (matched.isEmpty) return null;
