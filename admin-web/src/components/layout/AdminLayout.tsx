@@ -19,6 +19,8 @@ import {
   Moon,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
+  Sliders,
   Command,
   BarChart2,
 } from 'lucide-react';
@@ -29,6 +31,7 @@ import { BrandLogo } from '../common/BrandLogo.js';
 
 interface AdminLayoutProps {
   currentTab: string;
+  activeSubTab?: string;
   onTabChange: (tab: string) => void;
   user: AdminUser;
   onLogout: () => void;
@@ -42,6 +45,7 @@ interface AdminLayoutProps {
 
 export const AdminLayout: React.FC<AdminLayoutProps> = ({
   currentTab,
+  activeSubTab,
   onTabChange,
   user,
   onLogout,
@@ -54,6 +58,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
 }) => {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+  const [expandedAssessments, setExpandedAssessments] = useState(true);
   const { toggleTheme, isDark } = useTheme();
 
   // Navigation Categorized Sections
@@ -71,7 +76,17 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
       items: [
         { id: 'modules', label: lang === 'am' ? 'የትምህርት ሞጁሎች' : 'Learning CMS', icon: BookOpen },
         { id: 'quizzes', label: lang === 'am' ? 'ፈተናዎች' : 'Quizzes & Tests', icon: HelpCircle },
-        { id: 'assessments', label: lang === 'am' ? 'ምዘናዎች እና ቅኝቶች' : 'Assessments & Surveys', icon: BarChart2 },
+        { 
+          id: 'assessments', 
+          label: lang === 'am' ? 'ምዘናዎች እና ቅኝቶች' : 'Assessments & Surveys', 
+          icon: BarChart2,
+          isCollapsible: true,
+          children: [
+            { id: 'assessments-baseline', subTab: 'baseline', label: lang === 'am' ? 'የመግቢያ አጠቃላይ ቅኝት' : 'Survey Insights', icon: BarChart2 },
+            { id: 'assessments-questions', subTab: 'questions', label: lang === 'am' ? 'ጥያቄዎችን አስተዳድር' : 'Manage Questions', icon: Sliders },
+            { id: 'assessments-modules', subTab: 'modules', label: lang === 'am' ? 'የትምህርት ሞጁል ምዘናዎች' : 'Module Tests', icon: BookOpen },
+          ]
+        },
         { id: 'clubs', label: lang === 'am' ? 'የተማሪዎች ክለቦች' : 'Student Clubs', icon: GraduationCap },
       ],
     },
@@ -195,8 +210,68 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
                   <div className="px-2 text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
                     {section.category}
                   </div>
-                  {section.items.map((item) => {
+                  {section.items.map((item: any) => {
                     const Icon = item.icon;
+                    const isParentActive = currentTab === item.id || (item.children && item.children.some((c: any) => currentTab === c.id));
+                    
+                    if (item.isCollapsible && item.children) {
+                      return (
+                        <div key={item.id} className="space-y-1">
+                          <button
+                            onClick={() => {
+                              setExpandedAssessments(!expandedAssessments);
+                              if (currentTab !== 'assessments') {
+                                handleSelectTab(item.children[0].id);
+                              }
+                            }}
+                            className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-medium transition-all cursor-pointer ${
+                              isParentActive
+                                ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold shadow-2xs'
+                                : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white'
+                            }`}
+                          >
+                            <div className="flex items-center gap-2.5 truncate">
+                              <Icon
+                                size={18}
+                                className={isParentActive ? 'text-slate-900 dark:text-white' : 'text-slate-400 dark:text-slate-500'}
+                              />
+                              <span className="truncate">{item.label}</span>
+                            </div>
+                            <ChevronDown
+                              size={15}
+                              className={`text-slate-400 transition-transform duration-200 ${
+                                expandedAssessments ? 'rotate-180 text-slate-700 dark:text-slate-200' : ''
+                              }`}
+                            />
+                          </button>
+                          
+                          {/* Collapsible Dropdown Children */}
+                          {expandedAssessments && (
+                            <div className="ml-4 pl-3 border-l-2 border-slate-200 dark:border-slate-800 space-y-1 py-1">
+                              {item.children.map((child: any) => {
+                                const ChildIcon = child.icon;
+                                const isChildActive = currentTab === child.id || (currentTab === 'assessments' && activeSubTab === child.subTab);
+                                return (
+                                  <button
+                                    key={child.id}
+                                    onClick={() => handleSelectTab(child.id)}
+                                    className={`w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer ${
+                                      isChildActive
+                                        ? 'bg-slate-200/80 dark:bg-slate-750 text-slate-900 dark:text-white font-bold'
+                                        : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-800 dark:hover:text-slate-200'
+                                    }`}
+                                  >
+                                    <ChildIcon size={14} className={isChildActive ? 'text-brand-600 dark:text-cyan-400' : 'text-slate-400'} />
+                                    <span className="truncate">{child.label}</span>
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    }
+
                     const isActive = currentTab === item.id;
                     return (
                       <button
@@ -363,8 +438,71 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
                     {section.category}
                   </div>
                 )}
-                {section.items.map((item) => {
+                {section.items.map((item: any) => {
                   const Icon = item.icon;
+                  const isParentActive = currentTab === item.id || (item.children && item.children.some((c: any) => currentTab === c.id));
+                  
+                  if (item.isCollapsible && item.children) {
+                    return (
+                      <div key={item.id} className="space-y-0.5">
+                        <button
+                          onClick={() => {
+                            setExpandedAssessments(!expandedAssessments);
+                            if (currentTab !== 'assessments') {
+                              onTabChange(item.children[0].id);
+                            }
+                          }}
+                          title={collapsed ? item.label : undefined}
+                          className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer ${
+                            isParentActive
+                              ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-bold shadow-2xs'
+                              : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2.5 truncate">
+                            <Icon
+                              size={18}
+                              className={isParentActive ? 'text-slate-900 dark:text-white' : 'text-slate-400 dark:text-slate-500'}
+                            />
+                            {!collapsed && <span className="truncate">{item.label}</span>}
+                          </div>
+                          {!collapsed && (
+                            <ChevronDown
+                              size={14}
+                              className={`text-slate-400 transition-transform duration-200 ${
+                                expandedAssessments ? 'rotate-180' : ''
+                              }`}
+                            />
+                          )}
+                        </button>
+                        
+                        {/* Collapsible Dropdown Children */}
+                        {expandedAssessments && !collapsed && (
+                          <div className="ml-4 pl-3 border-l-2 border-slate-200 dark:border-slate-800 space-y-0.5 py-1">
+                            {item.children.map((child: any) => {
+                              const ChildIcon = child.icon;
+                              const isChildActive = currentTab === child.id || (currentTab === 'assessments' && activeSubTab === child.subTab);
+                              return (
+                                <button
+                                  key={child.id}
+                                  onClick={() => onTabChange(child.id)}
+                                  className={`w-full flex items-center gap-2.5 px-2 py-1.5 rounded-lg text-[11px] font-medium transition-all cursor-pointer ${
+                                    isChildActive
+                                      ? 'bg-slate-200/80 dark:bg-slate-750 text-slate-900 dark:text-white font-bold'
+                                      : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-800 dark:hover:text-slate-200'
+                                  }`}
+                                >
+                                  <ChildIcon size={14} className={isChildActive ? 'text-brand-600 dark:text-cyan-400' : 'text-slate-400'} />
+                                  <span className="truncate">{child.label}</span>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  }
+
                   const isActive = currentTab === item.id;
                   return (
                     <button

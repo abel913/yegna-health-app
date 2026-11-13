@@ -17,6 +17,8 @@ import {
   PlusCircle,
   Sun,
   Moon,
+  BarChart2,
+  Sliders,
 } from 'lucide-react';
 import { Facility, Mentor, Module, StudentClub } from '../types/index.js';
 import { useTheme } from '../context/ThemeContext.js';
@@ -118,9 +120,23 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
       {
         id: 'nav-quizzes',
         tab: 'quizzes',
-        title: lang === 'am' ? 'ፈተናዎችና ምዘናዎች' : 'Quizzes & Clinical Assessments',
+        title: lang === 'am' ? 'ፈተናዎችና ምዘናዎች' : 'Quizzes & Tests',
         subtitle: lang === 'am' ? 'የተማሪዎች እውቀት መመዘኛ ጥያቄዎች' : 'Interactive multiple-choice tests with doctor notes',
         icon: HelpCircle,
+      },
+      {
+        id: 'nav-assessments-insights',
+        tab: 'assessments-baseline',
+        title: lang === 'am' ? 'የተማሪዎች ቅኝት ዳታ' : 'Survey Insights & Analytics',
+        subtitle: lang === 'am' ? 'የመግቢያ አጠቃላይ ቅኝት ምላሾች' : 'Student baseline survey insights and live distributions',
+        icon: BarChart2,
+      },
+      {
+        id: 'nav-assessments-questions',
+        tab: 'assessments-questions',
+        title: lang === 'am' ? 'የቅኝት ጥያቄዎች አስተዳደር' : 'Manage Survey Questions',
+        subtitle: lang === 'am' ? 'ተለዋዋጭ ጥያቄዎችን ማከልና ማረም' : 'Create, edit, and reorder baseline assessment questions',
+        icon: Sliders,
       },
       {
         id: 'nav-clubs',

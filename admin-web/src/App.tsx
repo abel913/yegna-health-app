@@ -31,6 +31,7 @@ export function App() {
   const { toast } = useToast();
   const [user, setUser] = useState<AdminUser | null>(() => api.getCurrentUser());
   const [currentTab, setCurrentTab] = useState('dashboard');
+  const [activeSubTab, setActiveSubTab] = useState('baseline');
   const [lang, setLang] = useState<'en' | 'am'>('en');
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
 
@@ -104,7 +105,7 @@ export function App() {
 
   const handleExportKpiCsv = () => {
     const rows = [
-      { category: 'Platform Metric', item: 'Registered Students (Zero-Knowledge)', value: metrics?.registeredUsers || 1240, details: 'End-to-end confidential accounts' },
+      { category: 'Platform Metric', item: 'Registered Students (Zero-Knowledge)', value: metrics?.registeredUsers ?? users.length, details: 'End-to-end confidential accounts' },
       { category: 'Platform Metric', item: 'Verified Health Clinics', value: metrics?.verifiedFacilities || facilities.length, details: 'Campuses & regional youth centers' },
       { category: 'Platform Metric', item: 'Peer Mentors & Counselors', value: metrics?.counselorMentors || mentors.length, details: 'Active adolescent counselors' },
       { category: 'Platform Metric', item: 'Bilingual Health Modules', value: metrics?.learningModules || modules.length, details: 'Puberty, SRH, STI, Substance prevention' },
@@ -381,11 +382,22 @@ export function App() {
     );
   }
 
+  const handleNavigate = (id: string) => {
+    if (id.startsWith('assessments-')) {
+      const sub = id.split('-')[1];
+      setCurrentTab('assessments');
+      setActiveSubTab(sub);
+    } else {
+      setCurrentTab(id);
+    }
+  };
+
   return (
     <>
       <AdminLayout
         currentTab={currentTab}
-        onTabChange={setCurrentTab}
+        activeSubTab={activeSubTab}
+        onTabChange={handleNavigate}
         user={user}
         onLogout={handleLogout}
         lang={lang}
@@ -446,6 +458,8 @@ export function App() {
             modules={modules}
             assessments={learningAssessments}
             lang={lang}
+            activeSubTab={activeSubTab as any}
+            onSubTabChange={setActiveSubTab}
             onSaveAssessment={saveLearningAssessment}
             onDeleteAssessment={deleteLearningAssessment}
           />
