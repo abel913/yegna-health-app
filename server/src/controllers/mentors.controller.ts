@@ -6,9 +6,22 @@ import { AuthRequest } from '../middleware/auth.middleware.js';
 const mentorSchema = z.object({
   name: z.string().min(2),
   organization: z.string().min(2),
+  campus: z.string().default('Atse Fasil Campus'),
+  roleTitleEn: z.string().default('Certified Youth Peer Counselor'),
+  roleTitleAm: z.string().default('የተረጋገጠ የወጣቶች አቻ አማካሪ'),
   phone: z.string().min(5),
-  telegramHandle: z.string().optional(),
-  email: z.string().email().optional().or(z.literal('')),
+  whatsapp: z.string().optional().nullable().transform((val) => (val && val.trim().length > 0 ? val.trim() : null)),
+  telegramHandle: z.string().optional().nullable().transform((val) => {
+    if (!val || !val.trim()) return null;
+    return val.replace(/^@+/, '').trim();
+  }),
+  email: z.string().email().optional().or(z.literal('')).nullable().transform((val) => (val && val.trim().length > 0 ? val.trim() : null)),
+  experienceYears: z.coerce.number().int().min(0).default(2),
+  sessionsCount: z.coerce.number().int().min(0).default(120),
+  workingHoursEn: z.string().default('Mon – Fri: 8:30 AM – 5:30 PM'),
+  workingHoursAm: z.string().default('ከሰኞ – ዓርብ፡ 2:30 – 11:30'),
+  bioEn: z.string().optional().nullable(),
+  bioAm: z.string().optional().nullable(),
   languages: z.array(z.string()).default(['Amharic', 'English']),
   specialties: z.array(z.string()).default([]),
   isAvailable: z.boolean().default(true),
@@ -36,6 +49,27 @@ export async function getAllMentors(req: Request, res: Response) {
 export async function createMentor(req: AuthRequest, res: Response) {
   try {
     const data = mentorSchema.parse(req.body);
+
+    // Prevent duplicate creations within 15 seconds (double-click debounce protection)
+    const fifteenSecondsAgo = new Date(Date.now() - 15 * 1000);
+    const existingRecent = await prisma.mentor.findFirst({
+      where: {
+        name: data.name,
+        phone: data.phone,
+        createdAt: { gte: fifteenSecondsAgo },
+      },
+    });
+
+    if (existingRecent) {
+      return res.status(200).json({
+        mentor: {
+          ...existingRecent,
+          languages: JSON.parse(existingRecent.languages || '[]'),
+          specialties: JSON.parse(existingRecent.specialties || '[]'),
+        },
+      });
+    }
+
     const mentor = await prisma.mentor.create({
       data: {
         ...data,
