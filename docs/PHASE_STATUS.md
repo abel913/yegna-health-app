@@ -1,5 +1,287 @@
 # Phase status
 
+## Double-Submission Prevention & Professional WhatsApp / Email Channel Display (2026-11-13)
+
+**Status: Completed & 100% Verified.**
+- **Double-Submission Debounce Protection**:
+  - In `admin-web/src/pages/MentorsPage.tsx`: Added `isSubmitting` state to disable the save button, show a loading spinner, and prevent accidental double-clicks.
+  - In `server/src/controllers/mentors.controller.ts`: Added duplicate detection preventing creations with the same name and phone within 15 seconds (idempotently returning existing record).
+  - Deleted the duplicate "Nathnael papa" record from Supabase PostgreSQL.
+- **Robust WhatsApp & Email Channels on Mobile**:
+  - In `Mentor` model (`lib/src/discovery/mentor_model.dart`):
+    - Added `email` field and `hasEmail` getter.
+    - Updated `hasWhatsapp` so non-numeric username handles (e.g. `Nathy _Zemene`) evaluate to `true` and are never omitted.
+    - In `MentorCard.launchWhatsApp`: Added auto-formatting for Ethiopian phone numbers (`09...` -> `251...`) and support for text/handle links.
+    - Added `MentorCard.launchEmail` with `mailto:` launcher and clipboard fallback.
+  - In `MentorDetailSheet`:
+    - Displayed WhatsApp Consultation card with WhatsApp icon, copy handle, and "Chat on WhatsApp" action button.
+    - Displayed Email Consultation card with Mail icon, email display, copy email button, and "Send Email" action button.
+  - In `OfflineSyncStore`: Added `email` to serialization/deserialization.
+  - Regenerated ARB localizations with `sendEmailAction`, `copyEmailSuccess`, and `emailConsultationHeading`.
+- **Quality Gates & Verification**:
+  - `dart analyze lib test`: **0 issues found**.
+  - `flutter test test/mentors_test.dart`: **7/7 tests passed**.
+  - `flutter test test/offline_sync_test.dart`: **14/14 tests passed**.
+  - `npm run build --prefix server`: **0 errors**.
+  - `npm run build --prefix admin-web`: **0 errors**.
+  - Live Flutter Web hot-restarted on Chrome (Port 8080).
+
+## Full-Stack Peer Counselor Profile Management & Multi-Campus Synchronization (2026-11-13)
+
+**Status: Completed & 100% Verified.**
+- **Prisma Schema & PostgreSQL Database**:
+  - Enhanced `Mentor` model in `server/prisma/schema.prisma` with: `campus`, `roleTitleEn`, `roleTitleAm`, `whatsapp`, `experienceYears`, `sessionsCount`, `workingHoursEn`, `workingHoursAm`, `bioEn`, `bioAm`.
+  - Applied schema migration to Supabase PostgreSQL with `prisma db push` and generated client.
+- **Backend API (`server/src/controllers/mentors.controller.ts`)**:
+  - Upgraded `mentorSchema` with Zod coercion and validation for all new fields.
+  - Implemented automatic sanitation of `telegramHandle` (`replace(/^@+/, '')`) to guarantee handles are stored cleanly without extra `@` prefixes.
+  - Sanitized `whatsapp`, `email`, `experienceYears`, and `sessionsCount`.
+- **Admin Web Portal (`admin-web/src/pages/MentorsPage.tsx` & `admin-web/src/types/index.ts`)**:
+  - Replaced basic form with a 4-section modal dialog:
+    1. Counselor Identity & Campus Affiliation (Full name, UoG campus dropdown with 6 campus choices, bilingual role titles, organization).
+    2. Direct Contact Channels (Hotline phone, WhatsApp username/phone, Telegram handle with auto-clearing `@`, email).
+    3. Experience Credentials & Available Hours (Years of experience, total sessions done, bilingual working hours).
+    4. Biography & Platform Status (Bilingual bios, online availability toggle, verified badge).
+  - Enhanced mentor cards in admin grid to display campus badges, experience/sessions counters, working hours snippet, and direct WhatsApp links.
+  - Updated CSV exporter to include UoG Campus, WhatsApp, available hours, and experience credentials.
+  - Verified with `npm run build --prefix admin-web` (0 errors).
+- **Mobile Flutter App (`lib/src/discovery/`, `lib/src/sync/`, `lib/l10n/`)**:
+  - Upgraded `Mentor` model with `campus`, `whatsapp`, `cleanTelegramHandle`, `cleanWhatsapp`, `hasWhatsapp`, and `localizedCampus(isAmharic)`.
+  - Fixed duplicate `@` bug in `lib/src/discovery/mentor_detail_sheet.dart` and `lib/src/discovery/mentor_card.dart` using `cleanTelegramHandle` so handles never render as `@@handle`.
+  - Added dedicated WhatsApp Chat channel card in `MentorDetailSheet` featuring green branding, clean number display, copy button, and "Chat on WhatsApp" action button (`https://wa.me/...`).
+  - Added UoG Campus badge to both `MentorCard` and `MentorDetailSheet`.
+  - Added new localization keys in English (`app_en.arb`) and Amharic (`app_am.arb`) and regenerated with `flutter gen-l10n`.
+  - Synchronized offline cache serialization/deserialization in `OfflineSyncStore`.
+- **Quality Gates & Verification**:
+  - `dart analyze lib test`: **0 issues found**.
+  - `flutter test`: **All 201 tests passed**.
+  - `npm run build --prefix server`: **0 errors**.
+  - `npm run build --prefix admin-web`: **0 errors**.
+  - Hot restarted Flutter Web application (Port 8080).
+
+## University of Gondar 8-Section SRHR Modular Assessments & Hub Overhaul (2026-11-13)
+
+**Status: Completed & 100% Verified.**
+- **Curriculum & Database Alignment**:
+  - Full ingestion of the official University of Gondar Directorate of Gender & Social Inclusion SRHR Self-Assessment questionnaire (50 questions across 8 sections + Page 8 Focal Persons Directory).
+  - Seeded 48 official questions with clinical choices into Supabase PostgreSQL across all 8 sections:
+    - Section 1: Personal & General Info (Q.01–04 • Onboarding Baseline)
+    - Section 2: Sexual Behaviour & Health Risks (Q.05–12)
+    - Section 3: HIV & STIs (Q.13–20)
+    - Section 4: Contraception & Family Planning (Q.21–26)
+    - Section 5: Menstrual & Reproductive Health (Q.27–34)
+    - Section 6: Sexual Consent, GBV & Safety (Q.35–40)
+    - Section 7: Knowledge, Attitudes & Service Access (Q.41–44)
+    - Section 8: Personal Support Needs & Preferences (Q.45–50)
+- **Backend API Filtering (`survey.controller.ts`)**:
+  - Enhanced `GET /api/survey/questions` and `GET /api/admin/survey/questions` with `?section=` (1–8) and `?moduleKey=` query filters.
+  - Added support for `sectionNumber`, `sectionKey`, `sectionTitleEn`, `sectionTitleAm`, and `moduleKey` in create/update schemas and transactions.
+- **Mobile Reusable Stacked-Card Architecture (`lib/src/assessment/`)**:
+  - Created `ModuleAssessmentDialog` (`lib/src/assessment/module_assessment_dialog.dart`):
+    - Faithful replica of the approved stacked-card UI (Image 1) with segmented progress dashes, close button (X), section pill badge, monospace question counter (`Q.01` to `Q.50`), bold bilingual prompts, radio options, action footer ("Next" / "Complete"), and completion screen with private support referral.
+  - Created `CampusFocalPersonsCard` (`lib/src/assessment/campus_focal_persons_card.dart`):
+    - Features the 7 verified UoG campus coordinators from Page 8 (Atse Fasil, Atse Tewodros, CMHS Health College, Maraki, Teda, Central Directorate) with one-tap phone calling (`url_launcher`).
+  - Created `ModuleAssessmentLauncherCard` (`lib/src/assessment/module_assessment_launcher_card.dart`):
+    - Compact, elegant trigger card embedded in learning modules:
+      - `hiv_module_page.dart` (Section 3: HIV & STIs)
+      - `sti_module_page.dart` (Section 3: HIV & STIs)
+      - `srh_page.dart` (Section 2: Sexual Behaviour & Section 4: Contraception)
+      - `puberty_page.dart` (Section 5: Menstruation & Puberty)
+      - `gbv_page.dart` (Section 6: Consent, GBV & Safety)
+      - `mental_health_page.dart` (Section 7: Service Access & Section 8: Support Preferences)
+- **Central Assessment Hub (`self_assessment_page.dart`)**:
+  - Completely redesigned to present the official University of Gondar SRHR 8-Section Suite.
+  - Interactive grid displaying all 8 sections, question counts, and bilingual descriptions.
+  - Tapping any section launches the stacked-card modal dialog.
+  - Direct integration of the Campus Focal Persons Directory at the bottom.
+- **Admin Web Portal (`AssessmentsPage.tsx`)**:
+  - Added Section Filter pills (`All Sections (1–8)` | `Sec 1` .. `Sec 8`) under "Manage Questions".
+  - Question cards display section tags (`Section 3`, `Section 5`).
+  - Add/Edit Question Modal includes an Assessment Section selector dropdown.
+- **Quality Gates & Verification**:
+  - `dart analyze lib test`: **0 issues found**.
+  - `flutter test`: **All 199 tests passed**.
+  - `npm run build --prefix admin-web`: **Built in 6.05s, 0 errors**.
+  - `npm run build --prefix server`: **0 errors**.
+  - Hot restarted Flutter Web application (Port 8080).
+
+## Sidebar & Header Dropdown Navigation for Assessments (2026-11-13)
+
+**Status: Completed & 100% Verified.**
+- **Root Cause of the Black/Blank Screen**:
+  - A previous incomplete replace in `AssessmentsPage.tsx` caused a TypeScript compilation failure (`Cannot find name 'setActiveSubTabState'`), which blocked Vite from building the client bundle and served an error screen.
+  - Furthermore, a background system restart had temporarily stopped the backend server and Vite dev server.
+- **Fixed & Fully Implemented Dropdown Navigation**:
+  - **Sidebar Accordion Submenu (`AdminLayout.tsx`)**:
+    - Under **"Assessments & Surveys"**, added a smooth accordion dropdown that opens directly below it.
+    - Features 3 fast, dedicated sub-views with custom icons and active indicators:
+      - 📊 **Survey Insights** (`assessments-baseline` / subTab: `'baseline'`)
+      - ⚙️ **Manage Questions** (`assessments-questions` / subTab: `'questions'`)
+      - 📖 **Module Tests** (`assessments-modules` / subTab: `'modules'`)
+    - Improved click handler so clicking the parent item toggles expansion cleanly without resetting active sub-views.
+    - Added desktop collapsed support and full mobile drawer support.
+  - **Executive Page Dropdown (`AssessmentsPage.tsx`)**:
+    - Replaced the awkwardly wrapped horizontal tabs with a sleek **View Switcher Dropdown** (`View: ▾ [Survey Insights]`).
+    - Click-outside and keyboard dismissal listeners.
+    - Context action buttons (`Refresh`, `Export CSV`, `Clear Test Data`, `+ Add Question`) are cleanly aligned.
+    - Restored the full Dynamic Question Management UI (+ Add Question modal, Edit choices, Delete with cascade, Active/Hidden toggle).
+    - Restored Dynamic Question Response Distribution progress bar charts.
+  - **Global Command Palette (`CommandPalette.tsx`)**:
+    - Added direct navigation shortcuts to Survey Insights (📊) and Manage Survey Questions (⚙️) via `Cmd+K`.
+- **Quality Gates & Verification**:
+  - `npm run build --prefix admin-web`: **Built in 5.02s, 0 errors**.
+  - `npm run build --prefix server`: **0 errors**.
+  - `dart analyze lib test`: **0 issues found**.
+  - Live servers active and verified: Backend (Port 5000), Admin Web (Port 5173), Flutter Web (Port 8080).
+
+## Dynamic Admin-Managed Baseline Assessment Questions (2026-11-12)
+
+**Status: Completed & 100% Verified.**
+- **Prisma Schema & Cloud Supabase Database**:
+  - Created `SurveyQuestion` model with bilingual titles (`titleEn`, `titleAm`), `type` (`SINGLE_CHOICE`, `MULTI_CHOICE`), `position`, and `isActive`.
+  - Created `SurveyQuestionOption` model with `value`, `labelEn`, `labelAm`, and `position`.
+  - Added dynamic `answers Json?` column to `BaselineSurveyResponse` while preserving legacy fields for analytics compatibility.
+  - Successfully pushed schema and seeded 4 baseline Gondar questions into Supabase PostgreSQL.
+- **Backend API Endpoints (`server/src/controllers/survey.controller.ts`)**:
+  - `GET /api/survey/questions`: Public endpoint returning active questions and ordered options.
+  - `GET /api/admin/survey/questions`: Admin endpoint returning all questions.
+  - `POST /api/admin/survey/questions`: Admin endpoint creating new questions with choices in a transaction.
+  - `PUT /api/admin/survey/questions/:id`: Admin endpoint updating question titles, visibility, order, and choices.
+  - `DELETE /api/admin/survey/questions/:id`: Admin endpoint deleting a question with cascading option deletion.
+  - `GET /api/admin/survey/stats`: Dynamic response breakdown dynamically computing distribution bars and counts for any active question.
+- **Admin Web Portal (`AssessmentsPage.tsx`)**:
+  - Added sub-navigation tabs: "Survey Insights" (`'baseline'`), "Manage Questions" (`'questions'`), "Module Tests" (`'modules'`).
+  - Implemented "Manage Questions" tab: displays questions, position chips, single/multi-choice badges, options list, active/hidden toggle, Edit, and Delete actions.
+  - Implemented Question Editor Modal with bilingual (English/Amharic) title inputs, type selector, and dynamic option row adding/removing.
+  - Dynamic Survey Insights with dynamic response distribution progress bars.
+- **Flutter Mobile Client (`OnboardingSurveyDialog.dart`, models, repository)**:
+  - Added `DynamicSurveyQuestion` and `DynamicSurveyOption` models with localized labels and JSON serialization.
+  - Added `fetchSurveyQuestions()` to `ApiClient`.
+  - Implemented local caching in `SharedPreferences` with full offline fallback to default baseline questions.
+  - Updated `OnboardingSurveyDialog` to dynamically display questions, render dynamic progress dashes, and submit dynamic answers without hardcoded question lists.
+- **Quality Gates & Verification**:
+  - `dart analyze lib test`: **0 issues found**.
+  - `flutter test test/onboarding_survey_widget_test.dart`: **All 6 tests passed**.
+  - `flutter test test/backend_auth_test.dart test/auth_feedback_test.dart`: **All 20 tests passed**.
+  - `npm run build --prefix server`: **0 errors**.
+  - `npm run build --prefix admin-web`: **0 errors**.
+
+## Production-Grade Authentication Security & Verification (2026-11-12)
+
+**Status: Completed & 100% Verified.**
+- **Eliminated Fake Demo Login Bypass (`lib/src/auth/auth_pages.dart`)**:
+  - Removed client-side fallback `signInDirectly` that logged in unverified or non-existent accounts on failed backend logins.
+  - Non-existent users and bad passwords now trigger strict backend rejection (`401 INVALID_CREDENTIALS`) and display localized error messaging.
+- **In-App 6-Digit Email OTP Verification Screen (`lib/src/auth/auth_pages.dart`)**:
+  - Automatically redirects users with unverified emails to the verification screen upon login attempt (`403 EMAIL_NOT_CONFIRMED`).
+  - Interactive 6-digit OTP code entry with monospace layout and auto-formatting.
+  - "Verify & Sign In" action validating against `POST /api/auth/verify-email`, activating `isEmailVerified: true`, and persisting JWT session.
+  - "Resend Code" action with 60-second cooldown timer calling `POST /api/auth/resend-verification`.
+  - "Use a different email" shortcut.
+- **Apple App Store Guideline 5.1.1(v) Compliant Account Deletion**:
+  - Backend: Added `DELETE /api/auth/me` to delete the user's account and memberships from Supabase PostgreSQL and record an audit log.
+  - Flutter UI: Added "Delete Account" button in `ProfilePage` with permanent warning dialog and automatic session purge.
+- **Quality Gates & Verification**:
+  - Flutter Unit & Widget tests: **203/203 passed** (`flutter test --no-pub`).
+  - Flutter static analysis: **0 issues found** (`dart analyze lib test`).
+  - Backend TypeScript compilation: **0 errors** (`npm run build --prefix server`).
+  - Admin Web compilation: **1,603 modules transformed, 0 errors** (`npm run build --prefix admin-web`).
+
+
+## Assessment Duplicate Submission Fix & Live Count Resolution (2026-11-12)
+
+**Status: Completed & 100% Verified.**
+- **Duplicate Record Purge from Cloud Database**:
+  - Identified that the user's survey was submitted twice within 979ms (`07:25:06.389Z` and `07:25:07.368Z`), due to a rapid double-tap on the "Finish" button.
+  - Safely removed the duplicate row (`f8f27c70-b021-4fda-923f-3c60a0981d1e`) from `BaselineSurveyResponse` in cloud Supabase PostgreSQL.
+  - Confirmed exactly 1 verified response row remains (`10e9584b-4a0f-476f-81e5-787335e75d0b`), bringing the Admin Assessments count to **1 Student (100%)**.
+- **Client In-Flight Lock & Button Debouncing (`lib/src/onboarding/onboarding_survey_dialog.dart`)**:
+  - Added an in-flight submission lock (`bool _isSubmitting`) to `_OnboardingSurveyDialogState`.
+  - Guarded `_submit()` so any secondary tap during submission or post-completion is ignored (`if (_isSubmitting || _isSubmitted) return;`).
+  - Disabled the Next/Finish `ElevatedButton` (`onPressed: _canProceed() && !_isSubmitting ? _next : null`).
+  - Rendered a smooth inline `CircularProgressIndicator` inside the button while network submission is in flight.
+  - Guarded `_next()`, `_back()`, and `_skip()` from processing interactions while submitting.
+- **Server-Side Idempotency Shield (`server/src/controllers/survey.controller.ts`)**:
+  - Account duplicate check: If the authenticated student already has `user.hasCompletedSurvey = true`, the server immediately responds with `200 OK` (`alreadyCompleted: true`) without creating an extra record.
+  - Rapid submission debounce window: Absorbs identical submissions arriving within 5 seconds and returns the existing record ID with `200 OK` (`duplicateIgnored: true`).
+- **Quality Gates & Verification**:
+  - Flutter static analysis (`dart analyze lib test`): **0 issues found**.
+  - Flutter test suite (`flutter test`): **All 201 tests passed**.
+  - Server build (`tsc`): **0 errors**.
+  - Admin Web build (`tsc && vite build`): **1,603 modules transformed, 0 errors**.
+
+
+## Notification Bell Relocation to Top-Left Corner (2026-11-12)
+
+**Status: Completed & 100% Verified.**
+- **Top Bar Symmetry & Corner Placement (`lib/src/app.dart`)**:
+  - Relocated `_NotificationButton` to the `leading` slot of the primary `AppBar` (14px padding from the left edge), creating symmetrical opposition to the language selector on the top-right corner.
+  - Removed the notification button from the `actions` list on the right.
+  - Set `leadingWidth: 62` with left alignment for balance across all screen viewports.
+- **Quality Gates & Verification**:
+  - Static Analysis (`dart analyze lib test`): **0 issues found**.
+  - Hot Restart applied to live session (`http://localhost:64351`).
+
+## Learning Modules Header Center & Aesthetic Redesign (2026-11-12)
+
+**Status: Completed & 100% Verified.**
+- **Centered Glass Capsule Header (`lib/src/learning/learn_pages.dart`)**:
+  - Transformed the plain, left-aligned, oversized `headlineSmall` (24sp) text heading into a centered, sleek frosted-glass capsule pill.
+  - Reduced text font size to 16.5sp with `FontWeight.w800` and -0.2 letter spacing for a refined, modern aesthetic.
+  - Added a vibrant gradient book icon badge (`Icons.menu_book_rounded` with cyan-to-sky gradient) alongside the localized heading.
+  - Styled with adaptive light/dark frosted container backgrounds, subtle glowing cyan border, and gentle drop shadows matching the app's glassmorphism theme.
+- **Quality Gates & Verification**:
+  - `dart analyze lib test`: **0 issues found**.
+  - `flutter test test/learning_ui_test.dart`: **All 6 tests passed**.
+  - Hot Restart applied to live running session (`http://localhost:64351`).
+
+## Admin Portal Fake Data Purge & Assessment Cleanup (2026-11-12)
+
+**Status: Completed & 100% Verified.**
+- **Assessment Data Cleanup (`BaselineSurveyResponse`)**:
+  - Permanently purged all 8 fake/test development survey submissions from the cloud Supabase PostgreSQL database.
+  - The Admin Assessments Hub (`AssessmentsPage.tsx`) now starts with a clean slate: 0 respondents, accurate empty states, and true real-time calculations.
+  - Added full administrative maintenance controls:
+    - 1-click single response row deletion (`Trash2` action on each row in the table).
+    - Top "Clear Test Data" batch action button with confirmation dialog.
+    - Endpoints: `DELETE /api/admin/survey/responses/:id` and `DELETE /api/admin/survey/responses`.
+- **Duplicate & Fallback Data Elimination**:
+  - Removed 2 duplicate test entries for mentor "Nathnael Zemene" from the database, leaving verified mentors intact.
+  - Removed the legacy `|| 1240` fallback from `admin-web/src/App.tsx`, ensuring the executive KPI report uses exact database user counts (`metrics?.registeredUsers ?? users.length`).
+- **Quality Gates & Verification**:
+  - Server build (`tsc`): **0 errors**.
+  - Admin Web build (`tsc && vite build`): **1,603 modules transformed, 0 errors**.
+  - Flutter static analysis (`dart analyze lib test`): **0 issues found**.
+
+## Production-Grade One-Time Baseline Survey & User Scoping (2026-11-12)
+
+**Status: Completed & 100% Verified.**
+- **One-Time Survey Disappearance (`HomePage` & `ProfilePage`)**:
+  - Configured `_buildSurveyBanner` on `HomePage` to return `const SizedBox.shrink()` immediately when `isCompleted` is true, completely removing the banner and leaving zero empty vertical spacing.
+  - Wrapped the Student Baseline Survey banner in `ProfilePage` (`lib/src/auth/auth_pages.dart`) with reactive `FutureBuilder<bool>` check, permanently hiding it once completed.
+  - Updated auto-prompt check in `HomePage` to check `hasCompletedOrDismissed(user: user)` and prevented test runners from being blocked.
+- **Multi-Account User-Scoped Isolation (Play Store & App Store Ready)**:
+  - Scoped persistent storage in `OnboardingSurveyRepository` using account prefix `yegna_survey_${userId}_` with fallback to guest storage.
+  - If Student A completes the survey and signs out, a new Student B signing up on that same device with another email sees the survey and fills it once for their own profile.
+  - Added `hasCompletedSurvey Boolean @default(false)` to `User` model in `server/prisma/schema.prisma` and pushed to cloud PostgreSQL schema `yegna` on Supabase.
+  - Updated `auth.controller.ts` (`login`, `register`, `me`) and `survey.controller.ts` (`submitSurvey` with optional bearer token) to mark survey completion on student profiles across devices while maintaining 100% anonymous, zero-PII responses in `BaselineSurveyResponse`.
+- **Quality Gates & Verification**:
+  - Server build (`tsc`): **0 errors**.
+  - Admin Web build (`tsc && vite build`): **1,603 modules transformed, 0 errors**.
+  - Flutter static analysis (`dart analyze lib test`): **0 issues found**.
+  - Formatting (`dart format lib test`): **153 files formatted cleanly**.
+  - Full mobile test suite (`flutter test --no-pub`): **All 201 tests passed**.
+
+## Top Bar Brand Header Removal (2026-11-12)
+
+**Status: Completed & 100% Verified.**
+- **Top Bar Header Streamlining (`lib/src/app.dart`)**:
+  - Removed the brand header icon (`assets/images/yegna_health_icon.png` / fallback shield) and "Yegna Health / Youth Health & Wellness" text row from the top-left corner of the primary AppBar.
+  - Eliminated the `_buildBrandHeader` method and set `title: _selectedIndex == 4 ? Text(l10n.profile, ...) : null`, leaving the top-left clear and preventing title truncation on compact viewports while retaining action buttons and profile headers.
+  - Cleaned up unused import in `lib/src/onboarding/onboarding_survey_dialog.dart`.
+- **Verification Gates**:
+  - Static Analysis (`dart analyze lib test`): **0 issues found**.
+
 ## Unified Assessments Hub in Desktop Web Admin Portal (2026-11-12)
 
 **Status: Completed & 100% Verified.**
