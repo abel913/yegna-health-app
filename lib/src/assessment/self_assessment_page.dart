@@ -1,9 +1,153 @@
 import 'package:flutter/material.dart';
-import '../../l10n/app_localizations.dart';
 
-import 'self_assessment_models.dart';
+import 'module_assessment_dialog.dart';
 
-class SelfAssessmentPage extends StatefulWidget {
+class UogAssessmentSectionMeta {
+  const UogAssessmentSectionMeta({
+    required this.number,
+    required this.sectionKey,
+    required this.moduleKey,
+    required this.titleEn,
+    required this.titleAm,
+    required this.descriptionEn,
+    required this.descriptionAm,
+    required this.questionRangeEn,
+    required this.questionRangeAm,
+    required this.questionCount,
+    required this.icon,
+    required this.color,
+  });
+
+  final int number;
+  final String sectionKey;
+  final String moduleKey;
+  final String titleEn;
+  final String titleAm;
+  final String descriptionEn;
+  final String descriptionAm;
+  final String questionRangeEn;
+  final String questionRangeAm;
+  final int questionCount;
+  final IconData icon;
+  final Color color;
+}
+
+const List<UogAssessmentSectionMeta> kUogSections = [
+  UogAssessmentSectionMeta(
+    number: 1,
+    sectionKey: 'section_1',
+    moduleKey: 'general',
+    titleEn: 'Personal and General Information',
+    titleAm: 'አጠቃላይ የግል መረጃ',
+    descriptionEn: 'Demographics, year of study, accessibility needs, and SRH awareness.',
+    descriptionAm: 'ዕድሜ፣ የትምህርት ዓመት፣ የተደራሽነት ፍላጎት እና የአገልግሎት ግንዛቤ።',
+    questionRangeEn: 'Q.01–Q.04',
+    questionRangeAm: 'ጥያቄ 01–04',
+    questionCount: 4,
+    icon: Icons.person_pin_rounded,
+    color: Color(0xFF0F766E),
+  ),
+  UogAssessmentSectionMeta(
+    number: 2,
+    sectionKey: 'section_2',
+    moduleKey: 'srh',
+    titleEn: 'Sexual Behaviour and Health Risks',
+    titleAm: 'የጾታዊ ባህሪ እና የጤና ተጋላጭነት',
+    descriptionEn: 'Sexual activity, partner history, protection consistency, and risk factors.',
+    descriptionAm: 'የጾታዊ ግንኙነት ልምድ፣ ጥንቃቄ እና የተጋላጭነት ሁኔታዎች።',
+    questionRangeEn: 'Q.05–Q.12',
+    questionRangeAm: 'ጥያቄ 05–12',
+    questionCount: 8,
+    icon: Icons.health_and_safety_rounded,
+    color: Color(0xFF0284C7),
+  ),
+  UogAssessmentSectionMeta(
+    number: 3,
+    sectionKey: 'section_3',
+    moduleKey: 'hiv',
+    titleEn: 'HIV and STIs Self-Assessment',
+    titleAm: 'የኤችአይቪ እና አባለዘር በሽታዎች ምዘና',
+    descriptionEn: 'Testing history, symptoms, perceived risk, and partner notification.',
+    descriptionAm: 'የምርመራ ታሪክ፣ ምልክቶች፣ ተጋላጭነት እና የትዳር አጋር ማሳወቅ።',
+    questionRangeEn: 'Q.13–Q.20',
+    questionRangeAm: 'ጥያቄ 13–20',
+    questionCount: 8,
+    icon: Icons.coronavirus_rounded,
+    color: Color(0xFFE11D48),
+  ),
+  UogAssessmentSectionMeta(
+    number: 4,
+    sectionKey: 'section_4',
+    moduleKey: 'contraception',
+    titleEn: 'Contraception and Family Planning',
+    titleAm: 'የእርግዝና መከላከያ እና የቤተሰብ እቅድ',
+    descriptionEn: 'Method utilization, emergency contraception, and pregnancy history.',
+    descriptionAm: 'የመከላከያ ዘዴዎች አጠቃቀም፣ የአደጋ ጊዜ መከላከያ እና የእርግዝና ሁኔታ።',
+    questionRangeEn: 'Q.21–Q.26',
+    questionRangeAm: 'ጥያቄ 21–26',
+    questionCount: 6,
+    icon: Icons.favorite_rounded,
+    color: Color(0xFF7C3AED),
+  ),
+  UogAssessmentSectionMeta(
+    number: 5,
+    sectionKey: 'section_5',
+    moduleKey: 'puberty',
+    titleEn: 'Menstrual and Reproductive Health',
+    titleAm: 'የወር አበባ እና ስነ-ተዋልዶ ጤና',
+    descriptionEn: 'Menstrual regularity, severe pain, product access, and private facilities.',
+    descriptionAm: 'የወር አበባ ዑደት፣ ህመም፣ የንጽህና መጠበቂያ ቁሳቁሶች እና ምቹ ቦታዎች።',
+    questionRangeEn: 'Q.27–Q.34',
+    questionRangeAm: 'ጥያቄ 27–34',
+    questionCount: 8,
+    icon: Icons.water_drop_rounded,
+    color: Color(0xFFDB2777),
+  ),
+  UogAssessmentSectionMeta(
+    number: 6,
+    sectionKey: 'section_6',
+    moduleKey: 'gbv',
+    titleEn: 'Sexual Consent, GBV and Safety',
+    titleAm: 'የስምምነት፣ ጾታዊ ጥቃት እና ደህንነት',
+    descriptionEn: 'Campus safety, non-consensual experiences, harassment, and reporting.',
+    descriptionAm: 'የግቢ ደህንነት፣ ያለስምምነት የደረሰ ጥቃት፣ ትንኮሳ እና የሪፖርት አቀራረብ።',
+    questionRangeEn: 'Q.35–Q.40',
+    questionRangeAm: 'ጥያቄ 35–40',
+    questionCount: 6,
+    icon: Icons.shield_rounded,
+    color: Color(0xFFEA580C),
+  ),
+  UogAssessmentSectionMeta(
+    number: 7,
+    sectionKey: 'section_7',
+    moduleKey: 'mental_health',
+    titleEn: 'Knowledge, Attitudes & Service Access',
+    titleAm: 'ግንዛቤ፣ አመለካከት እና የአገልግሎት ተደራሽነት',
+    descriptionEn: 'Campus clinic location, perception of confidentiality, and stigma barriers.',
+    descriptionAm: 'የክሊኒክ ቦታ ዕውቀት፣ ሚስጥራዊነት እና የማህበራዊ መገለል ተግዳሮቶች።',
+    questionRangeEn: 'Q.41–Q.44',
+    questionRangeAm: 'ጥያቄ 41–44',
+    questionCount: 4,
+    icon: Icons.psychology_rounded,
+    color: Color(0xFF2563EB),
+  ),
+  UogAssessmentSectionMeta(
+    number: 8,
+    sectionKey: 'section_8',
+    moduleKey: 'support',
+    titleEn: 'Support Needs & Service Preferences',
+    titleAm: 'የድጋፍ ፍላጎት እና የአገልግሎት ምርጫዎች',
+    descriptionEn: 'Preferred support services, counseling channels, and campus resources.',
+    descriptionAm: 'ተመራጭ የድጋፍ አገልግሎቶች፣ የምክር መስጫ መንገዶች እና የዩኒቨርሲቲ ሀብቶች።',
+    questionRangeEn: 'Q.45–Q.50',
+    questionRangeAm: 'ጥያቄ 45–50',
+    questionCount: 6,
+    icon: Icons.support_agent_rounded,
+    color: Color(0xFF059669),
+  ),
+];
+
+class SelfAssessmentPage extends StatelessWidget {
   const SelfAssessmentPage({
     super.key,
     this.onOpenMentors,
@@ -16,1064 +160,302 @@ class SelfAssessmentPage extends StatefulWidget {
   final VoidCallback? onOpenLearning;
 
   @override
-  State<SelfAssessmentPage> createState() => _SelfAssessmentPageState();
-}
-
-class _SelfAssessmentPageState extends State<SelfAssessmentPage> {
-  int _currentIndex = 0;
-  final Map<String, bool> _answers = {};
-  bool _isCompleted = false;
-  late final List<SelfAssessmentQuestionItem> _questions;
-
-  @override
-  void initState() {
-    super.initState();
-    _questions = getSelfAssessmentQuestions();
-  }
-
-  void _selectAnswer(bool value) {
-    setState(() {
-      final currentQuestion = _questions[_currentIndex];
-      _answers[currentQuestion.id] = value;
-    });
-  }
-
-  void _onNext(AppLocalizations l10n) {
-    final currentQuestion = _questions[_currentIndex];
-    if (!_answers.containsKey(currentQuestion.id)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.selectAnswerPrompt),
-          backgroundColor: const Color(0xFF0284C7),
-          behavior: SnackBarBehavior.floating,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          duration: const Duration(seconds: 2),
-        ),
-      );
-      return;
-    }
-
-    if (_currentIndex < _questions.length - 1) {
-      setState(() {
-        _currentIndex++;
-      });
-    } else {
-      setState(() {
-        _isCompleted = true;
-      });
-    }
-  }
-
-  void _onPrevious() {
-    if (_currentIndex > 0) {
-      setState(() {
-        _currentIndex--;
-      });
-    }
-  }
-
-  Future<void> _confirmRestart(AppLocalizations l10n) async {
-    if (_answers.isEmpty && !_isCompleted) {
-      return;
-    }
-    final shouldRestart = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Text(
-          l10n.restartAssessmentDialogTitle,
-          style: const TextStyle(fontWeight: FontWeight.w700),
-        ),
-        content: Text(l10n.restartAssessmentDialogBody),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: Text(l10n.cancelAction),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.of(ctx).pop(true),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF0284C7),
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
-            ),
-            child: Text(l10n.restartAction),
-          ),
-        ],
-      ),
-    );
-
-    if (shouldRestart == true) {
-      _restartAssessment();
-    }
-  }
-
-  void _restartAssessment() {
-    setState(() {
-      _currentIndex = 0;
-      _answers.clear();
-      _isCompleted = false;
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    final evaluation = evaluateAssessment(_questions, _answers);
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final isAmharic = Localizations.localeOf(context).languageCode == 'am';
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded, color: Color(0xFF0F172A)),
-          onPressed: () {
-            if (_isCompleted) {
-              _restartAssessment();
-            } else if (_currentIndex > 0) {
-              _onPrevious();
-            } else {
-              Navigator.of(context).pop();
-            }
-          },
-        ),
         title: Text(
-          l10n.selfAssessmentHeading,
-          style: const TextStyle(
-            color: Color(0xFF0F172A),
-            fontSize: 19,
+          isAmharic ? 'የስነ-ተዋልዶ ጤና ምዘና ማዕከል' : 'SRHR Self-Assessment Hub',
+          style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w800,
-            letterSpacing: -0.2,
+            fontSize: 18,
           ),
         ),
-        centerTitle: true,
-        actions: [
-          // Notification bell with red badge "2" matching screenshot
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              IconButton(
-                icon: const Icon(Icons.notifications_none_rounded,
-                    color: Color(0xFF0F172A)),
-                onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(l10n.chatbotDisclaimer),
-                      behavior: SnackBarBehavior.floating,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
-                    ),
-                  );
-                },
-              ),
-              Positioned(
-                top: 10,
-                right: 10,
-                child: Container(
-                  padding: const EdgeInsets.all(4),
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFEF4444),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Text(
-                    '2',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          // Refresh/Restart icon button matching screenshot
-          IconButton(
-            icon: const Icon(Icons.refresh_rounded, color: Color(0xFF0F172A)),
-            tooltip: l10n.retakeAssessmentAction,
-            onPressed: () => _confirmRestart(l10n),
-          ),
-          const SizedBox(width: 4),
-        ],
       ),
-      body: SafeArea(
-        child: _isCompleted
-            ? _buildResultView(l10n, evaluation)
-            : _buildQuestionView(l10n),
-      ),
-    );
-  }
-
-  // ---------------------------------------------------------------------------
-  // QUESTION VIEW (Screenshots 1 & 2)
-  // ---------------------------------------------------------------------------
-  Widget _buildQuestionView(AppLocalizations l10n) {
-    final currentQuestion = _questions[_currentIndex];
-    final selectedAnswer = _answers[currentQuestion.id];
-    final hasSelected = selectedAnswer != null;
-    final isLast = _currentIndex == _questions.length - 1;
-
-    return Center(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 580),
-        child: Column(
-          children: [
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
-                children: [
-                  // 1. Question Counter Pill (e.g. "Question 1 of 12")
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 14, vertical: 7),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFE0F2FE),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Text(
-                          l10n.selfAssessmentQuestionProgress(
-                              _currentIndex + 1, _questions.length),
-                          style: const TextStyle(
-                            color: Color(0xFF0284C7),
-                            fontSize: 13,
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      // Category Tag Pill
-                      Flexible(
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFF1F5F9),
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(color: const Color(0xFFE2E8F0)),
-                          ),
-                          child: Text(
-                            currentQuestion.category(l10n),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              color: Color(0xFF475569),
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 14),
-
-                  // 2. Segmented Progress Bar (12 segments matching screenshots)
-                  Row(
-                    children: List.generate(_questions.length, (index) {
-                      final isFilled = index <= _currentIndex;
-                      return Expanded(
-                        child: Container(
-                          height: 5,
-                          margin: const EdgeInsets.symmetric(horizontal: 2),
-                          decoration: BoxDecoration(
-                            color: isFilled
-                                ? const Color(0xFF0284C7)
-                                : const Color(0xFFE2E8F0),
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                        ),
-                      );
-                    }),
-                  ),
-                  const SizedBox(height: 24),
-
-                  // 3. Question Card (White rounded card with shadow)
-                  Container(
-                    padding: const EdgeInsets.all(22),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(24),
-                      border: Border.all(color: const Color(0xFFE2E8F0)),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Color(0x08000000),
-                          blurRadius: 16,
-                          offset: Offset(0, 6),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          currentQuestion.title(l10n),
-                          style: const TextStyle(
-                            color: Color(0xFF0F172A),
-                            fontSize: 18.5,
-                            fontWeight: FontWeight.w700,
-                            height: 1.45,
-                            letterSpacing: -0.2,
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-
-                        // "Why this matters" educational tip card
-                        Container(
-                          padding: const EdgeInsets.all(14),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFF8FAFC),
-                            borderRadius: BorderRadius.circular(14),
-                            border: Border.all(color: const Color(0xFFE2E8F0)),
-                          ),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Icon(
-                                Icons.lightbulb_outline_rounded,
-                                color: Color(0xFF0284C7),
-                                size: 20,
-                              ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      l10n.whyThisMattersLabel,
-                                      style: const TextStyle(
-                                        color: Color(0xFF0284C7),
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w800,
-                                        letterSpacing: 0.2,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      currentQuestion.why(l10n),
-                                      style: const TextStyle(
-                                        color: Color(0xFF475569),
-                                        fontSize: 13,
-                                        height: 1.4,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-
-                  // 4. Option: Yes
-                  _buildOptionCard(
-                    label: l10n.yesOption,
-                    isSelected: selectedAnswer == true,
-                    onTap: () => _selectAnswer(true),
-                  ),
-                  const SizedBox(height: 14),
-
-                  // 5. Option: No
-                  _buildOptionCard(
-                    label: l10n.noOption,
-                    isSelected: selectedAnswer == false,
-                    onTap: () => _selectAnswer(false),
-                  ),
-                ],
-              ),
-            ),
-
-            // 6. Bottom Navigation Controls (Screenshot 1 & 2)
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 10, 20, 20),
-              child: Row(
-                children: [
-                  // Circular Back Button
-                  InkWell(
-                    onTap: _currentIndex > 0 ? _onPrevious : null,
-                    customBorder: const CircleBorder(),
-                    child: Container(
-                      width: 54,
-                      height: 54,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.white,
-                        border: Border.all(
-                          color: _currentIndex > 0
-                              ? const Color(0xFFE2E8F0)
-                              : const Color(0xFFF1F5F9),
-                          width: 1.5,
-                        ),
-                        boxShadow: _currentIndex > 0
-                            ? const [
-                                BoxShadow(
-                                  color: Color(0x0C000000),
-                                  blurRadius: 10,
-                                  offset: Offset(0, 3),
-                                ),
-                              ]
-                            : null,
-                      ),
-                      child: Icon(
-                        Icons.arrow_back_rounded,
-                        color: _currentIndex > 0
-                            ? const Color(0xFF0284C7)
-                            : const Color(0xFFCBD5E1),
-                        size: 24,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 14),
-
-                  // Stadium Pill "Next" / "View Results" Button
-                  Expanded(
-                    child: InkWell(
-                      onTap: () => _onNext(l10n),
-                      borderRadius: BorderRadius.circular(32),
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
-                        height: 54,
-                        padding: const EdgeInsets.symmetric(horizontal: 14),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(32),
-                          gradient: hasSelected
-                              ? const LinearGradient(
-                                  colors: [
-                                    Color(0xFF38BDF8),
-                                    Color(0xFF0284C7)
-                                  ],
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                )
-                              : const LinearGradient(
-                                  colors: [
-                                    Color(0xFF93C5FD),
-                                    Color(0xFF60A5FA)
-                                  ],
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                ),
-                          boxShadow: hasSelected
-                              ? [
-                                  BoxShadow(
-                                    color: const Color(0xFF0284C7)
-                                        .withValues(alpha: 0.35),
-                                    blurRadius: 14,
-                                    offset: const Offset(0, 6),
-                                  ),
-                                ]
-                              : null,
-                        ),
-                        child: Row(
-                          children: [
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                isLast
-                                    ? l10n.viewResultsAction
-                                    : l10n.nextQuestionAction,
-                                textAlign: TextAlign.center,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 15.5,
-                                  fontWeight: FontWeight.w800,
-                                  letterSpacing: 0.1,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            // Embedded white circle with arrow forward icon matching screenshot
-                            Container(
-                              width: 36,
-                              height: 36,
-                              decoration: const BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.white,
-                              ),
-                              child: const Icon(
-                                Icons.arrow_forward_rounded,
-                                color: Color(0xFF0284C7),
-                                size: 20,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // Option Card (Yes / No)
-  Widget _buildOptionCard({
-    required String label,
-    required bool isSelected,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(22),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-        decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFFF0F9FF) : Colors.white,
-          borderRadius: BorderRadius.circular(22),
-          border: Border.all(
-            color:
-                isSelected ? const Color(0xFF0284C7) : const Color(0xFFE2E8F0),
-            width: isSelected ? 2.0 : 1.2,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: isSelected
-                  ? const Color(0x180284C7)
-                  : const Color(0x06000000),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            // Circular Radio / Checkmark Icon
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 180),
-              width: 28,
-              height: 28,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: isSelected ? const Color(0xFF0284C7) : Colors.white,
-                border: Border.all(
-                  color: isSelected
-                      ? const Color(0xFF0284C7)
-                      : const Color(0xFFCBD5E1),
-                  width: 2,
-                ),
-              ),
-              child: isSelected
-                  ? const Icon(Icons.check_rounded,
-                      size: 18, color: Colors.white)
-                  : null,
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Text(
-                label,
-                style: TextStyle(
-                  fontSize: 16.5,
-                  fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
-                  color: isSelected
-                      ? const Color(0xFF0284C7)
-                      : const Color(0xFF0F172A),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // ---------------------------------------------------------------------------
-  // RESULT VIEW (Screenshots 3 & 4)
-  // ---------------------------------------------------------------------------
-  Widget _buildResultView(
-      AppLocalizations l10n, SelfAssessmentEvaluation evaluation) {
-    final (
-      resultTitle,
-      keyMessage,
-      badgeColor,
-      badgeIcon,
-      badgeBorderColor,
-      actions,
-    ) = _getResultConfiguration(l10n, evaluation.tier);
-
-    return Center(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 580),
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(20, 16, 20, 36),
-          children: [
-            // 1. Assessment Result Card (Matching Screenshot 3)
-            Container(
-              padding: const EdgeInsets.all(22),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(24),
-                border: Border.all(color: const Color(0xFFE2E8F0)),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Color(0x08000000),
-                    blurRadius: 18,
-                    offset: Offset(0, 6),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      // Circular Result Icon
-                      Container(
-                        width: 56,
-                        height: 56,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: badgeColor,
-                          border:
-                              Border.all(color: badgeBorderColor, width: 1.5),
-                        ),
-                        child:
-                            Icon(badgeIcon, color: badgeBorderColor, size: 28),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              l10n.assessmentResultHeader,
-                              style: const TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w600,
-                                color: Color(0xFF64748B),
-                                letterSpacing: 0.2,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              resultTitle,
-                              style: const TextStyle(
-                                fontSize: 19,
-                                fontWeight: FontWeight.w800,
-                                color: Color(0xFF0F172A),
-                                height: 1.25,
-                                letterSpacing: -0.3,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 18),
-
-                  // Risk score pill & visual bar
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Flexible(
-                        child: Text(
-                          l10n.riskScoreLabel(
-                              evaluation.score, evaluation.maxScore),
-                          style: const TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w700,
-                            color: Color(0xFF334155),
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        '${evaluation.answeredYesCount} / ${evaluation.totalQuestions} Yes',
-                        style: const TextStyle(
-                          fontSize: 12.5,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF64748B),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(6),
-                    child: LinearProgressIndicator(
-                      value: evaluation.scoreRatio.clamp(0.05, 1.0),
-                      minHeight: 8,
-                      backgroundColor: const Color(0xFFE2E8F0),
-                      valueColor:
-                          AlwaysStoppedAnimation<Color>(badgeBorderColor),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 24),
-
-            // 2. Recommended Actions Section (Vertical Stepper / Timeline)
-            Row(
-              children: [
-                Container(
-                  width: 4,
-                  height: 20,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF0284C7),
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Text(
-                  l10n.recommendedActionsHeader,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w800,
-                    color: Color(0xFF0F172A),
-                    letterSpacing: -0.2,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-
-            // Connected Vertical Stepper matching Screenshot 3
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 20),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(22),
-                border: Border.all(color: const Color(0xFFE2E8F0)),
-              ),
-              child: Column(
-                children: List.generate(actions.length, (index) {
-                  final actionText = actions[index];
-                  final isLastItem = index == actions.length - 1;
-
-                  return Column(
-                    children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Blue Circle Step Badge
-                          Container(
-                            width: 32,
-                            height: 32,
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Color(0xFF0284C7),
-                            ),
-                            child: Center(
-                              child: Text(
-                                '${index + 1}',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 14.5,
-                                  fontWeight: FontWeight.w800,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          // Action Text
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.only(top: 4),
-                              child: Text(
-                                actionText,
-                                style: const TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xFF1E293B),
-                                  height: 1.45,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      if (!isLastItem)
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Container(
-                            margin: const EdgeInsets.only(
-                                left: 15, top: 4, bottom: 4),
-                            width: 2,
-                            height: 24,
-                            color: const Color(0xFFBAE6FD),
-                          ),
-                        ),
-                    ],
-                  );
-                }),
-              ),
-            ),
-            const SizedBox(height: 20),
-
-            // 3. Key Message Card (Matching Screenshot 3)
-            Container(
-              padding: const EdgeInsets.all(22),
-              decoration: BoxDecoration(
-                color: const Color(0xFFF0F9FF),
-                borderRadius: BorderRadius.circular(22),
-                border: Border.all(color: const Color(0xFFBAE6FD)),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      const Text(
-                        '““',
-                        style: TextStyle(
-                          color: Color(0xFF0284C7),
-                          fontSize: 22,
-                          fontWeight: FontWeight.w900,
-                          height: 1.0,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        l10n.keyMessageHeader,
-                        style: const TextStyle(
-                          color: Color(0xFF0284C7),
-                          fontSize: 16,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    keyMessage,
-                    style: const TextStyle(
-                      color: Color(0xFF1E293B),
-                      fontSize: 14.5,
-                      fontWeight: FontWeight.w500,
-                      height: 1.55,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 24),
-
-            // 4. Action Cards: "Talk to Mentor" & "Get Service" (Screenshot 4)
-            Row(
-              children: [
-                Expanded(
-                  child: _buildActionDestinationCard(
-                    icon: Icons.support_agent_rounded,
-                    iconBgColor: const Color(0xFFFDF2F8),
-                    iconColor: const Color(0xFFDB2777),
-                    title: l10n.talkToMentorAction,
-                    subtitle: l10n.talkToMentorSubtitle,
-                    onTap: () {
-                      if (widget.onOpenMentors != null) {
-                        if (Navigator.of(context).canPop()) {
-                          Navigator.of(context).pop();
-                        }
-                        widget.onOpenMentors!.call();
-                      }
-                    },
-                  ),
-                ),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: _buildActionDestinationCard(
-                    icon: Icons.local_hospital_rounded,
-                    iconBgColor: const Color(0xFFF0FDF4),
-                    iconColor: const Color(0xFF16A34A),
-                    title: l10n.getServiceAction,
-                    subtitle: l10n.getServiceSubtitle,
-                    onTap: () {
-                      if (widget.onOpenFacilities != null) {
-                        if (Navigator.of(context).canPop()) {
-                          Navigator.of(context).pop();
-                        }
-                        widget.onOpenFacilities!.call();
-                      }
-                    },
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 22),
-
-            // 5. Retake Assessment Button
-            OutlinedButton.icon(
-              onPressed: _restartAssessment,
-              icon: const Icon(Icons.refresh_rounded, size: 20),
-              label: Text(l10n.retakeAssessmentAction),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: const Color(0xFF0284C7),
-                side: const BorderSide(color: Color(0xFF0284C7), width: 1.5),
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16)),
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            // 6. Educational Disclaimer Card
-            Container(
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                color: const Color(0xFFF8FAFC),
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: const Color(0xFFE2E8F0)),
-              ),
-              child: Row(
-                children: [
-                  const Icon(
-                    Icons.verified_user_outlined,
-                    color: Color(0xFF64748B),
-                    size: 20,
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Text(
-                      l10n.assessmentEducationalDisclaimer,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Color(0xFF64748B),
-                        height: 1.4,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // Result card helper
-  Widget _buildActionDestinationCard({
-    required IconData icon,
-    required Color iconBgColor,
-    required Color iconColor,
-    required String title,
-    required String subtitle,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(20),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: const Color(0xFFE2E8F0)),
-          boxShadow: const [
-            BoxShadow(
-              color: Color(0x06000000),
-              blurRadius: 10,
-              offset: Offset(0, 4),
-            ),
-          ],
-        ),
+      body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        padding: const EdgeInsets.fromLTRB(18, 12, 18, 32),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // 1. HERO BANNER
             Container(
-              width: 44,
-              height: 44,
+              width: double.infinity,
+              padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: iconBgColor,
-                borderRadius: BorderRadius.circular(14),
+                gradient: LinearGradient(
+                  colors: isDark
+                      ? [const Color(0xFF0F172A), const Color(0xFF1E293B)]
+                      : [const Color(0xFF004D5A), const Color(0xFF00796B)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(24),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.12),
+                    blurRadius: 18,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
               ),
-              child: Icon(icon, color: iconColor, size: 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.18),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.verified_rounded, color: Colors.white, size: 14),
+                            const SizedBox(width: 6),
+                            Flexible(
+                              child: Text(
+                                isAmharic ? 'የጎንደር ዩኒቨርሲቲ ይፋዊ መጠይቅ' : 'Official University of Gondar Tool',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 11,
+                                  letterSpacing: 0.3,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    isAmharic
+                        ? 'የጾታዊ እና ስነ-ተዋልዶ ጤና ራስን መመዘኛ'
+                        : 'SRHR Self-Assessment Suite',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 22,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: -0.4,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    isAmharic
+                        ? 'በጎንደር ዩኒቨርሲቲ የጾታ እና ማህበራዊ አካታችነት ዳይሬክቶሬት የተዘጋጀ 8 ክፍሎች ያሉት ክሊኒካዊ ምዘና። መልሶችዎ 100% ሚስጥራዊ ናቸው።'
+                        : 'Official clinical instrument by UoG Directorate of Gender & Social Inclusion. 50 questions across 8 sections. 100% confidential.',
+                    style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.9),
+                      fontSize: 13,
+                      height: 1.5,
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.lock_outline_rounded, color: Colors.white70, size: 14),
+                        const SizedBox(width: 8),
+                        Text(
+                          isAmharic ? 'ምንም የግል መታወቂያ አይቀመጥም (Zero-PII)' : 'Anonymous & Zero-PII Protected',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 11.5,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(height: 12),
-            Text(
-              title,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w800,
-                color: Color(0xFF0F172A),
-              ),
+
+            const SizedBox(height: 24),
+
+            // 2. SECTION LIST HEADER
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    isAmharic ? 'የምዘና ክፍሎች (8 ክፍሎች)' : 'Assessment Sections (8 Total)',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: -0.2,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  isAmharic ? '50 ጥያቄዎች' : '50 Questions',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 4),
-            Text(
-              subtitle,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 11.5,
-                color: Color(0xFF64748B),
-                height: 1.35,
-              ),
+
+            const SizedBox(height: 14),
+
+            // 3. SECTIONS ACCORDION / CARDS
+            ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: kUogSections.length,
+              separatorBuilder: (_, __) => const SizedBox(height: 12),
+              itemBuilder: (context, idx) {
+                final sec = kUogSections[idx];
+                final title = isAmharic ? sec.titleAm : sec.titleEn;
+                final desc = isAmharic ? sec.descriptionAm : sec.descriptionEn;
+                final range = isAmharic ? sec.questionRangeAm : sec.questionRangeEn;
+
+                return Container(
+                  decoration: BoxDecoration(
+                    color: isDark ? const Color(0xFF1E293B) : Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
+                        blurRadius: 10,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: Material(
+                    color: Colors.transparent,
+                    borderRadius: BorderRadius.circular(20),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(20),
+                      onTap: () {
+                        ModuleAssessmentDialog.show(
+                          context,
+                          sectionNumber: sec.number,
+                          sectionKey: sec.sectionKey,
+                          moduleKey: sec.moduleKey,
+                          titleEn: sec.titleEn,
+                          titleAm: sec.titleAm,
+                        );
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              width: 44,
+                              height: 44,
+                              decoration: BoxDecoration(
+                                color: sec.color.withValues(alpha: 0.12),
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                              child: Center(
+                                child: Icon(sec.icon, color: sec.color, size: 24),
+                              ),
+                            ),
+                            const SizedBox(width: 14),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                                        decoration: BoxDecoration(
+                                          color: sec.color.withValues(alpha: 0.1),
+                                          borderRadius: BorderRadius.circular(6),
+                                        ),
+                                        child: Text(
+                                          'Section ${sec.number}',
+                                          style: TextStyle(
+                                            fontSize: 10.5,
+                                            fontWeight: FontWeight.w800,
+                                            color: sec.color,
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Expanded(
+                                        child: Text(
+                                          '$range • ${sec.questionCount} ${isAmharic ? "ጥያቄዎች" : "Questions"}',
+                                          style: TextStyle(
+                                            fontSize: 11.5,
+                                            color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 6),
+                                  Text(
+                                    title,
+                                    style: TextStyle(
+                                      fontSize: 15.5,
+                                      fontWeight: FontWeight.w800,
+                                      color: isDark ? Colors.white : const Color(0xFF0F172A),
+                                      letterSpacing: -0.2,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    desc,
+                                    style: TextStyle(
+                                      fontSize: 12.5,
+                                      color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+                                      height: 1.45,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8),
+                              child: Container(
+                                width: 32,
+                                height: 32,
+                                decoration: BoxDecoration(
+                                  color: sec.color.withValues(alpha: 0.1),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Center(
+                                  child: Icon(Icons.arrow_forward_rounded, color: sec.color, size: 16),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
             ),
           ],
         ),
       ),
     );
-  }
-
-  // Tier configuration mapping
-  (
-    String title,
-    String message,
-    Color bg,
-    IconData icon,
-    Color border,
-    List<String> actions,
-  ) _getResultConfiguration(AppLocalizations l10n, RiskTier tier) {
-    switch (tier) {
-      case RiskTier.higherRisk:
-        return (
-          l10n.higherRiskTitle,
-          l10n.highRiskKeyMessage,
-          const Color(0xFFFEF3C7),
-          Icons.info_outline_rounded,
-          const Color(0xFFB45309),
-          [
-            l10n.highRiskAction1,
-            l10n.highRiskAction2,
-            l10n.highRiskAction3,
-            l10n.highRiskAction4,
-          ],
-        );
-      case RiskTier.moderateRisk:
-        return (
-          l10n.moderateRiskTitle,
-          l10n.moderateRiskKeyMessage,
-          const Color(0xFFFEF9C3),
-          Icons.shield_outlined,
-          const Color(0xFFCA8A04),
-          [
-            l10n.modRiskAction1,
-            l10n.modRiskAction2,
-            l10n.modRiskAction3,
-          ],
-        );
-      case RiskTier.lowerRisk:
-        return (
-          l10n.lowerRiskTitle,
-          l10n.lowerRiskKeyMessage,
-          const Color(0xFFDCFCE7),
-          Icons.verified_user_rounded,
-          const Color(0xFF16A34A),
-          [
-            l10n.lowRiskAction1,
-            l10n.lowRiskAction2,
-            l10n.lowRiskAction3,
-          ],
-        );
-    }
   }
 }
