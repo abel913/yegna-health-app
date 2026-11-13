@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../l10n/app_localizations.dart';
+import '../assessment/module_assessment_launcher_card.dart';
 import 'assessment_repository.dart';
 import 'learning_progress_controller.dart';
 import 'puberty_quiz_page.dart';
@@ -543,6 +544,17 @@ class _PubertyDetailPageState extends State<PubertyDetailPage> {
                           );
                         },
                   ),
+                ),
+                const SizedBox(height: 14),
+                const ModuleAssessmentLauncherCard(
+                  sectionNumber: 5,
+                  sectionKey: 'section_5',
+                  moduleKey: 'puberty',
+                  titleEn: 'Menstrual & Reproductive Health Assessment',
+                  titleAm: 'የወር አበባ እና ስነ-ተዋልዶ ጤና ምዘና',
+                  questionRangeTextEn: 'Q.27–Q.34 • 8 Questions',
+                  questionRangeTextAm: 'ጥያቄ 27–34 • 8 ጥያቄዎች',
+                  badgeColor: Color(0xFFD946EF),
                 ),
               ],
             ),

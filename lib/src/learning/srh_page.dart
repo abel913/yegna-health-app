@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../l10n/app_localizations.dart';
+import '../assessment/module_assessment_launcher_card.dart';
 import 'assessment_repository.dart';
 import 'learning_progress_controller.dart';
 import 'srh_quiz_page.dart';
@@ -535,6 +536,28 @@ class _SrhDetailPageState extends State<SrhDetailPage> {
                           );
                         },
                   ),
+                ),
+                const SizedBox(height: 14),
+                const ModuleAssessmentLauncherCard(
+                  sectionNumber: 2,
+                  sectionKey: 'section_2',
+                  moduleKey: 'srh',
+                  titleEn: 'Sexual Behaviour & Health Assessment',
+                  titleAm: 'የጾታዊ ባህሪ እና የጤና ተጋላጭነት ምዘና',
+                  questionRangeTextEn: 'Q.05–Q.12 • 8 Questions',
+                  questionRangeTextAm: 'ጥያቄ 05–12 • 8 ጥያቄዎች',
+                  badgeColor: Color(0xFF0D9488),
+                ),
+                const SizedBox(height: 10),
+                const ModuleAssessmentLauncherCard(
+                  sectionNumber: 4,
+                  sectionKey: 'section_4',
+                  moduleKey: 'contraception',
+                  titleEn: 'Contraception & Family Planning Assessment',
+                  titleAm: 'የእርግዝና መከላከያ እና የቤተሰብ እቅድ ምዘና',
+                  questionRangeTextEn: 'Q.21–Q.26 • 6 Questions',
+                  questionRangeTextAm: 'ጥያቄ 21–26 • 6 ጥያቄዎች',
+                  badgeColor: Color(0xFF4F46E5),
                 ),
               ],
             ),
