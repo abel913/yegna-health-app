@@ -55,6 +55,9 @@ export interface Module {
   summaryAm: string;
   contentEn: string;
   contentAm: string;
+  imageUrl?: string;
+  doctorNoteEn?: string;
+  doctorNoteAm?: string;
   readTimeMin: number;
   isPublished: boolean;
   authorName?: string;
