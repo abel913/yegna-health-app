@@ -110,6 +110,22 @@ class _DynamicModuleDetailPageState extends State<DynamicModuleDetailPage> {
     return sections;
   }
 
+  String? _extractDoctorNote(String content) {
+    // Look for top-level doctor note in preamble before the first "## " section
+    final firstSectionIdx = content.indexOf(RegExp(r'(?:^|\n)##\s+'));
+    final preamble =
+        firstSectionIdx != -1 ? content.substring(0, firstSectionIdx) : content;
+    final noteMatch = RegExp(
+      r'(?:^|\n)>\s*(?:(?:Clinical Tip|Medical Note|Doctor Note|የዶክተር ማስታወሻ|Note):\s*)?([^\n\r]+)',
+      caseSensitive: false,
+    ).firstMatch(preamble);
+    if (noteMatch != null && noteMatch.groupCount >= 1) {
+      final note = noteMatch.group(1)?.trim();
+      if (note != null && note.isNotEmpty) return note;
+    }
+    return null;
+  }
+
   _ParsedSection _extractSection(String title, String body) {
     final lines = body.split(RegExp(r'\r?\n'));
     final proseLines = <String>[];
@@ -145,6 +161,7 @@ class _DynamicModuleDetailPageState extends State<DynamicModuleDetailPage> {
         ? widget.module.contentAm
         : widget.module.contentEn;
 
+    final parsedDoctorNote = _extractDoctorNote(content);
     final sections = _parseSections(content, isAmharic);
     final totalSections = sections.length;
 
@@ -231,21 +248,38 @@ class _DynamicModuleDetailPageState extends State<DynamicModuleDetailPage> {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(16),
                     child: Center(
-                      child: Image.asset(
-                        widget.module.imageAsset,
-                        height: 195,
-                        fit: BoxFit.contain,
-                        errorBuilder: (_, __, ___) => Container(
-                          height: 160,
-                          color: const Color(0xFFE0F2FE),
-                          alignment: Alignment.center,
-                          child: const Icon(
-                            Icons.auto_stories_rounded,
-                            size: 48,
-                            color: Color(0xFF0284C7),
-                          ),
-                        ),
-                      ),
+                      child: widget.module.imageAsset.startsWith('http://') ||
+                              widget.module.imageAsset.startsWith('https://')
+                          ? Image.network(
+                              widget.module.imageAsset,
+                              height: 195,
+                              fit: BoxFit.contain,
+                              errorBuilder: (_, __, ___) => Container(
+                                height: 160,
+                                color: const Color(0xFFE0F2FE),
+                                alignment: Alignment.center,
+                                child: const Icon(
+                                  Icons.auto_stories_rounded,
+                                  size: 48,
+                                  color: Color(0xFF0284C7),
+                                ),
+                              ),
+                            )
+                          : Image.asset(
+                              widget.module.imageAsset,
+                              height: 195,
+                              fit: BoxFit.contain,
+                              errorBuilder: (_, __, ___) => Container(
+                                height: 160,
+                                color: const Color(0xFFE0F2FE),
+                                alignment: Alignment.center,
+                                child: const Icon(
+                                  Icons.auto_stories_rounded,
+                                  size: 48,
+                                  color: Color(0xFF0284C7),
+                                ),
+                              ),
+                            ),
                     ),
                   ),
                   const SizedBox(height: 18),
@@ -310,7 +344,7 @@ class _DynamicModuleDetailPageState extends State<DynamicModuleDetailPage> {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  l10n.hivNoteTitle,
+                  isAmharic ? 'የዶክተር ማስታወሻ' : 'Note',
                   style: const TextStyle(
                     fontSize: 17,
                     fontWeight: FontWeight.w800,
@@ -351,9 +385,10 @@ class _DynamicModuleDetailPageState extends State<DynamicModuleDetailPage> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      isAmharic
-                          ? 'የግል ጤና ጥበቃ እና ግንዛቤ ለወጣቶች ሁለንተናዊ እድገት ወሳኝ ነው። ማንኛውም ጥያቄ ሲኖርዎት በግቢው ውስጥ ያሉ የአቻ አማካሪዎችን ያነጋግሩ።'
-                          : 'Health awareness empowers youth to make informed, safe choices. University peer counselors and campus focal persons are available for confidential support.',
+                      parsedDoctorNote ??
+                          (isAmharic
+                              ? 'የግል ጤና ጥበቃ እና ግንዛቤ ለወጣቶች ሁለንተናዊ እድገት ወሳኝ ነው። ማንኛውም ጥያቄ ሲኖርዎት በግቢው ውስጥ ያሉ የአቻ አማካሪዎችን ያነጋግሩ።'
+                              : 'Health awareness empowers youth to make informed, safe choices. University peer counselors and campus focal persons are available for confidential support.'),
                       style: const TextStyle(
                         fontSize: 13.5,
                         color: Color(0xFF1E3A5F),

@@ -79,6 +79,7 @@ class LearningModuleItem {
     final summaryEn = data['summaryEn']?.toString() ?? '';
     final summaryAm = data['summaryAm']?.toString() ?? '';
     final category = data['category']?.toString() ?? 'srh';
+    final imageUrl = data['imageUrl']?.toString();
 
     return LearningModuleItem(
       id: id,
@@ -95,7 +96,9 @@ class LearningModuleItem {
         if (summaryEn.isNotEmpty) return summaryEn;
         return _fallbackDescription(id, l10n);
       },
-      imageAsset: resolveImageAsset(id, category),
+      imageAsset: (imageUrl != null && imageUrl.isNotEmpty)
+          ? imageUrl
+          : resolveImageAsset(id, category),
       illustrationOnTop: index % 2 == 0,
       category: category,
       contentEn: data['contentEn']?.toString() ?? '',

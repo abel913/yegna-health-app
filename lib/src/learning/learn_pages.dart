@@ -191,80 +191,84 @@ class _LearnPageState extends State<LearnPage> {
 
   Future<void> _handleOpenModule(LearningModuleItem module) async {
     if (!mounted) return;
-    if (module.id == 'module-01') {
-      Navigator.of(context).push<void>(MaterialPageRoute<void>(
-        builder: (_) => PubertyDetailPage(
-          progressController: widget.progressController,
-          assessmentRepository: widget.assessmentRepository,
-        ),
-      ));
-      return;
-    }
-    if (module.id == 'module-02') {
-      Navigator.of(context).push<void>(MaterialPageRoute<void>(
-        builder: (_) => StiModuleDetailPage(
-          progressController: widget.progressController,
-          assessmentRepository: widget.assessmentRepository,
-        ),
-      ));
-      return;
-    }
-    if (module.id == 'module-03') {
-      Navigator.of(context).push<void>(MaterialPageRoute<void>(
-        builder: (_) => HepatitisDetailPage(
-          progressController: widget.progressController,
-          assessmentRepository: widget.assessmentRepository,
-        ),
-      ));
-      return;
-    }
-    if (module.id == 'module-04') {
-      Navigator.of(context).push<void>(MaterialPageRoute<void>(
-        builder: (_) => GenderBasedViolenceDetailPage(
-          progressController: widget.progressController,
-          assessmentRepository: widget.assessmentRepository,
-        ),
-      ));
-      return;
-    }
-    if (module.id == 'module-05') {
-      Navigator.of(context).push<void>(MaterialPageRoute<void>(
-        builder: (_) => SrhDetailPage(
-          progressController: widget.progressController,
-          assessmentRepository: widget.assessmentRepository,
-        ),
-      ));
-      return;
-    }
-    if (module.id == 'module-06') {
-      Navigator.of(context).push<void>(MaterialPageRoute<void>(
-        builder: (_) => MentalHealthDetailPage(
-          progressController: widget.progressController,
-          assessmentRepository: widget.assessmentRepository,
-        ),
-      ));
-      return;
-    }
-    if (module.id == 'module-07') {
-      Navigator.of(context).push<void>(MaterialPageRoute<void>(
-        builder: (_) => HivModuleDetailPage(
-          progressController: widget.progressController,
-          assessmentRepository: widget.assessmentRepository,
-        ),
-      ));
-      return;
-    }
-    if (module.id == 'module-08') {
-      Navigator.of(context).push<void>(MaterialPageRoute<void>(
-        builder: (_) => SubstanceAbuseDetailPage(
-          progressController: widget.progressController,
-          assessmentRepository: widget.assessmentRepository,
-        ),
-      ));
-      return;
+
+    // If module content is empty (bundled fallback before sync), use dedicated bundled detail page
+    if (module.contentEn.isEmpty) {
+      if (module.id == 'module-01') {
+        Navigator.of(context).push<void>(MaterialPageRoute<void>(
+          builder: (_) => PubertyDetailPage(
+            progressController: widget.progressController,
+            assessmentRepository: widget.assessmentRepository,
+          ),
+        ));
+        return;
+      }
+      if (module.id == 'module-02') {
+        Navigator.of(context).push<void>(MaterialPageRoute<void>(
+          builder: (_) => StiModuleDetailPage(
+            progressController: widget.progressController,
+            assessmentRepository: widget.assessmentRepository,
+          ),
+        ));
+        return;
+      }
+      if (module.id == 'module-03') {
+        Navigator.of(context).push<void>(MaterialPageRoute<void>(
+          builder: (_) => HepatitisDetailPage(
+            progressController: widget.progressController,
+            assessmentRepository: widget.assessmentRepository,
+          ),
+        ));
+        return;
+      }
+      if (module.id == 'module-04') {
+        Navigator.of(context).push<void>(MaterialPageRoute<void>(
+          builder: (_) => GenderBasedViolenceDetailPage(
+            progressController: widget.progressController,
+            assessmentRepository: widget.assessmentRepository,
+          ),
+        ));
+        return;
+      }
+      if (module.id == 'module-05') {
+        Navigator.of(context).push<void>(MaterialPageRoute<void>(
+          builder: (_) => SrhDetailPage(
+            progressController: widget.progressController,
+            assessmentRepository: widget.assessmentRepository,
+          ),
+        ));
+        return;
+      }
+      if (module.id == 'module-06') {
+        Navigator.of(context).push<void>(MaterialPageRoute<void>(
+          builder: (_) => MentalHealthDetailPage(
+            progressController: widget.progressController,
+            assessmentRepository: widget.assessmentRepository,
+          ),
+        ));
+        return;
+      }
+      if (module.id == 'module-07') {
+        Navigator.of(context).push<void>(MaterialPageRoute<void>(
+          builder: (_) => HivModuleDetailPage(
+            progressController: widget.progressController,
+            assessmentRepository: widget.assessmentRepository,
+          ),
+        ));
+        return;
+      }
+      if (module.id == 'module-08') {
+        Navigator.of(context).push<void>(MaterialPageRoute<void>(
+          builder: (_) => SubstanceAbuseDetailPage(
+            progressController: widget.progressController,
+            assessmentRepository: widget.assessmentRepository,
+          ),
+        ));
+        return;
+      }
     }
 
-    // Dynamic Admin-Created Module (Module 09, 10, etc.)
+    // Dynamic Admin-Created or Database-Synced Module with verified clinical content
     Navigator.of(context).push<void>(MaterialPageRoute<void>(
       builder: (_) => DynamicModuleDetailPage(
         module: module,
