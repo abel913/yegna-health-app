@@ -1,5 +1,26 @@
 # Handoff
 
+## Health Curriculum CMS Professional Template System & Mobile Screen Preservation (2026-11-16)
+
+- **Admin Web CMS Clinical Template System**:
+  - `admin-web/src/data/curriculumTemplates.ts`: Added catalog of 8 ready-to-use clinical templates across all core topics (Puberty, SRH, STI, HIV, Mental Health, GBV, Hepatitis, Substance Abuse) + Blank Scaffold.
+  - `admin-web/src/pages/LearningCmsPage.tsx`:
+    - One-click template applicator auto-populating bilingual titles, summaries, doctor notes, cover illustrations, and 4 expandable markdown sections.
+    - Visual Cover Illustration Picker showing official vector artwork thumbnails (`admin-web/public/illustrations/`) with quick selection and custom URL input.
+    - Dedicated Doctor's Takeaway Note ("| Note") input card with lightbulb badge.
+    - Editor vs Live Mobile Preview tabs.
+- **Interactive Live Mobile Phone Simulator**:
+  - `admin-web/src/components/learning/ModuleMobilePreview.tsx`: Real-time phone frame simulating the exact mobile app design from Image 2 (App Bar, Hero card with illustration, Doctor's Note with lightbulb, expandable accordion sections with checkmarks, quiz launcher). Updates live in English and Amharic as the admin types.
+- **Mobile UI Design Preservation & Dynamic Sync**:
+  - The existing mobile app design (Image 2) is strictly preserved 100% untouched.
+  - `DynamicModuleDetailPage`: Enhanced with dynamic doctor's note extraction (`_extractDoctorNote`), dual network/asset image loading, and exact styling.
+  - `learn_pages.dart`: Routes database-synced modules to `DynamicModuleDetailPage` while maintaining cold-start offline fallbacks to bundled screens.
+- **Verification**:
+  - `dart analyze lib test`: 0 issues found.
+  - `flutter test test/dynamic_module_test.dart test/puberty_page_test.dart test/learning_ui_test.dart test/offline_sync_test.dart`: All tests passed.
+  - `npm run build --prefix admin-web`: 0 errors.
+  - `npm run build --prefix server`: 0 errors.
+
 ## Dynamic Learning Modules CMS & Offline Mobile Sync (2026-11-13)
 
 - **Admin CMS Module Management**:

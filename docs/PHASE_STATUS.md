@@ -1,5 +1,44 @@
 # Phase status
 
+## Health Curriculum CMS Professional Template System & Mobile Screen Preservation (2026-11-16)
+
+**Status: Completed & 100% Verified.**
+- **Admin Web CMS Professional Template System (`admin-web/src/data/curriculumTemplates.ts` & `admin-web/src/pages/LearningCmsPage.tsx`)**:
+  - Implemented 1-click clinical curriculum template library for all core health topics:
+    1. *Adolescent Health & Puberty* (`module_01_puberty.jpg`)
+    2. *Sexual & Reproductive Health Foundations* (`module_05_srh.png`)
+    3. *STI Prevention & Clinic Testing* (`module_02_sti.png`)
+    4. *HIV & AIDS Prevention & Modern Care* (`module_07_hiv.png`)
+    5. *Mental Health & Stress Management* (`module_06_mental_health.jpg`)
+    6. *Gender-Based Violence Prevention & Safe Spaces* (`module_04_gbv.png`)
+    7. *Viral Hepatitis & Liver Health* (`module_03_hepatitis.png`)
+    8. *Substance Abuse & Addiction Prevention* (`module_08_substance_abuse.png`)
+    9. *Blank Medical Curriculum Scaffold*
+  - Added dedicated visual **Cover Illustration & Image Chooser** gallery showcasing the official vector artwork thumbnails (`admin-web/public/illustrations/`) with quick 1-click selection and custom URL support.
+  - Added dedicated bilingual **Doctor's Takeaway Note ("| Note")** input with lightbulb badge, feeding directly into the mobile callout card.
+  - Integrated 4-section structured markdown editor with fast syntax inserters (Bold, H2 Section, Bullet List, Clinical Tip).
+- **Interactive Live Mobile Phone Simulator (`admin-web/src/components/learning/ModuleMobilePreview.tsx`)**:
+  - Implemented an interactive iPhone frame inside the Admin CMS editor replicating the exact mobile app design from Image 2:
+    - Status bar & top navigation header with timer badge (`4 MIN`).
+    - Top Hero Card with centered illustration, bold navy title, and summary text.
+    - Doctor's Note container (`#EFF7FD`) with lightbulb icon circle badge.
+    - Expandable accordion learning sections (`1 / N read`) with checkmark circle badges, bullet points, and clinical green tips.
+    - Knowledge Check Quiz and Mark Completed preview cards.
+    - Live bilingual toggle (English & Amharic) updating instantaneously as the admin authors content.
+- **Strict Mobile UI Design Preservation & Dynamic Sync (`lib/src/learning/`)**:
+  - Maintained the existing mobile app design (Image 2) 100% frozen and untouched across colors, typography, cards, and structure.
+  - In `DynamicModuleDetailPage`:
+    - Added dynamic Doctor's Note extraction (`_extractDoctorNote`) from module markdown preamble notes (`> Note:`), displaying the exact custom clinical guidance.
+    - Added dual asset and network image resolution (`imageUrl`).
+    - Maintained optical glass styling, expandable sections, quizzes, and self-assessments.
+  - In `learn_pages.dart`:
+    - Seamlessly connects database-synced modules to `DynamicModuleDetailPage` while keeping offline cold-start fallbacks to bundled screens 100% intact.
+- **Quality Gates & Verification**:
+  - `dart analyze lib test`: **0 issues found**.
+  - `flutter test test/dynamic_module_test.dart test/puberty_page_test.dart test/learning_ui_test.dart test/offline_sync_test.dart`: **All tests passed (100%)**.
+  - `npm run build --prefix admin-web`: **0 errors**.
+  - `npm run build --prefix server`: **0 errors**.
+
 ## Dynamic Learning Modules CMS & Offline Mobile Sync (2026-11-13)
 
 **Status: Completed & 100% Verified.**
