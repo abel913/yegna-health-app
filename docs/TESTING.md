@@ -29,7 +29,7 @@ These checks confirm basic deployment, routing, Hyperdrive connectivity, and rej
 - Browser visual QA and console inspection were not performed.
 - This does not establish production readiness, release security, or a formal security audit. No mobile Flutter checks were run as part of this deployment task.
 - The database password was exposed in chat. Rotate it in Supabase and update the Hyperdrive credential securely, then repeat the health check. No password or database URL containing a password is recorded here.
-- Automatic deployment setup is recorded above; the first GitHub Actions run remains unverified. Phase 3 remains partial; Phase 4 has not started.
+- Automatic deployment is not verified: both GitHub Actions deploy attempts failed due to malformed token formatting. Phase 3 remains partial; Phase 4 has not started.
 
 ## GitHub Actions deployment workflow setup (2026-11-17)
 
@@ -41,7 +41,7 @@ These checks confirm basic deployment, routing, Hyperdrive connectivity, and rej
 - `npm run build` in `admin-web` — PASS; latest GitHub source built, with a non-blocking Vite chunk warning (700.79 kB minified JS).
 - `node node_modules/wrangler/bin/wrangler.js deploy --config dist/yegna_health_admin_portal/wrangler.json --dry-run --keep-vars` in `admin-web` — PASS; Worker bundle 4.16 MB total, Hyperdrive binding and 16 static assets detected; no remote deployment performed by this dry run.
 - GitHub repository secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` — present by name; secret values were not read or exposed.
-- GitHub Actions run `44255338865` — build, Worker type check, SPA build, and Wrangler dry-run passed; deploy failed because the API token secret had line breaks, which Wrangler rejected as an invalid HTTP header. A whitespace-normalization fix is now in the workflow; retry pending.
+- GitHub Actions run `44255338865` — build/type checks and Wrangler dry-run passed; deploy rejected the multiline token as an invalid header. Run `44255796015` — the same checks passed; deploy then rejected the normalized secret as invalid Authorization format. A valid raw single-line `CLOUDFLARE_API_TOKEN` secret is required before retry.
 # Final Phase 3 verification (2026-10-31)
 
 ## Flutter commands

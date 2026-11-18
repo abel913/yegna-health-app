@@ -9,7 +9,7 @@
 - Basic deployment, database health, read-only module access, unauthenticated-route rejection, and invalid-login validation were smoke-tested. No migrations, schema changes, seeds, or database writes were performed.
 - Valid administrator login, authorized CRUD, SMTP email flows, browser visual/console verification, and production readiness remain unverified. Configure SMTP before relying on verification and recovery email.
 - The database password was exposed in chat; rotate it and update the Hyperdrive connection securely. The credential must not be stored in the repository.
-- The initial GitHub Actions run remains unverified. Phase 3 remains partial; Phase 4 has not started.
+- The GitHub Actions deploy attempts failed due to a malformed token secret; replace it with the raw single-line Cloudflare API token. Phase 3 remains partial; Phase 4 has not started.
 
 
 ## 2026-11-17 — Admin Portal Continuous Deployment
@@ -17,7 +17,7 @@
 - Use GitHub Actions for deployment of the admin Worker from `main`. This repository is a monorepo: the Worker build requires dependencies from both `server` and `admin-web`, plus a generated Prisma Client, so a workflow can explicitly prepare each package before deployment.
 - The workflow validates server and Worker types, builds the frontend/Worker bundle, runs a Wrangler dry run, and deploys using the pinned Wrangler package with `--keep-vars`.
 - Keep `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` only in GitHub Actions repository secrets. Never store their values in source, workflow YAML, or documentation. The API token is scoped to Workers Scripts Write and expires after 90 days.
-- The workflow does not migrate, seed, or write to Supabase. The initial deploy attempt failed because the GitHub token secret included line breaks; the workflow now strips whitespace in memory. Automatic deployment remains unverified until a rerun passes.
+- The workflow does not migrate, seed, or write to Supabase. The initial deploy attempt failed because the GitHub token secret included line breaks; the workflow strips whitespace in memory, but the retry still failed Cloudflare authentication. Replace the GitHub secret with the raw single-line token before retrying.
 
 ## 2026-11-12 — Unified Assessments Hub Architecture in Admin Web Portal
 

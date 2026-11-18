@@ -5,7 +5,7 @@
 - Added `.github/workflows/deploy_admin_portal.yml` to build and deploy the admin portal Worker on pushes to `main`; manual `workflow_dispatch` is also enabled.
 - The workflow builds the server and admin frontend, validates the Worker bundle, then deploys `yegna-health-admin-portal` while preserving dashboard variables. It does not run database migrations or seed data.
 - GitHub Actions repository secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` are configured by name; secret values are not in the repository.
-- Local server build, Worker type check, frontend build, and Wrangler dry run passed against the current GitHub source. The first Actions deployment failed because the stored API token contained line breaks; the workflow now removes whitespace from the token in memory before Wrangler uses it. The retry is pending.
+- Local server build, Worker type check, frontend build, and Wrangler dry run passed against the current GitHub source. The first Actions deployment rejected the multiline API token; after whitespace normalization, the retry still failed Cloudflare authentication because the resulting Authorization token format is invalid. Replace the GitHub `CLOUDFLARE_API_TOKEN` secret with the raw single-line Cloudflare token before retrying.
 - Phase 3 remains partial; Phase 4 has not started.
 
 ## Facility Card Refinement & Streamlined Actions (2026-11-18)
