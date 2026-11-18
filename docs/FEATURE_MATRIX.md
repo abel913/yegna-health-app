@@ -2,9 +2,9 @@
 
 ## Government reporting access (2026-11-18)
 
-- **Implemented locally and automated checks pass:** admin-provisioned `GOVERNMENT_VIEWER`, forced temporary-password change, bilingual reports-only dashboard and CSV, aggregate totals/trends, server-side role refresh and endpoint denial, and UI prevention of management-data requests.
+- **Deployed and local automated checks pass:** admin-provisioned `GOVERNMENT_VIEWER`, forced temporary-password change, bilingual reports-only dashboard and CSV, aggregate totals/trends, server-side role refresh and endpoint denial, and UI prevention of management-data requests. Push-triggered Cloudflare deployment succeeded; live UI bundle and unauthenticated route denial were smoke-tested.
 - **Database change:** additive `mustChangePassword` boolean migration is applied to the linked Supabase project and its default/column metadata were verified read-only.
-- **Not yet verified live:** GitHub push/Cloudflare deployment, government account provisioning, login, password change, report view, and CSV download. A fresh temporary password must be entered privately; never reuse the exposed chat password. Existing administrator flows are preserved and pass local compile/tests.
+- **Not yet verified live:** government account provisioning, valid login, password change, authenticated report contents, and CSV download. A fresh temporary password must be entered privately; never reuse the exposed chat password. Existing administrator code passes compile/tests; valid admin login was not re-tested in this task.
 
 
 ## Current evidence (2026-10-31)

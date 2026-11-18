@@ -2,9 +2,9 @@
 
 ## Government viewer feature handoff (2026-11-18)
 
-- Government-viewer code has passed local server/Worker/admin builds and seven automated backend tests, and the additive password-change column is verified in the linked Supabase project. GitHub push and Cloudflare deployment are pending; the feature must not be presented as live until the workflow passes.
-- No government account exists yet. An existing admin must provision it after deployment using the requested email and a fresh temporary password entered privately. A password previously shared in chat is considered exposed and must not be reused. First login requires a new password before reports become available.
-- No live role/login/password/report/CSV end-to-end test has been performed. The owner should verify a government account and also confirm existing admin login after deployment. This does not constitute a security audit or production-readiness assessment.
+- Government-viewer code and schema are deployed; local server/Worker/admin builds and seven automated backend tests pass. Live smoke tests verified the UI bundle, connected database, and HTTP 401 rejection for unauthenticated protected endpoints.
+- No government account exists yet. An existing admin must provision `geverment@gmail.com` with a fresh temporary password entered privately. The password previously shared in chat is considered exposed and must not be reused. First login requires a new password before reports become available.
+- No valid role/login/password/report/CSV end-to-end test has been performed. The owner should verify a government account and existing admin login. This does not constitute a security audit or production-readiness assessment.
 
 
 ## Final Phase 3 blockers and security notes (2026-10-31)

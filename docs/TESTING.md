@@ -13,8 +13,10 @@
 | `npx.cmd --yes --package=supabase supabase db push --remote --dry-run` | PASS; exactly the additive government password-change migration was queued. |
 | `npx.cmd --yes --package=supabase supabase db push --remote --yes --skip-vault` | PASS; applied one migration to project `oflkhtjskpsedsuczfkj`, identified by Supabase as production. |
 | Read-only query of `information_schema.columns` for `yegna.User.mustChangePassword` | PASS; `BOOLEAN NOT NULL DEFAULT false` confirmed. |
+| Push `31e16ae` to GitHub `main` | PASS; push-triggered Admin Portal Actions run #12 (`44355811892`) completed successfully. |
+| Live portal/API smoke checks | PASS: `/` HTTP 200; deployed bundle contains Government Viewer and forced-password UI; `/api/health` HTTP 200/database connected; unauthenticated `/api/government/reports` and `/api/admin/users` each HTTP 401. |
 
-These are automated local build/tests and database schema checks. No government account was created; no live government login, first-password change, report request, browser interaction, or CSV download has been tested yet. The GitHub push and Cloudflare workflow are pending.
+The route-denial smoke checks only confirm unauthenticated access is rejected; they do not test a valid government session or report contents. No government account was created, so live government login, first-password change, authenticated report data, CSV download, and browser interaction remain untested.
 
 
 ## Cloudflare GitHub Actions deployment follow-up (2026-11-18)
