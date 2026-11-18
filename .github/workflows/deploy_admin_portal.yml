@@ -37,7 +37,7 @@ jobs:
 
       - name: Generate Prisma client
         working-directory: server
-        run: npm run prisma:generate
+        run: npx prisma generate --schema=prisma/schema.postgresql.prisma
 
       - name: Check server and Worker types
         working-directory: server
