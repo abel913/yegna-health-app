@@ -26,7 +26,7 @@ const mentorSchema = z.object({
   specialties: z.array(z.string()).default([]),
   isAvailable: z.boolean().default(true),
   isVerified: z.boolean().default(true),
-  weeklySchedule: z.record(z.any()).optional().nullable(),
+  weeklySchedule: z.record(z.string(), z.any()).optional().nullable(),
 }).passthrough();
 
 export async function getAllMentors(req: Request, res: Response) {

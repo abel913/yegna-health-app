@@ -41,7 +41,7 @@ These checks confirm basic deployment, routing, Hyperdrive connectivity, and rej
 - `npm run build` in `admin-web` — PASS; latest GitHub source built, with a non-blocking Vite chunk warning (700.79 kB minified JS).
 - `node node_modules/wrangler/bin/wrangler.js deploy --config dist/yegna_health_admin_portal/wrangler.json --dry-run --keep-vars` in `admin-web` — PASS; Worker bundle 4.16 MB total, Hyperdrive binding and 16 static assets detected; no remote deployment performed by this dry run.
 - GitHub repository secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` — present by name; secret values were not read or exposed.
-- GitHub Actions run `44255338865` — build/type checks and Wrangler dry-run passed; deploy rejected the multiline token as an invalid header. Run `44255796015` — the same checks passed; deploy then rejected the normalized secret as invalid Authorization format. A valid raw single-line `CLOUDFLARE_API_TOKEN` secret is required before retry.
+- GitHub Actions runs `44255338865` and `44255796015` — builds and Wrangler dry-runs passed; deploy failed due to malformed Cloudflare token formatting. Run `44258362092` (commit `12cb831`) — stopped at `server/src/controllers/mentors.controller.ts:29` because Zod 4 requires `z.record(keySchema, valueSchema)`. Fixed to `z.record(z.string(), z.any())`. The Admin lockfile was synchronized for its declared Leaflet dependencies. Local server build, Worker type-check, admin build, and Wrangler dry-run now pass; next Actions run must verify deployment credentials.
 # Final Phase 3 verification (2026-10-31)
 
 ## Flutter commands

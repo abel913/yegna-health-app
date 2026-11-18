@@ -5,7 +5,7 @@
 - Added `.github/workflows/deploy_admin_portal.yml` to build and deploy the admin portal Worker on pushes to `main`; manual `workflow_dispatch` is also enabled.
 - The workflow builds the server and admin frontend, validates the Worker bundle, then deploys `yegna-health-admin-portal` while preserving dashboard variables. It does not run database migrations or seed data.
 - GitHub Actions repository secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` are configured by name; secret values are not in the repository.
-- Local server build, Worker type check, frontend build, and Wrangler dry run passed against the current GitHub source. The first Actions deployment rejected the multiline API token; after whitespace normalization, the retry still failed Cloudflare authentication because the resulting Authorization token format is invalid. Replace the GitHub `CLOUDFLARE_API_TOKEN` secret with the raw single-line Cloudflare token before retrying.
+- Local server build, Worker type check, frontend build, and Wrangler dry run pass. Actions run `44258362092` stopped before deployment on a Zod 4 `z.record` type error in `mentors.controller.ts`; fixed to pass the key and value schemas. The latest admin package lockfile was also synchronized with its declared Leaflet dependencies. The previous token-format error has not yet been rechecked by a new deployment run.
 - Phase 3 remains partial; Phase 4 has not started.
 
 ## Facility Card Refinement & Streamlined Actions (2026-11-18)

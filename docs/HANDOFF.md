@@ -22,13 +22,13 @@ The Worker runtime required fixes for Express response completion, Morgan loggin
 - Test a valid admin login and authorized assessment/module CRUD in a browser. These were not tested because no admin credentials were provided. Browser visual and console checks were also not performed.
 - The database password was exposed in chat; rotate it in Supabase and update the Hyperdrive credential through Cloudflare securely, then confirm the health endpoint remains connected. No password was written to project files.
 - Treat this as a development deployment. Production readiness, security audit, and end-to-end admin operation are not established.
-- GitHub Actions build and bundle validation passed, but both deploy attempts failed: first because the token secret contained line breaks, then because the normalized token was rejected as invalid Authorization format. Replace `CLOUDFLARE_API_TOKEN` with the raw single-line Cloudflare API token. Phase 3 remains partial; Phase 4 has not started.
+- The first two Actions deployment attempts reached Wrangler but failed authentication: first due to a multiline token secret, then due to invalid Authorization format after whitespace cleanup. Run `44258362092` stopped earlier during server compilation on the Zod 4 `z.record` signature. The source and admin lockfile fixes pass locally; the next CI run must verify Cloudflare credentials. Phase 3 remains partial; Phase 4 has not started.
 
 ## GitHub Actions deployment workflow
 
 `.github/workflows/deploy_admin_portal.yml` is configured to deploy `yegna-health-admin-portal` after pushes to `main`, and can also be run manually. It installs both server and admin dependencies, generates Prisma Client, type-checks/builds the server Worker, builds the admin SPA, validates the Worker bundle with Wrangler dry run, then deploys with `--keep-vars` to preserve Cloudflare dashboard variables. Repository secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` are configured; values stay out of source control.
 
-The workflow is on `main`. The first run passed build and dry-run checks but failed deployment due to a multiline token. The workflow strips whitespace in memory; the retry still failed because the resulting token has invalid Authorization format. Replace the GitHub `CLOUDFLARE_API_TOKEN` secret with the raw single-line token. Automatic deployment is not yet verified. Vite emitted a non-blocking large-chunk warning. No migrations or database writes are part of this workflow.
+The workflow is on `main` and triggers on pushes. The first two attempts failed at Cloudflare authentication due to malformed token formatting. The third attempt on commit `12cb831` failed before deploy because of a Zod 4 type error, now fixed locally. The credential must still be confirmed by the next deployment attempt. Automatic deployment is not yet verified. Vite emits a non-blocking large-chunk warning. No migrations or database writes are part of this workflow.
 
 ## Health Curriculum CMS Professional Template System & Mobile Screen Preservation (2026-11-16)
 
