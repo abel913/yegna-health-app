@@ -1,5 +1,18 @@
 # Handoff notes
 
+## GitHub Actions Android Release APK Pipeline (2026-11-18)
+
+- **Workflow**: `.github/workflows/build_apk.yml`
+- **Status**: Verified passing (Run #41, ID: `44269419681`).
+- **Artifact**: `yegna-health-apk` (33.58 MB) containing `app-release.apk`.
+- **Fix Summary**:
+  - Upgraded Android Gradle Plugin to `9.1.1` and Kotlin to `2.4.0` in `android/settings.gradle.kts` to satisfy Flutter 3.50's minimum AGP requirement.
+  - Aligned Gradle wrapper to `gradle-9.3.1-all.zip` in `android/gradle/wrapper/gradle-wrapper.properties`.
+  - Applied `id("kotlin-android")` and explicit `minSdk = 21` in `android/app/build.gradle.kts`.
+  - Upgraded Java setup to `actions/setup-java@v5` and supplied `--android-skip-build-dependency-validation` flag to `flutter build apk --release`.
+- **Download**:
+  - Navigate to https://github.com/abel913/yegna-health-app/actions/runs/44269419681 and download the `yegna-health-apk` artifact zip.
+
 ## Cloudflare Admin Portal deployment (2026-11-17)
 
 A new development deployment is live at https://yegna-health-admin-portal.smartserve.workers.dev (`yegna-health-admin-portal`). It serves the React/Vite admin SPA and Express API from one Worker; existing Cloudflare projects were not replaced. The existing Hyperdrive config `01923c5876ce4a4e81bc5a760217703c` is bound to the Worker. A random `JWT_SECRET` is stored as a Cloudflare secret; no secret value is in the repository.

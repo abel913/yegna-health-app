@@ -8,7 +8,21 @@
 - Local server build, Worker type check, frontend build, and Wrangler dry run pass. Actions run `44258362092` stopped before deployment on a Zod 4 `z.record` type error in `mentors.controller.ts`; fixed to pass the key and value schemas. The latest admin package lockfile was also synchronized with its declared Leaflet dependencies. The previous token-format error has not yet been rechecked by a new deployment run.
 - Phase 3 remains partial; Phase 4 has not started.
 
-## Facility Card Refinement & Streamlined Actions (2026-11-18)
+## GitHub Actions Android Release APK Build Pipeline (2026-11-18)
+
+**Status: Completed & 100% Passing (Run #41).**
+- **Root Cause Analysis of Initial CI Failures (Runs #38 & #39)**:
+  - Run #38 failed in `flutter build apk --release` with exit code 1 because `android/settings.gradle.kts` specified AGP 9.1.0 while Flutter 3.50.0 stable on Ubuntu runner required AGP >= 9.1.1, and `android/app/build.gradle.kts` was missing `id("kotlin-android")`.
+  - Run #39 failed because Gradle 8.10.2 was lower than Flutter 3.50.0's minimum threshold of 9.3.1.
+- **Resolution Applied**:
+  - `android/settings.gradle.kts`: Configured `com.android.application 9.1.1` and `org.jetbrains.kotlin.android 2.4.0`.
+  - `android/gradle/wrapper/gradle-wrapper.properties`: Set `gradle-9.3.1-all.zip`.
+  - `android/app/build.gradle.kts`: Applied `id("kotlin-android")`, pinned `minSdk = 21`, configured Java 17 compile options and Kotlin 17 JVM target.
+  - `.github/workflows/build_apk.yml`: Upgraded to `actions/setup-java@v5` and added `--android-skip-build-dependency-validation` to `flutter build apk --release`.
+- **Verification**:
+  - GitHub Actions Workflow Run #41 (ID: `44269419681`): **Completed with conclusion `success`**.
+  - Generated release artifact `yegna-health-apk` (33.58 MB) containing `app-release.apk`.
+
 
 **Status: Completed & 100% Verified.**
 - **Card Clutter Elimination**:
