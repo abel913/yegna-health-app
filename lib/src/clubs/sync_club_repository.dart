@@ -6,6 +6,8 @@ import '../sync/api_client.dart';
 import '../sync/offline_sync_store.dart';
 import 'club_models.dart';
 import 'club_repository.dart';
+import 'repositories/club_filter_helper.dart';
+import 'repositories/sync_club_cache_helper.dart';
 
 /// Offline-first club repository that combines local member rosters
 /// with remote club directory synchronization.
@@ -45,10 +47,8 @@ class SyncClubRepository extends ChangeNotifier implements ClubRepository {
     ClubCategory? category,
     String? query,
   }) async {
-    // 1. Check offline persistent cache
     List<StudentClub>? cached = await _store.getCachedClubs();
 
-    // 2. If no cache yet and has never synced from backend, fall back to local seed repository
     if (cached == null && !(await _store.hasSynced('clubs'))) {
       cached = await _local.getClubs();
       if (cached.isNotEmpty) {
@@ -57,16 +57,13 @@ class SyncClubRepository extends ChangeNotifier implements ClubRepository {
     }
     cached ??= [];
 
-    // 3. Stale-While-Revalidate: Trigger background fetch
     if (_apiClient != null) {
       unawaited(_revalidateInBackground());
     }
 
-    // 4. Apply filtering
-    return _filterClubs(cached, category: category, query: query);
+    return ClubFilterHelper.filter(cached, category: category, query: query);
   }
 
-  /// Forces an immediate network fetch from the backend and updates the cache.
   Future<List<StudentClub>> refreshClubs({
     ClubCategory? category,
     String? query,
@@ -83,40 +80,11 @@ class SyncClubRepository extends ChangeNotifier implements ClubRepository {
             await _local.saveClub(club);
           }
           notifyListeners();
-          return _filterClubs(clubs, category: category, query: query);
+          return ClubFilterHelper.filter(clubs, category: category, query: query);
         }
-      } catch (_) {
-        // Fall back to cache on network error
-      }
+      } catch (_) {}
     }
     return getClubs(category: category, query: query);
-  }
-
-  List<StudentClub> _filterClubs(
-    List<StudentClub> input, {
-    ClubCategory? category,
-    String? query,
-  }) {
-    var result = List<StudentClub>.from(input);
-
-    if (category != null && category != ClubCategory.all) {
-      result = result.where((c) => c.category == category).toList();
-    }
-
-    if (query != null && query.trim().isNotEmpty) {
-      final clean = query.trim().toLowerCase();
-      result = result.where((c) {
-        final matchEn = c.nameEn.toLowerCase().contains(clean) ||
-            c.descriptionEn.toLowerCase().contains(clean) ||
-            c.meetingLocationEn.toLowerCase().contains(clean);
-        final matchAm = c.nameAm.contains(clean) ||
-            c.descriptionAm.contains(clean) ||
-            c.meetingLocationAm.contains(clean);
-        return matchEn || matchAm;
-      }).toList();
-    }
-
-    return result;
   }
 
   @override
@@ -130,9 +98,8 @@ class SyncClubRepository extends ChangeNotifier implements ClubRepository {
   }
 
   @override
-  Future<List<String>> getJoinedClubIds(String userId) {
-    return _local.getJoinedClubIds(userId);
-  }
+  Future<List<String>> getJoinedClubIds(String userId) =>
+      _local.getJoinedClubIds(userId);
 
   @override
   Future<bool> joinClub(
@@ -141,7 +108,6 @@ class SyncClubRepository extends ChangeNotifier implements ClubRepository {
     String? userEmail,
     String? userName,
   }) async {
-    // 1. Ensure target club exists in local repository before joining
     final localExisting = await _local.getClubById(clubId);
     if (localExisting == null) {
       final cached = await _store.getCachedClubs();
@@ -154,7 +120,6 @@ class SyncClubRepository extends ChangeNotifier implements ClubRepository {
       }
     }
 
-    // 2. Always persist locally first so student membership works offline
     final success = await _local.joinClub(
       clubId,
       userId,
@@ -162,25 +127,10 @@ class SyncClubRepository extends ChangeNotifier implements ClubRepository {
       userName: userName,
     );
 
-    // 3. Keep offline store cache in sync with updated member count
     if (success) {
-      final updated = await _local.getClubById(clubId);
-      if (updated != null) {
-        final cached = await _store.getCachedClubs();
-        if (cached != null) {
-          final list = List<StudentClub>.from(cached);
-          final idx = list.indexWhere((c) => c.id == clubId);
-          if (idx >= 0) {
-            list[idx] = updated;
-          } else {
-            list.add(updated);
-          }
-          await _store.saveClubs(list);
-        }
-      }
+      await SyncClubCacheHelper.updateClubInCache(_store, _local, clubId);
     }
 
-    // 4. If online, asynchronously notify backend with Bearer token
     if (success && _apiClient != null) {
       unawaited(() async {
         final token = await _getAuthToken();
@@ -195,21 +145,9 @@ class SyncClubRepository extends ChangeNotifier implements ClubRepository {
   Future<bool> leaveClub(String clubId, String userId) async {
     final success = await _local.leaveClub(clubId, userId);
     if (success) {
-      final updated = await _local.getClubById(clubId);
-      if (updated != null) {
-        final cached = await _store.getCachedClubs();
-        if (cached != null) {
-          final list = List<StudentClub>.from(cached);
-          final idx = list.indexWhere((c) => c.id == clubId);
-          if (idx >= 0) {
-            list[idx] = updated;
-            await _store.saveClubs(list);
-          }
-        }
-      }
+      await SyncClubCacheHelper.updateClubInCache(_store, _local, clubId);
     }
 
-    // If online, asynchronously notify backend with Bearer token
     if (success && _apiClient != null) {
       unawaited(() async {
         final token = await _getAuthToken();
@@ -235,29 +173,25 @@ class SyncClubRepository extends ChangeNotifier implements ClubRepository {
   }
 
   @override
-  Future<List<ClubMembership>> getClubMembers(String clubId) {
-    return _local.getClubMembers(clubId);
-  }
+  Future<List<ClubMembership>> getClubMembers(String clubId) =>
+      _local.getClubMembers(clubId);
 
   @override
-  Future<List<ClubMembership>> getAllMemberships() {
-    return _local.getAllMemberships();
-  }
+  Future<List<ClubMembership>> getAllMemberships() =>
+      _local.getAllMemberships();
 
   @override
-  Future<bool> removeMember(String clubId, String userId) {
-    return _local.removeMember(clubId, userId);
-  }
+  Future<bool> removeMember(String clubId, String userId) =>
+      _local.removeMember(clubId, userId);
 
   @override
-  Future<bool> updateMemberRole(String clubId, String userId, String newRole) {
-    return _local.updateMemberRole(clubId, userId, newRole);
-  }
+  Future<bool> updateMemberRole(
+          String clubId, String userId, String newRole) =>
+      _local.updateMemberRole(clubId, userId, newRole);
 
   @override
-  Future<void> toggleClubActive(String clubId) {
-    return _local.toggleClubActive(clubId);
-  }
+  Future<void> toggleClubActive(String clubId) =>
+      _local.toggleClubActive(clubId);
 
   Future<void> _revalidateInBackground() async {
     try {

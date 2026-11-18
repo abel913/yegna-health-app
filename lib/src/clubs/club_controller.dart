@@ -50,6 +50,7 @@ class ClubController extends ChangeNotifier {
   ClubCategory get selectedCategory => _selectedCategory;
   String get searchQuery => _searchQuery;
   bool get showOnlyJoined => _showOnlyJoined;
+  bool get filterOnlyJoined => _showOnlyJoined;
   int get joinedCount => _joinedClubIds.length;
 
   bool isJoined(String clubId) => _joinedClubIds.contains(clubId);
@@ -97,6 +98,10 @@ class ClubController extends ChangeNotifier {
     _selectedCategory = category;
     loadClubs(_currentUserId);
   }
+
+  void setSelectedCategory(ClubCategory category) => setCategory(category);
+  Future<void> refreshClubs(String? userId) => loadClubs(userId, forceRefresh: true);
+  Future<List<ClubMembership>> getClubMembers(String clubId) => _repository.getClubMembers(clubId);
 
   void setSearchQuery(String query) {
     if (_searchQuery == query) return;
