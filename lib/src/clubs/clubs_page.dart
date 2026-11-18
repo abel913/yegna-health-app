@@ -14,6 +14,7 @@ class ClubsPage extends StatefulWidget {
     this.userEmail,
     this.userName,
     this.notificationController,
+    this.onRequireAuth,
     super.key,
   });
 
@@ -22,6 +23,7 @@ class ClubsPage extends StatefulWidget {
   final String? userEmail;
   final String? userName;
   final InAppNotificationController? notificationController;
+  final VoidCallback? onRequireAuth;
 
   @override
   State<ClubsPage> createState() => _ClubsPageState();
@@ -658,6 +660,7 @@ class _ClubsPageState extends State<ClubsPage> {
                                         userEmail: widget.userEmail,
                                         userName: widget.userName,
                                         notificationController: widget.notificationController,
+                                        onRequireAuth: widget.onRequireAuth,
                                       );
                                     },
                                   ),

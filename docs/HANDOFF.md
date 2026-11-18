@@ -1,5 +1,31 @@
 # Handoff notes
 
+## Student Club Management, Membership Sync & Guest Gating (2026-11-18)
+
+- **Context & Goal**: Complete end-to-end student club moderation and membership tracking:
+  - Admin can create, edit, approve, and delete clubs, as well as view student members who joined (name, email, role, join date/time) with search, CSV export, and member removal.
+  - Students cannot join clubs without an authenticated account; guest users are prompted with an Account Required modal directing them to sign in or register.
+  - Spotless offline-first sync across mobile client, server, and admin portal with bearer token authentication.
+- **Implemented Changes**:
+  - **Server (`server/src/controllers/clubs.controller.ts` & `routes/index.ts`)**:
+    - `getClubRoster`: selects `id`, `displayName`, `email`, `role`, and `createdAt` from `User` joined through `ClubMember`, ordered by `joinedAt: 'desc'`. Returns `clubId`, `clubName`, `memberCount`, and mapped `roster`.
+    - `joinClub`: validates authentication, links student `req.user.id`, prevents duplicate joins, increments member count.
+    - `leaveClub`: authenticated endpoint (`POST /api/clubs/:id/leave`) that removes membership and decrements member count.
+    - `removeMemberAdmin`: privileged endpoint (`DELETE /api/admin/clubs/:id/members/:userId`) allowing administrators to remove members from a club roster with audit log tracking.
+  - **Admin Web (`admin-web/src/pages/ClubsPage.tsx` & `services/api.ts`)**:
+    - Member Roster Modal with search bar, initials avatars with gradient styling, email indicator, role badge, formatted join timestamps (`toLocaleDateString` + `toLocaleTimeString`), remove member action with confirmation dialog (`ConfirmModal`), and CSV export.
+    - Added `api.removeClubMember(clubId, userId)` and enhanced `api.getClubRoster(id)`.
+  - **Mobile Client (`lib/src/clubs/` & `lib/src/sync/`)**:
+    - `ApiClient.joinClub` and `ApiClient.leaveClub` support Bearer tokens for authenticated server mutations.
+    - `SyncClubRepository`: retrieves `backend_auth_token` from persistent storage (`SharedPreferences`) and attaches it to `joinClub` and `leaveClub` API calls.
+    - `showClubAuthRequiredDialog` modal in `lib/src/clubs/club_card.dart` and `club_detail_sheet.dart` intercepting guest joins and directing users to `AuthPage`.
+    - Bilingual ARB resource keys (`clubAuthRequiredTitle`, `clubAuthRequiredDesc`, `clubSignInAction`, `clubMaybeLater`, `clubLeaveAction`, `clubLeaveConfirmTitle`, `clubLeaveConfirmDesc`, `clubLeaveSuccess`) in `lib/l10n/app_en.arb` and `app_am.arb`, cleanly generated with `flutter gen-l10n`.
+- **Verification**:
+  - `flutter analyze`: 0 issues found.
+  - `flutter test`: 196/196 tests passed (100%), including new guest auth gating widget test in `test/club_ui_test.dart`.
+  - `npm --prefix server run worker:check`: 0 errors.
+  - `npm --prefix admin-web run build`: 0 errors.
+
 ## Government viewer portal feature (2026-11-18)
 
 - Pushed commit `31e16ae` to `main` from branch `codex/automatic-admin-deploy`, rebased onto the latest `origin/main`. The older `C:\Users\HP\Downloads\Yegna Health Amharic` checkout contains unrelated uncommitted changes and was not used for this push.
@@ -8,6 +34,25 @@
 - Admin Portal workflow run #12 (`44355811892`) succeeded. Live portal returned HTTP 200; deployed bundle contains the government view; `/api/health` reports the database connected; unauthenticated reports and admin-user requests both returned HTTP 401.
 - No government account exists yet. An existing admin should open User Management → Add User, choose Government Viewer, enter `geverment@gmail.com` and a fresh temporary password of at least 12 characters, and deliver the password privately. Do not reuse the password shared in chat. The government user must change it at first sign-in.
 - The Government Viewer is not allowed on management pages or APIs. Positive login, password-change, report-data, and CSV behavior remain unverified until the account is provisioned. No Phase 4 work was started.
+
+## Complete Removal of Mobile In-App Admin Portal (Centralized to Web Admin) (2026-11-18)
+
+- **Requirement**: Full removal of the in-app mobile admin portal and pages; all administrative workflows are centralized on the desktop web portal (`admin-web`).
+- **Implementation**:
+  - Deleted `lib/src/admin/` containing early in-memory admin portal prototypes.
+  - Relocated shared fallback data models (`ModuleDraft`, `QuestionDraft`, `ArticleDraft`, `ContentTemplates`) to `lib/src/content/content_templates.dart`.
+  - Removed all mobile UI access points:
+    - `lib/src/app.dart`: Stripped `AppBar` executive admin actions/popups, removed `onOpenAdmin` and admin repositories from `AppShell` and `_AccountPage`, removed the large "Administrator Portal" tile.
+    - `lib/src/home/home_page.dart`: Removed `Executive Admin Console` banner and `onOpenAdmin` callback.
+    - `lib/src/auth/auth_pages.dart`: Removed hardcoded admin login shortcut and "Admin Console" quick link.
+  - Cleaned obsolete test files (`test/admin_ui_test.dart`, `test/admin_clubs_ui_test.dart`, `test/admin_controller_test.dart`) and updated `test/auth_feedback_test.dart`.
+  - Removed unused ARB keys (`adminConsoleTitle`, `adminConsoleSubtitle`) and ran `flutter gen-l10n`.
+  - Verified Web Admin Portal (`admin-web` on port 5174) builds cleanly with TypeScript and Vite.
+- **Verification**:
+  - `flutter analyze`: 0 issues found.
+  - `flutter test`: 196/196 tests passed (100%).
+  - `flutter build web --release`: Exit code 0 (`√ Built build\web`).
+  - `npm --prefix admin-web run build`: Exit code 0.
 
 
 ## Shared Database Real-Time Sync & Repository Unification (2026-11-18)

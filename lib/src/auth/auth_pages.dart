@@ -3,9 +3,6 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 import '../../l10n/app_localizations.dart';
-import '../admin/admin_controller.dart';
-import '../admin/admin_dashboard_page.dart';
-import '../admin/admin_repository.dart';
 import '../notifications/notification_controller.dart';
 import '../onboarding/onboarding_survey_dialog.dart';
 import '../onboarding/onboarding_survey_repository.dart';
@@ -27,20 +24,12 @@ class AuthPage extends StatefulWidget {
     required this.controller,
     this.notificationController,
     this.initialMode = AuthPageMode.signIn,
-    this.onOpenAdmin,
-    this.adminRepository,
-    this.adminController,
-    this.onAdminSignedIn,
     super.key,
   });
 
   final AuthController controller;
   final InAppNotificationController? notificationController;
   final AuthPageMode initialMode;
-  final VoidCallback? onOpenAdmin;
-  final AdminRepository? adminRepository;
-  final AdminController? adminController;
-  final VoidCallback? onAdminSignedIn;
 
   @override
   State<AuthPage> createState() => _AuthPageState();
@@ -115,97 +104,8 @@ class _AuthPageState extends State<AuthPage> {
         final cleanEmail = _email.text.trim();
         final cleanPass = _password.text;
         final l10n = AppLocalizations.of(context);
-        final isAmharic = Localizations.localeOf(context).languageCode == 'am';
 
-        // 1. ROLE-BASED CHECK: Detect if credentials match an ADMINISTRATOR in database
-        bool isAdmin = false;
-        if (widget.adminRepository != null) {
-          isAdmin = await widget.adminRepository!
-              .verifyAdminCredentials(cleanEmail, cleanPass);
-        }
-
-        if (isAdmin) {
-          // Log into Admin Controller
-          await widget.adminController?.signIn(cleanEmail, cleanPass);
-
-          // Establish authenticated user session for the admin
-          widget.controller.signInDirectly(
-            id: 'admin_usr_01',
-            email: cleanEmail,
-            displayName: 'Natnael Zemene (Admin)',
-          );
-
-          if (!mounted) return;
-
-          // Record admin login in Notification Center
-          widget.notificationController?.addWelcomeBackNotification(
-            'Natnael Zemene',
-            isAmharic: isAmharic,
-          );
-
-          // Celebratory Admin SnackBar
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              behavior: SnackBarBehavior.floating,
-              backgroundColor: const Color(0xFF0F172A),
-              elevation: 6,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-                side: const BorderSide(color: Color(0xFF38BDF8), width: 1.4),
-              ),
-              content: Row(
-                children: [
-                  Container(
-                    width: 32,
-                    height: 32,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFF0284C7),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(Icons.admin_panel_settings_rounded,
-                        color: Colors.white, size: 18),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      isAmharic
-                          ? 'እንኳን ደህና መጡ፣ አስተዳዳሪ Natnael Zemene!'
-                          : 'Welcome, System Administrator (Natnael Zemene)!',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 13.5,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              duration: const Duration(seconds: 4),
-            ),
-          );
-
-          // Invoke onAdminSignedIn callback
-          if (widget.onAdminSignedIn != null) {
-            widget.onAdminSignedIn!();
-          } else if (widget.onOpenAdmin != null) {
-            widget.onOpenAdmin!();
-          }
-
-          // Immediately navigate and display the full Admin Dashboard!
-          if (widget.adminController != null) {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute<void>(
-                builder: (_) =>
-                    AdminDashboardPage(controller: widget.adminController!),
-              ),
-            );
-          } else {
-            Navigator.of(context).pop();
-          }
-          return;
-        }
-
-        // 2. REGULAR USER / STUDENT LOGIN
+        // USER / STUDENT LOGIN
         bool success = false;
         if (widget.controller.isConfigured) {
           success = await widget.controller.signIn(
@@ -702,28 +602,6 @@ class _AuthPageState extends State<AuthPage> {
                                   color: Color(0xFF4A6277),
                                 ),
                               ),
-                              if (widget.onOpenAdmin != null) ...[
-                                const SizedBox(height: 14),
-                                TextButton.icon(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                    widget.onOpenAdmin!();
-                                  },
-                                  icon: const Icon(
-                                    Icons.admin_panel_settings_rounded,
-                                    size: 18,
-                                    color: Color(0xFF005A71),
-                                  ),
-                                  label: Text(
-                                    l10n.adminConsoleTitle,
-                                    style: const TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w700,
-                                      color: Color(0xFF005A71),
-                                    ),
-                                  ),
-                                ),
-                              ],
                             ],
                           ],
                         ),
@@ -817,39 +695,6 @@ class _AuthPageState extends State<AuthPage> {
             ],
           ),
           const SizedBox(height: 18),
-          if (!isRegister && !isRecovery && !isNewPassword) ...[
-            Container(
-              margin: const EdgeInsets.only(bottom: 14),
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-              decoration: BoxDecoration(
-                color: const Color(0xFF0284C7).withValues(alpha: 0.08),
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(
-                  color: const Color(0xFF0284C7).withValues(alpha: 0.2),
-                  width: 1,
-                ),
-              ),
-              child: Row(
-                children: [
-                  const Icon(Icons.verified_user_rounded,
-                      size: 15, color: Color(0xFF0284C7)),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      Localizations.localeOf(context).languageCode == 'am'
-                          ? 'የተጠቃሚ ሚና መግቢያ፡ የአስተዳዳሪ እና የተማሪ አካውንት ተደግፏል።'
-                          : 'Role-based sign in: Admin & Student accounts supported.',
-                      style: const TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF0284C7),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
           if (isRegister) ...[
             _textField(
               controller: _displayName,

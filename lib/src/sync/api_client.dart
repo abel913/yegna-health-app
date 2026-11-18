@@ -193,6 +193,21 @@ class ApiClient {
     }
   }
 
+  /// Leaves a student club via `POST /api/clubs/:id/leave`.
+  Future<bool> leaveClub(String clubId, {String? token}) async {
+    try {
+      final uri = Uri.parse('$baseUrl/clubs/$clubId/leave');
+      final headers = <String, String>{
+        'Content-Type': 'application/json',
+        if (token != null) 'Authorization': 'Bearer $token',
+      };
+      final res = await _client.post(uri, headers: headers).timeout(timeout);
+      return res.statusCode == 200;
+    } catch (_) {
+      return false;
+    }
+  }
+
   /// Authenticates a user against `POST /api/auth/login`.
   Future<AuthApiResponse> login({
     required String email,

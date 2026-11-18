@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../notifications/notification_controller.dart';
 import '../notifications/notification_models.dart';
 import '../theme/app_glass_theme.dart';
+import 'club_card.dart';
 import 'club_controller.dart';
 import 'club_models.dart';
 
@@ -16,6 +17,7 @@ class ClubDetailSheet extends StatefulWidget {
     this.userEmail,
     this.userName,
     this.notificationController,
+    this.onRequireAuth,
     super.key,
   });
 
@@ -25,6 +27,7 @@ class ClubDetailSheet extends StatefulWidget {
   final String? userEmail;
   final String? userName;
   final InAppNotificationController? notificationController;
+  final VoidCallback? onRequireAuth;
 
   static void show(
     BuildContext context, {
@@ -34,6 +37,7 @@ class ClubDetailSheet extends StatefulWidget {
     String? userEmail,
     String? userName,
     InAppNotificationController? notificationController,
+    VoidCallback? onRequireAuth,
   }) {
     showModalBottomSheet<void>(
       context: context,
@@ -47,6 +51,7 @@ class ClubDetailSheet extends StatefulWidget {
         userEmail: userEmail,
         userName: userName,
         notificationController: notificationController,
+        onRequireAuth: onRequireAuth,
       ),
     );
   }
@@ -734,6 +739,15 @@ class _ClubDetailSheetState extends State<ClubDetailSheet> {
                               onPressed: _isSubmitting
                                   ? null
                                   : () async {
+                                      final isGuest = widget.userId.isEmpty ||
+                                          widget.userId == 'guest_explorer';
+                                      if (isGuest) {
+                                        await showClubAuthRequiredDialog(
+                                          context,
+                                          onSignIn: widget.onRequireAuth,
+                                        );
+                                        return;
+                                      }
                                       setState(() => _isSubmitting = true);
                                       final success = await widget.controller.joinClub(
                                         liveClub.id,

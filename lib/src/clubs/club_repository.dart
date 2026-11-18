@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../admin/content_templates.dart';
+import '../content/content_templates.dart';
 import 'club_models.dart';
 
 abstract class ClubRepository {

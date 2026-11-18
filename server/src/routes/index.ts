@@ -82,6 +82,7 @@ router.get('/learning-assessments', learningAssessments.getAll);
 
 router.get('/clubs', clubs.getAllClubs);
 router.post('/clubs/:id/join', authenticateToken as any, refreshAuthorizationContext as any, requirePasswordChangeComplete as any, requireNotGovernmentViewer as any, clubs.joinClub as any);
+router.post('/clubs/:id/leave', authenticateToken as any, refreshAuthorizationContext as any, requirePasswordChangeComplete as any, requireNotGovernmentViewer as any, clubs.leaveClub as any);
 
 // This is the only protected resource available to government viewers.
 const governmentRouter = Router();
@@ -125,6 +126,7 @@ adminRouter.post('/clubs', clubs.createClub as any);
 adminRouter.put('/clubs/:id', clubs.updateClub as any);
 adminRouter.delete('/clubs/:id', clubs.deleteClub as any);
 adminRouter.get('/clubs/:id/roster', clubs.getClubRoster as any);
+adminRouter.delete('/clubs/:id/members/:userId', clubs.removeMemberAdmin as any);
 
 // User Governance
 adminRouter.get('/users', users.getAllUsers as any);

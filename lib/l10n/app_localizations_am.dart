@@ -3563,12 +3563,6 @@ class AppLocalizationsAm extends AppLocalizations {
   }
 
   @override
-  String get adminConsoleTitle => 'የአስተዳዳሪ ማዕከል';
-
-  @override
-  String get adminConsoleSubtitle => 'ክበቦችን፣ ጥያቄዎችን፣ ሞጁሎችን እና አድራሻዎችን ማስተዳደሪያ';
-
-  @override
   String get studentClubsTitle => 'የተማሪዎች የጤና ክበቦች';
 
   @override
@@ -3826,4 +3820,30 @@ class AppLocalizationsAm extends AppLocalizations {
 
   @override
   String get connectDuringHours => 'በክፍት ሰዓታት ውስጥ ከአማካሪው ጋር ይገናኙ፡';
+
+  @override
+  String get clubAuthRequiredTitle => 'መለያ ያስፈልጋል';
+
+  @override
+  String get clubAuthRequiredDesc =>
+      'የተማሪዎች ጤና ክለቦችን ለመቀላቀል እና ከአቻ ተማሪዎች ጋር ለመገናኘት እባክዎ አዲስ መለያ ይፍጠሩ ወይም ይግቡ። ይህ አማካሪዎችና የክለብ መሪዎች ከተረጋገጡ ተማሪዎች ጋር እንዲገናኙ ይረዳል።';
+
+  @override
+  String get clubSignInAction => 'ግባ / ተመዝገብ';
+
+  @override
+  String get clubMaybeLater => 'ለጊዜው ይቆይ';
+
+  @override
+  String get clubLeaveAction => 'ከክለቡ ውጣ';
+
+  @override
+  String get clubLeaveConfirmTitle => 'ከክለቡ መውጣት ይፈልጋሉ?';
+
+  @override
+  String get clubLeaveConfirmDesc =>
+      'እርግጠኛ ነዎት ከዚህ የተማሪ ክለብ መውጣት ይፈልጋሉ? በማንኛውም ጊዜ እንደገና መቀላቀል ይችላሉ።';
+
+  @override
+  String get clubLeaveSuccess => 'ከክለቡ በተሳካ ሁኔታ ወጥተዋል።';
 }

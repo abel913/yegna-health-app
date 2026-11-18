@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../sync/api_client.dart';
 import '../sync/offline_sync_store.dart';
@@ -13,13 +14,31 @@ class SyncClubRepository extends ChangeNotifier implements ClubRepository {
     required OfflineSyncStore store,
     required LocalClubRepository localRepository,
     ApiClient? apiClient,
+    Future<String?> Function()? authTokenProvider,
   })  : _store = store,
         _local = localRepository,
-        _apiClient = apiClient;
+        _apiClient = apiClient,
+        _authTokenProvider = authTokenProvider;
 
   final OfflineSyncStore _store;
   final LocalClubRepository _local;
   final ApiClient? _apiClient;
+  final Future<String?> Function()? _authTokenProvider;
+
+  Future<String?> _getAuthToken() async {
+    if (_authTokenProvider != null) {
+      try {
+        final t = await _authTokenProvider();
+        if (t != null && t.isNotEmpty) return t;
+      } catch (_) {}
+    }
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getString('backend_auth_token');
+    } catch (_) {
+      return null;
+    }
+  }
 
   @override
   Future<List<StudentClub>> getClubs({
@@ -161,9 +180,12 @@ class SyncClubRepository extends ChangeNotifier implements ClubRepository {
       }
     }
 
-    // 4. If online, asynchronously notify backend
+    // 4. If online, asynchronously notify backend with Bearer token
     if (success && _apiClient != null) {
-      unawaited(_apiClient.joinClub(clubId));
+      unawaited(() async {
+        final token = await _getAuthToken();
+        await _apiClient.joinClub(clubId, token: token);
+      }());
     }
 
     return success;
@@ -186,6 +208,15 @@ class SyncClubRepository extends ChangeNotifier implements ClubRepository {
         }
       }
     }
+
+    // If online, asynchronously notify backend with Bearer token
+    if (success && _apiClient != null) {
+      unawaited(() async {
+        final token = await _getAuthToken();
+        await _apiClient.leaveClub(clubId, token: token);
+      }());
+    }
+
     return success;
   }
 

@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import '../admin/content_templates.dart';
+import '../content/content_templates.dart';
 import '../sync/api_client.dart';
 import '../sync/offline_sync_store.dart';
 import 'assessment_repository.dart';

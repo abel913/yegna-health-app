@@ -142,5 +142,51 @@ void main() {
       expect(find.text('ሁሉንም አስስ'), findsOneWidget);
       expect(find.textContaining('የሴቶች ጤና እና ደህንነት ክበብ'), findsOneWidget);
     });
+
+    testWidgets('guest user joining club prompts account required dialog',
+        (tester) async {
+      bool authPrompted = false;
+      await tester.pumpWidget(
+        MaterialApp(
+          locale: const Locale('en'),
+          supportedLocales: AppLocalizations.supportedLocales,
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          home: ClubsPage(
+            controller: controller,
+            userId: 'guest_explorer',
+            onRequireAuth: () {
+              authPrompted = true;
+            },
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Tap the Join button on the first card
+      final joinButton = find.text('Join').first;
+      await tester.tap(joinButton);
+      await tester.pumpAndSettle();
+
+      // Account Required dialog is shown
+      expect(find.text('Account Required'), findsOneWidget);
+      expect(
+        find.textContaining('To join a student health club'),
+        findsOneWidget,
+      );
+
+      // Tap Sign In / Register button
+      final signInAction = find.text('Sign In / Register');
+      expect(signInAction, findsOneWidget);
+      await tester.tap(signInAction);
+      await tester.pumpAndSettle();
+
+      // Verify onRequireAuth was triggered
+      expect(authPrompted, isTrue);
+    });
   });
 }

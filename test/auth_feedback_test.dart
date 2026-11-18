@@ -3,12 +3,9 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yegna_health_app/l10n/app_localizations.dart';
-import 'package:yegna_health_app/src/admin/admin_controller.dart';
-import 'package:yegna_health_app/src/admin/admin_repository.dart';
 import 'package:yegna_health_app/src/auth/auth_controller.dart';
 import 'package:yegna_health_app/src/auth/auth_models.dart';
 import 'package:yegna_health_app/src/auth/auth_pages.dart';
-import 'package:yegna_health_app/src/clubs/club_repository.dart';
 import 'package:yegna_health_app/src/notifications/notification_controller.dart';
 import 'package:yegna_health_app/src/notifications/notification_models.dart';
 
@@ -19,9 +16,6 @@ Widget _buildAuthTestApp({
   required InAppNotificationController notificationController,
   AuthPageMode initialMode = AuthPageMode.signIn,
   Locale locale = const Locale('en'),
-  AdminRepository? adminRepository,
-  AdminController? adminController,
-  VoidCallback? onAdminSignedIn,
 }) {
   return MaterialApp(
     locale: locale,
@@ -41,9 +35,6 @@ Widget _buildAuthTestApp({
                 controller: controller,
                 notificationController: notificationController,
                 initialMode: initialMode,
-                adminRepository: adminRepository,
-                adminController: adminController,
-                onAdminSignedIn: onAdminSignedIn,
               ),
             ),
           ),
@@ -204,119 +195,7 @@ void main() {
       authController.dispose();
     });
 
-    testWidgets(
-        'role-based login detects admin credentials and invokes admin dashboard route',
-        (tester) async {
-      final fakeRepo = FakeAuthRepository(
-        failure: AuthIssue.invalidCredentials,
-      );
-      final authController = AuthController(fakeRepo);
-      final notificationController = InAppNotificationController(prefs);
-      await notificationController.load(
-          isAmharic: false, healthTipsEnabled: false);
-
-      final clubRepo = LocalClubRepository(preferences: prefs);
-      final adminRepo = LocalAdminRepository(
-        clubRepository: clubRepo,
-        preferences: prefs,
-      );
-      final adminController = AdminController(repository: adminRepo);
-
-      bool adminRouteTriggered = false;
-
-      await tester.pumpWidget(_buildAuthTestApp(
-        controller: authController,
-        notificationController: notificationController,
-        adminRepository: adminRepo,
-        adminController: adminController,
-        onAdminSignedIn: () => adminRouteTriggered = true,
-      ));
-      await tester.pumpAndSettle();
-
-      await tester.tap(find.text('Open Auth'));
-      await tester.pumpAndSettle();
-
-      final emailField = find.byType(TextFormField).at(0);
-      final passwordField = find.byType(TextFormField).at(1);
-
-      // Enter primary superadmin credentials
-      await tester.enterText(emailField, 'natnaelzemene21@gmail.com');
-      await tester.enterText(passwordField, 'admin1234');
-
-      final l10n = AppLocalizations.of(tester.element(find.byType(AuthPage)));
-      await tester.tap(find.text(l10n.loginAction).last);
-      await tester.pumpAndSettle();
-
-      // Verify admin dashboard navigation callback was triggered
-      expect(adminRouteTriggered, isTrue);
-      expect(adminController.isAuthenticated, isTrue);
-      expect(adminController.currentAdminEmail, 'natnaelzemene21@gmail.com');
-      expect(authController.isAuthenticated, isTrue);
-
-      // Verify admin celebratory banner appeared
-      expect(
-          find.textContaining(
-              'Welcome, System Administrator (Natnael Zemene)!'),
-          findsOneWidget);
-      expect(find.byIcon(Icons.admin_panel_settings_rounded), findsOneWidget);
-
-      authController.dispose();
-      adminController.dispose();
-    });
-
-    testWidgets(
-        'role-based login detects naelzemene21@gmail.com admin alias and routes to dashboard',
-        (tester) async {
-      final fakeRepo = FakeAuthRepository(
-        failure: AuthIssue.invalidCredentials,
-      );
-      final authController = AuthController(fakeRepo);
-      final notificationController = InAppNotificationController(prefs);
-      await notificationController.load(
-          isAmharic: false, healthTipsEnabled: false);
-
-      final clubRepo = LocalClubRepository(preferences: prefs);
-      final adminRepo = LocalAdminRepository(
-        clubRepository: clubRepo,
-        preferences: prefs,
-      );
-      final adminController = AdminController(repository: adminRepo);
-
-      bool adminRouteTriggered = false;
-
-      await tester.pumpWidget(_buildAuthTestApp(
-        controller: authController,
-        notificationController: notificationController,
-        adminRepository: adminRepo,
-        adminController: adminController,
-        onAdminSignedIn: () => adminRouteTriggered = true,
-      ));
-      await tester.pumpAndSettle();
-
-      await tester.tap(find.text('Open Auth'));
-      await tester.pumpAndSettle();
-
-      final emailField = find.byType(TextFormField).at(0);
-      final passwordField = find.byType(TextFormField).at(1);
-
-      // Enter user screenshot exact email
-      await tester.enterText(emailField, 'naelzemene21@gmail.com');
-      await tester.enterText(passwordField, 'admin1234');
-
-      final l10n = AppLocalizations.of(tester.element(find.byType(AuthPage)));
-      await tester.tap(find.text(l10n.loginAction).last);
-      await tester.pumpAndSettle();
-
-      expect(adminRouteTriggered, isTrue);
-      expect(adminController.isAuthenticated, isTrue);
-      expect(adminController.currentAdminEmail, 'naelzemene21@gmail.com');
-      expect(authController.isAuthenticated, isTrue);
-
-      authController.dispose();
-      adminController.dispose();
-    });
-
-    testWidgets('role-based login strictly rejects invalid student credentials',
+    testWidgets('login strictly rejects invalid student credentials',
         (tester) async {
       final fakeRepo = FakeAuthRepository(
         failure: AuthIssue.invalidCredentials,

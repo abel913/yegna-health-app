@@ -15,6 +15,9 @@ import {
   X,
   Phone,
   ShieldCheck,
+  UserMinus,
+  Mail,
+  FileSpreadsheet,
 } from 'lucide-react';
 import { StudentClub } from '../types/index.js';
 import { api } from '../services/api.js';
@@ -44,11 +47,14 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingClub, setEditingClub] = useState<StudentClub | null>(null);
   const [clubToDelete, setClubToDelete] = useState<StudentClub | null>(null);
-  const [rosterModal, setRosterModal] = useState<{ open: boolean; clubName: string; members: any[] }>({
+  const [rosterModal, setRosterModal] = useState<{ open: boolean; clubId: string; clubName: string; members: any[] }>({
     open: false,
+    clubId: '',
     clubName: '',
     members: [],
   });
+  const [rosterSearch, setRosterSearch] = useState('');
+  const [memberToRemove, setMemberToRemove] = useState<{ userId: string; displayName: string } | null>(null);
 
   const defaultGuidelines = [
     'Maintain 100% confidentiality and respect peer privacy.',
@@ -137,12 +143,70 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
 
   const openRoster = async (club: StudentClub) => {
     try {
+      setRosterSearch('');
       const data = await api.getClubRoster(club.id);
-      setRosterModal({ open: true, clubName: data.clubName, members: data.roster || [] });
+      setRosterModal({
+        open: true,
+        clubId: club.id,
+        clubName: data.clubName || club.name,
+        members: data.roster || [],
+      });
     } catch (err: any) {
       toast.error('Failed to load roster: ' + err.message, 'Roster Error');
     }
   };
+
+  const handleRemoveMember = async (userId: string, displayName: string) => {
+    if (!rosterModal.clubId) return;
+    try {
+      await api.removeClubMember(rosterModal.clubId, userId);
+      setRosterModal((prev) => ({
+        ...prev,
+        members: prev.members.filter((m: any) => (m.userId || m.user?.id) !== userId),
+      }));
+      setMemberToRemove(null);
+      toast.success(
+        lang === 'am' ? `${displayName} ከክለቡ ተሰርዟል` : `Removed ${displayName} from club roster`,
+        lang === 'am' ? 'ተወግዷል' : 'Member Removed'
+      );
+    } catch (err: any) {
+      toast.error('Failed to remove member: ' + err.message, 'Action Failed');
+    }
+  };
+
+  const handleExportClubRoster = () => {
+    if (!rosterModal.members.length) return;
+    exportToCsv(
+      `${rosterModal.clubName.replace(/\s+/g, '_')}_Members`,
+      [
+        { header: 'Student Name', accessor: (m: any) => m.displayName || m.user?.displayName || 'Student' },
+        { header: 'Email Address', accessor: (m: any) => m.email || m.user?.email || 'N/A' },
+        { header: 'Role', accessor: (m: any) => m.role || 'MEMBER' },
+        {
+          header: 'Joined Date',
+          accessor: (m: any) =>
+            m.joinedAt
+              ? `${new Date(m.joinedAt).toLocaleDateString()} ${new Date(m.joinedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
+              : 'N/A',
+        },
+      ],
+      rosterModal.members
+    );
+    toast.success(
+      lang === 'am' ? 'የአባላት ዝርዝር በተሳካ ሁኔታ ወርዷል' : 'Club member roster exported to CSV successfully',
+      lang === 'am' ? 'ሪፖርት ተዘጋጅቷል' : 'Export Ready'
+    );
+  };
+
+  const filteredRosterMembers = useMemo(() => {
+    if (!rosterSearch.trim()) return rosterModal.members;
+    const q = rosterSearch.trim().toLowerCase();
+    return rosterModal.members.filter((m: any) => {
+      const name = (m.displayName || m.user?.displayName || '').toLowerCase();
+      const email = (m.email || m.user?.email || '').toLowerCase();
+      return name.includes(q) || email.includes(q);
+    });
+  }, [rosterModal.members, rosterSearch]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -418,38 +482,194 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
         </div>
       )}
 
-      {/* Roster Modal */}
+      {/* Upgraded Member Roster Modal */}
       {rosterModal.open && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl max-w-lg w-full max-h-[80vh] overflow-y-auto p-6 animate-in fade-in zoom-in-95">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
-              <div>
-                <h3 className="text-base font-extrabold text-slate-900 dark:text-white">Member Roster</h3>
-                <p className="text-xs text-slate-400 dark:text-slate-500">{rosterModal.clubName}</p>
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 md:p-4">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl max-w-2xl w-full max-h-[85vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95">
+            {/* Modal Header */}
+            <div className="flex-shrink-0 flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xs">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-brand-50 dark:bg-brand-950/60 border border-brand-200/50 dark:border-brand-800/50 flex items-center justify-center text-brand-600 dark:text-cyan-400">
+                  <Users size={20} />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-base md:text-lg font-extrabold text-slate-900 dark:text-white">
+                      {lang === 'am' ? 'የክለቡ አባላት መዝገብ' : 'Student Member Roster'}
+                    </h3>
+                    <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-brand-100 dark:bg-brand-900/50 text-brand-700 dark:text-cyan-300">
+                      {rosterModal.members.length} {lang === 'am' ? 'አባላት' : 'members'}
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 truncate max-w-sm font-medium">
+                    {rosterModal.clubName}
+                  </p>
+                </div>
               </div>
-              <button
-                onClick={() => setRosterModal({ open: false, clubName: '', members: [] })}
-                className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
-              >
-                <X size={20} />
-              </button>
+              <div className="flex items-center gap-2">
+                {rosterModal.members.length > 0 && (
+                  <button
+                    onClick={handleExportClubRoster}
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl border border-slate-200 dark:border-slate-700 transition-colors cursor-pointer"
+                    title={lang === 'am' ? 'የአባላት ዝርዝር (CSV)' : 'Export roster to CSV'}
+                  >
+                    <FileSpreadsheet size={14} className="text-emerald-500" />
+                    <span className="hidden sm:inline">{lang === 'am' ? 'አውርድ (CSV)' : 'Export CSV'}</span>
+                  </button>
+                )}
+                <button
+                  onClick={() => setRosterModal({ open: false, clubId: '', clubName: '', members: [] })}
+                  className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
+                >
+                  <X size={20} />
+                </button>
+              </div>
             </div>
 
-            <div className="mt-4 space-y-2">
-              {rosterModal.members.map((m: any, idx: number) => (
-                <div key={idx} className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700/60 flex items-center justify-between text-xs">
-                  <div>
-                    <p className="font-bold text-slate-900 dark:text-white">{m.user?.displayName || 'Student'}</p>
-                    <p className="text-[11px] text-slate-400 dark:text-slate-500">{m.user?.email}</p>
-                  </div>
-                  <span className="text-[10px] text-slate-400 dark:text-slate-500">
-                    Joined {new Date(m.joinedAt).toLocaleDateString()}
-                  </span>
+            {/* Search filter if there are members */}
+            {rosterModal.members.length > 0 && (
+              <div className="flex-shrink-0 px-6 py-2.5 border-b border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-850/50">
+                <div className="relative">
+                  <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <input
+                    type="text"
+                    value={rosterSearch}
+                    onChange={(e) => setRosterSearch(e.target.value)}
+                    placeholder={
+                      lang === 'am'
+                        ? 'በተማሪው ስም ወይም ኢሜይል ፈልግ...'
+                        : 'Search members by student name or email...'
+                    }
+                    className="w-full pl-8 pr-8 py-1.5 text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl focus:outline-none focus:border-brand-500 transition-all placeholder:text-slate-400"
+                  />
+                  {rosterSearch && (
+                    <button
+                      onClick={() => setRosterSearch('')}
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
+                    >
+                      <X size={13} />
+                    </button>
+                  )}
                 </div>
-              ))}
+              </div>
+            )}
+
+            {/* Member List */}
+            <div className="flex-1 overflow-y-auto px-6 py-4 space-y-2.5">
+              {filteredRosterMembers.map((m: any, idx: number) => {
+                const displayName = m.displayName || m.user?.displayName || 'Registered Student';
+                const email = m.email || m.user?.email || 'No email registered';
+                const userId = m.userId || m.user?.id;
+                const initials = displayName
+                  .split(' ')
+                  .filter(Boolean)
+                  .slice(0, 2)
+                  .map((p: string) => p[0]?.toUpperCase())
+                  .join('') || 'ST';
+
+                const joinedDate = m.joinedAt
+                  ? new Date(m.joinedAt).toLocaleDateString(undefined, {
+                      month: 'short',
+                      day: 'numeric',
+                      year: 'numeric',
+                    })
+                  : 'Recent';
+                const joinedTime = m.joinedAt
+                  ? new Date(m.joinedAt).toLocaleTimeString([], {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })
+                  : '';
+
+                return (
+                  <div
+                    key={userId || idx}
+                    className="p-3.5 rounded-2xl bg-slate-50/80 dark:bg-slate-800/50 border border-slate-200/80 dark:border-slate-700/60 hover:border-brand-300 dark:hover:border-brand-700/60 transition-all flex items-center justify-between gap-3 group"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-brand-600 to-indigo-600 text-white font-black text-xs flex items-center justify-center shadow-xs flex-shrink-0">
+                        {initials}
+                      </div>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <h4 className="font-extrabold text-xs md:text-sm text-slate-900 dark:text-white truncate">
+                            {displayName}
+                          </h4>
+                          <span className="px-1.5 py-0.5 rounded-md text-[10px] font-bold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 flex-shrink-0">
+                            {m.role || 'MEMBER'}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-3 mt-0.5 text-[11px] text-slate-500 dark:text-slate-400">
+                          <span className="flex items-center gap-1 truncate font-mono text-[10.5px]">
+                            <Mail size={12} className="text-slate-400 flex-shrink-0" />
+                            {email}
+                          </span>
+                          <span className="flex items-center gap-1 text-[10px] text-slate-400 dark:text-slate-500 flex-shrink-0">
+                            <Clock size={11} className="text-slate-400" />
+                            {joinedDate} {joinedTime && `• ${joinedTime}`}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Remove Member button */}
+                    {userId && (
+                      <button
+                        onClick={() => setMemberToRemove({ userId, displayName })}
+                        className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl transition-colors cursor-pointer flex-shrink-0"
+                        title={lang === 'am' ? `${displayName}ን ከክለቡ አስወግድ` : `Remove ${displayName} from club`}
+                        aria-label="Remove member"
+                      >
+                        <UserMinus size={15} />
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
+
               {rosterModal.members.length === 0 && (
-                <p className="py-8 text-center text-xs text-slate-400 dark:text-slate-500 font-semibold">No students have joined this club yet.</p>
+                <div className="py-12 px-4 text-center">
+                  <div className="w-12 h-12 mx-auto mb-3 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center">
+                    <Users size={24} />
+                  </div>
+                  <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200">
+                    {lang === 'am' ? 'እስካሁን ምንም ተማሪ አልተቀላቀለም' : 'No Students Joined Yet'}
+                  </h4>
+                  <p className="text-xs text-slate-400 dark:text-slate-500 max-w-sm mx-auto mt-1">
+                    {lang === 'am'
+                      ? 'ተማሪዎች ከመተግበሪያው ሲቀላቀሉ የተረጋገጠ ስማቸው፣ ኢሜይላቸውና የተቀላቀሉበት ቀን እዚህ ይዘረዘራል።'
+                      : 'When authenticated students tap "Join Club" in the mobile app, their verified names, emails, and join timestamps will appear here in real-time.'}
+                  </p>
+                </div>
               )}
+
+              {rosterModal.members.length > 0 && filteredRosterMembers.length === 0 && (
+                <div className="py-8 text-center text-xs text-slate-400 dark:text-slate-500">
+                  <p className="font-semibold">{lang === 'am' ? 'ምንም የሚመሳሰል አባል አልተገኘም' : 'No members found matching your search.'}</p>
+                  <button
+                    onClick={() => setRosterSearch('')}
+                    className="mt-2 text-brand-600 dark:text-cyan-400 font-bold hover:underline cursor-pointer"
+                  >
+                    {lang === 'am' ? 'ፍለጋውን አጽዳ' : 'Clear search'}
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="flex-shrink-0 px-6 py-3 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60 flex items-center justify-between text-xs">
+              <span className="text-slate-500 dark:text-slate-400">
+                {lang === 'am'
+                  ? `የሚታዩ አባላት: ${filteredRosterMembers.length} ከ ${rosterModal.members.length}`
+                  : `Showing ${filteredRosterMembers.length} of ${rosterModal.members.length} member(s)`}
+              </span>
+              <button
+                type="button"
+                onClick={() => setRosterModal({ open: false, clubId: '', clubName: '', members: [] })}
+                className="px-4 py-1.5 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer transition-colors"
+              >
+                {lang === 'am' ? 'ዝጋ' : 'Close'}
+              </button>
             </div>
           </div>
         </div>
@@ -677,6 +897,25 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
           lang === 'am'
             ? 'ይህ እርምጃ ክለቡንና የአባላት መዝገብን በቋሚነት ያጠፋል። ተማሪዎች ይህንን ክለብ በካምፓስ ማህበር ውስጥ አያገኙትም።'
             : 'This will permanently remove the student club chapter, its meeting schedule, and member roster.'
+        }
+        lang={lang}
+      />
+
+      {/* Remove Member Confirmation Modal */}
+      <ConfirmModal
+        isOpen={Boolean(memberToRemove)}
+        onClose={() => setMemberToRemove(null)}
+        onConfirm={async () => {
+          if (memberToRemove) {
+            await handleRemoveMember(memberToRemove.userId, memberToRemove.displayName);
+          }
+        }}
+        title={lang === 'am' ? 'ተማሪው ከክለቡ ይወገድ?' : 'Remove Student from Club?'}
+        itemName={memberToRemove?.displayName || ''}
+        message={
+          lang === 'am'
+            ? 'ይህ ተማሪ ከዚህ ክለብ አባልነት ይሰረዛል። እንደገና ለመቀላቀል ከፈለገ ከስልኩ መተግበሪያ ማመልከት ይችላል።'
+            : 'This will remove the student from this club roster. They can rejoin anytime through their mobile app.'
         }
         lang={lang}
       />

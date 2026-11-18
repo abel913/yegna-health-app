@@ -1146,8 +1146,6 @@
       }
     }
   },
-  "adminConsoleTitle": "የአስተዳዳሪ ማዕከል",
-  "adminConsoleSubtitle": "ክበቦችን፣ ጥያቄዎችን፣ ሞጁሎችን እና አድራሻዎችን ማስተዳደሪያ",
   "studentClubsTitle": "የተማሪዎች የጤና ክበቦች",
   "studentClubsSubtitle": "የአቻ ደህንነት፣ የአእምሮ ጤና እና የአመራር ክበቦችን ይቀላቀሉ",
   "studentClubsPromoTitle": "የተማሪዎች የጤና ክበቦች",
@@ -1236,6 +1234,14 @@
   "saturday": "ቅዳሜ",
   "sunday": "እሑድ",
   "connectDuringHours": "በክፍት ሰዓታት ውስጥ ከአማካሪው ጋር ይገናኙ፡",
-  "closeButton": "ዝጋ"
+  "closeButton": "ዝጋ",
+  "clubAuthRequiredTitle": "መለያ ያስፈልጋል",
+  "clubAuthRequiredDesc": "የተማሪዎች ጤና ክለቦችን ለመቀላቀል እና ከአቻ ተማሪዎች ጋር ለመገናኘት እባክዎ አዲስ መለያ ይፍጠሩ ወይም ይግቡ። ይህ አማካሪዎችና የክለብ መሪዎች ከተረጋገጡ ተማሪዎች ጋር እንዲገናኙ ይረዳል።",
+  "clubSignInAction": "ግባ / ተመዝገብ",
+  "clubMaybeLater": "ለጊዜው ይቆይ",
+  "clubLeaveAction": "ከክለቡ ውጣ",
+  "clubLeaveConfirmTitle": "ከክለቡ መውጣት ይፈልጋሉ?",
+  "clubLeaveConfirmDesc": "እርግጠኛ ነዎት ከዚህ የተማሪ ክለብ መውጣት ይፈልጋሉ? በማንኛውም ጊዜ እንደገና መቀላቀል ይችላሉ።",
+  "clubLeaveSuccess": "ከክለቡ በተሳካ ሁኔታ ወጥተዋል።"
 }
 

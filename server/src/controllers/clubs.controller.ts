@@ -114,12 +114,14 @@ export async function getClubRoster(req: AuthRequest, res: Response) {
       where: { id },
       include: {
         members: {
+          orderBy: { joinedAt: 'desc' },
           include: {
             user: {
               select: {
                 id: true,
                 displayName: true,
                 email: true,
+                role: true,
                 createdAt: true,
               },
             },
@@ -134,11 +136,15 @@ export async function getClubRoster(req: AuthRequest, res: Response) {
 
     const roster = club.members.map((m) => ({
       membershipId: m.id,
+      userId: m.user?.id || m.userId,
+      displayName: m.user?.displayName || 'Student Member',
+      email: m.user?.email || 'student@yegnahealth.org',
+      role: m.user?.role || 'STUDENT',
       joinedAt: m.joinedAt,
       user: m.user,
     }));
 
-    return res.json({ clubName: club.name, roster });
+    return res.json({ clubName: club.name, memberCount: roster.length, roster });
   } catch (err: any) {
     return res.status(500).json({ error: err.message });
   }
@@ -164,9 +170,63 @@ export async function joinClub(req: AuthRequest, res: Response) {
 
     const membership = await prisma.clubMember.create({
       data: { userId, clubId },
+      include: {
+        user: {
+          select: {
+            id: true,
+            displayName: true,
+            email: true,
+            role: true,
+          },
+        },
+      },
     });
 
     return res.status(201).json({ success: true, membership });
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message });
+  }
+}
+
+export async function leaveClub(req: AuthRequest, res: Response) {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+    const { id: clubId } = req.params;
+    const userId = req.user.id;
+
+    await prisma.clubMember.deleteMany({
+      where: { userId, clubId },
+    });
+
+    return res.json({ success: true, message: 'Left club successfully.' });
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message });
+  }
+}
+
+export async function removeMemberAdmin(req: AuthRequest, res: Response) {
+  try {
+    const { id: clubId, userId } = req.params;
+
+    const deleted = await prisma.clubMember.deleteMany({
+      where: { userId, clubId },
+    });
+
+    if (deleted.count === 0) {
+      return res.status(404).json({ error: 'Membership record not found.' });
+    }
+
+    await prisma.auditLog.create({
+      data: {
+        action: 'CLUB_MEMBER_REMOVED',
+        adminEmail: req.user?.email || 'admin@yegnahealth.org',
+        details: `Removed user ${userId} from club ${clubId}`,
+      },
+    });
+
+    return res.json({ success: true, message: 'Member removed from club successfully.' });
   } catch (err: any) {
     return res.status(500).json({ error: err.message });
   }

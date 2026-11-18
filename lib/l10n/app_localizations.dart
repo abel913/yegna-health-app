@@ -6302,18 +6302,6 @@ abstract class AppLocalizations {
   /// **'{days}d ago'**
   String notificationTimeDaysAgo(int days);
 
-  /// No description provided for @adminConsoleTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Admin Console'**
-  String get adminConsoleTitle;
-
-  /// No description provided for @adminConsoleSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Manage clubs, questions, modules, and directories'**
-  String get adminConsoleSubtitle;
-
   /// No description provided for @studentClubsTitle.
   ///
   /// In en, this message translates to:
@@ -6799,6 +6787,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Connect with counselor during active hours:'**
   String get connectDuringHours;
+
+  /// No description provided for @clubAuthRequiredTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Account Required'**
+  String get clubAuthRequiredTitle;
+
+  /// No description provided for @clubAuthRequiredDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'To join a student health club and connect with peers, please create an account or sign in. This ensures counselors and club leaders can communicate with verified students.'**
+  String get clubAuthRequiredDesc;
+
+  /// No description provided for @clubSignInAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign In / Register'**
+  String get clubSignInAction;
+
+  /// No description provided for @clubMaybeLater.
+  ///
+  /// In en, this message translates to:
+  /// **'Maybe Later'**
+  String get clubMaybeLater;
+
+  /// No description provided for @clubLeaveAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave Club'**
+  String get clubLeaveAction;
+
+  /// No description provided for @clubLeaveConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave Club?'**
+  String get clubLeaveConfirmTitle;
+
+  /// No description provided for @clubLeaveConfirmDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to leave this student club? You can rejoin anytime.'**
+  String get clubLeaveConfirmDesc;
+
+  /// No description provided for @clubLeaveSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'You have left the club.'**
+  String get clubLeaveSuccess;
 }
 
 class _AppLocalizationsDelegate

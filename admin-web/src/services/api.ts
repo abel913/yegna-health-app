@@ -358,10 +358,18 @@ export const api = {
     if (!res.ok) throw new Error('Failed to delete club');
   },
 
-  async getClubRoster(id: string): Promise<{ clubName: string; roster: any[] }> {
+  async getClubRoster(id: string): Promise<{ clubName: string; memberCount: number; roster: any[] }> {
     const res = await fetch(`${API_BASE}/admin/clubs/${id}/roster`, { headers: getAuthHeaders() });
     if (!res.ok) throw new Error('Failed to load club roster');
     return res.json();
+  },
+
+  async removeClubMember(clubId: string, userId: string): Promise<void> {
+    const res = await fetch(`${API_BASE}/admin/clubs/${clubId}/members/${userId}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(),
+    });
+    if (!res.ok) throw new Error('Failed to remove club member');
   },
 
   // Users

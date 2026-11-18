@@ -1,5 +1,31 @@
 # Phase status
 
+## Student Club Management, Membership Sync & Guest Gating (2026-11-18)
+
+**Status: Completed & 100% Verified.**
+- **Backend Student Club Membership & Admin Roster**:
+  - `getClubRoster` in `clubs.controller.ts`: returns verified `roster` including `userId`, `displayName`, `email`, `role`, and `joinedAt` timestamps ordered descending.
+  - `joinClub`: associates joining user with their authenticated JWT ID (`req.user.id`), prevents duplicate memberships, and accurately increments club member count.
+  - `leaveClub`: authenticated endpoint (`POST /api/clubs/:id/leave`) that safely deletes `ClubMember` records and decrements counts.
+  - `removeMemberAdmin`: privileged endpoint (`DELETE /api/admin/clubs/:id/members/:userId`) allowing administrators to moderate rosters, complete with audit logging.
+- **Admin Web Roster Management (`admin-web`)**:
+  - Full-featured Member Roster Modal in `ClubsPage.tsx` with live member count badge.
+  - Real-time search filter for roster members by student name or email.
+  - Dynamic avatar badges with student initials and vibrant gradient styling.
+  - Detailed join date & time presentation (`toLocaleDateString` + `toLocaleTimeString`).
+  - Single-click CSV export of club member rosters (`FileSpreadsheet` icon).
+  - Member removal with confirmation modal dialog (`ConfirmModal`).
+- **Mobile App Guest Gating & Token-Authenticated Sync**:
+  - Guest authentication gating: students cannot join clubs without an authenticated account (`guest_explorer` or empty ID is intercepted).
+  - Account Required dialog (`showClubAuthRequiredDialog`) in `ClubCard` and `ClubDetailSheet` guiding guest users to sign in or register with direct navigation to `AuthPage`.
+  - Token-authenticated synchronization: `SyncClubRepository` automatically retrieves the stored session token (`SharedPreferences` `backend_auth_token`) and supplies it as Bearer authorization header to `ApiClient.joinClub` and `ApiClient.leaveClub`.
+  - Full bilingual localization in `lib/l10n/app_en.arb` and `lib/l10n/app_am.arb`, regenerated with `flutter gen-l10n`.
+- **Verification**:
+  - `flutter analyze`: **0 issues found**.
+  - `flutter test`: **196/196 tests passed (100%)**, including new guest auth gating test in `test/club_ui_test.dart`.
+  - `npm --prefix server run worker:check`: **0 errors**.
+  - `npm --prefix admin-web run build`: **Built successfully** with Vite SSR & client bundle.
+
 ## Government view-only reporting access (2026-11-18)
 
 - Implemented a dedicated `GOVERNMENT_VIEWER` role for the admin portal. Existing administrators provision accounts; there is no public government registration. The login response identifies the role and requires a password change before report access. Temporary tokens expire after 15 minutes; replacement passwords are bcrypt-hashed and must be at least 12 characters.
@@ -10,6 +36,28 @@
 - Live verification passed: portal `GET /` HTTP 200 and deployed JavaScript bundle includes Government Viewer/password-change UI; `/api/health` HTTP 200 with database connected; unauthenticated `/api/government/reports` and `/api/admin/users` both return HTTP 401.
 - **Account status:** no government account has been provisioned and no valid government login/report/CSV flow has been tested. An existing administrator must create a dedicated account for `geverment@gmail.com` with a fresh temporary password entered privately; the password previously shared in chat is not reused. The user must replace the temporary password at first sign-in.
 - Phase 3 remains partial; Phase 4 has not started.
+
+## Complete Removal of Mobile In-App Admin Portal (Centralized to Web Admin) (2026-11-18)
+
+**Status: Completed & 100% Verified.**
+- **Mobile In-App Admin Fully Purged**:
+  - Deleted entire `lib/src/admin/` folder (12 obsolete in-memory files: `admin_dashboard_page.dart`, `admin_facilities_page.dart`, `admin_mentors_page.dart`, `admin_modules_page.dart`, `admin_quizzes_page.dart`, `admin_clubs_page.dart`, `admin_articles_page.dart`, `admin_users_page.dart`, `admin_controller.dart`, `admin_models.dart`, `admin_login_page.dart`, `admin_repository.dart`).
+  - Deleted obsolete mobile admin test suites (`test/admin_clubs_ui_test.dart`, `test/admin_ui_test.dart`, `test/admin_controller_test.dart`).
+- **All Mobile Entry Points Eliminated**:
+  - `lib/src/app.dart`: Removed `adminRepository` & `adminController` fields, `_openAdmin()` method, executive admin icon & menu items from the top `AppBar`, and removed the `Administrator Portal` card and `adminConsoleTitle` tile from `_AccountPage`.
+  - `lib/src/home/home_page.dart`: Removed `onOpenAdmin` and the `Executive Admin Console` banner container widget.
+  - `lib/src/auth/auth_pages.dart`: Removed all admin imports, admin credentials bypass, role-based navigation directly into admin pages, and the "Admin Console" quick launch button.
+- **Offline Seed Templates Preserved**:
+  - Relocated shared fallback data models (`ModuleDraft`, `QuestionDraft`, `ContentTemplates`, etc.) to `lib/src/content/content_templates.dart`.
+  - Updated `SyncEducationRepository` and `LocalClubRepository` to import from the clean location.
+- **Web Admin Portal Centralization Confirmed**:
+  - The Web Admin Portal (`admin-web` running on Vite / Cloudflare Worker at `http://localhost:5174/`) remains the single, independent administrative interface for managing facilities, mentors, clubs, modules, quizzes, and users.
+- **Verification**:
+  - `flutter analyze`: **0 issues found** (clean in 6.7s).
+  - `flutter test`: **196/196 tests passed (100%)**.
+  - `flutter build web --release`: **Built successfully** into `build/web`.
+  - `npm --prefix admin-web run build`: **Built successfully** with Vite and Cloudflare plugin.
+>>>>>>> 8fc5302 (feat(clubs): implement club membership roster, guest auth gating, and full sync)
 
 
 ## Shared Database Real-Time Sync & Repository Unification (2026-11-18)

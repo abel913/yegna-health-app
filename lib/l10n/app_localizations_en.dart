@@ -3638,13 +3638,6 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get adminConsoleTitle => 'Admin Console';
-
-  @override
-  String get adminConsoleSubtitle =>
-      'Manage clubs, questions, modules, and directories';
-
-  @override
   String get studentClubsTitle => 'Student Health Clubs';
 
   @override
@@ -3910,4 +3903,30 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get connectDuringHours =>
       'Connect with counselor during active hours:';
+
+  @override
+  String get clubAuthRequiredTitle => 'Account Required';
+
+  @override
+  String get clubAuthRequiredDesc =>
+      'To join a student health club and connect with peers, please create an account or sign in. This ensures counselors and club leaders can communicate with verified students.';
+
+  @override
+  String get clubSignInAction => 'Sign In / Register';
+
+  @override
+  String get clubMaybeLater => 'Maybe Later';
+
+  @override
+  String get clubLeaveAction => 'Leave Club';
+
+  @override
+  String get clubLeaveConfirmTitle => 'Leave Club?';
+
+  @override
+  String get clubLeaveConfirmDesc =>
+      'Are you sure you want to leave this student club? You can rejoin anytime.';
+
+  @override
+  String get clubLeaveSuccess => 'You have left the club.';
 }
