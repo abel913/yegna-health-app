@@ -40,10 +40,31 @@ export async function getAllClubs(req: Request, res: Response) {
   }
 }
 
+function toPrismaClub(data: Record<string, any>): Record<string, any> {
+  const allowed = [
+    'name',
+    'description',
+    'category',
+    'venue',
+    'meetingTime',
+    'isApproved',
+  ] as const;
+
+  const result: Record<string, any> = {};
+  for (const key of allowed) {
+    if (data[key] !== undefined) {
+      result[key] = data[key];
+    }
+  }
+  return result;
+}
+
 export async function createClub(req: AuthRequest, res: Response) {
   try {
     const data = clubSchema.parse(req.body);
-    const club = await prisma.studentClub.create({ data });
+    const club = await prisma.studentClub.create({
+      data: toPrismaClub(data) as any,
+    });
 
     await prisma.auditLog.create({
       data: {
@@ -68,7 +89,7 @@ export async function updateClub(req: AuthRequest, res: Response) {
     const data = clubSchema.partial().parse(req.body);
     const club = await prisma.studentClub.update({
       where: { id },
-      data,
+      data: toPrismaClub(data) as any,
     });
 
     await prisma.auditLog.create({

@@ -1,5 +1,22 @@
 # Handoff notes
 
+## Cloudflare Admin Portal Edit/Delete & Hyperdrive Cache Resolution (2026-11-18)
+
+- **Context & Issue**: Edits and deletes in the deployed admin portal were reported as failing or not persisting to the database.
+- **Root Causes**:
+  1. **Hyperdrive Query Caching**: Cloudflare Hyperdrive query caching was enabled (60s max age), causing the immediate `SELECT` queries after a mutation to return stale cached rows rather than the fresh database state.
+  2. **Prisma Unknown Argument 500s**:
+     - `facilities.controller.ts`: Passed non-existent schema properties (`category`, `buildingEn`, etc.) to Prisma create/update, triggering HTTP 500 (`Unknown argument category`).
+     - `clubs.controller.ts`: Passed non-existent schema properties (`mentorName`, `mentorContact`, `rules`) to Prisma create/update, triggering HTTP 500 (`Unknown argument mentorName`).
+- **Fixes Applied**:
+  - Disabled Hyperdrive query caching in Cloudflare dashboard for `yegna-health-amharic` config `01923c5876ce4a4e81bc5a760217703c`.
+  - Added strict payload sanitizers (`toPrismaFacility` in `facilities.controller.ts` and `toPrismaClub` in `clubs.controller.ts`) so only known database columns are passed to Prisma.
+- **Verification**:
+  - `npm --prefix server run worker:check`: 0 errors.
+  - `npm --prefix server run build`: 0 errors.
+  - `npm --prefix server test`: 7/7 tests passed.
+  - `npm --prefix admin-web run build`: 0 errors.
+
 ## Government report loading fix (2026-11-18)
 
 - Replaced the report endpoint's concurrent per-table count calls and individual-row trend fetch with one parameterized PostgreSQL aggregate query. The exact statement was exercised against the linked database using Supabase CLI read-only mode and returned aggregate counts plus monthly totals.

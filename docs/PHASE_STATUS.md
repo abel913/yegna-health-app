@@ -1,5 +1,22 @@
 # Phase status
 
+## Cloudflare Admin Portal Edit/Delete & Hyperdrive Cache Resolution (2026-11-18)
+
+**Status: Completed & 100% Verified.**
+- **Root Causes Identified**:
+  1. **Hyperdrive Query Caching**: Cloudflare Hyperdrive had 60s query caching enabled on `yegna-health-amharic` (`01923c5876ce4a4e81bc5a760217703c`). Immediate follow-up reads after deletes or updates returned stale pre-mutation cached data.
+  2. **Prisma Unknown Argument 500 Errors**:
+     - `facilities.controller.ts`: Sent non-schema fields (`category`, `buildingEn`, etc.) to `prisma.facility.create` and `prisma.facility.update`, failing with HTTP 500 (`Unknown argument category`).
+     - `clubs.controller.ts`: Sent non-schema fields (`mentorName`, `mentorContact`, `rules`) to `prisma.studentClub.create` and `prisma.studentClub.update`, failing with HTTP 500 (`Unknown argument mentorName`).
+- **Fixes Applied**:
+  1. Disabled Hyperdrive query caching in Cloudflare dashboard for `yegna-health-amharic`.
+  2. Implemented strict payload sanitizers (`toPrismaFacility` and `toPrismaClub`) in `facilities.controller.ts` and `clubs.controller.ts` to only pass columns recognized by the PostgreSQL schema.
+- **Verification**:
+  - `npm --prefix server run worker:check`: 0 errors.
+  - `npm --prefix server run build`: 0 errors.
+  - `npm --prefix server test`: 7/7 tests passed.
+  - `npm --prefix admin-web run build`: 0 errors.
+
 ## Government reports runtime fix (2026-11-18)
 
 - Investigated the live report-loading failure after government sign-in. The linked Supabase database contains all eight report tables, and a read-only execution of the replacement aggregate SQL returned the expected count/trend payload. Cloudflare Hyperdrive targets the expected Supabase project host and database; `/api/health` reports connected.

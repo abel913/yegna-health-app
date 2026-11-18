@@ -66,18 +66,49 @@ export async function getFacilityById(req: Request, res: Response) {
   }
 }
 
+function toPrismaFacility(data: Record<string, any>, isCreate = false): Record<string, any> {
+  const allowed = [
+    'nameEn',
+    'nameAm',
+    'subCity',
+    'woreda',
+    'addressEn',
+    'addressAm',
+    'phone',
+    'latitude',
+    'longitude',
+    'operatingHours',
+    'isVerified',
+  ] as const;
+
+  const result: Record<string, any> = {};
+  for (const key of allowed) {
+    if (data[key] !== undefined) {
+      result[key] = data[key];
+    }
+  }
+
+  if (!result.woreda && data.buildingEn) {
+    result.woreda = data.buildingEn;
+  }
+
+  if (data.services !== undefined) {
+    result.services = Array.isArray(data.services)
+      ? JSON.stringify(data.services)
+      : String(data.services);
+  } else if (isCreate) {
+    result.services = '[]';
+  }
+
+  return result;
+}
+
 export async function createFacility(req: AuthRequest, res: Response) {
   try {
     const data = facilitySchema.parse(req.body);
-    const createData: any = {
-      ...data,
-      services: JSON.stringify(data.services),
-    };
-    if (data.woreda && !data.buildingEn) {
-      createData.buildingEn = data.woreda;
-    }
+    const createData = toPrismaFacility(data, true);
     const facility = await prisma.facility.create({
-      data: createData,
+      data: createData as any,
     });
 
     // Record audit log
@@ -92,7 +123,7 @@ export async function createFacility(req: AuthRequest, res: Response) {
     return res.status(201).json({
       facility: {
         ...facility,
-        services: data.services,
+        services: JSON.parse(facility.services || '[]'),
       },
     });
   } catch (err: any) {
@@ -107,18 +138,11 @@ export async function updateFacility(req: AuthRequest, res: Response) {
   try {
     const { id } = req.params;
     const data = facilitySchema.partial().parse(req.body);
-
-    const updateData: any = { ...data };
-    if (data.services !== undefined) {
-      updateData.services = JSON.stringify(data.services);
-    }
-    if (data.woreda && !data.buildingEn) {
-      updateData.buildingEn = data.woreda;
-    }
+    const updateData = toPrismaFacility(data, false);
 
     const facility = await prisma.facility.update({
       where: { id },
-      data: updateData,
+      data: updateData as any,
     });
 
     await prisma.auditLog.create({
