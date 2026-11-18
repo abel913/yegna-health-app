@@ -1,5 +1,47 @@
 # Testing strategy and results
 
+## Cloudflare admin portal deployment (2026-11-17)
+
+### Build and deploy commands
+
+- `cd admin-web; npm install --package-lock-only --ignore-scripts --no-audit --no-fund` — PASS.
+- `cd admin-web; npm install --ignore-scripts --no-audit --no-fund` — PASS.
+- `cd admin-web; npm run build` — PASS; Vite emitted a non-blocking warning that the minified JavaScript chunk is about 588 kB.
+- `cd server; npm run build` — PASS.
+- `cd server; npm run worker:check` — PASS.
+- Wrangler deploy dry-run — PASS.
+- Wrangler deploy to the new Worker `yegna-health-admin-portal` — PASS. Public URL: https://yegna-health-admin-portal.smartserve.workers.dev.
+
+### Live smoke checks
+
+- `GET /` — HTTP 200; SPA root served.
+- `GET /api/health` — HTTP 200; `status=ok`, database connected.
+- `GET /api/modules` — HTTP 200; 8 module records returned using a read-only query.
+- `GET /api/admin/dashboard` without an authorization token — HTTP 401.
+- `POST /api/auth/login` with an empty JSON object — HTTP 400 validation response.
+
+These checks confirm basic deployment, routing, Hyperdrive connectivity, and rejection of unauthenticated/invalid requests. No schema, migration, Supabase configuration, or remote database data was changed.
+
+### Not tested / remaining
+
+- Valid administrator login and authorized create/update/delete operations were not tested; no admin credentials were supplied.
+- SMTP verification and password recovery are not available until SMTP settings are configured in Cloudflare.
+- Browser visual QA and console inspection were not performed.
+- This does not establish production readiness, release security, or a formal security audit. No mobile Flutter checks were run as part of this deployment task.
+- The database password was exposed in chat. Rotate it in Supabase and update the Hyperdrive credential securely, then repeat the health check. No password or database URL containing a password is recorded here.
+- Automatic deployment setup is recorded above; the first GitHub Actions run remains unverified. Phase 3 remains partial; Phase 4 has not started.
+
+## GitHub Actions deployment workflow setup (2026-11-17)
+
+- `npm ci --ignore-scripts --no-audit --no-fund` in `server` — PASS.
+- `npm run prisma:generate` in `server` — PASS; Prisma Client 6.19.3 generated.
+- `npm run build` in `server` — PASS.
+- `npm run worker:check` in `server` — PASS.
+- `npm ci --ignore-scripts --no-audit --no-fund` in `admin-web` — PASS.
+- `npm run build` in `admin-web` — PASS; latest GitHub source built, with a non-blocking Vite chunk warning (700.79 kB minified JS).
+- `node node_modules/wrangler/bin/wrangler.js deploy --config dist/yegna_health_admin_portal/wrangler.json --dry-run --keep-vars` in `admin-web` — PASS; Worker bundle 4.16 MB total, Hyperdrive binding and 16 static assets detected; no remote deployment performed by this dry run.
+- GitHub repository secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` — present by name; secret values were not read or exposed.
+- GitHub Actions deployment execution — pending the workflow commit reaching `main`; not yet claimed as passing.
 # Final Phase 3 verification (2026-10-31)
 
 ## Flutter commands

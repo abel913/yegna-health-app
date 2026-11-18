@@ -159,7 +159,7 @@ export async function resetUserPassword(req: AuthRequest, res: Response) {
     return res.json({ success: true, message: `Password reset successfully for ${user.email}` });
   } catch (err: any) {
     if (err instanceof z.ZodError) {
-      return res.status(400).json({ error: 'VALIDATION_FAILED', details: err.errors });
+      return res.status(400).json({ error: 'VALIDATION_FAILED', details: err.issues });
     }
     return res.status(500).json({ error: err.message });
   }
@@ -244,7 +244,7 @@ export async function createUser(req: AuthRequest, res: Response) {
     });
   } catch (err: any) {
     if (err instanceof z.ZodError) {
-      return res.status(400).json({ error: 'VALIDATION_FAILED', details: err.errors });
+      return res.status(400).json({ error: 'VALIDATION_FAILED', details: err.issues });
     }
     return res.status(500).json({ error: err.message });
   }

@@ -95,7 +95,7 @@ export async function createModule(req: AuthRequest, res: Response) {
     return res.status(201).json({ module: mod });
   } catch (err: any) {
     if (err instanceof z.ZodError) {
-      return res.status(400).json({ error: 'Validation failed', details: err.errors });
+      return res.status(400).json({ error: 'Validation failed', details: err.issues });
     }
     return res.status(500).json({ error: err.message });
   }
@@ -122,7 +122,7 @@ export async function updateModule(req: AuthRequest, res: Response) {
     return res.json({ module: mod });
   } catch (err: any) {
     if (err instanceof z.ZodError) {
-      return res.status(400).json({ error: 'Validation failed', details: err.errors });
+      return res.status(400).json({ error: 'Validation failed', details: err.issues });
     }
     return res.status(500).json({ error: err.message });
   }

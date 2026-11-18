@@ -1,5 +1,24 @@
 # Technical decisions
 
+## 2026-11-17 — Cloudflare Admin Portal Deployment
+
+- Deploy the admin frontend and API as a new, uniquely named Cloudflare Worker with Workers Static Assets and same-origin `/api` routing; preserve all existing Cloudflare deployments.
+- Keep the existing React/Vite frontend and Express/Prisma API. Use a Hyperdrive binding to the existing Supabase PostgreSQL project. Never put database credentials or JWT secret values in source or documentation.
+- The new development Worker `yegna-health-admin-portal` is live at https://yegna-health-admin-portal.smartserve.workers.dev. Its Hyperdrive binding uses the existing configuration `01923c5876ce4a4e81bc5a760217703c`. A randomly generated `JWT_SECRET` is stored in Cloudflare.
+- The Worker uses a response-finish wrapper around Express, omits Morgan logging in the Workers runtime, and resolves Prisma to its Workerd/WASM client build. The Node server continues using its existing logging behavior.
+- Basic deployment, database health, read-only module access, unauthenticated-route rejection, and invalid-login validation were smoke-tested. No migrations, schema changes, seeds, or database writes were performed.
+- Valid administrator login, authorized CRUD, SMTP email flows, browser visual/console verification, and production readiness remain unverified. Configure SMTP before relying on verification and recovery email.
+- The database password was exposed in chat; rotate it and update the Hyperdrive connection securely. The credential must not be stored in the repository.
+- The initial GitHub Actions run remains unverified. Phase 3 remains partial; Phase 4 has not started.
+
+
+## 2026-11-17 — Admin Portal Continuous Deployment
+
+- Use GitHub Actions for deployment of the admin Worker from `main`. This repository is a monorepo: the Worker build requires dependencies from both `server` and `admin-web`, plus a generated Prisma Client, so a workflow can explicitly prepare each package before deployment.
+- The workflow validates server and Worker types, builds the frontend/Worker bundle, runs a Wrangler dry run, and deploys using the pinned Wrangler package with `--keep-vars`.
+- Keep `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` only in GitHub Actions repository secrets. Never store their values in source, workflow YAML, or documentation. The API token is scoped to Workers Scripts Write and expires after 90 days.
+- The workflow does not migrate, seed, or write to Supabase. The initial GitHub Actions deployment must pass before auto-deploy behavior is considered verified.
+
 ## 2026-11-12 — Unified Assessments Hub Architecture in Admin Web Portal
 
 - **Consolidated Assessments Hub (`AssessmentsPage.tsx`)**:

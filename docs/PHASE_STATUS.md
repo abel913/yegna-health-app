@@ -1,5 +1,13 @@
 # Phase status
 
+## Admin portal automatic deployment setup (2026-11-17)
+
+- Added `.github/workflows/deploy_admin_portal.yml` to build and deploy the admin portal Worker on pushes to `main`; manual `workflow_dispatch` is also enabled.
+- The workflow builds the server and admin frontend, validates the Worker bundle, then deploys `yegna-health-admin-portal` while preserving dashboard variables. It does not run database migrations or seed data.
+- GitHub Actions repository secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` are configured by name; secret values are not in the repository.
+- Local server build, Worker type check, frontend build, and Wrangler dry run passed against the current GitHub source. Automatic deployment remains unverified until the workflow runs successfully on GitHub.
+- Phase 3 remains partial; Phase 4 has not started.
+
 ## Health Curriculum CMS Professional Template System & Mobile Screen Preservation (2026-11-16)
 
 **Status: Completed & 100% Verified.**

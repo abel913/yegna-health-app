@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { prisma } from '../config/index.js';
+import { config, prisma } from '../config/index.js';
 import { authenticateToken, requireAdmin } from '../middleware/auth.middleware.js';
 
 import * as auth from '../controllers/auth.controller.js';
@@ -23,6 +23,12 @@ router.get('/health', async (req, res) => {
     await prisma.$queryRaw`SELECT 1`;
   } catch (err) {
     dbStatus = 'degraded';
+    const error = err instanceof Error ? err as Error & { code?: unknown } : undefined;
+    console.error(JSON.stringify({
+      event: 'database_health_check_failed',
+      errorName: error?.name ?? 'UnknownError',
+      errorCode: typeof error?.code === 'string' ? error.code : undefined,
+    }));
   }
   const dbLatencyMs = Date.now() - start;
 
@@ -30,7 +36,7 @@ router.get('/health', async (req, res) => {
     status: 'ok',
     service: 'Yegna Health Custom Backend API',
     version: '1.0.0',
-    environment: process.env.NODE_ENV || 'development',
+    environment: config.nodeEnv,
     uptimeSeconds: Math.floor(process.uptime()),
     database: {
       type: 'Supabase PostgreSQL (Prisma ORM)',

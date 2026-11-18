@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer';
+import { config } from '../config/index.js';
 
 interface SendVerificationOptions {
   email: string;
@@ -13,14 +14,14 @@ export async function sendVerificationEmail({
   code,
   token,
 }: SendVerificationOptions): Promise<void> {
-  const host = process.env.SMTP_HOST;
-  const port = parseInt(process.env.SMTP_PORT || '587', 10);
-  const user = process.env.SMTP_USER;
-  const pass = process.env.SMTP_PASS?.replace(/\s+/g, '');
-  const service = process.env.SMTP_SERVICE; // e.g. 'gmail'
-  const from = process.env.SMTP_FROM || `"Yegna Health" <${user || 'no-reply@yegnahealth.org'}>`;
+  const host = config.smtpHost;
+  const port = config.smtpPort;
+  const user = config.smtpUser;
+  const pass = config.smtpPass;
+  const service = config.smtpService; // e.g. 'gmail'
+  const from = config.smtpFrom || `"Yegna Health" <${user || 'no-reply@yegnahealth.org'}>`;
 
-  const backendUrl = process.env.BACKEND_PUBLIC_URL || 'http://localhost:5000';
+  const backendUrl = config.backendPublicUrl;
   const verifyUrl = `${backendUrl}/api/auth/verify-email?token=${token}`;
 
   // 1. If SMTP or Gmail is configured, attempt real email delivery
@@ -65,23 +66,13 @@ export async function sendVerificationEmail({
           </div>
         `,
       });
-      console.log(`[Mailer] Real email dispatched successfully to ${email}`);
+      console.log('[Mailer] Verification email sent.');
       return;
     } catch (err) {
-      console.error(`[Mailer] Error sending real email to ${email}:`, err);
+      console.error('[Mailer] Verification email delivery failed.');
+      throw new Error('Verification email could not be delivered.');
     }
   }
 
-  // 2. Development / Local Environment: Console simulation
-  console.log(`
-┌────────────────────────────────────────────────────────────────────────┐
-│ 📧 YEGNA HEALTH - VERIFICATION EMAIL DISPATCHED                        │
-├────────────────────────────────────────────────────────────────────────┤
-│ To:          ${email.padEnd(58)}│
-│ Student:     ${displayName.padEnd(58)}│
-│ 6-Digit Code:${(' ' + code).padEnd(58)}│
-│ Link:        ${verifyUrl.padEnd(58)}│
-│ Note:        Configure SMTP in server/.env for direct inbox delivery.  │
-└────────────────────────────────────────────────────────────────────────┘
-`);
+  throw new Error('Email delivery is not configured. Configure SMTP before enabling registration.');
 }

@@ -24,6 +24,8 @@ docs/smart delivery mock/
 # Node.js & Web Admin
 node_modules/
 dist/
+/server/dist-worker/
+/admin-web/.wrangler/
 *.db
 *.db-journal
 .env

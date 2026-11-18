@@ -100,7 +100,7 @@ export async function createQuestion(req: AuthRequest, res: Response) {
     });
   } catch (err: any) {
     if (err instanceof z.ZodError) {
-      return res.status(400).json({ error: 'Validation failed', details: err.errors });
+      return res.status(400).json({ error: 'Validation failed', details: err.issues });
     }
     return res.status(500).json({ error: err.message });
   }
@@ -141,7 +141,7 @@ export async function updateQuestion(req: AuthRequest, res: Response) {
     });
   } catch (err: any) {
     if (err instanceof z.ZodError) {
-      return res.status(400).json({ error: 'Validation failed', details: err.errors });
+      return res.status(400).json({ error: 'Validation failed', details: err.issues });
     }
     return res.status(500).json({ error: err.message });
   }

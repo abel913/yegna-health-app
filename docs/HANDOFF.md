@@ -1,5 +1,34 @@
-# Handoff
+# Handoff notes
 
+## Cloudflare Admin Portal deployment (2026-11-17)
+
+A new development deployment is live at https://yegna-health-admin-portal.smartserve.workers.dev (`yegna-health-admin-portal`). It serves the React/Vite admin SPA and Express API from one Worker; existing Cloudflare projects were not replaced. The existing Hyperdrive config `01923c5876ce4a4e81bc5a760217703c` is bound to the Worker. A random `JWT_SECRET` is stored as a Cloudflare secret; no secret value is in the repository.
+
+### Verified
+
+- Admin frontend `npm run build` — PASS (Vite emitted a non-blocking large-chunk warning).
+- Server `npm run build` — PASS.
+- Server `npm run worker:check` — PASS.
+- Wrangler deployment dry-run — PASS; actual deployment — PASS.
+- Live SPA — HTTP 200; `/api/health` — `ok`, database connected; `/api/modules` — HTTP 200 with 8 records.
+- Unauthenticated `GET /api/admin/dashboard` — HTTP 401; malformed `POST /api/auth/login` — HTTP 400 validation response.
+- Database access was verified with read-only health/module requests. No migrations, schema changes, writes, seeds, or Supabase setting changes were made.
+
+The Worker runtime required fixes for Express response completion, Morgan logging, and Prisma's Workerd/WASM client resolution. These fixes are in the current deployment.
+
+### Remaining checks and owner action
+
+- Configure SMTP in Cloudflare before expecting email verification or password recovery to work.
+- Test a valid admin login and authorized assessment/module CRUD in a browser. These were not tested because no admin credentials were provided. Browser visual and console checks were also not performed.
+- The database password was exposed in chat; rotate it in Supabase and update the Hyperdrive credential through Cloudflare securely, then confirm the health endpoint remains connected. No password was written to project files.
+- Treat this as a development deployment. Production readiness, security audit, and end-to-end admin operation are not established.
+- The first GitHub Actions-triggered deployment is not yet verified. Phase 3 remains partial; Phase 4 has not started.
+
+## GitHub Actions deployment workflow
+
+`.github/workflows/deploy_admin_portal.yml` is configured to deploy `yegna-health-admin-portal` after pushes to `main`, and can also be run manually. It installs both server and admin dependencies, generates Prisma Client, type-checks/builds the server Worker, builds the admin SPA, validates the Worker bundle with Wrangler dry run, then deploys with `--keep-vars` to preserve Cloudflare dashboard variables. Repository secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` are configured; values stay out of source control.
+
+The latest GitHub source was used for local build verification, preserving its newer CMS changes. The first GitHub Actions deployment still needs to run and pass before automatic deployment is considered verified. Vite emitted a non-blocking large-chunk warning. No migrations or database writes are part of this workflow.
 ## Health Curriculum CMS Professional Template System & Mobile Screen Preservation (2026-11-16)
 
 - **Admin Web CMS Clinical Template System**:

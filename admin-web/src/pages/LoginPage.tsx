@@ -9,10 +9,8 @@ import {
   Sun,
   Moon,
   Globe,
-  Sparkles,
   Loader2,
   AlertCircle,
-  Check,
 } from 'lucide-react';
 import { AdminUser } from '../types/index.js';
 import { BrandLogo } from '../components/common/BrandLogo.js';
@@ -30,20 +28,11 @@ export const LoginPage: React.FC<LoginPageProps> = ({
   onToggleLang,
 }) => {
   const { theme, toggleTheme } = useTheme();
-  const [email, setEmail] = useState('admin@yegnahealth.org');
-  const [password, setPassword] = useState('admin1234');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [copiedDemo, setCopiedDemo] = useState(false);
-
-  const handleFillDemo = () => {
-    setEmail('admin@yegnahealth.org');
-    setPassword('admin1234');
-    setError(null);
-    setCopiedDemo(true);
-    setTimeout(() => setCopiedDemo(false), 2500);
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -133,31 +122,6 @@ export const LoginPage: React.FC<LoginPageProps> = ({
                 : 'Zero-Knowledge Student Privacy Vault'}
             </span>
           </div>
-        </div>
-
-        {/* 1-Click Quick Demo Fill Pill */}
-        <div className="mb-4">
-          <button
-            type="button"
-            onClick={handleFillDemo}
-            className="w-full flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-xl bg-slate-50 dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700 text-xs font-bold transition-all cursor-pointer shadow-2xs"
-          >
-            {copiedDemo ? (
-              <>
-                <Check size={13} className="text-emerald-500" />
-                <span className="text-emerald-600 dark:text-emerald-400">
-                  {lang === 'am' ? 'የአስተዳዳሪ መረጃ ተሞልቷል!' : 'Demo Credentials Filled!'}
-                </span>
-              </>
-            ) : (
-              <>
-                <Sparkles size={13} className="text-brand-600 dark:text-cyan-400" />
-                <span>
-                  {lang === 'am' ? 'የአስተዳዳሪ መረጃ በ1-ጠቅታ ሙላ (Quick Demo)' : 'Quick Fill Demo Credentials'}
-                </span>
-              </>
-            )}
-          </button>
         </div>
 
         {/* Error Alert */}
@@ -258,10 +222,6 @@ export const LoginPage: React.FC<LoginPageProps> = ({
 
         {/* Footer Note */}
         <div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 text-center space-y-1">
-          <p className="text-[11px] text-slate-400 dark:text-slate-500 font-medium">
-            {lang === 'am' ? 'የተዘጋጀ የአስተዳዳሪ መለያ፡' : 'Pre-seeded Executive Account:'}{' '}
-            <span className="text-slate-700 dark:text-slate-300 font-bold">admin@yegnahealth.org</span>
-          </p>
           <p className="text-[10px] text-slate-400 dark:text-slate-600">
             {lang === 'am'
               ? '256-ቢት የደህንነት ጥበቃ • የባለብዙ ሚና አስተዳደር'

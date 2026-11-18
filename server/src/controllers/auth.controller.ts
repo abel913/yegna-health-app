@@ -86,7 +86,7 @@ export async function login(req: Request, res: Response) {
     });
   } catch (err: any) {
     if (err instanceof z.ZodError) {
-      return res.status(400).json({ error: 'VALIDATION_FAILED', details: err.errors });
+      return res.status(400).json({ error: 'VALIDATION_FAILED', details: err.issues });
     }
     return res.status(500).json({ error: err.message || 'Login failed' });
   }
@@ -159,7 +159,7 @@ export async function register(req: Request, res: Response) {
     });
   } catch (err: any) {
     if (err instanceof z.ZodError) {
-      return res.status(400).json({ error: 'VALIDATION_FAILED', details: err.errors });
+      return res.status(400).json({ error: 'VALIDATION_FAILED', details: err.issues });
     }
     return res.status(500).json({ error: err.message || 'Registration failed' });
   }
@@ -207,7 +207,7 @@ export async function verifyEmail(req: Request, res: Response) {
         },
       });
 
-      const appUrl = process.env.CLIENT_APP_URL || 'http://localhost:8080';
+      const appUrl = config.clientAppUrl;
       return res.send(`
         <!DOCTYPE html>
         <html>
@@ -394,7 +394,7 @@ export async function updateProfile(req: AuthRequest, res: Response) {
     return res.json({ user: updated });
   } catch (err: any) {
     if (err instanceof z.ZodError) {
-      return res.status(400).json({ error: 'VALIDATION_FAILED', details: err.errors });
+      return res.status(400).json({ error: 'VALIDATION_FAILED', details: err.issues });
     }
     return res.status(500).json({ error: err.message || 'Failed to update profile' });
   }
@@ -418,7 +418,7 @@ export async function updatePassword(req: AuthRequest, res: Response) {
     return res.json({ success: true, message: 'Password updated successfully' });
   } catch (err: any) {
     if (err instanceof z.ZodError) {
-      return res.status(400).json({ error: 'VALIDATION_FAILED', details: err.errors });
+      return res.status(400).json({ error: 'VALIDATION_FAILED', details: err.issues });
     }
     return res.status(500).json({ error: err.message || 'Failed to update password' });
   }

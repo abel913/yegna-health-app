@@ -1,0 +1,25 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "yegna-health-admin-portal",
+  "main": "../server/src/worker.ts",
+  "compatibility_date": "2026-11-17",
+  "compatibility_flags": [
+    "nodejs_compat",
+    "nodejs_compat_populate_process_env"
+  ],
+  "assets": {
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*"]
+  },
+  "hyperdrive": [
+    {
+      "binding": "HYPERDRIVE",
+      "id": "01923c5876ce4a4e81bc5a760217703c"
+    }
+  ],
+  "vars": {
+    "ADMIN_WEB_ORIGIN": "https://yegna-health-admin-portal.smartserve.workers.dev",
+    "BACKEND_PUBLIC_URL": "https://yegna-health-admin-portal.smartserve.workers.dev",
+    "NODE_ENV": "production"
+  }
+}

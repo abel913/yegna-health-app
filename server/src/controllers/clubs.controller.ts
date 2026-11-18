@@ -50,7 +50,7 @@ export async function createClub(req: AuthRequest, res: Response) {
     return res.status(201).json({ club });
   } catch (err: any) {
     if (err instanceof z.ZodError) {
-      return res.status(400).json({ error: 'Validation failed', details: err.errors });
+      return res.status(400).json({ error: 'Validation failed', details: err.issues });
     }
     return res.status(500).json({ error: err.message });
   }
@@ -76,7 +76,7 @@ export async function updateClub(req: AuthRequest, res: Response) {
     return res.json({ club });
   } catch (err: any) {
     if (err instanceof z.ZodError) {
-      return res.status(400).json({ error: 'Validation failed', details: err.errors });
+      return res.status(400).json({ error: 'Validation failed', details: err.issues });
     }
     return res.status(500).json({ error: err.message });
   }
