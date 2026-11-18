@@ -17,7 +17,13 @@
 - Use GitHub Actions for deployment of the admin Worker from `main`. This repository is a monorepo: the Worker build requires dependencies from both `server` and `admin-web`, plus a generated Prisma Client, so a workflow can explicitly prepare each package before deployment.
 - The workflow validates server and Worker types, builds the frontend/Worker bundle, runs a Wrangler dry run, and deploys using the pinned Wrangler package with `--keep-vars`.
 - Keep `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` only in GitHub Actions repository secrets. Never store their values in source, workflow YAML, or documentation. The API token is scoped to Workers Scripts Write and expires after 90 days.
-- The workflow does not migrate, seed, or write to Supabase. The first deployment attempt found line breaks in the token and the workflow now strips whitespace in memory; the next attempt still failed authentication. A later run stopped at a TypeScript error before deploy, now fixed. A subsequent successful deploy is required to verify the credential and automatic release.
+- At the time of this decision, deployment was still unverified: early attempts failed on token formatting and another stopped at a TypeScript error. Those issues were resolved; the successful push-triggered deployment and runtime verification are recorded in the 2026-11-18 follow-up below. The workflow does not migrate, seed, or write to Supabase.
+
+## 2026-11-18 — Generate the PostgreSQL Prisma Client for Cloudflare CI
+
+- The Worker uses `PrismaPg` with the Supabase PostgreSQL connection provided by Hyperdrive, so CI must generate Prisma Client from the existing `server/prisma/schema.postgresql.prisma`, not the default SQLite schema.
+- The push-triggered deployment and live `/api/health` check passed after this correction (run `44272774147`). No database schema or data changes were needed.
+- Keep this schema selection explicit in the deployment workflow; do not run `prisma db push`, migrations, or seed operations as part of deployment.
 
 ## 2026-11-12 — Unified Assessments Hub Architecture in Admin Web Portal
 

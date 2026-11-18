@@ -1,5 +1,13 @@
 # Testing strategy and results
 
+## Cloudflare GitHub Actions deployment follow-up (2026-11-18)
+
+- Push of commit `ca42659` triggered Admin Portal workflow run #8 (`44272774147`) automatically — PASS. All steps passed, including PostgreSQL Prisma Client generation, server and Worker checks, admin build, Wrangler dry run, and Cloudflare deployment.
+- The first CI deployment exposed a runtime mismatch: the default Prisma schema generated a SQLite client, but the Worker connects through `PrismaPg` and Hyperdrive to PostgreSQL. `.github/workflows/deploy_admin_portal.yml` now generates from `server/prisma/schema.postgresql.prisma`.
+- Live checks after the corrected deployment: `GET /` — HTTP 200, admin app title present; `GET /api/health` — HTTP 200, `status=ok`, database connected.
+- Local commands — PASS: `npx --no-install prisma generate --schema=prisma/schema.postgresql.prisma` (from `server`); `npm run build` and `npm run worker:check` (from `server`); `npm run build` (from `admin-web`); `npx --no-install wrangler deploy --config dist/yegna_health_admin_portal/wrangler.json --dry-run` (from `admin-web`). Vite emitted a non-blocking large-chunk warning.
+- No database migrations, schema changes, seeds, or writes were run. Admin login/CRUD, email delivery, browser visual QA, and production readiness remain unverified.
+
 ## Cloudflare admin portal deployment (2026-11-17)
 
 ### Build and deploy commands
@@ -29,9 +37,9 @@ These checks confirm basic deployment, routing, Hyperdrive connectivity, and rej
 - Browser visual QA and console inspection were not performed.
 - This does not establish production readiness, release security, or a formal security audit. No mobile Flutter checks were run as part of this deployment task.
 - The database password was exposed in chat. Rotate it in Supabase and update the Hyperdrive credential securely, then repeat the health check. No password or database URL containing a password is recorded here.
-- Automatic deployment is not verified: both GitHub Actions deploy attempts failed due to malformed token formatting. Phase 3 remains partial; Phase 4 has not started.
+- Historical note: automatic deployment was not verified when this entry was written. It was later verified by the successful 2026-11-18 push-triggered run above. Phase 3 remains partial; Phase 4 has not started.
 
-## GitHub Actions deployment workflow setup (2026-11-17)
+## GitHub Actions deployment workflow setup (historical snapshot, 2026-11-17)
 
 - `npm ci --ignore-scripts --no-audit --no-fund` in `server` — PASS.
 - `npm run prisma:generate` in `server` — PASS; Prisma Client 6.19.3 generated.
@@ -41,7 +49,7 @@ These checks confirm basic deployment, routing, Hyperdrive connectivity, and rej
 - `npm run build` in `admin-web` — PASS; latest GitHub source built, with a non-blocking Vite chunk warning (700.79 kB minified JS).
 - `node node_modules/wrangler/bin/wrangler.js deploy --config dist/yegna_health_admin_portal/wrangler.json --dry-run --keep-vars` in `admin-web` — PASS; Worker bundle 4.16 MB total, Hyperdrive binding and 16 static assets detected; no remote deployment performed by this dry run.
 - GitHub repository secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` — present by name; secret values were not read or exposed.
-- GitHub Actions runs `44255338865` and `44255796015` — builds and Wrangler dry-runs passed; deploy failed due to malformed Cloudflare token formatting. Run `44258362092` (commit `12cb831`) — stopped at `server/src/controllers/mentors.controller.ts:29` because Zod 4 requires `z.record(keySchema, valueSchema)`. Fixed to `z.record(z.string(), z.any())`. The Admin lockfile was synchronized for its declared Leaflet dependencies. Local server build, Worker type-check, admin build, and Wrangler dry-run now pass; next Actions run must verify deployment credentials.
+- At the time of this snapshot, runs `44255338865` and `44255796015` failed at Cloudflare authentication and `44258362092` stopped on the Zod 4 `z.record` type error. Those issues were addressed; the successful follow-up run and live health results are recorded above.
 # Final Phase 3 verification (2026-10-31)
 
 ## Flutter commands

@@ -1,11 +1,11 @@
 # Phase status
 
-## Admin portal automatic deployment setup (2026-11-17)
+## Admin portal automatic deployment setup (verified 2026-11-18)
 
-- Added `.github/workflows/deploy_admin_portal.yml` to build and deploy the admin portal Worker on pushes to `main`; manual `workflow_dispatch` is also enabled.
-- The workflow builds the server and admin frontend, validates the Worker bundle, then deploys `yegna-health-admin-portal` while preserving dashboard variables. It does not run database migrations or seed data.
-- GitHub Actions repository secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` are configured by name; secret values are not in the repository.
-- Local server build, Worker type check, frontend build, and Wrangler dry run pass. Actions run `44258362092` stopped before deployment on a Zod 4 `z.record` type error in `mentors.controller.ts`; fixed to pass the key and value schemas. The latest admin package lockfile was also synchronized with its declared Leaflet dependencies. The previous token-format error has not yet been rechecked by a new deployment run.
+- `.github/workflows/deploy_admin_portal.yml` deploys on pushes to `main` and supports manual `workflow_dispatch`. Push-triggered run #8 (`44272774147`, commit `ca42659`) completed every build, validation, and Cloudflare deployment step successfully.
+- GitHub Actions repository secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` are configured by name; values are not stored in the repository.
+- A live `/api/health` check initially exposed a Prisma provider mismatch: the workflow generated the default SQLite client while the Worker uses `PrismaPg` with Hyperdrive/PostgreSQL. The workflow now generates from the existing `server/prisma/schema.postgresql.prisma` schema. After the fix, the SPA returned HTTP 200 and `/api/health` returned HTTP 200 with `status=ok` and the database connected.
+- Local verification passed: PostgreSQL Prisma Client generation, server build, Worker type check, admin build, and Wrangler dry run. No migration or database/schema change was made.
 - Phase 3 remains partial; Phase 4 has not started.
 
 ## GitHub Actions Android Release APK Build Pipeline (2026-11-18)

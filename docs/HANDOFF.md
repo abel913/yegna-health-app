@@ -26,6 +26,8 @@ A new development deployment is live at https://yegna-health-admin-portal.smarts
 - Live SPA — HTTP 200; `/api/health` — `ok`, database connected; `/api/modules` — HTTP 200 with 8 records.
 - Unauthenticated `GET /api/admin/dashboard` — HTTP 401; malformed `POST /api/auth/login` — HTTP 400 validation response.
 - Database access was verified with read-only health/module requests. No migrations, schema changes, writes, seeds, or Supabase setting changes were made.
+- Push-triggered GitHub Actions run #8 (`44272774147`, commit `ca42659`) succeeded through `Deploy to Cloudflare`. After deployment, `GET /` returned HTTP 200 and `GET /api/health` returned HTTP 200 with `status=ok` and the database connected.
+- The first CI deploy exposed that the workflow generated Prisma Client from the SQLite schema while the Worker uses `PrismaPg` and Hyperdrive/PostgreSQL. The workflow now generates from the existing `server/prisma/schema.postgresql.prisma`; this did not change or migrate the database.
 
 The Worker runtime required fixes for Express response completion, Morgan logging, and Prisma's Workerd/WASM client resolution. These fixes are in the current deployment.
 
@@ -35,13 +37,13 @@ The Worker runtime required fixes for Express response completion, Morgan loggin
 - Test a valid admin login and authorized assessment/module CRUD in a browser. These were not tested because no admin credentials were provided. Browser visual and console checks were also not performed.
 - The database password was exposed in chat; rotate it in Supabase and update the Hyperdrive credential through Cloudflare securely, then confirm the health endpoint remains connected. No password was written to project files.
 - Treat this as a development deployment. Production readiness, security audit, and end-to-end admin operation are not established.
-- The first two Actions deployment attempts reached Wrangler but failed authentication: first due to a multiline token secret, then due to invalid Authorization format after whitespace cleanup. Run `44258362092` stopped earlier during server compilation on the Zod 4 `z.record` signature. The source and admin lockfile fixes pass locally; the next CI run must verify Cloudflare credentials. Phase 3 remains partial; Phase 4 has not started.
+- Earlier Actions attempts failed on token formatting or stopped at a Zod 4 type error; those issues were addressed before successful run #8. Phase 3 remains partial; Phase 4 has not started.
 
 ## GitHub Actions deployment workflow
 
 `.github/workflows/deploy_admin_portal.yml` is configured to deploy `yegna-health-admin-portal` after pushes to `main`, and can also be run manually. It installs both server and admin dependencies, generates Prisma Client, type-checks/builds the server Worker, builds the admin SPA, validates the Worker bundle with Wrangler dry run, then deploys with `--keep-vars` to preserve Cloudflare dashboard variables. Repository secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` are configured; values stay out of source control.
 
-The workflow is on `main` and triggers on pushes. The first two attempts failed at Cloudflare authentication due to malformed token formatting. The third attempt on commit `12cb831` failed before deploy because of a Zod 4 type error, now fixed locally. The credential must still be confirmed by the next deployment attempt. Automatic deployment is not yet verified. Vite emits a non-blocking large-chunk warning. No migrations or database writes are part of this workflow.
+The workflow is on `main` and its push trigger was verified by successful run #8 (`44272774147`) for commit `ca42659`. The workflow builds both packages, generates the PostgreSQL Prisma client, validates the bundle, and deploys with `--keep-vars`. Vite emits a non-blocking large-chunk warning. No migrations or database writes are part of this workflow.
 
 ## Health Curriculum CMS Professional Template System & Mobile Screen Preservation (2026-11-16)
 
