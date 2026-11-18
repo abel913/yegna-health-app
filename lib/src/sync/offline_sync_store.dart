@@ -169,6 +169,11 @@ class OfflineSyncStore {
     }
   }
 
+  Future<bool> hasSynced(String entity) async {
+    final time = await getLastSyncTime(entity);
+    return time != null;
+  }
+
   Future<void> _recordSyncTimestamp(String entity) async {
     try {
       final prefs = await _getPrefs();

@@ -7,7 +7,23 @@ import 'sync_club_repository.dart';
 class ClubController extends ChangeNotifier {
   ClubController({
     required ClubRepository repository,
-  }) : _repository = repository;
+  }) : _repository = repository {
+    if (_repository is Listenable) {
+      (_repository as Listenable).addListener(_onRepositoryUpdated);
+    }
+  }
+
+  void _onRepositoryUpdated() {
+    loadClubs(_currentUserId);
+  }
+
+  @override
+  void dispose() {
+    if (_repository is Listenable) {
+      (_repository as Listenable).removeListener(_onRepositoryUpdated);
+    }
+    super.dispose();
+  }
 
   final ClubRepository _repository;
 

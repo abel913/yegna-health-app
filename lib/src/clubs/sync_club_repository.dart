@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 
 import '../sync/api_client.dart';
 import '../sync/offline_sync_store.dart';
@@ -7,7 +8,7 @@ import 'club_repository.dart';
 
 /// Offline-first club repository that combines local member rosters
 /// with remote club directory synchronization.
-class SyncClubRepository implements ClubRepository {
+class SyncClubRepository extends ChangeNotifier implements ClubRepository {
   SyncClubRepository({
     required OfflineSyncStore store,
     required LocalClubRepository localRepository,
@@ -28,13 +29,14 @@ class SyncClubRepository implements ClubRepository {
     // 1. Check offline persistent cache
     List<StudentClub>? cached = await _store.getCachedClubs();
 
-    // 2. If no cache yet, fall back to local seed repository
-    if (cached == null || cached.isEmpty) {
+    // 2. If no cache yet and has never synced from backend, fall back to local seed repository
+    if (cached == null && !(await _store.hasSynced('clubs'))) {
       cached = await _local.getClubs();
       if (cached.isNotEmpty) {
         unawaited(_store.saveClubs(cached));
       }
     }
+    cached ??= [];
 
     // 3. Stale-While-Revalidate: Trigger background fetch
     if (_apiClient != null) {
@@ -61,6 +63,7 @@ class SyncClubRepository implements ClubRepository {
           for (final club in clubs) {
             await _local.saveClub(club);
           }
+          notifyListeners();
           return _filterClubs(clubs, category: category, query: query);
         }
       } catch (_) {
@@ -228,10 +231,14 @@ class SyncClubRepository implements ClubRepository {
   Future<void> _revalidateInBackground() async {
     try {
       final remoteList = await _apiClient?.fetchClubs();
-      if (remoteList != null && remoteList.isNotEmpty) {
+      if (remoteList != null) {
         final clubs =
             remoteList.map(OfflineSyncStore.clubFromBackendMap).toList();
         await _store.saveClubs(clubs);
+        for (final club in clubs) {
+          await _local.saveClub(club);
+        }
+        notifyListeners();
       }
     } catch (_) {}
   }

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 
 import '../sync/api_client.dart';
 import '../sync/offline_sync_store.dart';
@@ -7,7 +8,7 @@ import 'mentor_repository.dart';
 
 /// Offline-first mentor repository that immediately serves from persistent cache
 /// or bundled verified mentors, while revalidating against the Node.js backend.
-class SyncMentorRepository implements MentorRepository {
+class SyncMentorRepository extends ChangeNotifier implements MentorRepository {
   SyncMentorRepository({
     required OfflineSyncStore store,
     ApiClient? apiClient,
@@ -31,13 +32,14 @@ class SyncMentorRepository implements MentorRepository {
     // 1. Retrieve from local persistent cache
     List<Mentor>? cached = await _store.getCachedMentors();
 
-    // 2. If no cache yet, fall back to bundled verified mentors and seed cache
-    if (cached == null || cached.isEmpty) {
+    // 2. If no cache yet and has never synced from backend, fall back to bundled verified mentors
+    if (cached == null && !(await _store.hasSynced('mentors'))) {
       cached = await _fallback.getMentors(campus: campus);
       if (cached.isNotEmpty) {
         unawaited(_store.saveMentors(cached));
       }
     }
+    cached ??= [];
 
     // 3. Stale-While-Revalidate: Trigger background fetch if client is available
     if (_apiClient != null) {
@@ -69,6 +71,7 @@ class SyncMentorRepository implements MentorRepository {
         if (remoteList != null) {
           final mentors = remoteList.map(OfflineSyncStore.mentorFromMap).toList();
           await _store.saveMentors(mentors);
+          notifyListeners();
           return _applyFilters(
             mentors,
             query: query,
@@ -146,9 +149,10 @@ class SyncMentorRepository implements MentorRepository {
   Future<void> _revalidateInBackground() async {
     try {
       final remoteList = await _apiClient?.fetchMentors();
-      if (remoteList != null && remoteList.isNotEmpty) {
+      if (remoteList != null) {
         final mentors = remoteList.map(OfflineSyncStore.mentorFromMap).toList();
         await _store.saveMentors(mentors);
+        notifyListeners();
       }
     } catch (_) {
       // Offline or network error: silently ignored in background

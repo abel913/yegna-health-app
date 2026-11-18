@@ -35,21 +35,45 @@ class _MentorsPageState extends State<MentorsPage> {
     _repository =
         widget.mentorRepository ?? const LocalVerifiedMentorRepository();
     _searchController.addListener(_onSearchChanged);
+    _setupRepositoryListener();
     _loadMentors();
+  }
+
+  void _setupRepositoryListener() {
+    final repo = _repository;
+    if (repo is Listenable) {
+      (repo as Listenable).addListener(_onRepositoryUpdated);
+    }
+  }
+
+  void _removeRepositoryListener() {
+    final repo = _repository;
+    if (repo is Listenable) {
+      (repo as Listenable).removeListener(_onRepositoryUpdated);
+    }
+  }
+
+  void _onRepositoryUpdated() {
+    if (mounted) {
+      _loadMentors();
+    }
   }
 
   @override
   void didUpdateWidget(MentorsPage oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.mentorRepository != oldWidget.mentorRepository) {
+      _removeRepositoryListener();
       _repository =
           widget.mentorRepository ?? const LocalVerifiedMentorRepository();
+      _setupRepositoryListener();
       _loadMentors();
     }
   }
 
   @override
   void dispose() {
+    _removeRepositoryListener();
     _searchController.removeListener(_onSearchChanged);
     _searchController.dispose();
     super.dispose();

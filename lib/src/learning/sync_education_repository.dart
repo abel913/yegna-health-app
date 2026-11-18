@@ -103,8 +103,8 @@ class SyncEducationRepository implements EducationRepository {
     // 1. Check local persistent cache
     var rawModules = await _store.getCachedModules();
 
-    // 2. Fallback to bundled templates if cache empty
-    if (rawModules == null || rawModules.isEmpty) {
+    // 2. Fallback to bundled templates if cache empty and has never synced
+    if (rawModules == null && !(await _store.hasSynced('modules'))) {
       final templates = ContentTemplates.moduleTemplates;
       rawModules = templates
           .map((m) => {
@@ -118,6 +118,7 @@ class SyncEducationRepository implements EducationRepository {
           .toList();
       unawaited(_store.saveModules(rawModules));
     }
+    rawModules ??= [];
 
     // 3. Stale-While-Revalidate background fetch
     if (_apiClient != null) {
@@ -247,12 +248,12 @@ class SyncEducationRepository implements EducationRepository {
     }
 
     final raw = await _store.getCachedModules();
-    if (raw == null || raw.isEmpty) {
+    if (raw == null && !(await _store.hasSynced('modules'))) {
       return kLearningModules;
     }
 
-    final published = raw.where((m) => m['isPublished'] != false).toList();
-    if (published.isEmpty) {
+    final published = (raw ?? []).where((m) => m['isPublished'] != false).toList();
+    if (published.isEmpty && !(await _store.hasSynced('modules'))) {
       return kLearningModules;
     }
 
@@ -272,7 +273,7 @@ class SyncEducationRepository implements EducationRepository {
   Future<void> _revalidateModules() async {
     try {
       final remoteList = await _apiClient?.fetchModules();
-      if (remoteList != null && remoteList.isNotEmpty) {
+      if (remoteList != null) {
         await _store.saveModules(remoteList);
       }
     } catch (_) {}
@@ -296,7 +297,7 @@ class SyncAssessmentRepository implements AssessmentRepository {
     final isAmharic = locale.startsWith('am');
     final rawQuizzes = await _store.getCachedQuizzes() ?? [];
 
-    if (rawQuizzes.isEmpty) {
+    if (rawQuizzes.isEmpty && !(await _store.hasSynced('quizzes'))) {
       // Bundled default assessments
       return [
         AssessmentSummary(

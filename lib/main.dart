@@ -21,10 +21,8 @@ import 'src/locale_controller.dart';
 import 'src/notifications/notification_controller.dart';
 import 'src/learning/assessment_repository.dart';
 import 'src/learning/education_repository.dart';
-import 'src/learning/learning_cache.dart';
 import 'src/learning/learning_progress_controller.dart';
 import 'src/learning/progress_repository.dart';
-import 'src/learning/supabase_education_repository.dart';
 import 'src/learning/sync_education_repository.dart';
 import 'src/sync/api_client.dart';
 import 'src/sync/offline_sync_store.dart';
@@ -73,12 +71,10 @@ Future<void> main() async {
         : SupabaseGeminiChatbotRepository(supabaseClient),
   );
 
-  final educationRepository = supabaseClient == null
-      ? SyncEducationRepository(store: syncStore, apiClient: apiClient)
-      : SupabaseEducationRepository(supabaseClient, LearningCache());
-  final assessmentRepository = supabaseClient == null
-      ? SyncAssessmentRepository(store: syncStore, apiClient: apiClient)
-      : SupabaseAssessmentRepository(supabaseClient, LearningCache());
+  final educationRepository =
+      SyncEducationRepository(store: syncStore, apiClient: apiClient);
+  final assessmentRepository =
+      SyncAssessmentRepository(store: syncStore, apiClient: apiClient);
 
   runApp(YegnaHealthApp(
     localeController: localeController,

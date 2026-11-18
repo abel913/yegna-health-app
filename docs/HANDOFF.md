@@ -1,5 +1,20 @@
 # Handoff notes
 
+## Shared Database Real-Time Sync & Repository Unification (2026-11-18)
+
+- **Issue**: Need complete guarantee that when an admin edits, creates, or deletes facilities, mentors, clubs, modules, or quizzes in the Admin Portal, those changes instantly occur on the mobile app.
+- **Resolution**:
+  - `lib/src/sync/offline_sync_store.dart`: Added `hasSynced(entity)` to track whether an entity has been fetched from the backend. Once synced, local database records take 100% precedence and hardcoded seed fallbacks are never resurrected even if an admin deletes records.
+  - `lib/src/discovery/sync_mentor_repository.dart`: Extended `ChangeNotifier`, calling `notifyListeners()` on background revalidation and pull-to-refresh.
+  - `lib/src/discovery/mentors_page.dart`: Added `_setupRepositoryListener()` and `_removeRepositoryListener()` so `MentorsPage` re-renders in real time when fresh database records arrive.
+  - `lib/src/clubs/sync_club_repository.dart`: Extended `ChangeNotifier` and calling `notifyListeners()` on sync.
+  - `lib/src/clubs/club_controller.dart`: Added listener to `repository` so `ClubController` automatically reloads and refreshes the Clubs page whenever the database changes.
+  - `lib/main.dart`: Switched `educationRepository` and `assessmentRepository` to `SyncEducationRepository` and `SyncAssessmentRepository` to fully unify curriculum and quizzes with the Admin Portal's Prisma database.
+- **Verification**:
+  - `flutter analyze`: 0 issues found.
+  - `flutter test`: 215/215 tests passed (100%).
+  - GitHub Actions Run #44299228501 (`build_apk.yml`): completed successfully.
+
 ## Live Production Backend URL & Pull-to-Refresh Sync for Release APK (2026-11-18)
 
 - **Issue**: Downloaded Android APK was defaulting to `http://10.0.2.2:5000/api` (Android emulator loopback IP), making physical devices unable to connect to the live Cloudflare Worker database, and causing additions/edits/deletions in the Admin Portal to not reflect on mobile devices.

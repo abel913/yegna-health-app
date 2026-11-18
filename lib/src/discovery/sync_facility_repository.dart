@@ -30,14 +30,15 @@ class SyncFacilityRepository extends ChangeNotifier
     // 1. Retrieve from local persistent cache
     List<Facility>? cached = await _store.getCachedFacilities();
 
-    // 2. If no cache yet, fall back to bundled verified clinics and seed cache
-    if (cached == null || cached.isEmpty) {
+    // 2. If no cache yet and has never synced from backend, fall back to bundled verified clinics
+    if (cached == null && !(await _store.hasSynced('facilities'))) {
       cached = await _fallback.getFacilities();
       if (cached.isNotEmpty) {
         // Seed offline cache for future instant offline reads
         unawaited(_store.saveFacilities(cached));
       }
     }
+    cached ??= [];
 
     // 3. Stale-While-Revalidate: Trigger background fetch if client is available
     if (_apiClient != null) {
@@ -160,7 +161,7 @@ class SyncFacilityRepository extends ChangeNotifier
   Future<void> _revalidateInBackground() async {
     try {
       final remoteList = await _apiClient?.fetchFacilities();
-      if (remoteList != null && remoteList.isNotEmpty) {
+      if (remoteList != null) {
         final facilities =
             remoteList.map(OfflineSyncStore.facilityFromMap).toList();
         await _store.saveFacilities(facilities);
