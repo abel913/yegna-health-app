@@ -10,6 +10,7 @@ import { AssessmentsPage } from './pages/AssessmentsPage.js';
 import { ClubsPage } from './pages/ClubsPage.js';
 import { UsersPage } from './pages/UsersPage.js';
 import { AuditLogsPage } from './pages/AuditLogsPage.js';
+import { GovernmentReportsPage } from './pages/GovernmentReportsPage.js';
 import { LoginPage } from './pages/LoginPage.js';
 import { api } from './services/api.js';
 import {
@@ -23,6 +24,7 @@ import {
   StudentClub,
   ManagedUser,
   AuditLog,
+  GovernmentReport,
 } from './types/index.js';
 import { useToast } from './context/ToastContext.js';
 import { exportToCsv } from './utils/csvExport.js';
@@ -46,6 +48,21 @@ export function App() {
   const [clubs, setClubs] = useState<StudentClub[]>([]);
   const [users, setUsers] = useState<ManagedUser[]>([]);
   const [logs, setLogs] = useState<AuditLog[]>([]);
+  const [governmentReport, setGovernmentReport] = useState<GovernmentReport | null>(null);
+  const [governmentReportLoading, setGovernmentReportLoading] = useState(false);
+  const [governmentReportError, setGovernmentReportError] = useState<string | null>(null);
+
+  const loadGovernmentReport = async () => {
+    setGovernmentReportLoading(true);
+    setGovernmentReportError(null);
+    try {
+      setGovernmentReport(await api.getGovernmentReport());
+    } catch (err) {
+      setGovernmentReportError(err instanceof Error ? err.message : 'Report request failed');
+    } finally {
+      setGovernmentReportLoading(false);
+    }
+  };
 
   const loadAllData = async () => {
     if (!user) return;
@@ -82,7 +99,16 @@ export function App() {
 
   useEffect(() => {
     if (user) {
-      loadAllData();
+      if (user.role.toUpperCase() === 'GOVERNMENT_VIEWER') {
+        if (user.mustChangePassword) {
+          setGovernmentReport(null);
+          setGovernmentReportLoading(false);
+        } else {
+          void loadGovernmentReport();
+        }
+      } else {
+        void loadAllData();
+      }
     }
   }, [user]);
 
@@ -401,6 +427,22 @@ export function App() {
         onLoginSuccess={setUser}
         lang={lang}
         onToggleLang={() => setLang(lang === 'en' ? 'am' : 'en')}
+      />
+    );
+  }
+
+  if (user.role.toUpperCase() === 'GOVERNMENT_VIEWER') {
+    return (
+      <GovernmentReportsPage
+        user={user}
+        report={governmentReport}
+        isLoading={governmentReportLoading}
+        error={governmentReportError}
+        onRetry={() => void loadGovernmentReport()}
+        lang={lang}
+        onToggleLang={() => setLang((current) => (current === 'en' ? 'am' : 'en'))}
+        onLogout={handleLogout}
+        onPasswordChanged={setUser}
       />
     );
   }

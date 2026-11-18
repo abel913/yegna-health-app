@@ -140,6 +140,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({
 
   const [resettingUser, setResettingUser] = useState<ManagedUser | null>(null);
   const [newPassword, setNewPassword] = useState('');
+  const minimumPasswordLength = resettingUser?.role === 'GOVERNMENT_VIEWER' ? 12 : 6;
   const [isSubmittingPassword, setIsSubmittingPassword] = useState(false);
 
   const [deletingUser, setDeletingUser] = useState<ManagedUser | null>(null);
@@ -253,11 +254,9 @@ export const UsersPage: React.FC<UsersPageProps> = ({
   // Password generator
   const generateRandomPassword = () => {
     const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789!@#$%';
-    let pass = '';
-    for (let i = 0; i < 10; i++) {
-      pass += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return pass;
+    const randomValues = new Uint32Array(18);
+    window.crypto.getRandomValues(randomValues);
+    return Array.from(randomValues, (value) => chars[value % chars.length]).join('');
   };
 
   // Handle Add User Submit
@@ -289,7 +288,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({
   // Confirm Reset Password
   const handleConfirmResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!resettingUser || !onResetPassword || newPassword.length < 6) return;
+    if (!resettingUser || !onResetPassword || newPassword.length < minimumPasswordLength) return;
     setIsSubmittingPassword(true);
     try {
       await onResetPassword(resettingUser.id, newPassword);
@@ -515,6 +514,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({
                 { val: 'CONTENT_AUTHOR', label: 'Content Author' },
                 { val: 'ADMIN', label: 'Health Admin' },
                 { val: 'SUPER_ADMIN', label: 'Super Admin' },
+                { val: 'GOVERNMENT_VIEWER', label: lang === 'am' ? 'የመንግስት ተመልካች' : 'Government Viewer' },
               ].map((opt) => (
                 <button
                   key={opt.val}
@@ -766,6 +766,8 @@ export const UsersPage: React.FC<UsersPageProps> = ({
                             ? 'Peer Mentor'
                             : u.role === 'CONTENT_AUTHOR'
                             ? 'Content Author'
+                            : u.role === 'GOVERNMENT_VIEWER'
+                            ? (lang === 'am' ? 'የመንግስት ተመልካች' : 'Government Viewer')
                             : 'Student'}
                         </span>
                       </td>
@@ -1186,6 +1188,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({
                   <option value="MENTOR">Peer Mentor (አማካሪ)</option>
                   <option value="CONTENT_AUTHOR">Content Author</option>
                   <option value="ADMIN">Health Admin (አስተዳዳሪ)</option>
+                  <option value="GOVERNMENT_VIEWER">{lang === 'am' ? 'የመንግስት ተመልካች (ሪፖርቶችን ብቻ)' : 'Government Viewer (reports only)'}</option>
                 </select>
               </div>
 
@@ -1207,13 +1210,22 @@ export const UsersPage: React.FC<UsersPageProps> = ({
                 </div>
                 <input
                   type="text"
-                  minLength={6}
+                  minLength={newUserData.role === 'GOVERNMENT_VIEWER' ? 12 : 6}
+                  required={newUserData.role === 'GOVERNMENT_VIEWER'}
                   value={newUserData.password}
                   onChange={(e) => setNewUserData({ ...newUserData, password: e.target.value })}
                   placeholder="Leave empty for auto-generated password"
                   className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-mono dark:text-white focus:outline-none focus:ring-1 focus:ring-slate-400"
                 />
               </div>
+
+              {newUserData.role === 'GOVERNMENT_VIEWER' && (
+                <p className="rounded-xl border border-cyan-200 bg-cyan-50 p-3 text-xs text-cyan-900 dark:border-cyan-900 dark:bg-cyan-950/40 dark:text-cyan-100">
+                  {lang === 'am'
+                    ? 'በመጀመሪያ መግቢያ ጊዜ የመንግስት ተመልካቹ ጊዜያዊ የይለፍ ቃሉን መቀየር አለበት። የይለፍ ቃሉን በግል የደህንነት መንገድ ያጋሩ።'
+                    : 'The government viewer must change this temporary password at first sign-in. Share it through a private channel.'}
+                </p>
+              )}
 
               <div className="flex items-center gap-2 pt-1">
                 <input
@@ -1421,13 +1433,15 @@ export const UsersPage: React.FC<UsersPageProps> = ({
             <form onSubmit={handleConfirmResetPassword} className="p-5 space-y-4">
               <div>
                 <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                  New Password (min 6 characters)
+                  {resettingUser.role === 'GOVERNMENT_VIEWER'
+                    ? (lang === 'am' ? 'ጊዜያዊ የይለፍ ቃል (ቢያንስ 12 ቁምፊ)' : 'Temporary Password (min 12 characters)')
+                    : (lang === 'am' ? 'አዲስ የይለፍ ቃል (ቢያንስ 6 ቁምፊ)' : 'New Password (min 6 characters)')}
                 </label>
                 <div className="relative">
                   <input
                     type="text"
                     required
-                    minLength={6}
+                    minLength={minimumPasswordLength}
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     placeholder="Enter or generate temporary password..."
@@ -1454,7 +1468,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({
                 </button>
                 <button
                   type="submit"
-                  disabled={newPassword.length < 6 || isSubmittingPassword}
+                  disabled={newPassword.length < minimumPasswordLength || isSubmittingPassword}
                   className="px-4 py-2 text-xs font-semibold text-white bg-slate-900 hover:bg-slate-800 dark:bg-brand-600 rounded-xl transition-colors cursor-pointer flex items-center gap-1.5 shadow-2xs"
                 >
                   <Check size={13} />

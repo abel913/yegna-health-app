@@ -46,17 +46,27 @@ export const LoginPage: React.FC<LoginPageProps> = ({
         body: JSON.stringify({ email, password }),
       });
 
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error || (lang === 'am' ? 'የመግቢያ መረጃው ትክክል አይደለም' : 'Login failed'));
-      }
-
-      const role = data.user.role.toUpperCase();
-      if (role !== 'ADMIN' && role !== 'SUPER_ADMIN') {
+      const data = await res.json().catch(() => null);
+      if (!data || typeof data !== 'object') {
         throw new Error(
           lang === 'am'
-            ? 'ፍቃድ ተከልክሏል፡ ይህ ፖርታል ለዋና አስተዳዳሪዎች ብቻ የተፈቀደ ነው።'
-            : 'Access denied: This portal is strictly for platform administrators.'
+            ? 'ከአገልጋዩ ትክክለኛ የመግቢያ ምላሽ አልተገኘም። የአገልጋዩን ሁኔታ ያረጋግጡ።'
+            : 'The sign-in service returned an invalid response. Check that the admin API is available.'
+        );
+      }
+      if (!res.ok) {
+        throw new Error(data.message || data.error || (lang === 'am' ? 'የመግቢያ መረጃው ትክክል አይደለም' : 'Login failed'));
+      }
+
+      if (!data.user || !data.token) {
+        throw new Error(lang === 'am' ? 'ከአገልጋዩ የመግቢያ መረጃ አልተገኘም።' : 'The admin API returned an incomplete sign-in response.');
+      }
+      const role = data.user.role.toUpperCase();
+      if (role !== 'ADMIN' && role !== 'SUPER_ADMIN' && role !== 'GOVERNMENT_VIEWER') {
+        throw new Error(
+          lang === 'am'
+            ? 'ፍቃድ ተከልክሏል፡ ይህ ፖርታል ለአስተዳዳሪዎች ወይም ለመንግስት ሪፖርት ተመልካቾች ብቻ ነው።'
+            : 'Access denied: this portal is for administrators or government report viewers.'
         );
       }
 

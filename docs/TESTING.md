@@ -1,5 +1,22 @@
 # Testing strategy and results
 
+## Government viewer implementation checks (2026-11-18)
+
+| Exact command/action | Result |
+| --- | --- |
+| `npx.cmd prisma generate --schema=prisma/schema.postgresql.prisma` (from `server`) | PASS; Prisma Client 6.19.3 generated. |
+| `npm.cmd run build` (from `server`) | PASS; TypeScript build. |
+| `npm.cmd run worker:check` (from `server`) | PASS; Worker type check. |
+| `npm.cmd test` (from `server`) | PASS; 7/7 government report, authorization, temporary-password, and route-guard tests. |
+| `npm.cmd run build` (from `admin-web`) | PASS; TypeScript and Vite production builds. Non-blocking dependency annotation and large-chunk warnings remain. |
+| `npx.cmd prisma validate --schema=prisma/schema.postgresql.prisma` (with local placeholder DB URLs; from `server`) | PASS; no connection was made. Prisma reports its existing `multiSchema` preview deprecation warning. |
+| `npx.cmd --yes --package=supabase supabase db push --remote --dry-run` | PASS; exactly the additive government password-change migration was queued. |
+| `npx.cmd --yes --package=supabase supabase db push --remote --yes --skip-vault` | PASS; applied one migration to project `oflkhtjskpsedsuczfkj`, identified by Supabase as production. |
+| Read-only query of `information_schema.columns` for `yegna.User.mustChangePassword` | PASS; `BOOLEAN NOT NULL DEFAULT false` confirmed. |
+
+These are automated local build/tests and database schema checks. No government account was created; no live government login, first-password change, report request, browser interaction, or CSV download has been tested yet. The GitHub push and Cloudflare workflow are pending.
+
+
 ## Cloudflare GitHub Actions deployment follow-up (2026-11-18)
 
 - Push of commit `ca42659` triggered Admin Portal workflow run #8 (`44272774147`) automatically — PASS. All steps passed, including PostgreSQL Prisma Client generation, server and Worker checks, admin build, Wrangler dry run, and Cloudflare deployment.

@@ -1,5 +1,14 @@
 # Technical decisions
 
+## 2026-11-18 — Government report-only portal accounts
+
+- Use the string role `GOVERNMENT_VIEWER`; do not create a role enum or public signup flow. Existing admins create dedicated government accounts through User Management.
+- Enforce authorization at the backend on every protected request. Government accounts get only aggregate government reports and CSV export; no personal records, management lists, audit log, or individual survey responses.
+- Add only `User.mustChangePassword BOOLEAN NOT NULL DEFAULT FALSE`. Government temporary credentials are bcrypt-hashed, have a 15-minute session, require a 12-character minimum replacement, and are changed before reports load.
+- Treat the password previously shared in chat as exposed and do not reuse it. The owner/admin must enter a fresh temporary password privately and share it out of band. No government account has been provisioned by this change.
+- GitHub Actions deploys the Worker on pushes to `main`; the database migration is applied separately and is not part of deployment CI.
+
+
 ## 2026-11-17 — Cloudflare Admin Portal Deployment
 
 - Deploy the admin frontend and API as a new, uniquely named Cloudflare Worker with Workers Static Assets and same-origin `/api` routing; preserve all existing Cloudflare deployments.

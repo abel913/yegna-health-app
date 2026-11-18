@@ -68,9 +68,10 @@ export async function login(req: Request, res: Response) {
         email: user.email,
         role: user.role,
         displayName: user.displayName,
+        mustChangePassword: user.mustChangePassword,
       },
       config.jwtSecret,
-      { expiresIn: '30d' }
+      { expiresIn: user.mustChangePassword ? '15m' : '30d' }
     );
 
     return res.json({
@@ -80,6 +81,7 @@ export async function login(req: Request, res: Response) {
         email: user.email,
         displayName: user.displayName,
         role: user.role,
+        mustChangePassword: user.mustChangePassword,
         isEmailVerified: user.isEmailVerified,
         hasCompletedSurvey: user.hasCompletedSurvey,
       },
@@ -355,6 +357,7 @@ export async function me(req: AuthRequest, res: Response) {
       isSuspended: true,
       hasCompletedSurvey: true,
       createdAt: true,
+      mustChangePassword: true,
     },
   });
 
@@ -407,15 +410,40 @@ export async function updatePassword(req: AuthRequest, res: Response) {
 
   try {
     const { newPassword } = updatePasswordSchema.parse(req.body);
+    if (req.user.mustChangePassword && newPassword.length < 12) {
+      return res.status(400).json({
+        error: 'PASSWORD_TOO_SHORT',
+        message: 'Your new password must contain at least 12 characters.',
+      });
+    }
     const salt = await bcrypt.genSalt(10);
     const passwordHash = await bcrypt.hash(newPassword, salt);
 
-    await prisma.user.update({
+    const updated = await prisma.user.update({
       where: { id: req.user.id },
-      data: { passwordHash },
+      data: { passwordHash, mustChangePassword: false },
     });
 
-    return res.json({ success: true, message: 'Password updated successfully' });
+    const token = jwt.sign({
+      id: updated.id,
+      email: updated.email,
+      role: updated.role,
+      displayName: updated.displayName,
+      mustChangePassword: false,
+    }, config.jwtSecret, { expiresIn: '30d' });
+
+    return res.json({
+      success: true,
+      message: 'Password updated successfully',
+      token,
+      user: {
+        id: updated.id,
+        email: updated.email,
+        displayName: updated.displayName,
+        role: updated.role,
+        mustChangePassword: false,
+      },
+    });
   } catch (err: any) {
     if (err instanceof z.ZodError) {
       return res.status(400).json({ error: 'VALIDATION_FAILED', details: err.issues });

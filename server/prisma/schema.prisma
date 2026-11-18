@@ -12,7 +12,8 @@ model User {
   email              String       @unique
   passwordHash       String
   displayName        String
-  role               String       @default("STUDENT") // STUDENT, MENTOR, ADMIN, SUPER_ADMIN
+  role               String       @default("STUDENT") // STUDENT, MENTOR, CONTENT_AUTHOR, ADMIN, SUPER_ADMIN, GOVERNMENT_VIEWER
+  mustChangePassword Boolean      @default(false)
   isSuspended        Boolean      @default(false)
   isEmailVerified    Boolean      @default(false)
   hasCompletedSurvey Boolean      @default(false)

@@ -1,5 +1,12 @@
 # Feature inventory
 
+## Government reporting access (2026-11-18)
+
+- **Implemented locally and automated checks pass:** admin-provisioned `GOVERNMENT_VIEWER`, forced temporary-password change, bilingual reports-only dashboard and CSV, aggregate totals/trends, server-side role refresh and endpoint denial, and UI prevention of management-data requests.
+- **Database change:** additive `mustChangePassword` boolean migration is applied to the linked Supabase project and its default/column metadata were verified read-only.
+- **Not yet verified live:** GitHub push/Cloudflare deployment, government account provisioning, login, password change, report view, and CSV download. A fresh temporary password must be entered privately; never reuse the exposed chat password. Existing administrator flows are preserved and pass local compile/tests.
+
+
 ## Current evidence (2026-10-31)
 
 - **Implemented locally; automated Flutter coverage passes:** localized article/assessment browsing and detail flows, client-side validation/answer selection, server-result presentation/retry state, local caching and guest progress, opt-in sync UI, account progress/history controls, and five-destination navigation. `flutter test` currently passes all 27 tests.

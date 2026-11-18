@@ -1,5 +1,15 @@
 # Handoff notes
 
+## Government viewer portal feature (2026-11-18)
+
+- Feature work is isolated on branch `codex/automatic-admin-deploy` and rebased onto the current `origin/main`. The older `C:\Users\HP\Downloads\Yegna Health Amharic` checkout contains unrelated uncommitted changes and was not used for this push.
+- Implemented the aggregate-only `GOVERNMENT_VIEWER` role, dedicated report UI/CSV, backend role checks, forced temporary-password change, admin provisioning controls, and safe login response parsing. See `PHASE_STATUS.md` for security boundaries and command results.
+- Supabase CLI is linked to `oflkhtjskpsedsuczfkj`. The additive password-change migration was applied and its column verified. This project is identified as production by Supabase; no rows were created or modified.
+- At handoff time: local builds/tests pass, but Git push and Cloudflare workflow deployment remain pending. Do not tell the user this portal feature is live until the push-triggered workflow succeeds and the live health check passes.
+- No government account exists yet. After the feature deploys, an existing admin should open User Management → Add User, choose Government Viewer, enter the requested email and a newly generated temporary password (at least 12 characters), and deliver it privately. Do not reuse the password that was shared in chat. Government user changes it at first sign-in. No credentials are in source control.
+- The Government Viewer is not allowed on management pages or APIs; live login/report behavior still needs verification with the newly provisioned account. No Phase 4 work was started.
+
+
 ## Shared Database Real-Time Sync & Repository Unification (2026-11-18)
 
 - **Issue**: Need complete guarantee that when an admin edits, creates, or deletes facilities, mentors, clubs, modules, or quizzes in the Admin Portal, those changes instantly occur on the mobile app.

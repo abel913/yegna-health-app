@@ -3,6 +3,29 @@ export interface AdminUser {
   email: string;
   displayName: string;
   role: string;
+  mustChangePassword?: boolean;
+}
+
+export interface GovernmentReportPoint {
+  month: string;
+  students: number;
+  mentors: number;
+}
+
+export interface GovernmentReport {
+  registeredStudents: number;
+  registeredMentors: number;
+  mentorProfiles: number;
+  facilities: number;
+  verifiedFacilities: number;
+  clubs: number;
+  approvedClubs: number;
+  learningModules: number;
+  publishedModules: number;
+  quizQuestions: number;
+  moduleAssessments: number;
+  assessmentQuestions: number;
+  registrationTrend: GovernmentReportPoint[];
 }
 
 export type FacilityCategory =

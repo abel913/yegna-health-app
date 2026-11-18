@@ -12,7 +12,7 @@ const createUserSchema = z.object({
   email: z.string().email(),
   displayName: z.string().min(2),
   password: z.string().min(6),
-  role: z.enum(['STUDENT', 'MENTOR', 'CONTENT_AUTHOR', 'ADMIN', 'SUPER_ADMIN']).default('STUDENT'),
+  role: z.enum(['STUDENT', 'MENTOR', 'CONTENT_AUTHOR', 'ADMIN', 'SUPER_ADMIN', 'GOVERNMENT_VIEWER']).default('STUDENT'),
   isEmailVerified: z.boolean().default(true),
 });
 
@@ -76,14 +76,23 @@ export async function updateUserRole(req: AuthRequest, res: Response) {
     const { id } = req.params;
     const { role } = req.body;
 
-    const validRoles = ['STUDENT', 'MENTOR', 'CONTENT_AUTHOR', 'ADMIN', 'SUPER_ADMIN'];
+    const validRoles = ['STUDENT', 'MENTOR', 'CONTENT_AUTHOR', 'ADMIN', 'SUPER_ADMIN', 'GOVERNMENT_VIEWER'];
     if (!validRoles.includes(role)) {
       return res.status(400).json({ error: 'Invalid role specified.' });
     }
 
+    const currentUser = await prisma.user.findUnique({ where: { id }, select: { role: true } });
+    if (!currentUser) return res.status(404).json({ error: 'User not found.' });
+    if (role === 'GOVERNMENT_VIEWER' && currentUser.role !== 'GOVERNMENT_VIEWER') {
+      return res.status(400).json({
+        error: 'GOVERNMENT_VIEWER_MUST_BE_PROVISIONED',
+        message: 'Create a dedicated government viewer account with a new temporary password.',
+      });
+    }
+
     const updated = await prisma.user.update({
       where: { id },
-      data: { role },
+      data: { role, mustChangePassword: role === 'GOVERNMENT_VIEWER' ? true : undefined },
       select: { id: true, email: true, displayName: true, role: true },
     });
 
@@ -108,7 +117,6 @@ export async function toggleUserSuspension(req: AuthRequest, res: Response) {
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
-
     const newSuspensionState = !user.isSuspended;
     const updated = await prisma.user.update({
       where: { id },
@@ -139,13 +147,19 @@ export async function resetUserPassword(req: AuthRequest, res: Response) {
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
+    if (user.role === 'GOVERNMENT_VIEWER' && newPassword.length < 12) {
+      return res.status(400).json({
+        error: 'PASSWORD_TOO_SHORT',
+        message: 'Government viewer temporary passwords must contain at least 12 characters.',
+      });
+    }
 
     const salt = await bcrypt.genSalt(10);
     const passwordHash = await bcrypt.hash(newPassword, salt);
 
     await prisma.user.update({
       where: { id },
-      data: { passwordHash },
+      data: { passwordHash, mustChangePassword: user.role === 'GOVERNMENT_VIEWER' },
     });
 
     await prisma.auditLog.create({
@@ -197,6 +211,12 @@ export async function deleteUser(req: AuthRequest, res: Response) {
 export async function createUser(req: AuthRequest, res: Response) {
   try {
     const { email, displayName, password, role, isEmailVerified } = createUserSchema.parse(req.body);
+    if (role === 'GOVERNMENT_VIEWER' && password.length < 12) {
+      return res.status(400).json({
+        error: 'PASSWORD_TOO_SHORT',
+        message: 'Government viewer temporary passwords must contain at least 12 characters.',
+      });
+    }
 
     const existing = await prisma.user.findUnique({
       where: { email: email.toLowerCase().trim() },
@@ -214,6 +234,7 @@ export async function createUser(req: AuthRequest, res: Response) {
         displayName: displayName.trim(),
         passwordHash,
         role,
+        mustChangePassword: role === 'GOVERNMENT_VIEWER',
         isEmailVerified,
       },
       select: {
@@ -221,6 +242,7 @@ export async function createUser(req: AuthRequest, res: Response) {
         email: true,
         displayName: true,
         role: true,
+        mustChangePassword: true,
         isSuspended: true,
         isEmailVerified: true,
         createdAt: true,

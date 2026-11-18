@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-11-18 — Government view-only admin portal (local verification)
+
+- Added an admin-provisioned `GOVERNMENT_VIEWER` role with a reports-only bilingual dashboard and aggregate CSV export.
+- Added refreshed server authorization, denial of management/profile/audit access, forced password replacement for temporary credentials, and an additive `mustChangePassword` database column.
+- Improved sign-in handling for empty/non-JSON API responses and added server authorization/report tests (7 passing).
+- Server and Worker checks and admin production build passed. The migration was applied to the linked Supabase project and verified. GitHub push, Cloudflare deployment, account provisioning, and live government sign-in remain pending.
+
+
 ## 2026-10-31 — Phase 3 final verification and RLS correction
 
 - Corrected the public assessment visibility RLS correlation with additive migration `20261031095050_fix_assessment_publication_policy_correlation`; verified the applied migration and `pg_policies` predicate in the linked development project.

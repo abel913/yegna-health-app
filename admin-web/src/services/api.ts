@@ -12,6 +12,7 @@ import {
   SystemTelemetry,
   BaselineSurveyStats,
   SurveyQuestion,
+  GovernmentReport,
 } from '../types/index.js';
 
 const API_BASE = '/api';
@@ -50,6 +51,26 @@ export const api = {
   getCurrentUser(): AdminUser | null {
     const u = localStorage.getItem('yegna_admin_user');
     return u ? JSON.parse(u) : null;
+  },
+
+  async getGovernmentReport(): Promise<GovernmentReport> {
+    const res = await fetch(`${API_BASE}/government/reports`, { headers: getAuthHeaders() });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.message || data.error || 'Failed to load government reports');
+    return data.report;
+  },
+
+  async updatePassword(newPassword: string): Promise<{ token: string; user: AdminUser }> {
+    const res = await fetch(`${API_BASE}/auth/password`, {
+      method: 'PUT',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ newPassword }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.message || data.error || 'Failed to update password');
+    localStorage.setItem('yegna_admin_token', data.token);
+    localStorage.setItem('yegna_admin_user', JSON.stringify(data.user));
+    return data;
   },
 
   // Dashboard & Metrics

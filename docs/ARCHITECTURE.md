@@ -1,5 +1,14 @@
 # Architecture
 
+## Admin portal government viewer boundary (2026-11-18)
+
+- `GOVERNMENT_VIEWER` is a server-authorized account role; the React role check only chooses the reports-only UI. `refreshAuthorizationContext` reloads the role, suspension state, and password-change flag from PostgreSQL before protected requests, so a stale JWT role cannot grant access.
+- `/api/government/reports` is the only protected government route. It returns aggregate totals and a 12-month student/mentor registration trend using count queries plus a role/date-only projection. It does not select or return account names, email addresses, user identifiers, audit events, or individual survey responses.
+- All `/api/admin/*` routes remain behind refreshed authentication and `requireAdmin`. Auth profile/read/delete and club-join endpoints reject government viewers. `/api/auth/password` remains available so a temporary credential can be replaced. The portal role branch skips `loadAllData` and requests only the report after password change.
+- `User.mustChangePassword` is an additive PostgreSQL boolean flag, default false. Admin-created government accounts and their password resets set it true; login grants a 15-minute temporary token. A successful password change hashes the new password, clears the flag, and returns a replacement session token.
+- Provisioning stays restricted to existing admin routes. No anonymous government registration, database credential, or service-role secret is added to the browser.
+
+
 ## Final Phase 3 backend verification (2026-10-31)
 
 - The linked development database has four Phase 3 migration records. `20261031095050_fix_assessment_publication_policy_correlation.sql` fixes the public assessment policy so a published version is correlated to its outer `education_assessments.id`; before it, the unqualified `id` resolved to the version table and formed a tautological comparison. The correction is applied and verified in the remote `pg_policies` catalog.

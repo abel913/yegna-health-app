@@ -1,5 +1,15 @@
 # Phase status
 
+## Government view-only reporting access (2026-11-18)
+
+- Implemented a dedicated `GOVERNMENT_VIEWER` role for the admin portal. Existing administrators provision accounts; there is no public government registration. The login response identifies the role and requires a password change before report access. Temporary tokens expire after 15 minutes; replacement passwords are bcrypt-hashed and must be at least 12 characters.
+- The server exposes one protected `/api/government/reports` endpoint for aggregate counts and monthly student/mentor totals. Current database role and forced-password state are refreshed on protected requests. Government viewers are denied admin/management endpoints and account profile/deletion APIs; reports contain no names, emails, individual records, audit rows, or survey responses. The portal does not fetch admin management lists for this role.
+- Applied additive migration `20261118163951_government_viewer_password_change.sql` to linked Supabase project `yegna-health-amharic` (`oflkhtjskpsedsuczfkj`), which the CLI identified as production. Read-only verification confirmed `yegna."User"."mustChangePassword"` exists as `BOOLEAN NOT NULL DEFAULT false`. No data was seeded or changed.
+- Local checks passed: PostgreSQL Prisma generation and schema validation, server build, Worker type check, 7 server tests, and admin portal build. The admin build emitted dependency annotation and bundle-size warnings; no build errors.
+- **Deployment/account status:** source changes are not yet pushed or deployed in this status entry. No government account has been provisioned and no government login has been tested. An administrator must create a dedicated account using the requested email and a fresh temporary password entered privately; the password previously shared in chat is not reused. The user must replace the temporary password at first sign-in.
+- Phase 3 remains partial; Phase 4 has not started.
+
+
 ## Shared Database Real-Time Sync & Repository Unification (2026-11-18)
 
 **Status: Completed & 100% Verified.**

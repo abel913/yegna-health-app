@@ -1,6 +1,13 @@
 import { Router } from 'express';
 import { config, prisma } from '../config/index.js';
-import { authenticateToken, requireAdmin } from '../middleware/auth.middleware.js';
+import {
+  authenticateToken,
+  requireAdmin,
+  requireGovernmentViewer,
+  requireNotGovernmentViewer,
+  requirePasswordChangeComplete,
+  refreshAuthorizationContext,
+} from '../middleware/auth.middleware.js';
 
 import * as auth from '../controllers/auth.controller.js';
 import * as facilities from '../controllers/facilities.controller.js';
@@ -12,6 +19,7 @@ import * as users from '../controllers/users.controller.js';
 import * as dashboard from '../controllers/dashboard.controller.js';
 import * as survey from '../controllers/survey.controller.js';
 import * as learningAssessments from '../controllers/learning-assessments.controller.js';
+import * as governmentReports from '../controllers/government-reports.controller.js';
 
 export const router = Router();
 
@@ -54,11 +62,11 @@ router.post('/auth/register', auth.register);
 router.get('/auth/verify-email', auth.verifyEmail);
 router.post('/auth/verify-email', auth.verifyEmail);
 router.post('/auth/resend-verification', auth.resendVerification);
-router.get('/auth/me', authenticateToken as any, auth.me as any);
-router.put('/auth/profile', authenticateToken as any, auth.updateProfile as any);
-router.put('/auth/password', authenticateToken as any, auth.updatePassword as any);
-router.delete('/auth/me', authenticateToken as any, auth.deleteAccount as any);
-router.delete('/auth/account', authenticateToken as any, auth.deleteAccount as any);
+router.get('/auth/me', authenticateToken as any, refreshAuthorizationContext as any, requirePasswordChangeComplete as any, requireNotGovernmentViewer as any, auth.me as any);
+router.put('/auth/profile', authenticateToken as any, refreshAuthorizationContext as any, requirePasswordChangeComplete as any, requireNotGovernmentViewer as any, auth.updateProfile as any);
+router.put('/auth/password', authenticateToken as any, refreshAuthorizationContext as any, auth.updatePassword as any);
+router.delete('/auth/me', authenticateToken as any, refreshAuthorizationContext as any, requirePasswordChangeComplete as any, requireNotGovernmentViewer as any, auth.deleteAccount as any);
+router.delete('/auth/account', authenticateToken as any, refreshAuthorizationContext as any, requirePasswordChangeComplete as any, requireNotGovernmentViewer as any, auth.deleteAccount as any);
 
 // --- 3. PUBLIC DIRECTORIES (FOR MOBILE APP & WEB) ---
 router.get('/facilities', facilities.getAllFacilities);
@@ -73,11 +81,17 @@ router.get('/quizzes', quizzes.getAllQuestions);
 router.get('/learning-assessments', learningAssessments.getAll);
 
 router.get('/clubs', clubs.getAllClubs);
-router.post('/clubs/:id/join', authenticateToken as any, clubs.joinClub as any);
+router.post('/clubs/:id/join', authenticateToken as any, refreshAuthorizationContext as any, requirePasswordChangeComplete as any, requireNotGovernmentViewer as any, clubs.joinClub as any);
+
+// This is the only protected resource available to government viewers.
+const governmentRouter = Router();
+governmentRouter.use(authenticateToken as any, refreshAuthorizationContext as any, requirePasswordChangeComplete as any, requireGovernmentViewer as any);
+governmentRouter.get('/reports', governmentReports.getGovernmentReports as any);
+router.use('/government', governmentRouter);
 
 // --- 4. PROTECTED ADMIN ROUTES (REQUIRE ADMIN ROLE) ---
 const adminRouter = Router();
-adminRouter.use(authenticateToken as any, requireAdmin as any);
+adminRouter.use(authenticateToken as any, refreshAuthorizationContext as any, requirePasswordChangeComplete as any, requireAdmin as any);
 
 // Dashboard & Auditing
 adminRouter.get('/dashboard', dashboard.getDashboardMetrics as any);
