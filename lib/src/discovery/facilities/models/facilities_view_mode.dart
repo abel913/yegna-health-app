@@ -1,0 +1,4 @@
+enum FacilitiesViewMode {
+  list,
+  map,
+}
