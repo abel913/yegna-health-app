@@ -80,7 +80,15 @@ class _DynamicModuleDetailPageState extends State<DynamicModuleDetailPage> {
       ];
     }
 
-    final rawBlocks = content.split(RegExp(r'\r?\n##\s+'));
+    // Strip preamble (e.g. | Note: ...) before the first "## " section
+    final firstSectionIdx = content.indexOf(RegExp(r'(?:^|\r?\n)##\s+'));
+    String sectionsText = content.trim();
+    if (firstSectionIdx != -1) {
+      sectionsText = content.substring(firstSectionIdx).trim();
+    }
+    sectionsText = sectionsText.replaceFirst(RegExp(r'^##\s+'), '');
+
+    final rawBlocks = sectionsText.split(RegExp(r'\r?\n##\s+'));
     final sections = <_ParsedSection>[];
 
     for (int i = 0; i < rawBlocks.length; i++) {
@@ -89,6 +97,13 @@ class _DynamicModuleDetailPageState extends State<DynamicModuleDetailPage> {
 
       final lines = block.split(RegExp(r'\r?\n'));
       final title = lines.first.replaceAll(RegExp(r'^#+\s*'), '').trim();
+
+      // Skip any residual doctor note if present in the header
+      if (title.startsWith('|') &&
+          (title.toLowerCase().contains('note') || title.contains('ማስታወሻ'))) {
+        continue;
+      }
+
       final rest = lines.skip(1).join('\n').trim();
       sections.add(_extractSection(
         title.isNotEmpty
@@ -112,11 +127,11 @@ class _DynamicModuleDetailPageState extends State<DynamicModuleDetailPage> {
 
   String? _extractDoctorNote(String content) {
     // Look for top-level doctor note in preamble before the first "## " section
-    final firstSectionIdx = content.indexOf(RegExp(r'(?:^|\n)##\s+'));
+    final firstSectionIdx = content.indexOf(RegExp(r'(?:^|\r?\n)##\s+'));
     final preamble =
         firstSectionIdx != -1 ? content.substring(0, firstSectionIdx) : content;
     final noteMatch = RegExp(
-      r'(?:^|\n)>\s*(?:(?:Clinical Tip|Medical Note|Doctor Note|የዶክተር ማስታወሻ|Note):\s*)?([^\n\r]+)',
+      r'(?:^|\r?\n)(?:[>|]\s*|\s*)(?:Clinical Tip|Medical Note|Doctor(?:\x27s)? Note|የዶክተር ማስታወሻ|ማስታወሻ|Note):\s*([^\n\r]+(?:\r?\n(?!(?:##|#|[>|]|\s*$))[^\n\r]+)*)',
       caseSensitive: false,
     ).firstMatch(preamble);
     if (noteMatch != null && noteMatch.groupCount >= 1) {

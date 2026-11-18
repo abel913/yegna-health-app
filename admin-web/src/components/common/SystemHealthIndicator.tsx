@@ -49,7 +49,7 @@ export const SystemHealthIndicator: React.FC<SystemHealthIndicatorProps> = ({ la
               environment: 'offline',
               uptimeSeconds: 0,
               database: {
-                type: 'SQLite',
+                type: 'Supabase PostgreSQL',
                 status: 'disconnected',
                 latencyMs: 0,
               },
@@ -245,7 +245,7 @@ export const SystemHealthIndicator: React.FC<SystemHealthIndicatorProps> = ({ la
                     {lang === 'am' ? 'የዳታቤዝ ግንኙነት (Database)' : 'Database Engine (Prisma)'}
                   </p>
                   <p className="text-[10px] text-slate-400 dark:text-slate-500">
-                    {telemetry?.database.type || 'SQLite (Local)'}
+                    {telemetry?.database.type || 'Supabase PostgreSQL (Prisma ORM)'}
                   </p>
                 </div>
               </div>

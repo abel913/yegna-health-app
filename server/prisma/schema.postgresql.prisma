@@ -1,0 +1,248 @@
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+  schemas   = ["yegna"]
+}
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
+}
+
+model User {
+  id                String       @id @default(uuid())
+  email             String       @unique
+  passwordHash      String
+  displayName       String
+  role              String       @default("STUDENT") // STUDENT, MENTOR, ADMIN, SUPER_ADMIN
+  isSuspended       Boolean      @default(false)
+  isEmailVerified   Boolean      @default(false)
+  hasCompletedSurvey Boolean     @default(false)
+  verificationCode  String?
+  verificationToken String?
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+
+  memberships  ClubMember[]
+
+  @@schema("yegna")
+}
+
+model Facility {
+  id             String   @id @default(uuid())
+  nameEn         String
+  nameAm         String
+  subCity        String   // Arada, Kirkos, Bole, etc.
+  woreda         String?
+  addressEn      String
+  addressAm      String
+  phone          String
+  latitude       Float
+  longitude      Float
+  operatingHours String   @default("08:30 - 17:30")
+  isVerified     Boolean  @default(true)
+  services       String   @default("[]") // JSON string array of tags
+  createdAt      DateTime @default(now())
+
+  @@schema("yegna")
+}
+
+model Mentor {
+  id              String   @id @default(uuid())
+  name            String
+  organization    String
+  campus          String   @default("Atse Fasil Campus")
+  roleTitleEn     String   @default("Certified Youth Peer Counselor")
+  roleTitleAm     String   @default("የተረጋገጠ የወጣቶች አቻ አማካሪ")
+  phone           String
+  whatsapp        String?
+  telegramHandle  String?
+  email           String?
+  experienceYears Int      @default(2)
+  sessionsCount   Int      @default(120)
+  workingHoursEn  String   @default("Mon – Fri: 8:30 AM – 5:30 PM")
+  workingHoursAm  String   @default("ከሰኞ – ዓርብ፡ 2:30 – 11:30")
+  bioEn           String?
+  bioAm           String?
+  languages       String   @default("[\"Amharic\",\"English\"]") // JSON string array
+  specialties     String   @default("[\"#MentalHealth\",\"#SRH\"]") // JSON string array
+  isAvailable     Boolean  @default(true)
+  isVerified      Boolean  @default(true)
+  createdAt       DateTime @default(now())
+
+  @@schema("yegna")
+}
+
+model Module {
+  id          String         @id @default(uuid())
+  category    String         // puberty, srh, hiv, gbv, mental_health, substance
+  titleEn     String
+  titleAm     String
+  summaryEn   String
+  summaryAm   String
+  contentEn   String
+  contentAm   String
+  readTimeMin Int            @default(4)
+  isPublished Boolean        @default(true)
+  authorName  String?
+  orderIndex  Int            @default(0)
+  createdAt   DateTime       @default(now())
+
+  quizzes     QuizQuestion[]
+  assessments LearningAssessment[]
+
+  @@schema("yegna")
+}
+
+model LearningAssessment {
+  id        String   @id @default(uuid())
+  moduleId  String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  module    Module                   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  questions LearningAssessmentQuestion[]
+
+  @@schema("yegna")
+}
+
+model LearningAssessmentQuestion {
+  id           String   @id @default(uuid())
+  assessmentId String
+  position     Int      @default(0)
+  promptEn     String
+  promptAm     String
+  createdAt    DateTime @default(now())
+
+  assessment LearningAssessment       @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  choices    LearningAssessmentChoice[]
+
+  @@index([assessmentId, position])
+
+  @@schema("yegna")
+}
+
+model LearningAssessmentChoice {
+  id         String   @id @default(uuid())
+  questionId String
+  position   Int
+  labelEn    String
+  labelAm    String
+  score      Int      @default(0)
+
+  question LearningAssessmentQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([questionId, position])
+
+  @@schema("yegna")
+}
+
+model QuizQuestion {
+  id            String   @id @default(uuid())
+  moduleId      String
+  type          String   @default("MULTIPLE_CHOICE") // MULTIPLE_CHOICE, TRUE_FALSE
+  questionEn    String
+  questionAm    String
+  optionsEn     String   @default("[]") // JSON string array
+  optionsAm     String   @default("[]") // JSON string array
+  correctIndex  Int      @default(0)
+  explanationEn String
+  explanationAm String
+  createdAt     DateTime @default(now())
+
+  module        Module   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+
+  @@schema("yegna")
+}
+
+model StudentClub {
+  id          String       @id @default(uuid())
+  name        String
+  description String
+  category    String       // wellness, mental_health, srh, leadership
+  venue       String?
+  meetingTime String?
+  isApproved  Boolean      @default(true)
+  createdAt   DateTime     @default(now())
+
+  members     ClubMember[]
+
+  @@schema("yegna")
+}
+
+model ClubMember {
+  id        String      @id @default(uuid())
+  userId    String
+  clubId    String
+  joinedAt  DateTime    @default(now())
+
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  club      StudentClub @relation(fields: [clubId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, clubId])
+  @@schema("yegna")
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  action     String   // e.g. "FACILITY_CREATED", "USER_SUSPENDED", "MODULE_UPDATED"
+  adminEmail String
+  details    String
+  timestamp  DateTime @default(now())
+
+  @@schema("yegna")
+}
+
+model SurveyQuestion {
+  id            String                 @id @default(uuid())
+  position      Int                    @default(0)
+  key           String                 @unique // unique identifier slug e.g. "age_group"
+  sectionNumber Int                    @default(1)
+  sectionKey    String                 @default("section_1")
+  sectionTitleEn String                @default("Personal & General Information")
+  sectionTitleAm String                @default("አጠቃላይ የግል መረጃ")
+  moduleKey     String?                // "general", "srh", "hiv", "contraception", "puberty", "gbv", "mental_health", "support"
+  titleEn       String
+  titleAm       String
+  descriptionEn String?
+  descriptionAm String?
+  type          String                 @default("SINGLE_CHOICE") // SINGLE_CHOICE, MULTI_CHOICE
+  isRequired    Boolean                @default(true)
+  isActive      Boolean                @default(true)
+  createdAt     DateTime               @default(now())
+  updatedAt     DateTime               @updatedAt
+
+  options       SurveyQuestionOption[]
+
+  @@index([sectionNumber, position])
+  @@schema("yegna")
+}
+
+model SurveyQuestionOption {
+  id         String         @id @default(uuid())
+  questionId String
+  position   Int            @default(0)
+  value      String
+  labelEn    String
+  labelAm    String
+  createdAt  DateTime       @default(now())
+
+  question   SurveyQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@index([questionId, position])
+  @@schema("yegna")
+}
+
+model BaselineSurveyResponse {
+  id             String   @id @default(uuid())
+  ageGroup       String?  // Legacy column preserved for backward compatibility
+  yearOfStudy    String?
+  disabilityNeed String?
+  knowsGondarSrh String?
+  answers        Json?    // Dynamic answer mappings: { [questionIdOrKey]: value }
+  submittedAt    DateTime @default(now())
+
+  @@schema("yegna")
+}
+

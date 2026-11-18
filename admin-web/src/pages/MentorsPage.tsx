@@ -19,8 +19,12 @@ import {
   ShieldCheck,
   UserCheck,
   Loader2,
+  Globe,
+  Tag,
+  Calendar,
+  Sparkles,
 } from 'lucide-react';
-import { Mentor } from '../types/index.js';
+import { Mentor, WeeklySchedule, DaySchedule } from '../types/index.js';
 import { EmptyState } from '../components/common/EmptyState.js';
 import { ConfirmModal } from '../components/common/ConfirmModal.js';
 import { exportToCsv } from '../utils/csvExport.js';
@@ -34,6 +38,125 @@ export const UOG_CAMPUSES = [
   { value: 'Teda Campus', labelEn: 'Teda Campus (ተዳ ግቢ)', labelAm: 'ተዳ ግቢ' },
   { value: 'Central Directorate / All Campuses', labelEn: 'Central Directorate / All Campuses (ማዕከላዊ ዳይሬክቶሬት)', labelAm: 'ማዕከላዊ ዳይሬክቶሬት / ሁሉም ግቢዎች' },
 ];
+
+export const PRESET_LANGUAGES = ['Amharic', 'English', 'Afaan Oromoo', 'Tigrinya', 'Somali'];
+
+export const PRESET_SPECIALTIES = [
+  { tag: '#MentalHealth', label: 'Mental Health & Wellbeing' },
+  { tag: '#SRH', label: 'Sexual & Reproductive Health' },
+  { tag: '#Puberty', label: 'Puberty & Adolescence' },
+  { tag: '#SubstanceAbuse', label: 'Substance Abuse & Addiction' },
+  { tag: '#GBV', label: 'Gender-Based Violence' },
+];
+
+export const WEEKDAYS = [
+  { key: 'monday' as const, short: 'Mo', labelEn: 'Monday', fullEn: 'Monday', fullAm: 'ሰኞ' },
+  { key: 'tuesday' as const, short: 'Tu', labelEn: 'Tuesday', fullEn: 'Tuesday', fullAm: 'ማክሰኞ' },
+  { key: 'wednesday' as const, short: 'We', labelEn: 'Wednesday', fullEn: 'Wednesday', fullAm: 'ረቡዕ' },
+  { key: 'thursday' as const, short: 'Th', labelEn: 'Thursday', fullEn: 'Thursday', fullAm: 'ሐሙስ' },
+  { key: 'friday' as const, short: 'Fr', labelEn: 'Friday', fullEn: 'Friday', fullAm: 'ዓርብ' },
+  { key: 'saturday' as const, short: 'Sa', labelEn: 'Saturday', fullEn: 'Saturday', fullAm: 'ቅዳሜ' },
+  { key: 'sunday' as const, short: 'Su', labelEn: 'Sunday', fullEn: 'Sunday', fullAm: 'እሑድ' },
+];
+
+export const TIME_SLOTS = [
+  { value: '08:00', label: '8:00 AM' },
+  { value: '08:30', label: '8:30 AM' },
+  { value: '09:00', label: '9:00 AM' },
+  { value: '09:30', label: '9:30 AM' },
+  { value: '10:00', label: '10:00 AM' },
+  { value: '10:30', label: '10:30 AM' },
+  { value: '11:00', label: '11:00 AM' },
+  { value: '11:30', label: '11:30 AM' },
+  { value: '12:00', label: '12:00 PM' },
+  { value: '12:30', label: '12:30 PM' },
+  { value: '13:00', label: '1:00 PM' },
+  { value: '13:30', label: '1:30 PM' },
+  { value: '14:00', label: '2:00 PM' },
+  { value: '14:30', label: '2:30 PM' },
+  { value: '15:00', label: '3:00 PM' },
+  { value: '15:30', label: '3:30 PM' },
+  { value: '16:00', label: '4:00 PM' },
+  { value: '16:30', label: '4:30 PM' },
+  { value: '17:00', label: '5:00 PM' },
+  { value: '17:30', label: '5:30 PM' },
+  { value: '18:00', label: '6:00 PM' },
+];
+
+export const DEFAULT_WEEKLY_SCHEDULE: WeeklySchedule = {
+  monday: { enabled: true, start: '08:30', end: '17:30' },
+  tuesday: { enabled: true, start: '08:30', end: '17:30' },
+  wednesday: { enabled: true, start: '08:30', end: '17:30' },
+  thursday: { enabled: true, start: '08:30', end: '17:30' },
+  friday: { enabled: true, start: '08:30', end: '17:30' },
+  saturday: { enabled: false, start: '09:00', end: '13:00' },
+  sunday: { enabled: false, start: '09:00', end: '13:00' },
+};
+
+function formatTimeLabel(val: string): string {
+  const match = TIME_SLOTS.find((s) => s.value === val);
+  if (match) return match.label;
+  const [h, m] = val.split(':').map(Number);
+  if (isNaN(h)) return val;
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  const hour12 = h % 12 === 0 ? 12 : h % 12;
+  return `${hour12}:${String(m || 0).padStart(2, '0')} ${ampm}`;
+}
+
+function generateWorkingHoursSummaries(schedule: WeeklySchedule): { en: string; am: string } {
+  const isMonFri =
+    schedule.monday.enabled &&
+    schedule.tuesday.enabled &&
+    schedule.wednesday.enabled &&
+    schedule.thursday.enabled &&
+    schedule.friday.enabled &&
+    !schedule.saturday.enabled &&
+    !schedule.sunday.enabled;
+
+  const isMonSat =
+    schedule.monday.enabled &&
+    schedule.tuesday.enabled &&
+    schedule.wednesday.enabled &&
+    schedule.thursday.enabled &&
+    schedule.friday.enabled &&
+    schedule.saturday.enabled &&
+    !schedule.sunday.enabled;
+
+  const isAllDays = Object.values(schedule).every((d) => d.enabled);
+
+  const startFmt = formatTimeLabel(schedule.monday.start);
+  const endFmt = formatTimeLabel(schedule.monday.end);
+
+  if (isMonFri) {
+    return {
+      en: `Mon – Fri: ${startFmt} – ${endFmt}`,
+      am: `ከሰኞ – ዓርብ፡ 2:30 – 11:30`,
+    };
+  } else if (isMonSat) {
+    return {
+      en: `Mon – Sat: ${startFmt} – ${endFmt}`,
+      am: `ከሰኞ – ቅዳሜ፡ 3:00 – 12:00`,
+    };
+  } else if (isAllDays) {
+    return {
+      en: `Daily (All Week): ${startFmt} – ${endFmt}`,
+      am: `በየቀኑ (ሙሉ ሳምንት)፡ 2:30 – 11:30`,
+    };
+  }
+
+  const enabledDays = WEEKDAYS.filter((w) => schedule[w.key].enabled);
+  if (enabledDays.length === 0) {
+    return {
+      en: `Currently Offline / On Leave`,
+      am: `በአሁኑ ሰዓት እረፍት ላይ`,
+    };
+  }
+  const dayNames = enabledDays.map((d) => d.labelEn).join(', ');
+  return {
+    en: `${dayNames}: ${startFmt} – ${endFmt}`,
+    am: `${dayNames}፡ 2:30 – 11:30`,
+  };
+}
 
 interface MentorsPageProps {
   mentors: Mentor[];
@@ -56,6 +179,10 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
   const [editingMentor, setEditingMentor] = useState<Mentor | null>(null);
   const [mentorToDelete, setMentorToDelete] = useState<Mentor | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [customLanguage, setCustomLanguage] = useState('');
+  const [customSpecialty, setCustomSpecialty] = useState('');
+  const [weeklySchedule, setWeeklySchedule] = useState<WeeklySchedule>(DEFAULT_WEEKLY_SCHEDULE);
+  const [activeDayKey, setActiveDayKey] = useState<keyof WeeklySchedule>('monday');
 
   const [formData, setFormData] = useState({
     name: '',
@@ -164,10 +291,17 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
       isVerified: true,
     });
     setIsModalOpen(true);
+    setWeeklySchedule(DEFAULT_WEEKLY_SCHEDULE);
+    setActiveDayKey('monday');
   };
 
   const openEditModal = (m: Mentor) => {
     setEditingMentor(m);
+    const initialSchedule: WeeklySchedule = m.weeklySchedule
+      ? { ...DEFAULT_WEEKLY_SCHEDULE, ...m.weeklySchedule }
+      : DEFAULT_WEEKLY_SCHEDULE;
+    setWeeklySchedule(initialSchedule);
+    setActiveDayKey('monday');
     setFormData({
       name: m.name,
       organization: m.organization || 'University of Gondar & Marie Stopes',
@@ -190,6 +324,142 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
       isVerified: m.isVerified ?? true,
     });
     setIsModalOpen(true);
+    setCustomLanguage('');
+    setCustomSpecialty('');
+  };
+
+  const handleToggleLanguage = (langName: string) => {
+    const current = formData.languages || [];
+    if (current.includes(langName)) {
+      setFormData({ ...formData, languages: current.filter((l) => l !== langName) });
+    } else {
+      setFormData({ ...formData, languages: [...current, langName] });
+    }
+  };
+
+  const handleAddCustomLanguage = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    const trimmed = customLanguage.trim();
+    if (!trimmed) return;
+    const current = formData.languages || [];
+    if (!current.includes(trimmed)) {
+      setFormData({ ...formData, languages: [...current, trimmed] });
+    }
+    setCustomLanguage('');
+  };
+
+  const handleRemoveLanguage = (langName: string) => {
+    setFormData({ ...formData, languages: (formData.languages || []).filter((l) => l !== langName) });
+  };
+
+  const handleToggleSpecialty = (tag: string) => {
+    const formattedTag = tag.startsWith('#') ? tag : `#${tag}`;
+    const current = formData.specialties || [];
+    if (current.includes(formattedTag)) {
+      setFormData({ ...formData, specialties: current.filter((s) => s !== formattedTag) });
+    } else {
+      setFormData({ ...formData, specialties: [...current, formattedTag] });
+    }
+  };
+
+  const handleAddCustomSpecialty = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    let trimmed = customSpecialty.trim();
+    if (!trimmed) return;
+    if (!trimmed.startsWith('#')) trimmed = `#${trimmed}`;
+    const current = formData.specialties || [];
+    if (!current.includes(trimmed)) {
+      setFormData({ ...formData, specialties: [...current, trimmed] });
+    }
+    setCustomSpecialty('');
+  };
+
+  const handleRemoveSpecialty = (tag: string) => {
+    setFormData({ ...formData, specialties: (formData.specialties || []).filter((s) => s !== tag) });
+  };
+
+  const updateActiveDaySchedule = (patch: Partial<DaySchedule>) => {
+    setWeeklySchedule((prev) => {
+      const updated = {
+        ...prev,
+        [activeDayKey]: {
+          ...prev[activeDayKey],
+          ...patch,
+        },
+      };
+      const summaries = generateWorkingHoursSummaries(updated);
+      setFormData((f) => ({
+        ...f,
+        workingHoursEn: summaries.en,
+        workingHoursAm: summaries.am,
+      }));
+      return updated;
+    });
+  };
+
+  const applyPreset = (preset: 'mon_fri' | 'mon_sat' | 'all') => {
+    let newSched: WeeklySchedule;
+    if (preset === 'mon_fri') {
+      newSched = {
+        monday: { enabled: true, start: '08:30', end: '17:30' },
+        tuesday: { enabled: true, start: '08:30', end: '17:30' },
+        wednesday: { enabled: true, start: '08:30', end: '17:30' },
+        thursday: { enabled: true, start: '08:30', end: '17:30' },
+        friday: { enabled: true, start: '08:30', end: '17:30' },
+        saturday: { enabled: false, start: '09:00', end: '13:00' },
+        sunday: { enabled: false, start: '09:00', end: '13:00' },
+      };
+    } else if (preset === 'mon_sat') {
+      newSched = {
+        monday: { enabled: true, start: '09:00', end: '18:00' },
+        tuesday: { enabled: true, start: '09:00', end: '18:00' },
+        wednesday: { enabled: true, start: '09:00', end: '18:00' },
+        thursday: { enabled: true, start: '09:00', end: '18:00' },
+        friday: { enabled: true, start: '09:00', end: '18:00' },
+        saturday: { enabled: true, start: '09:00', end: '14:00' },
+        sunday: { enabled: false, start: '09:00', end: '13:00' },
+      };
+    } else {
+      newSched = {
+        monday: { enabled: true, start: '08:30', end: '17:30' },
+        tuesday: { enabled: true, start: '08:30', end: '17:30' },
+        wednesday: { enabled: true, start: '08:30', end: '17:30' },
+        thursday: { enabled: true, start: '08:30', end: '17:30' },
+        friday: { enabled: true, start: '08:30', end: '17:30' },
+        saturday: { enabled: true, start: '08:30', end: '17:30' },
+        sunday: { enabled: true, start: '08:30', end: '17:30' },
+      };
+    }
+    setWeeklySchedule(newSched);
+    const summaries = generateWorkingHoursSummaries(newSched);
+    setFormData((f) => ({
+      ...f,
+      workingHoursEn: summaries.en,
+      workingHoursAm: summaries.am,
+    }));
+  };
+
+  const copyActiveDayToWeekdays = () => {
+    const active = weeklySchedule[activeDayKey];
+    setWeeklySchedule((prev) => {
+      const updated = {
+        ...prev,
+        monday: { ...active },
+        tuesday: { ...active },
+        wednesday: { ...active },
+        thursday: { ...active },
+        friday: { ...active },
+      };
+      const summaries = generateWorkingHoursSummaries(updated);
+      setFormData((f) => ({
+        ...f,
+        workingHoursEn: summaries.en,
+        workingHoursAm: summaries.am,
+      }));
+      return updated;
+    });
+    const dayLabel = WEEKDAYS.find((w) => w.key === activeDayKey)?.labelEn;
+    toast.success(`Copied ${dayLabel} hours to Mon–Fri`);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -199,6 +469,7 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
     try {
       const cleanedPayload = {
         ...formData,
+        weeklySchedule,
         telegramHandle: formData.telegramHandle.replace(/^@+/, '').trim() || null,
         whatsapp: formData.whatsapp.trim() || null,
         email: formData.email.trim() || null,
@@ -482,6 +753,28 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
                       {lang === 'am' ? (m.workingHoursAm || m.workingHoursEn || 'ከሰኞ – ዓርብ፡ 2:30 – 11:30') : (m.workingHoursEn || 'Mon – Fri: 8:30 AM – 5:30 PM')}
                     </span>
                   </div>
+
+                  {/* 7-Day Weekly Availability Pills */}
+                  <div className="flex items-center gap-1 pt-0.5">
+                    {WEEKDAYS.map((w) => {
+                      const isEnabled = m.weeklySchedule
+                        ? !!m.weeklySchedule[w.key]?.enabled
+                        : (w.key !== 'saturday' && w.key !== 'sunday');
+                      return (
+                        <span
+                          key={w.key}
+                          title={`${w.labelEn}: ${isEnabled ? 'Active' : 'Off'}`}
+                          className={`text-[9px] font-bold px-1.5 py-0.5 rounded transition-all ${
+                            isEnabled
+                              ? 'bg-brand-50 dark:bg-slate-800 text-brand-700 dark:text-cyan-400 border border-brand-200/60 dark:border-brand-800/60'
+                              : 'bg-slate-100 dark:bg-slate-850 text-slate-400 dark:text-slate-600 opacity-60'
+                          }`}
+                        >
+                          {w.short}
+                        </span>
+                      );
+                    })}
+                  </div>
                 </div>
 
                 {/* Specialty Tags */}
@@ -711,11 +1004,17 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
                 </div>
               </div>
 
-              {/* SECTION 3: Experience, Sessions & Working Hours */}
-              <div className="bg-slate-50 dark:bg-slate-850 p-4 rounded-2xl border border-slate-200/70 dark:border-slate-800 space-y-3.5">
-                <div className="flex items-center gap-2 text-xs font-bold text-brand-600 dark:text-cyan-400 uppercase tracking-wider">
-                  <Clock size={14} />
-                  <span>3. Experience Credentials & Available Hours</span>
+              {/* SECTION 3: Experience, Sessions & Weekly Working Hours Schedule */}
+              <div className="bg-slate-50 dark:bg-slate-850 p-4 rounded-2xl border border-slate-200/70 dark:border-slate-800 space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-xs font-bold text-brand-600 dark:text-cyan-400 uppercase tracking-wider">
+                    <Clock size={14} />
+                    <span>3. Experience Credentials & Weekly Availability Schedule</span>
+                  </div>
+                  <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                    <Calendar size={13} className="text-brand-500" />
+                    Interactive Day & Time Slot Manager
+                  </span>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
@@ -748,10 +1047,200 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                {/* Interactive Weekly Schedule Board (Matching Mockup: Calendar & Time Slots) */}
+                <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-750 p-4 shadow-xs space-y-3.5">
+                  {/* Presets Bar */}
+                  <div className="flex items-center justify-between flex-wrap gap-2 pb-3 border-b border-slate-100 dark:border-slate-800">
+                    <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1">
+                      <Sparkles size={12} className="text-amber-500" />
+                      Quick Presets:
+                    </span>
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <button
+                        type="button"
+                        onClick={() => applyPreset('mon_fri')}
+                        className="px-2.5 py-1 text-[11px] font-bold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg transition-all cursor-pointer border border-slate-200 dark:border-slate-700"
+                      >
+                        Mon – Fri (8:30 – 5:30)
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => applyPreset('mon_sat')}
+                        className="px-2.5 py-1 text-[11px] font-bold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg transition-all cursor-pointer border border-slate-200 dark:border-slate-700"
+                      >
+                        Mon – Sat (9:00 – 6:00)
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => applyPreset('all')}
+                        className="px-2.5 py-1 text-[11px] font-bold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg transition-all cursor-pointer border border-slate-200 dark:border-slate-700"
+                      >
+                        All 7 Days
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* 2-Column Calendar & Time Slot Matrix */}
+                  <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-start">
+                    {/* Left: Weekday Calendar Matrix (Mo, Tu, We, Th, Fr, Sa, Su) */}
+                    <div className="md:col-span-6 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                          Select Day to Schedule
+                        </span>
+                        <span className="text-[10px] text-slate-400">
+                          Dots indicate active hours
+                        </span>
+                      </div>
+
+                      {/* Weekday Capsules Row */}
+                      <div className="grid grid-cols-7 gap-1.5 p-2 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-100 dark:border-slate-800">
+                        {WEEKDAYS.map((w) => {
+                          const isSelected = activeDayKey === w.key;
+                          const isDayEnabled = weeklySchedule[w.key].enabled;
+                          return (
+                            <button
+                              key={w.key}
+                              type="button"
+                              onClick={() => setActiveDayKey(w.key)}
+                              className={`flex flex-col items-center justify-center py-2.5 rounded-xl transition-all cursor-pointer ${
+                                isSelected
+                                  ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-md font-extrabold scale-102 ring-2 ring-slate-900/10 dark:ring-white/20'
+                                  : 'hover:bg-white dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold'
+                              }`}
+                            >
+                              <span className="text-[11px] uppercase tracking-wide">{w.short}</span>
+                              <span
+                                className={`w-1.5 h-1.5 rounded-full mt-1.5 transition-all ${
+                                  isDayEnabled
+                                    ? isSelected
+                                      ? 'bg-cyan-400 dark:bg-brand-600'
+                                      : 'bg-emerald-500'
+                                    : 'bg-transparent'
+                                }`}
+                              />
+                            </button>
+                          );
+                        })}
+                      </div>
+
+                      {/* Active Day Status & Toggle Switch */}
+                      <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/40 rounded-xl border border-slate-200/60 dark:border-slate-800">
+                        <div className="flex items-center gap-2">
+                          <label className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                            Available on {WEEKDAYS.find((w) => w.key === activeDayKey)?.labelEn}
+                          </label>
+                          <span
+                            className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md ${
+                              weeklySchedule[activeDayKey].enabled
+                                ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300'
+                                : 'bg-slate-200 dark:bg-slate-700 text-slate-500'
+                            }`}
+                          >
+                            {weeklySchedule[activeDayKey].enabled ? 'ACTIVE' : 'OFF'}
+                          </span>
+                        </div>
+                        <input
+                          type="checkbox"
+                          checked={weeklySchedule[activeDayKey].enabled}
+                          onChange={(e) => updateActiveDaySchedule({ enabled: e.target.checked })}
+                          className="w-4 h-4 text-brand-600 rounded focus:ring-brand-500 cursor-pointer"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Right: Time Slot Pickers (Start & End Slots) */}
+                    <div className="md:col-span-6 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                          {WEEKDAYS.find((w) => w.key === activeDayKey)?.labelEn} Time Slots
+                        </span>
+                        {weeklySchedule[activeDayKey].enabled && (
+                          <span className="text-[11px] font-semibold text-brand-600 dark:text-cyan-400">
+                            {formatTimeLabel(weeklySchedule[activeDayKey].start)} – {formatTimeLabel(weeklySchedule[activeDayKey].end)}
+                          </span>
+                        )}
+                      </div>
+
+                      {weeklySchedule[activeDayKey].enabled ? (
+                        <div className="space-y-2.5">
+                          <div>
+                            <label className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1">
+                              Session Starts At:
+                            </label>
+                            <select
+                              value={weeklySchedule[activeDayKey].start}
+                              onChange={(e) => updateActiveDaySchedule({ start: e.target.value })}
+                              className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:border-brand-500 focus:outline-none font-bold text-xs"
+                            >
+                              {TIME_SLOTS.map((t) => (
+                                <option key={`start_${t.value}`} value={t.value}>
+                                  {t.label}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+
+                          <div>
+                            <label className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1">
+                              Session Ends At:
+                            </label>
+                            <select
+                              value={weeklySchedule[activeDayKey].end}
+                              onChange={(e) => updateActiveDaySchedule({ end: e.target.value })}
+                              className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:border-brand-500 focus:outline-none font-bold text-xs"
+                            >
+                              {TIME_SLOTS.map((t) => (
+                                <option key={`end_${t.value}`} value={t.value}>
+                                  {t.label}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="p-6 bg-slate-50 dark:bg-slate-800/40 rounded-xl border border-dashed border-slate-200 dark:border-slate-700 text-center">
+                          <p className="text-xs text-slate-500 dark:text-slate-400">
+                            Mentor is marked <span className="font-bold text-rose-500">OFF</span> on this day.
+                          </p>
+                          <button
+                            type="button"
+                            onClick={() => updateActiveDaySchedule({ enabled: true })}
+                            className="mt-2 text-xs font-bold text-brand-600 dark:text-cyan-400 hover:underline cursor-pointer"
+                          >
+                            + Enable working hours for {WEEKDAYS.find((w) => w.key === activeDayKey)?.labelEn}
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Bottom Action Bar matching Mockup Footer (Badge & Action Button) */}
+                  <div className="flex items-center justify-between flex-wrap gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+                    <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
+                      <Clock size={13} className="text-brand-500" />
+                      <span className="text-xs font-extrabold text-slate-800 dark:text-slate-200">
+                        {weeklySchedule[activeDayKey].enabled
+                          ? `${WEEKDAYS.find((w) => w.key === activeDayKey)?.labelEn}: ${formatTimeLabel(weeklySchedule[activeDayKey].start)} – ${formatTimeLabel(weeklySchedule[activeDayKey].end)}`
+                          : `${WEEKDAYS.find((w) => w.key === activeDayKey)?.labelEn}: Off`}
+                      </span>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={copyActiveDayToWeekdays}
+                      className="px-3 py-1.5 text-xs font-bold text-brand-600 dark:text-cyan-400 hover:bg-brand-50 dark:hover:bg-slate-800 rounded-xl transition-all cursor-pointer border border-brand-200 dark:border-brand-800"
+                    >
+                      Apply this time to Mon – Fri
+                    </button>
+                  </div>
+                </div>
+
+                {/* Auto-Synchronized Working Hours Summaries for App & Profile */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 pt-1">
                   <div>
                     <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                      Available Hours (EN)
+                      Available Hours Summary (EN)
                     </label>
                     <input
                       type="text"
@@ -764,7 +1253,7 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
 
                   <div>
                     <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                      Available Hours (AM)
+                      Available Hours Summary (AM)
                     </label>
                     <input
                       type="text"
@@ -829,6 +1318,175 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
                     />
                     <span>Verified Badge</span>
                   </label>
+                </div>
+              </div>
+
+              {/* SECTION 5: Languages Spoken & Focus Areas / Specialties */}
+              <div className="bg-slate-50 dark:bg-slate-850 p-4 rounded-2xl border border-slate-200/70 dark:border-slate-800 space-y-4">
+                <div className="flex items-center gap-2 text-xs font-bold text-brand-600 dark:text-cyan-400 uppercase tracking-wider">
+                  <Languages size={14} />
+                  <span>5. Languages Spoken & Focus Areas</span>
+                </div>
+
+                {/* Subsection A: Languages Spoken */}
+                <div>
+                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center justify-between">
+                    <span className="flex items-center gap-1.5">
+                      <Globe size={13} className="text-brand-500" />
+                      <span>Languages Spoken</span>
+                    </span>
+                    <span className="text-[11px] font-normal text-slate-400">
+                      {(formData.languages || []).length} selected
+                    </span>
+                  </label>
+
+                  {/* Preset Language Chips */}
+                  <div className="flex flex-wrap gap-1.5 mb-2.5">
+                    {PRESET_LANGUAGES.map((langName) => {
+                      const isSelected = (formData.languages || []).includes(langName);
+                      return (
+                        <button
+                          key={langName}
+                          type="button"
+                          onClick={() => handleToggleLanguage(langName)}
+                          className={`px-2.5 py-1 text-xs rounded-lg font-semibold transition-all cursor-pointer flex items-center gap-1 ${
+                            isSelected
+                              ? 'bg-brand-600 text-white shadow-sm'
+                              : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-brand-300'
+                          }`}
+                        >
+                          {isSelected && <CheckCircle2 size={12} />}
+                          <span>{langName}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Custom Language Add Input */}
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={customLanguage}
+                      onChange={(e) => setCustomLanguage(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          handleAddCustomLanguage();
+                        }
+                      }}
+                      placeholder="Add other language (e.g. Sidama, Gurage, French)..."
+                      className="flex-1 px-3 py-1.5 text-xs border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:border-brand-500 focus:outline-none"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleAddCustomLanguage}
+                      className="px-3 py-1.5 text-xs bg-slate-200 dark:bg-slate-700 hover:bg-brand-600 hover:text-white text-slate-700 dark:text-slate-200 font-bold rounded-xl transition-all cursor-pointer flex items-center gap-1"
+                    >
+                      <Plus size={13} />
+                      <span>Add</span>
+                    </button>
+                  </div>
+
+                  {/* Selected Language Badges */}
+                  <div className="flex flex-wrap gap-1.5 mt-2">
+                    {(formData.languages || []).map((l) => (
+                      <span
+                        key={l}
+                        className="inline-flex items-center gap-1 px-2.5 py-1 text-xs bg-brand-50 dark:bg-brand-950/40 text-brand-700 dark:text-cyan-300 border border-brand-200 dark:border-brand-800 rounded-lg font-medium"
+                      >
+                        {l}
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveLanguage(l)}
+                          className="hover:text-rose-500 cursor-pointer ml-0.5"
+                          title="Remove language"
+                        >
+                          <X size={12} />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Subsection B: Focus Areas / Specialties */}
+                <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800">
+                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center justify-between">
+                    <span className="flex items-center gap-1.5">
+                      <Tag size={13} className="text-indigo-500" />
+                      <span>Focus Areas & Counseling Topics</span>
+                    </span>
+                    <span className="text-[11px] font-normal text-slate-400">
+                      {(formData.specialties || []).length} selected
+                    </span>
+                  </label>
+
+                  {/* Preset Focus Area Chips */}
+                  <div className="flex flex-wrap gap-1.5 mb-2.5">
+                    {PRESET_SPECIALTIES.map((spec) => {
+                      const isSelected = (formData.specialties || []).includes(spec.tag);
+                      return (
+                        <button
+                          key={spec.tag}
+                          type="button"
+                          onClick={() => handleToggleSpecialty(spec.tag)}
+                          className={`px-2.5 py-1 text-xs rounded-lg font-semibold transition-all cursor-pointer flex items-center gap-1 ${
+                            isSelected
+                              ? 'bg-indigo-600 text-white shadow-sm'
+                              : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-indigo-300'
+                          }`}
+                        >
+                          {isSelected && <CheckCircle2 size={12} />}
+                          <span>{spec.tag}</span>
+                          <span className="text-[10px] opacity-75 font-normal">({spec.label.split(' ')[0]})</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Custom Focus Area Tag Add Input */}
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={customSpecialty}
+                      onChange={(e) => setCustomSpecialty(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          handleAddCustomSpecialty();
+                        }
+                      }}
+                      placeholder="Add custom topic (e.g. #AcademicStress, #Nutrition)..."
+                      className="flex-1 px-3 py-1.5 text-xs border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:border-indigo-500 focus:outline-none"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleAddCustomSpecialty}
+                      className="px-3 py-1.5 text-xs bg-slate-200 dark:bg-slate-700 hover:bg-indigo-600 hover:text-white text-slate-700 dark:text-slate-200 font-bold rounded-xl transition-all cursor-pointer flex items-center gap-1"
+                    >
+                      <Plus size={13} />
+                      <span>Add Tag</span>
+                    </button>
+                  </div>
+
+                  {/* Selected Topic Badges */}
+                  <div className="flex flex-wrap gap-1.5 mt-2">
+                    {(formData.specialties || []).map((s) => (
+                      <span
+                        key={s}
+                        className="inline-flex items-center gap-1 px-2.5 py-1 text-xs bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 rounded-lg font-bold font-mono"
+                      >
+                        {s}
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveSpecialty(s)}
+                          className="hover:text-rose-500 cursor-pointer ml-0.5"
+                          title="Remove topic"
+                        >
+                          <X size={12} />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
                 </div>
               </div>
 

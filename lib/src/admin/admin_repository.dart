@@ -51,6 +51,13 @@ abstract class AdminRepository {
   Future<void> saveClub(StudentClub club, {String adminEmail = 'admin'});
   Future<void> deleteClub(String clubId, {String adminEmail = 'admin'});
   Future<List<ClubMembership>> getClubRoster(String clubId);
+  Future<List<ClubMembership>> getAllClubMemberships();
+  Future<bool> removeClubMember(String clubId, String userId,
+      {String adminEmail = 'admin'});
+  Future<bool> updateClubMemberRole(
+      String clubId, String userId, String newRole,
+      {String adminEmail = 'admin'});
+  Future<void> toggleClubActive(String clubId, {String adminEmail = 'admin'});
 
   // Users
   Future<List<ManagedUser>> getUsers();
@@ -456,12 +463,18 @@ class LocalAdminRepository implements AdminRepository {
         'id': f.id,
         'nameEn': f.nameEn,
         'nameAm': f.nameAm,
+        'category': f.category.toDbString(),
         'subCityEn': f.subCityEn,
         'subCityAm': f.subCityAm,
-        'addressEn': f.addressEn,
-        'addressAm': f.addressAm,
+        'buildingEn': f.buildingEn,
+        'buildingAm': f.buildingAm,
         'landmarkEn': f.landmarkEn,
         'landmarkAm': f.landmarkAm,
+        'focalPerson': f.focalPerson,
+        'focalPhone': f.focalPhone,
+        'telegramHandle': f.telegramHandle,
+        'addressEn': f.addressEn,
+        'addressAm': f.addressAm,
         'phone': f.phone,
         'type': f.type.name,
         'latitude': f.latitude,
@@ -469,37 +482,61 @@ class LocalAdminRepository implements AdminRepository {
         'distanceKm': f.distanceKm,
         'isYouthFriendly': f.isYouthFriendly,
         'isFreeForYouth': f.isFreeForYouth,
+        'isWheelchairAccessible': f.isWheelchairAccessible,
+        'hasPrivateRoom': f.hasPrivateRoom,
+        'operatingHours': f.operatingHours,
         'openingHour': f.openingHour,
         'closingHour': f.closingHour,
         'services': f.services,
+        'campusNameEn': f.campusNameEn,
+        'campusNameAm': f.campusNameAm,
+        'confidentialityPolicyEn': f.confidentialityPolicyEn,
+        'confidentialityPolicyAm': f.confidentialityPolicyAm,
       };
 
   Facility _facilityFromJson(Map<String, Object?> json) => Facility(
         id: json['id']! as String,
         nameEn: json['nameEn']! as String,
         nameAm: json['nameAm']! as String,
+        category: FacilityCategory.fromString(json['category'] as String?),
         subCityEn: json['subCityEn']! as String,
         subCityAm: json['subCityAm']! as String,
+        buildingEn: json['buildingEn'] as String?,
+        buildingAm: json['buildingAm'] as String?,
+        landmarkEn: json['landmarkEn'] as String? ?? '',
+        landmarkAm: json['landmarkAm'] as String? ?? '',
+        focalPerson: json['focalPerson'] as String?,
+        focalPhone: json['focalPhone'] as String?,
+        telegramHandle: json['telegramHandle'] as String?,
         addressEn: json['addressEn']! as String,
         addressAm: json['addressAm']! as String,
-        landmarkEn: json['landmarkEn']! as String,
-        landmarkAm: json['landmarkAm']! as String,
         phone: json['phone']! as String,
         type: FacilityType.values.firstWhere(
           (t) => t.name == json['type'],
-          orElse: () => FacilityType.youthCenter,
+          orElse: () => FacilityType.campusClinic,
         ),
         latitude: (json['latitude'] as num).toDouble(),
         longitude: (json['longitude'] as num).toDouble(),
         distanceKm: (json['distanceKm'] as num? ?? 1.0).toDouble(),
         isYouthFriendly: json['isYouthFriendly'] as bool? ?? true,
         isFreeForYouth: json['isFreeForYouth'] as bool? ?? true,
+        isWheelchairAccessible:
+            json['isWheelchairAccessible'] as bool? ?? false,
+        hasPrivateRoom: json['hasPrivateRoom'] as bool? ?? false,
+        operatingHours:
+            json['operatingHours'] as String? ?? '08:30 - 17:30',
         openingHour: json['openingHour'] as int? ?? 8,
         closingHour: json['closingHour'] as int? ?? 18,
         services: (json['services'] as List<Object?>?)
                 ?.map((e) => e! as String)
                 .toList() ??
             const [],
+        campusNameEn: json['campusNameEn'] as String?,
+        campusNameAm: json['campusNameAm'] as String?,
+        confidentialityPolicyEn: json['confidentialityPolicyEn'] as String? ??
+            'Private and youth-friendly services. All reproductive health consultations and screenings are strictly confidential without mandatory parental disclosure.',
+        confidentialityPolicyAm: json['confidentialityPolicyAm'] as String? ??
+            'ሚስጥራዊ እና ለወጣቶች ምቹ የጤና አገልግሎት። ሁሉም የስነ-ተዋልዶ ጤና ምክክር እና ምርመራዎች ያለ ወላጆች ጣልቃ ገብነት በጥብቅ ሚስጥራዊነት የተጠበቁ ናቸው።',
       );
 
   Map<String, Object?> _mentorToJson(Mentor m) => {
@@ -527,6 +564,7 @@ class LocalAdminRepository implements AdminRepository {
         'telegramHandle': m.telegramHandle,
         'workingHoursEn': m.workingHoursEn,
         'workingHoursAm': m.workingHoursAm,
+        'weeklySchedule': m.weeklySchedule?.map((k, v) => MapEntry(k, v.toJson())),
       };
 
   Mentor _mentorFromJson(Map<String, Object?> json) => Mentor(
@@ -567,6 +605,14 @@ class LocalAdminRepository implements AdminRepository {
             json['workingHoursEn'] as String? ?? 'Mon – Fri: 8:30 AM – 5:30 PM',
         workingHoursAm:
             json['workingHoursAm'] as String? ?? 'ከሰኞ – ዓርብ፡ 2:30 – 11:30',
+        weeklySchedule: (json['weeklySchedule'] is Map)
+            ? (json['weeklySchedule'] as Map).map(
+                (k, v) => MapEntry(
+                  k.toString().toLowerCase(),
+                  DayAvailability.fromJson(Map<String, dynamic>.from(v as Map)),
+                ),
+              )
+            : null,
       );
 
   Future<void> _recordAudit(
@@ -933,6 +979,43 @@ class LocalAdminRepository implements AdminRepository {
   @override
   Future<List<ClubMembership>> getClubRoster(String clubId) async {
     return _clubRepository.getClubMembers(clubId);
+  }
+
+  @override
+  Future<List<ClubMembership>> getAllClubMemberships() async {
+    return _clubRepository.getAllMemberships();
+  }
+
+  @override
+  Future<bool> removeClubMember(String clubId, String userId,
+      {String adminEmail = 'admin'}) async {
+    final success = await _clubRepository.removeMember(clubId, userId);
+    if (success) {
+      await _recordAudit('Removed Club Member', 'Clubs',
+          'Removed user $userId from club $clubId', adminEmail);
+    }
+    return success;
+  }
+
+  @override
+  Future<bool> updateClubMemberRole(
+      String clubId, String userId, String newRole,
+      {String adminEmail = 'admin'}) async {
+    final success =
+        await _clubRepository.updateMemberRole(clubId, userId, newRole);
+    if (success) {
+      await _recordAudit('Updated Club Member Role', 'Clubs',
+          'Changed role of user $userId to $newRole in club $clubId', adminEmail);
+    }
+    return success;
+  }
+
+  @override
+  Future<void> toggleClubActive(String clubId,
+      {String adminEmail = 'admin'}) async {
+    await _clubRepository.toggleClubActive(clubId);
+    await _recordAudit('Toggled Club Status', 'Clubs',
+        'Toggled active status for club $clubId', adminEmail);
   }
 
   // --- USERS ---

@@ -1,4 +1,5 @@
 import 'facility_model.dart';
+import 'sync_facility_repository.dart';
 
 abstract class FacilityRepository {
   Future<List<Facility>> getFacilities({
@@ -23,137 +24,229 @@ class LocalVerifiedFacilityRepository implements FacilityRepository {
 
   static const List<Facility> _verifiedFacilities = [
     Facility(
-      id: 'arada_youth_center',
-      nameEn: 'Arada Youth-Friendly Health Center',
-      nameAm: 'የአራዳ ወጣቶች ተስማሚ ጤና ጣቢያ',
-      subCityEn: 'Arada Sub-City, Woreda 01',
-      subCityAm: 'አራዳ ክፍለ ከተማ፣ ወረዳ 01',
-      addressEn: 'Near St. George Church & Churchill Road, Addis Ababa',
-      addressAm: 'ቅዱስ ጊዮርጊስ ቤተክርስቲያን እና ቸርችል ጎዳና አጠገብ፣ አዲስ አበባ',
-      landmarkEn: 'Behind Arada Sub-City Administration',
-      landmarkAm: 'ከአራዳ ክፍለ ከተማ አስተዳደር ጀርባ',
-      phone: '+251-11-155-2233',
-      type: FacilityType.youthCenter,
-      latitude: 9.0345,
-      longitude: 38.7521,
-      distanceKm: 1.2,
+      id: 'uog_maraki_student_clinic',
+      nameEn: 'UoG Maraki Student Health Center',
+      nameAm: 'የጎንደር ዩኒቨርሲቲ ማራኪ የተማሪዎች ጤና ጣቢያ',
+      category: FacilityCategory.clinical,
+      subCityEn: 'UoG - Maraki Campus',
+      subCityAm: 'ዩኦጂ ማራኪ ካምፓስ',
+      campusNameEn: 'UoG - Maraki Campus',
+      campusNameAm: 'ዩኦጂ ማራኪ ካምፓስ',
+      buildingEn: 'Block 42, Ground Floor (Near Student Lounge)',
+      buildingAm: 'ብሎክ 42፣ ምድር ቤት (ከተማሪዎች ማረፊያ አጠገብ)',
+      landmarkEn: 'Behind Maraki Main Library, Next to Campus Gate 2',
+      landmarkAm: 'ከማራኪ ዋና ቤተ-መጽሐፍት ጀርባ፣ ከግቢ በር 2 አጠገብ',
+      focalPerson: 'Sr. Tigist Alemayehu (Chief Campus Nurse)',
+      focalPhone: '+251-58-114-1234',
+      telegramHandle: 'uog_maraki_health',
+      phone: '+251-58-114-1234',
+      type: FacilityType.campusClinic,
+      latitude: 12.6075,
+      longitude: 37.4589,
+      distanceKm: 0.8,
       isYouthFriendly: true,
       isFreeForYouth: true,
+      isWheelchairAccessible: true,
+      hasPrivateRoom: true,
+      operatingHours: 'Mon-Fri 08:00 - 18:00, Sat 08:30 - 12:30',
       openingHour: 8,
       closingHour: 18,
+      addressEn: 'Maraki Campus, University of Gondar, Gondar, Ethiopia',
+      addressAm: 'ማራኪ ግቢ፣ ጎንደር ዩኒቨርሲቲ፣ ጎንደር፣ ኢትዮጵያ',
       services: [
-        'SRH Services',
-        'VCT / HIV Testing',
-        'Mental Health & Counseling',
-        'Free Contraceptives',
+        '#Youth_Friendly',
+        '#Student_Clinic',
+        '#SRH_Counseling',
+        '#Free_Services',
+        '#First_Aid',
       ],
     ),
     Facility(
-      id: 'aau_sidist_kilo_clinic',
-      nameEn: 'AAU Student Health Clinic (Sidist Kilo)',
-      nameAm: 'የአዲስ አበባ ዩኒቨርሲቲ ተማሪዎች ክሊኒክ (ስድስት ኪሎ)',
-      subCityEn: 'Yeka Sub-City, Sidist Kilo Campus',
-      subCityAm: 'የካ ክፍለ ከተማ፣ ስድስት ኪሎ ግቢ',
-      addressEn: 'AAU Main Campus, Algeria Street, Addis Ababa',
-      addressAm: 'አዲስ አበባ ዩኒቨርሲቲ ዋና ግቢ፣ አልጄሪያ ጎዳና፣ አዲስ አበባ',
-      landmarkEn: 'Near Institute of Ethiopian Studies (IES)',
-      landmarkAm: 'የኢትዮጵያ ጥናት ተቋም አጠገብ',
-      phone: '+251-11-123-9700',
-      type: FacilityType.campusClinic,
-      latitude: 9.0478,
-      longitude: 38.7619,
-      distanceKm: 2.5,
+      id: 'uog_gcms_adolescent_clinic',
+      nameEn:
+          'UoG Comprehensive Specialized Hospital (GCMS) Adolescent Clinic',
+      nameAm: 'የጎንደር ዩኒቨርሲቲ ኮምፕረሄንሲቭ ስፔሻላይዝድ ሆስፒታል የወጣቶች ክሊኒክ',
+      category: FacilityCategory.clinical,
+      subCityEn: 'UoG - GCMS Referral Hospital / CMHS',
+      subCityAm: 'ዩኦጂ ሪፈራል ሆስፒታል / CMHS',
+      campusNameEn: 'UoG - GCMS Referral Hospital / CMHS',
+      campusNameAm: 'ዩኦጂ ሪፈራል ሆስፒታል / CMHS',
+      buildingEn: 'CMHS Clinical Block, OPD Room 14',
+      buildingAm: 'የጤና ሳይንስ ክሊኒካል ብሎክ፣ ታካሚ ክፍል 14',
+      landmarkEn: 'Opposite Chechela Police Station, Referral Main Gate',
+      landmarkAm: 'ከቼቼላ ፖሊስ ጣቢያ ፊት ለፊት፣ ከዋናው የሪፈራል በር',
+      focalPerson: 'Dr. Yohannes Tadesse (Youth Specialist)',
+      focalPhone: '+251-58-111-0422',
+      telegramHandle: 'uog_referral_youth',
+      phone: '+251-58-111-0422',
+      type: FacilityType.publicHealthCenter,
+      latitude: 12.6133,
+      longitude: 37.4642,
+      distanceKm: 1.5,
       isYouthFriendly: true,
       isFreeForYouth: true,
-      openingHour: 8,
-      closingHour: 20,
-      campusNameEn: 'Addis Ababa University (Main Campus)',
-      campusNameAm: 'አዲስ አበባ ዩኒቨርሲቲ (ዋና ግቢ)',
+      isWheelchairAccessible: true,
+      hasPrivateRoom: true,
+      operatingHours: '24/7 Emergency & Specialty Care',
+      openingHour: 0,
+      closingHour: 24,
+      addressEn: 'Chechela, CMHS Hospital Compound, Gondar, Ethiopia',
+      addressAm: 'ቼቼላ፣ ጤና ሳይንስ ሆስፒታል ግቢ፣ ጎንደር፣ ኢትዮጵያ',
       services: [
-        'Campus Student Health',
-        'SRH Counseling',
-        'Emergency First Aid',
-        'Mental Health & Counseling',
+        '#Adolescent_Clinic',
+        '#Specialized_Care',
+        '#Emergency_Care',
+        '#HIV_Testing',
+        '#MentalHealth',
       ],
     ),
     Facility(
-      id: 'kirkos_youth_center',
-      nameEn: 'Kirkos Youth Reproductive Health Center',
-      nameAm: 'የቂርቆስ ወጣቶች የስነ-ተዋልዶ ጤና ማዕከል',
-      subCityEn: 'Kirkos Sub-City, Woreda 04',
-      subCityAm: 'ቂርቆስ ክፍለ ከተማ፣ ወረዳ 04',
-      addressEn: 'Meshualekia, near Meskel Square, Addis Ababa',
-      addressAm: 'መሸለቂያ፣ መስቀል አደባባይ አጠገብ፣ አዲስ አበባ',
-      landmarkEn: 'Next to Kirkos Youth Center & Sports Ground',
-      landmarkAm: 'ከቂርቆስ ወጣቶች ማዕከል እና ስፖርት ሜዳ ጎን',
-      phone: '+251-11-551-8844',
+      id: 'uog_maraki_guidance_center',
+      nameEn: 'UoG Maraki Guidance & Psychological Counseling Center',
+      nameAm: 'የማራኪ ተማሪዎች ስነ-ልቦና ምክር እና ድጋፍ ማዕከል',
+      category: FacilityCategory.counseling,
+      subCityEn: 'UoG - Maraki Campus',
+      subCityAm: 'ዩኦጂ ማራኪ ካምፓስ',
+      campusNameEn: 'UoG - Maraki Campus',
+      campusNameAm: 'ዩኦጂ ማራኪ ካምፓስ',
+      buildingEn: 'Dean of Students Building, 2nd Floor, Room 204',
+      buildingAm: 'የተማሪዎች ዲን ህንፃ፣ 2ኛ ፎቅ፣ ቢሮ ቁጥር 204',
+      landmarkEn: 'Above Gender Office, Opposite Student Cafeteria',
+      landmarkAm: 'ከስርዓተ-ፆታ ቢሮ በላይ፣ ከተማሪዎች ካፌ ፊት ለፊት',
+      focalPerson: 'Mulugeta Worku (Counselor)',
+      focalPhone: '+251-58-114-1299',
+      telegramHandle: 'uog_counseling_support',
+      phone: '+251-58-114-1299',
       type: FacilityType.youthCenter,
-      latitude: 9.0112,
-      longitude: 38.7582,
-      distanceKm: 3.1,
+      latitude: 12.6080,
+      longitude: 37.4595,
+      distanceKm: 0.9,
       isYouthFriendly: true,
       isFreeForYouth: true,
+      isWheelchairAccessible: false,
+      hasPrivateRoom: true,
+      operatingHours: 'Mon-Fri 08:30 - 17:30',
+      openingHour: 8,
+      closingHour: 18,
+      addressEn: 'Maraki Campus, University of Gondar, Gondar, Ethiopia',
+      addressAm: 'ማራኪ ግቢ፣ ጎንደር ዩኒቨርሲቲ፣ ጎንደር፣ ኢትዮጵያ',
+      services: [
+        '#MentalHealth',
+        '#SRH_Counseling',
+        '#Peer_Counseling',
+        '#Confidential_Support',
+      ],
+    ),
+    Facility(
+      id: 'uog_tewodros_health_post',
+      nameEn: 'UoG Atse Tewodros Campus Health Post & First Aid',
+      nameAm: 'የአፄ ቴዎድሮስ ካምፓስ የመጀመሪያ እርዳታ እና ጤና ኬላ',
+      category: FacilityCategory.clinical,
+      subCityEn: 'UoG - Atse Tewodros Campus',
+      subCityAm: 'ዩኦጂ አፄ ቴዎድሮስ ካምፓስ',
+      campusNameEn: 'UoG - Atse Tewodros Campus',
+      campusNameAm: 'ዩኦጂ አፄ ቴዎድሮስ ካምፓስ',
+      buildingEn: 'Engineering Workshop Wing, Block 12',
+      buildingAm: 'ኢንጂነሪንግ ወርክሾፕ ክንፍ፣ ብሎክ 12',
+      landmarkEn: 'Near Technology Faculty Gate & Sports Field',
+      landmarkAm: 'ከቴክኖሎጂ ፋኩልቲ መግቢያ በር እና ስፖርት ሜዳ አጠገብ',
+      focalPerson: 'Alemayehu Bogale (Health Officer)',
+      focalPhone: '+251-58-114-2200',
+      telegramHandle: 'uog_tewodros_clinic',
+      phone: '+251-58-114-2200',
+      type: FacilityType.campusClinic,
+      latitude: 12.5982,
+      longitude: 37.4520,
+      distanceKm: 2.1,
+      isYouthFriendly: true,
+      isFreeForYouth: true,
+      isWheelchairAccessible: true,
+      hasPrivateRoom: true,
+      operatingHours: 'Mon-Fri 08:00 - 18:00',
+      openingHour: 8,
+      closingHour: 18,
+      addressEn:
+          'Atse Tewodros Campus, University of Gondar, Gondar, Ethiopia',
+      addressAm: 'አፄ ቴዎድሮስ ግቢ፣ ጎንደር ዩኒቨርሲቲ፣ ጎንደር፣ ኢትዮጵያ',
+      services: [
+        '#First_Aid',
+        '#Student_Clinic',
+        '#Emergency_Care',
+        '#Free_Services',
+      ],
+    ),
+    Facility(
+      id: 'uog_fasil_student_clinic',
+      nameEn: 'UoG Fasil Campus Student Clinic',
+      nameAm: 'የፋሲል ካምፓስ የተማሪዎች ጤና ማዕከል',
+      category: FacilityCategory.clinical,
+      subCityEn: 'UoG - Fasil Campus',
+      subCityAm: 'ዩኦጂ ፋሲል ካምፓስ',
+      campusNameEn: 'UoG - Fasil Campus',
+      campusNameAm: 'ዩኦጂ ፋሲል ካምፓስ',
+      buildingEn: 'Natural Sciences Block, Ground Floor',
+      buildingAm: 'የተፈጥሮ ሳይንስ ብሎክ፣ ምድር ቤት',
+      landmarkEn: 'Near Main Auditorium and Fasil Dining Hall',
+      landmarkAm: 'ከዋናው አዳራሽ እና ከፋሲል የተማሪዎች መመገቢያ አዳራሽ አጠገብ',
+      focalPerson: 'Sister Hiwot (Nurse In-Charge)',
+      focalPhone: '+251-58-114-3311',
+      telegramHandle: 'uog_fasil_health',
+      phone: '+251-58-114-3311',
+      type: FacilityType.campusClinic,
+      latitude: 12.6025,
+      longitude: 37.4485,
+      distanceKm: 2.8,
+      isYouthFriendly: true,
+      isFreeForYouth: true,
+      isWheelchairAccessible: true,
+      hasPrivateRoom: true,
+      operatingHours: 'Mon-Fri 08:30 - 17:30',
+      openingHour: 8,
+      closingHour: 18,
+      addressEn: 'Fasil Campus, University of Gondar, Gondar, Ethiopia',
+      addressAm: 'ፋሲል ግቢ፣ ጎንደር ዩኒቨርሲቲ፣ ጎንደር፣ ኢትዮጵያ',
+      services: [
+        '#Youth_Friendly',
+        '#Student_Clinic',
+        '#SRH_Counseling',
+        '#First_Aid',
+      ],
+    ),
+    Facility(
+      id: 'uog_tseda_health_center',
+      nameEn: 'UoG Tseda Campus Health & First Aid Center',
+      nameAm: 'የጼዳ ካምፓስ የጤና እና የመጀመሪያ እርዳታ ማዕከል',
+      category: FacilityCategory.clinical,
+      subCityEn: 'UoG - Tseda Campus',
+      subCityAm: 'ዩኦጂ ጼዳ ካምፓስ',
+      campusNameEn: 'UoG - Tseda Campus',
+      campusNameAm: 'ዩኦጂ ጼዳ ካምፓስ',
+      buildingEn: 'Agricultural Science Complex, Room 05',
+      buildingAm: 'የግብርና ሳይንስ ኮምፕሌክስ፣ ቢሮ ቁጥር 05',
+      landmarkEn: 'Next to Administration Gate, Tseda Field Compound',
+      landmarkAm: 'ከአስተዳደር በር አጠገብ፣ የጼዳ መስክ ግቢ',
+      focalPerson: 'Ephrem G. (Emergency Medic)',
+      focalPhone: '+251-58-114-4422',
+      telegramHandle: 'uog_tseda_clinic',
+      phone: '+251-58-114-4422',
+      type: FacilityType.campusClinic,
+      latitude: 12.5510,
+      longitude: 37.4820,
+      distanceKm: 8.5,
+      isYouthFriendly: true,
+      isFreeForYouth: true,
+      isWheelchairAccessible: true,
+      hasPrivateRoom: true,
+      operatingHours: 'Mon-Fri 08:30 - 17:00',
       openingHour: 8,
       closingHour: 17,
+      addressEn: 'Tseda Campus, University of Gondar, Tseda, Ethiopia',
+      addressAm: 'ጼዳ ግቢ፣ ጎንደር ዩኒቨርሲቲ፣ ጼዳ፣ ኢትዮጵያ',
       services: [
-        'SRH Services',
-        'VCT / HIV Testing',
-        'Mental Health & Counseling',
-        'Peer Support & Education',
-      ],
-    ),
-    Facility(
-      id: 'bole_17_health_center',
-      nameEn: 'Bole 17 Public Health Center',
-      nameAm: 'ቦሌ 17 ጤና ጣቢያ',
-      subCityEn: 'Bole Sub-City, Woreda 03',
-      subCityAm: 'ቦሌ ክፍለ ከተማ፣ ወረዳ 03',
-      addressEn: 'Near 22 Mazoria & Lem Hotel, Addis Ababa',
-      addressAm: '22 ማዞሪያ እና ሌም ሆቴል አካባቢ፣ አዲስ አበባ',
-      landmarkEn: 'Opposite Bole Community High School',
-      landmarkAm: 'ከቦሌ ማህበረሰብ ሁለተኛ ደረጃ ት/ቤት ፊት ለፊት',
-      phone: '+251-11-662-3311',
-      type: FacilityType.publicHealthCenter,
-      latitude: 9.0205,
-      longitude: 38.7891,
-      distanceKm: 4.8,
-      isYouthFriendly: true,
-      isFreeForYouth: true,
-      openingHour: 8,
-      closingHour: 18,
-      services: [
-        'SRH Services',
-        'VCT / HIV Testing',
-        'Adolescent Health',
-        'General Health Checkup',
-      ],
-    ),
-    Facility(
-      id: 'aastu_clinic',
-      nameEn: 'AASTU Student Health Center (Kilinto Campus)',
-      nameAm: 'የአ.ሳ.ቴ.ዩ የተማሪዎች ጤና ማዕከል (ኪሊንጦ)',
-      subCityEn: 'Akaki-Kality Sub-City, Kilinto',
-      subCityAm: 'አቃቂ ቃሊቲ ክፍለ ከተማ፣ ኪሊንጦ',
-      addressEn: 'AASTU Campus, Kality Road, Addis Ababa',
-      addressAm: 'የአ.አ.ሳ.ቴ.ዩ ግቢ፣ ቃሊቲ መንገድ፣ አዲስ አበባ',
-      landmarkEn: 'AASTU Administration Gate 2',
-      landmarkAm: 'የአ.አ.ሳ.ቴ.ዩ አስተዳደር በር 2',
-      phone: '+251-11-888-0600',
-      type: FacilityType.campusClinic,
-      latitude: 8.8872,
-      longitude: 38.8105,
-      distanceKm: 7.2,
-      isYouthFriendly: true,
-      isFreeForYouth: true,
-      openingHour: 8,
-      closingHour: 21,
-      campusNameEn: 'Addis Ababa Science & Technology University',
-      campusNameAm: 'አዲስ አበባ ሳይንስና ቴክኖሎጂ ዩኒቨርሲቲ',
-      services: [
-        'Campus Student Health',
-        'Emergency First Aid',
-        'Mental Health & Counseling',
-        'SRH Services',
+        '#First_Aid',
+        '#Student_Clinic',
+        '#Emergency_Care',
+        '#Disability_Support',
       ],
     ),
   ];
@@ -182,7 +275,38 @@ class LocalVerifiedFacilityRepository implements FacilityRepository {
         case FacilityFilterCategory.mentalHealth:
           result = result
               .where((f) =>
-                  f.services.any((s) => s.toLowerCase().contains('mental')))
+                  f.services.any((s) => s.toLowerCase().contains('mental')) ||
+                  f.category == FacilityCategory.counseling)
+              .toList();
+          break;
+        case FacilityFilterCategory.clinical:
+          result =
+              result.where((f) => f.category == FacilityCategory.clinical).toList();
+          break;
+        case FacilityFilterCategory.counseling:
+          result = result
+              .where((f) => f.category == FacilityCategory.counseling)
+              .toList();
+          break;
+        case FacilityFilterCategory.academic:
+          result =
+              result.where((f) => f.category == FacilityCategory.academic).toList();
+          break;
+        case FacilityFilterCategory.studentAffairs:
+          result = result
+              .where((f) => f.category == FacilityCategory.studentAffairs)
+              .toList();
+          break;
+        case FacilityFilterCategory.sportsDining:
+          result = result
+              .where((f) => f.category == FacilityCategory.sportsDining)
+              .toList();
+          break;
+        case FacilityFilterCategory.accessibility:
+          result = result
+              .where((f) =>
+                  f.category == FacilityCategory.accessibility ||
+                  f.isWheelchairAccessible)
               .toList();
           break;
         case FacilityFilterCategory.all:
@@ -195,10 +319,12 @@ class LocalVerifiedFacilityRepository implements FacilityRepository {
       result = result.where((f) {
         final matchEn = f.nameEn.toLowerCase().contains(clean) ||
             f.subCityEn.toLowerCase().contains(clean) ||
+            (f.buildingEn?.toLowerCase().contains(clean) ?? false) ||
             f.addressEn.toLowerCase().contains(clean) ||
             f.services.any((s) => s.toLowerCase().contains(clean));
         final matchAm = f.nameAm.contains(clean) ||
             f.subCityAm.contains(clean) ||
+            (f.buildingAm?.contains(clean) ?? false) ||
             f.addressAm.contains(clean);
         return matchEn || matchAm;
       }).toList();
@@ -225,6 +351,28 @@ class DynamicFacilityRepository implements FacilityRepository {
     final base = await fallback.getFacilities(query: query, category: category);
     if (fallback is UnconfiguredFacilityRepository) {
       return base;
+    }
+    if (customFacilitiesProvider == null) return base;
+    try {
+      final custom = await customFacilitiesProvider!();
+      final ids = base.map((f) => f.id).toSet();
+      final extras = custom.where((f) => !ids.contains(f.id)).toList();
+      return [...base, ...extras];
+    } catch (_) {
+      return base;
+    }
+  }
+
+  Future<List<Facility>> refreshFacilities({
+    String? query,
+    FacilityFilterCategory? category,
+  }) async {
+    final fb = fallback;
+    List<Facility> base;
+    if (fb is SyncFacilityRepository) {
+      base = await fb.refreshFacilities(query: query, category: category);
+    } else {
+      base = await fb.getFacilities(query: query, category: category);
     }
     if (customFacilitiesProvider == null) return base;
     try {

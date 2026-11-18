@@ -6,7 +6,6 @@ import {
   Trash2,
   Clock,
   X,
-  Edit3,
   Download,
   Bold,
   Heading2,
@@ -18,8 +17,20 @@ import {
   Lightbulb,
   Smartphone,
   LayoutTemplate,
+  ChevronUp,
+  ChevronDown,
+  Check,
+  HelpCircle,
+  FileText,
+  Layers,
+  ArrowLeft,
+  Copy,
+  Save,
+  ChevronRight,
+  Info,
+  HeartPulse,
 } from 'lucide-react';
-import { Module } from '../types/index.js';
+import { Module, QuizQuestion } from '../types/index.js';
 import { exportToCsv } from '../utils/csvExport.js';
 import { ConfirmModal } from '../components/common/ConfirmModal.js';
 import { EmptyState } from '../components/common/EmptyState.js';
@@ -27,14 +38,24 @@ import {
   CURRICULUM_TEMPLATES,
   OFFICIAL_ILLUSTRATIONS,
   CurriculumTemplate,
+  CurriculumSection,
+  parseMarkdownToSections,
+  serializeSectionsToMarkdown,
 } from '../data/curriculumTemplates.js';
 import { ModuleMobilePreview } from '../components/learning/ModuleMobilePreview.js';
 
 interface LearningCmsPageProps {
   modules: Module[];
   lang: 'en' | 'am';
-  onSave: (data: Partial<Module>, id?: string) => Promise<void>;
+  onSave: (
+    data: Partial<Module>,
+    id?: string,
+    extraQuizzes?: Array<Partial<QuizQuestion>>
+  ) => Promise<void>;
   onDelete: (id: string) => Promise<void>;
+  questions?: QuizQuestion[];
+  onSaveQuestion?: (data: Partial<QuizQuestion>, id?: string) => Promise<void>;
+  onDeleteQuestion?: (id: string) => Promise<void>;
 }
 
 export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
@@ -42,17 +63,50 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
   lang,
   onSave,
   onDelete,
+  questions = [],
 }) => {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [search, setSearch] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingModule, setEditingModule] = useState<Module | null>(null);
   const [moduleToDelete, setModuleToDelete] = useState<Module | null>(null);
-  const [activeTab, setActiveTab] = useState<'en' | 'am'>('en');
-  const [modalTab, setModalTab] = useState<'form' | 'preview'>('form');
+
+  // Studio step navigation: overview, note, sections, quizzes, preview
+  const [modalTab, setModalTab] = useState<'overview' | 'note' | 'sections' | 'quizzes' | 'preview'>('overview');
+  const [activeLangTab, setActiveLangTab] = useState<'en' | 'am'>('en');
+  const [viewMode, setViewMode] = useState<'split' | 'en' | 'am'>('split');
+  const [expandedSections, setExpandedSections] = useState<Set<number>>(new Set([0]));
+
+  // Mode for learning sections: visual form cards (easy default) or raw markdown
+  const [sectionEditMode, setSectionEditMode] = useState<'form' | 'markdown'>('form');
+
   const [showTemplatePicker, setShowTemplatePicker] = useState(false);
   const [showImagePicker, setShowImagePicker] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Editing state for an individual quiz question inside Tab 4
+  const [editingQuizIndex, setEditingQuizIndex] = useState<number | null>(null);
+  const [quizFormOpen, setQuizFormOpen] = useState(false);
+  const [quizFormData, setQuizFormData] = useState<{
+    id?: string;
+    type: 'MULTIPLE_CHOICE' | 'TRUE_FALSE';
+    questionEn: string;
+    questionAm: string;
+    optionsEn: string[];
+    optionsAm: string[];
+    correctIndex: number;
+    explanationEn: string;
+    explanationAm: string;
+  }>({
+    type: 'MULTIPLE_CHOICE',
+    questionEn: '',
+    questionAm: '',
+    optionsEn: ['', '', '', ''],
+    optionsAm: ['', '', '', ''],
+    correctIndex: 0,
+    explanationEn: '',
+    explanationAm: '',
+  });
 
   const categories = [
     'All',
@@ -78,6 +132,7 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
     substance: { en: 'Substance Abuse', am: 'የሱስ መከላከል' },
   };
 
+  // Base module fields
   const [formData, setFormData] = useState({
     category: 'puberty',
     titleEn: '',
@@ -95,12 +150,18 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
     orderIndex: 1,
   });
 
+  // Dynamic Visual Sections Form State
+  const [sections, setSections] = useState<CurriculumSection[]>([]);
+
+  // Module Quiz Questions State
+  const [moduleQuestions, setModuleQuestions] = useState<Array<Partial<QuizQuestion>>>([]);
+
   // Lock body scroll and capture Escape key when modal is open
   useEffect(() => {
     if (isModalOpen) {
       document.body.style.overflow = 'hidden';
       const handleKeyDown = (e: KeyboardEvent) => {
-        if (e.key === 'Escape') {
+        if (e.key === 'Escape' && !quizFormOpen && !showImagePicker && !showTemplatePicker) {
           setIsModalOpen(false);
         }
       };
@@ -112,7 +173,7 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
     } else {
       document.body.style.overflow = '';
     }
-  }, [isModalOpen]);
+  }, [isModalOpen, quizFormOpen, showImagePicker, showTemplatePicker]);
 
   // Filter modules by category and full-text search
   const filtered = useMemo(() => {
@@ -150,18 +211,27 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
 
   const extractNoteFromMarkdown = (content: string): string => {
     const match = content.match(
-      />\s*(?:(?:Clinical Tip|Medical Note|የዶክተር ማስታወሻ|Note):\s*)?([^\n\r]+)/i
+      /(?:^|\r?\n)(?:[>|]\s*|\s*)(?:Clinical Tip|Medical Note|Doctor(?:\x27s)? Note|የዶክተር ማስታወሻ|ማስታወሻ|Note):\s*([^\n\r]+(?:\r?\n(?!(?:##|#|[>|]|\s*$))[^\n\r]+)*)/i
     );
     return match ? match[1].trim() : '';
   };
 
   const openCreateModal = () => {
     setEditingModule(null);
-    setModalTab('form');
+    setModalTab('overview');
+    setSectionEditMode('form');
     setShowTemplatePicker(false);
     setShowImagePicker(false);
+    setQuizFormOpen(false);
+    setExpandedSections(new Set([0]));
+
     // Auto-select Puberty template as initial starting scaffold
     const defaultTemplate = CURRICULUM_TEMPLATES[0];
+    const initialSections = parseMarkdownToSections(
+      defaultTemplate.contentEn,
+      defaultTemplate.contentAm
+    );
+
     setFormData({
       category: defaultTemplate.category,
       titleEn: defaultTemplate.titleEn,
@@ -178,18 +248,44 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
       isPublished: true,
       orderIndex: modules.length + 1,
     });
+    setSections(initialSections);
+
+    // Populate starter template questions if present
+    if (defaultTemplate.questions && defaultTemplate.questions.length > 0) {
+      setModuleQuestions(
+        defaultTemplate.questions.map((q, idx) => ({
+          id: `temp-${idx}`,
+          type: q.type,
+          questionEn: q.questionEn,
+          questionAm: q.questionAm,
+          optionsEn: q.optionsEn,
+          optionsAm: q.optionsAm,
+          correctIndex: q.correctIndex,
+          explanationEn: q.explanationEn,
+          explanationAm: q.explanationAm,
+        }))
+      );
+    } else {
+      setModuleQuestions([]);
+    }
+
     setIsModalOpen(true);
   };
 
   const openEditModal = (m: Module) => {
     setEditingModule(m);
-    setModalTab('form');
+    setModalTab('overview');
+    setSectionEditMode('form');
     setShowTemplatePicker(false);
     setShowImagePicker(false);
+    setQuizFormOpen(false);
+    setExpandedSections(new Set([0]));
 
     const fallbackImg =
       OFFICIAL_ILLUSTRATIONS.find((i) => i.id === m.category)?.path ||
       'assets/images/learning/module_01_puberty.jpg';
+
+    const parsed = parseMarkdownToSections(m.contentEn || '', m.contentAm || '');
 
     setFormData({
       category: m.category,
@@ -209,10 +305,17 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
       isPublished: m.isPublished,
       orderIndex: m.orderIndex,
     });
+    setSections(parsed);
+
+    // Find linked questions for this module from the questions bank
+    const linked = questions.filter((q) => q.moduleId === m.id);
+    setModuleQuestions(linked.map((q) => ({ ...q })));
+
     setIsModalOpen(true);
   };
 
   const applyTemplate = (template: CurriculumTemplate) => {
+    const parsed = parseMarkdownToSections(template.contentEn, template.contentAm);
     setFormData((prev) => ({
       ...prev,
       category: template.category,
@@ -228,34 +331,277 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
       readTimeMin: template.readTimeMin,
       authorName: template.authorName,
     }));
+    setSections(parsed);
+    setExpandedSections(new Set([0]));
+
+    // If template includes verified quiz questions, load them into the module's questions
+    if (template.questions && template.questions.length > 0) {
+      setModuleQuestions(
+        template.questions.map((q, idx) => ({
+          id: `temp-${idx}`,
+          type: q.type,
+          questionEn: q.questionEn,
+          questionAm: q.questionAm,
+          optionsEn: q.optionsEn,
+          optionsAm: q.optionsAm,
+          correctIndex: q.correctIndex,
+          explanationEn: q.explanationEn,
+          explanationAm: q.explanationAm,
+        }))
+      );
+    }
+
     setShowTemplatePicker(false);
   };
 
-  const handleExportCsv = () => {
-    exportToCsv(
-      'Yegna_Health_Curriculum_Modules',
-      [
-        { header: 'Title (English)', accessor: (m) => m.titleEn },
-        { header: 'Title (Amharic)', accessor: (m) => m.titleAm },
-        { header: 'Category', accessor: (m) => m.category },
-        { header: 'Read Time (Minutes)', accessor: (m) => m.readTimeMin },
-        {
-          header: 'Author Attribution',
-          accessor: (m) => m.authorName || 'Medical Review Team',
-        },
-        { header: 'Summary (English)', accessor: (m) => m.summaryEn },
-        { header: 'Summary (Amharic)', accessor: (m) => m.summaryAm },
-        {
-          header: 'Publication Status',
-          accessor: (m) => (m.isPublished ? 'PUBLISHED' : 'DRAFT'),
-        },
-      ],
-      filtered
+  // Section Handlers for Form Mode
+  const handleAddSection = () => {
+    const newIdx = sections.length + 1;
+    const newSec: CurriculumSection = {
+      id: `sec-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+      titleEn: `Section ${newIdx}`,
+      titleAm: `ክፍል ${newIdx}`,
+      bodyEn: '',
+      bodyAm: '',
+      bulletsEn: [''],
+      bulletsAm: [''],
+      tipEn: '',
+      tipAm: '',
+    };
+    setSections((prev) => [...prev, newSec]);
+    setExpandedSections((prev) => new Set([...prev, sections.length]));
+  };
+
+  const handleRemoveSection = (index: number) => {
+    if (sections.length <= 1) return;
+    setSections((prev) => prev.filter((_, i) => i !== index));
+    setExpandedSections((prev) => {
+      const next = new Set<number>();
+      prev.forEach((idx) => {
+        if (idx < index) next.add(idx);
+        else if (idx > index) next.add(idx - 1);
+      });
+      return next;
+    });
+  };
+
+  const handleMoveSection = (index: number, direction: 'up' | 'down') => {
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= sections.length) return;
+
+    setSections((prev) => {
+      const next = [...prev];
+      const temp = next[index];
+      next[index] = next[targetIndex];
+      next[targetIndex] = temp;
+      return next;
+    });
+
+    setExpandedSections((prev) => {
+      const next = new Set<number>();
+      prev.forEach((idx) => {
+        if (idx === index) next.add(targetIndex);
+        else if (idx === targetIndex) next.add(index);
+        else next.add(idx);
+      });
+      return next;
+    });
+  };
+
+  const handleUpdateSection = (
+    index: number,
+    field: keyof CurriculumSection,
+    val: any
+  ) => {
+    setSections((prev) =>
+      prev.map((s, i) => (i === index ? { ...s, [field]: val } : s))
     );
   };
 
-  const insertMarkdown = (syntaxPrefix: string, syntaxSuffix = '') => {
-    if (activeTab === 'en') {
+  const handleAddBullet = (secIndex: number) => {
+    setSections((prev) =>
+      prev.map((s, i) => {
+        if (i !== secIndex) return s;
+        return {
+          ...s,
+          bulletsEn: [...s.bulletsEn, ''],
+          bulletsAm: [...s.bulletsAm, ''],
+        };
+      })
+    );
+  };
+
+  const handleRemoveBullet = (secIndex: number, bulletIndex: number) => {
+    setSections((prev) =>
+      prev.map((s, i) => {
+        if (i !== secIndex) return s;
+        return {
+          ...s,
+          bulletsEn: s.bulletsEn.filter((_, bIdx) => bIdx !== bulletIndex),
+          bulletsAm: s.bulletsAm.filter((_, bIdx) => bIdx !== bulletIndex),
+        };
+      })
+    );
+  };
+
+  const handleUpdateBullet = (
+    secIndex: number,
+    bulletIndex: number,
+    bulletLang: 'en' | 'am',
+    val: string
+  ) => {
+    setSections((prev) =>
+      prev.map((s, i) => {
+        if (i !== secIndex) return s;
+        if (bulletLang === 'en') {
+          const newBullets = [...s.bulletsEn];
+          newBullets[bulletIndex] = val;
+          return { ...s, bulletsEn: newBullets };
+        } else {
+          const newBullets = [...s.bulletsAm];
+          newBullets[bulletIndex] = val;
+          return { ...s, bulletsAm: newBullets };
+        }
+      })
+    );
+  };
+
+  // Accordion Expand/Collapse Helpers
+  const toggleSectionExpanded = (idx: number) => {
+    setExpandedSections((prev) => {
+      const next = new Set(prev);
+      if (next.has(idx)) {
+        next.delete(idx);
+      } else {
+        next.add(idx);
+      }
+      return next;
+    });
+  };
+
+  const expandAllSections = () => {
+    setExpandedSections(new Set(sections.map((_, i) => i)));
+  };
+
+  const collapseAllSections = () => {
+    setExpandedSections(new Set());
+  };
+
+  // 1-Click Interactive Correct Answer Selector for Quiz Cards
+  const handleSetCorrectAnswer = (qIdx: number, oIdx: number) => {
+    setModuleQuestions((prev) => {
+      const next = [...prev];
+      next[qIdx] = { ...next[qIdx], correctIndex: oIdx };
+      return next;
+    });
+  };
+
+  // Sync between Form Mode and Markdown Mode
+  const handleToggleSectionMode = (newMode: 'form' | 'markdown') => {
+    if (newMode === 'markdown') {
+      const serialized = serializeSectionsToMarkdown(sections);
+      setFormData((prev) => ({
+        ...prev,
+        contentEn: serialized.contentEn,
+        contentAm: serialized.contentAm,
+      }));
+    } else {
+      const parsed = parseMarkdownToSections(formData.contentEn, formData.contentAm);
+      setSections(parsed);
+      setExpandedSections(new Set([0]));
+    }
+    setSectionEditMode(newMode);
+  };
+
+  // Quiz Question Handlers inside Module Editor
+  const openAddQuizQuestion = () => {
+    setEditingQuizIndex(null);
+    setQuizFormData({
+      type: 'MULTIPLE_CHOICE',
+      questionEn: '',
+      questionAm: '',
+      optionsEn: ['', '', '', ''],
+      optionsAm: ['', '', '', ''],
+      correctIndex: 0,
+      explanationEn: '',
+      explanationAm: '',
+    });
+    setQuizFormOpen(true);
+  };
+
+  const openEditQuizQuestion = (q: Partial<QuizQuestion>, idx: number) => {
+    setEditingQuizIndex(idx);
+    const isTf = q.type === 'TRUE_FALSE';
+    setQuizFormData({
+      id: q.id,
+      type: q.type || 'MULTIPLE_CHOICE',
+      questionEn: q.questionEn || '',
+      questionAm: q.questionAm || '',
+      optionsEn:
+        q.optionsEn && q.optionsEn.length > 0
+          ? [...q.optionsEn]
+          : isTf
+          ? ['True', 'False']
+          : ['', '', '', ''],
+      optionsAm:
+        q.optionsAm && q.optionsAm.length > 0
+          ? [...q.optionsAm]
+          : isTf
+          ? ['እውነት', 'ሐሰት']
+          : ['', '', '', ''],
+      correctIndex: q.correctIndex ?? 0,
+      explanationEn: q.explanationEn || '',
+      explanationAm: q.explanationAm || '',
+    });
+    setQuizFormOpen(true);
+  };
+
+  const handleSaveQuizQuestion = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!quizFormData.questionEn.trim() && !quizFormData.questionAm.trim()) {
+      return;
+    }
+
+    const newQuestion: Partial<QuizQuestion> = {
+      ...quizFormData,
+      id: quizFormData.id || `temp-${Date.now()}`,
+    };
+
+    if (editingQuizIndex !== null) {
+      setModuleQuestions((prev) =>
+        prev.map((q, i) => (i === editingQuizIndex ? newQuestion : q))
+      );
+    } else {
+      setModuleQuestions((prev) => [...prev, newQuestion]);
+    }
+
+    setQuizFormOpen(false);
+    setEditingQuizIndex(null);
+  };
+
+  const handleDeleteQuizQuestion = (idx: number) => {
+    setModuleQuestions((prev) => prev.filter((_, i) => i !== idx));
+    if (editingQuizIndex === idx) {
+      setQuizFormOpen(false);
+      setEditingQuizIndex(null);
+    }
+  };
+
+  const handleDuplicateQuizQuestion = (idx: number) => {
+    const source = moduleQuestions[idx];
+    if (!source) return;
+    const duplicate: Partial<QuizQuestion> = {
+      ...source,
+      id: `temp-${Date.now()}`,
+      questionEn: `${source.questionEn || ''} (Copy)`,
+      questionAm: source.questionAm ? `${source.questionAm} (ቅጂ)` : '',
+    };
+    setModuleQuestions((prev) => [...prev.slice(0, idx + 1), duplicate, ...prev.slice(idx + 1)]);
+  };
+
+  // Fast Markdown Syntax Helper
+  const insertMarkdown = (syntaxPrefix: string, syntaxSuffix: string = '') => {
+    if (activeLangTab === 'en') {
       setFormData((prev) => ({
         ...prev,
         contentEn: `${prev.contentEn}\n${syntaxPrefix}Sample Text${syntaxSuffix}`,
@@ -268,248 +614,219 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     if (isSubmitting) return;
+
     try {
       setIsSubmitting(true);
-      await onSave(formData, editingModule ? editingModule.id : undefined);
+
+      let finalContentEn = formData.contentEn;
+      let finalContentAm = formData.contentAm;
+
+      if (sectionEditMode === 'form') {
+        const serialized = serializeSectionsToMarkdown(sections);
+        finalContentEn = formData.doctorNoteEn.trim()
+          ? `| Note: ${formData.doctorNoteEn.trim()}\n\n${serialized.contentEn}`
+          : serialized.contentEn;
+        finalContentAm = formData.doctorNoteAm.trim()
+          ? `| ማስታወሻ: ${formData.doctorNoteAm.trim()}\n\n${serialized.contentAm}`
+          : serialized.contentAm;
+      } else {
+        if (
+          formData.doctorNoteEn.trim() &&
+          !finalContentEn.trim().startsWith('| Note')
+        ) {
+          finalContentEn = `| Note: ${formData.doctorNoteEn.trim()}\n\n${finalContentEn}`;
+        }
+        if (
+          formData.doctorNoteAm.trim() &&
+          !finalContentAm.trim().startsWith('| ማስታወሻ')
+        ) {
+          finalContentAm = `| ማስታወሻ: ${formData.doctorNoteAm.trim()}\n\n${finalContentAm}`;
+        }
+      }
+
+      const finalPayload: Partial<Module> = {
+        ...formData,
+        contentEn: finalContentEn,
+        contentAm: finalContentAm,
+      };
+
+      await onSave(
+        finalPayload,
+        editingModule ? editingModule.id : undefined,
+        moduleQuestions
+      );
+
       setIsModalOpen(false);
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // Resolve thumbnail preview URL for form display
   const currentThumbnailUrl = useMemo(() => {
     if (!formData.imageUrl) return '/illustrations/module_01_puberty.jpg';
-    if (formData.imageUrl.startsWith('http://') || formData.imageUrl.startsWith('https://')) {
+    if (
+      formData.imageUrl.startsWith('http://') ||
+      formData.imageUrl.startsWith('https://')
+    ) {
       return formData.imageUrl;
     }
-    const filename = formData.imageUrl.split('/').pop();
-    return `/illustrations/${filename}`;
+    const clean = formData.imageUrl.replace(/^assets\/images\/learning\//, '');
+    return `/illustrations/${clean}`;
   }, [formData.imageUrl]);
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      {/* Top Banner and Quick Actions */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xs">
         <div>
-          <h2 className="text-xl md:text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
-            <BookOpen className="text-brand-600 dark:text-cyan-400" size={24} />
-            <span>
-              {lang === 'am'
-                ? 'የትምህርት ሞጁሎችና የዶክተር ማስታወሻዎች'
-                : 'Health Curriculum CMS'}
-            </span>
+          <h2 className="text-xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+            <BookOpen className="text-brand-600 dark:text-cyan-400" size={22} />
+            <span>{lang === 'am' ? 'የትምህርት ሞጁሎች ማኔጅመንት' : 'Health Curriculum CMS'}</span>
           </h2>
-          <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
             {lang === 'am'
-              ? 'የጉርምስና፣ የሥነ-ተዋልዶ፣ የኤች.አይ.ቪና የአእምሮ ጤና ትምህርቶችን በአብነቶች አማካኝነት ያዘጋጁ።'
-              : 'Draft, publish, and update bilingual medical education verified for Ethiopian youth with professional templates.'}
+              ? 'ክሊኒካዊ ትምህርቶችን፣ የዶክተር ማስታወሻዎችን፣ አኮርዲዮን ክፍሎችንና የፈተና ጥያቄዎችን ያቀናብሩ'
+              : 'Enterprise curriculum studio for clinical lessons, doctor takeaway notes, and knowledge quizzes'}
           </p>
         </div>
 
-        <div className="flex items-center gap-2 self-start sm:self-auto">
+        <div className="flex items-center gap-2">
           <button
-            onClick={handleExportCsv}
-            className="flex items-center gap-1.5 px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs md:text-sm font-bold rounded-xl border border-slate-200 dark:border-slate-700 transition-all cursor-pointer shadow-2xs"
-            title={
-              lang === 'am'
-                ? 'የትምህርት ሞጁሎች ሪፖርት አውርድ'
-                : 'Export curriculum to Excel CSV'
-            }
+            onClick={() => {
+              exportToCsv(
+                'yegna-health-curriculum',
+                [
+                  { header: 'ID', accessor: (m) => m.id },
+                  { header: 'Category', accessor: (m) => m.category },
+                  { header: 'Title (EN)', accessor: (m) => m.titleEn },
+                  { header: 'Title (AM)', accessor: (m) => m.titleAm },
+                  { header: 'Read Time (min)', accessor: (m) => m.readTimeMin },
+                  { header: 'Author', accessor: (m) => m.authorName || '' },
+                  { header: 'Published', accessor: (m) => (m.isPublished ? 'Yes' : 'No') },
+                  { header: 'Sections Count', accessor: (m) => (m.contentEn ? m.contentEn.split('##').length - 1 : 0) },
+                ],
+                modules
+              );
+            }}
+            className="px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold transition-all shadow-2xs flex items-center gap-1.5 cursor-pointer"
           >
-            <Download size={15} />
-            <span>{lang === 'am' ? 'ሪፖርት (CSV)' : 'Export CSV'}</span>
+            <Download size={14} />
+            <span className="hidden sm:inline">{lang === 'am' ? 'ዳታ አውርድ' : 'Export CSV'}</span>
           </button>
+
           <button
             onClick={openCreateModal}
-            className="flex items-center gap-2 px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-xs md:text-sm font-bold rounded-xl shadow-md shadow-brand-600/20 transition-all cursor-pointer"
+            className="px-4 py-2 bg-gradient-to-r from-brand-600 to-cyan-600 hover:from-brand-700 hover:to-cyan-700 text-white rounded-xl text-xs font-extrabold transition-all shadow-sm flex items-center gap-1.5 cursor-pointer"
           >
-            <Plus size={16} />
-            <span>
-              {lang === 'am' ? '+ አዲስ ትምህርት ጨምር' : '+ New Health Module'}
-            </span>
+            <Plus size={15} />
+            <span>{lang === 'am' ? 'አዲስ ሞጁል አዘጋጅ' : 'Create Health Module'}</span>
           </button>
         </div>
       </div>
 
-      {/* Search & Topic Filter Bar */}
-      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-3.5 sm:p-4 shadow-xs space-y-3">
-        {/* Search Input & Live Metrics */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-          <div className="relative flex-1">
-            <Search
-              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500"
-              size={16}
-            />
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder={
-                lang === 'am'
-                  ? 'ሞጁሎችን በርዕስ፣ በማጠቃለያ ወይም በደራሲ ፈልግ...'
-                  : 'Search modules by title, summary, content, or author...'
-              }
-              className="w-full pl-9 pr-8 py-2 text-xs md:text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-hidden focus:border-brand-500 dark:focus:border-brand-400 transition-colors"
-            />
-            {search && (
-              <button
-                type="button"
-                onClick={() => setSearch('')}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
-              >
-                <X size={14} />
-              </button>
-            )}
-          </div>
-
-          <div className="flex items-center justify-between sm:justify-end gap-3 text-xs text-slate-500 dark:text-slate-400">
-            <span>
-              {lang === 'am'
-                ? `${filtered.length} ከ ${modules.length} ሞጁሎች ተገኝተዋል`
-                : `Showing ${filtered.length} of ${modules.length} modules`}
-            </span>
-
-            {(search || selectedCategory !== 'All') && (
-              <button
-                onClick={() => {
-                  setSearch('');
-                  setSelectedCategory('All');
-                }}
-                className="text-brand-600 dark:text-cyan-400 font-bold hover:underline cursor-pointer"
-              >
-                {lang === 'am' ? 'አጣራዎችን አጽዳ' : 'Reset'}
-              </button>
-            )}
-          </div>
-        </div>
-
-        {/* Category Pills Bar */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 pt-1 scrollbar-none">
+      {/* Filter and Search Bar */}
+      <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 max-w-full">
           {categories.map((cat) => {
-            const isSelected = selectedCategory === cat;
-            const label = categoryLabels[cat]
-              ? lang === 'am'
-                ? categoryLabels[cat].am
-                : categoryLabels[cat].en
-              : cat;
-
-            const count =
-              cat === 'All'
-                ? modules.length
-                : modules.filter((m) => m.category === cat).length;
-
+            const isSel = selectedCategory === cat;
+            const label =
+              lang === 'am'
+                ? categoryLabels[cat]?.am || cat
+                : categoryLabels[cat]?.en || cat;
             return (
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
-                  isSelected
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+                  isSel
                     ? 'bg-brand-600 text-white shadow-xs'
-                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                    : 'bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:border-slate-300'
                 }`}
               >
-                <span>{label}</span>
-                <span
-                  className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
-                    isSelected
-                      ? 'bg-white/20 text-white'
-                      : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'
-                  }`}
-                >
-                  {count}
-                </span>
+                {label}
               </button>
             );
           })}
         </div>
-      </div>
 
-      {/* Modules Grid */}
-      {filtered.length === 0 ? (
-        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 p-8 shadow-xs">
-          <EmptyState
-            icon={BookOpen}
-            title={
-              modules.length === 0
-                ? (lang === 'am'
-                    ? 'ምንም የተመዘገበ የትምህርት ሞጁል የለም'
-                    : 'No Health Modules Registered')
-                : (lang === 'am'
-                    ? 'ከፍለጋዎ ጋር የሚዛመድ ሞጁል አልተገኘም'
-                    : 'No Matching Health Modules')
+        <div className="relative min-w-[240px]">
+          <Search
+            size={14}
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+          />
+          <input
+            type="text"
+            placeholder={
+              lang === 'am'
+                ? 'በርዕስ፣ በይዘት ወይም በደራሲ ፈልግ...'
+                : 'Search curriculum titles, summaries, or authors...'
             }
-            description={
-              modules.length === 0
-                ? (lang === 'am'
-                    ? 'የመጀመሪያውን የጤና ትምህርት ሞጁል በአብነት ወይም በራስዎ ማብራሪያ ይፍጠሩ።'
-                    : 'Create your first youth curriculum module using verified templates or custom lessons.')
-                : (lang === 'am'
-                    ? 'እባክዎ የፍለጋ ቃላትን ይቀይሩ ወይም ሌላ የጤና ዘርፍ ይምረጡ።'
-                    : 'Try adjusting your search query or selecting a different health topic category.')
-            }
-            actionLabel={
-              modules.length === 0
-                ? (lang === 'am' ? '+ አዲስ ትምህርት ጨምር' : '+ New Health Module')
-                : undefined
-            }
-            onAction={modules.length === 0 ? openCreateModal : undefined}
-            clearLabel={
-              modules.length > 0 && (search || selectedCategory !== 'All')
-                ? (lang === 'am' ? 'ሁሉንም ሞጁሎች አሳይ' : 'Clear Filters')
-                : undefined
-            }
-            onClear={() => {
-              setSearch('');
-              setSelectedCategory('All');
-            }}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full pl-9 pr-3 py-1.5 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-xl text-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-hidden focus:border-brand-500 transition-all"
           />
         </div>
+      </div>
+
+      {/* Modules Catalog Grid */}
+      {filtered.length === 0 ? (
+        <EmptyState
+          title={lang === 'am' ? 'ምንም የትምህርት ሞጁል አልተገኘም' : 'No curriculum modules found'}
+          description={
+            lang === 'am'
+              ? 'የተመረጠውን ዘርፍ ወይም የፍለጋ ቃል በመቀየር እንደገና ይሞክሩ።'
+              : 'Try selecting another topic filter or create a new curriculum module.'
+          }
+          actionLabel={lang === 'am' ? 'አዲስ ሞጁል ፍጠር' : 'Create Health Module'}
+          onAction={openCreateModal}
+        />
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filtered.map((m) => {
+            const fallbackImg =
+              OFFICIAL_ILLUSTRATIONS.find((i) => i.id === m.category)?.previewUrl ||
+              '/illustrations/module_01_puberty.jpg';
             const cardImgUrl = m.imageUrl
               ? m.imageUrl.startsWith('http')
                 ? m.imageUrl
-                : `/illustrations/${m.imageUrl.split('/').pop()}`
-              : `/illustrations/${OFFICIAL_ILLUSTRATIONS.find((i) => i.id === m.category)?.path.split('/').pop() || 'module_01_puberty.jpg'}`;
+                : `/illustrations/${m.imageUrl.replace(/^assets\/images\/learning\//, '')}`
+              : fallbackImg;
+
+            const linkedQuizCount = questions.filter((q) => q.moduleId === m.id).length;
 
             return (
               <div
                 key={m.id}
-                className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-5 shadow-xs hover:border-slate-300 dark:hover:border-slate-700 transition-all flex flex-col justify-between"
+                className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-5 shadow-2xs hover:shadow-md transition-all flex flex-col justify-between group"
               >
                 <div>
-                  <div className="flex items-start justify-between gap-3 mb-3">
-                    <span className="text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-md bg-brand-50 dark:bg-brand-950/60 text-brand-700 dark:text-cyan-400 border border-brand-100 dark:border-brand-900/40">
-                      {categoryLabels[m.category]
-                        ? lang === 'am'
-                          ? categoryLabels[m.category].am
-                          : categoryLabels[m.category].en
-                        : m.category}
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-cyan-50 dark:bg-cyan-950/60 text-cyan-700 dark:text-cyan-300 border border-cyan-200/60 dark:border-cyan-800/60">
+                      {m.category}
                     </span>
-                    <div className="flex items-center gap-1">
+
+                    <div className="flex items-center gap-1 opacity-80 group-hover:opacity-100 transition-opacity">
                       <button
                         onClick={() => openEditModal(m)}
-                        className="p-1.5 text-slate-400 hover:text-brand-600 dark:hover:text-cyan-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"
-                        title={lang === 'am' ? 'አርትዕ' : 'Edit module'}
+                        className="p-1.5 text-slate-400 hover:text-brand-600 dark:hover:text-cyan-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg cursor-pointer"
+                        title={lang === 'am' ? 'አርትዕ' : 'Edit Module'}
                       >
                         <Edit2 size={14} />
                       </button>
                       <button
                         onClick={() => setModuleToDelete(m)}
-                        className="p-1.5 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg cursor-pointer transition-colors"
-                        title={lang === 'am' ? 'ሞጁሉን ሰርዝ' : 'Delete module'}
+                        className="p-1.5 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-lg cursor-pointer"
+                        title={lang === 'am' ? 'ሰርዝ' : 'Delete Module'}
                       >
                         <Trash2 size={14} />
                       </button>
                     </div>
                   </div>
 
-                  <div className="flex items-start gap-3.5 mb-2">
+                  <div className="flex items-start gap-3.5 mb-3">
                     <div className="w-16 h-16 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700/60 overflow-hidden shrink-0 flex items-center justify-center p-1">
                       <img
                         src={cardImgUrl}
@@ -538,14 +855,11 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
 
                 <div className="pt-4 mt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-slate-400 dark:text-slate-500">
                   <span className="flex items-center gap-1 font-semibold text-slate-600 dark:text-slate-300">
-                    <Clock
-                      size={13}
-                      className="text-slate-400 dark:text-slate-500"
-                    />
+                    <Clock size={13} className="text-slate-400 dark:text-slate-500" />
                     {m.readTimeMin} min read
                   </span>
-                  <span className="text-[11px] truncate max-w-[180px]">
-                    {m.authorName || 'Medical Review Team'}
+                  <span className="text-[11px] font-semibold text-brand-600 dark:text-cyan-400 bg-brand-50/70 dark:bg-cyan-950/40 px-2 py-0.5 rounded-full border border-brand-200/50 dark:border-cyan-900/50">
+                    {linkedQuizCount} {lang === 'am' ? 'ፈተናዎች' : 'Quizzes'}
                   </span>
                 </div>
               </div>
@@ -554,144 +868,181 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
         </div>
       )}
 
-      {/* Editor Modal with Template Picker and Mobile Live Preview */}
+      {/* ========================================================================= */}
+      {/* ENTERPRISE-GRADE CURRICULUM STUDIO WORKSPACE                              */}
+      {/* ========================================================================= */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4">
-          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl max-w-5xl w-full max-h-[94vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95">
-            {/* Modal Header */}
-            <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-brand-50 dark:bg-brand-950/60 text-brand-600 dark:text-cyan-400 flex items-center justify-center">
-                  <BookOpen size={20} />
-                </div>
-                <div>
-                  <h3 className="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white">
-                    {editingModule
-                      ? (lang === 'am'
-                          ? 'የትምህርት ሞጁልን አርትዕ'
-                          : 'Edit Health Curriculum Module')
-                      : (lang === 'am'
-                          ? 'አዲስ የትምህርት ሞጁል ፍጠር'
-                          : 'Create Health Curriculum Module')}
+        <div className="fixed inset-0 z-50 bg-slate-100/90 dark:bg-slate-950 flex flex-col overflow-hidden animate-in fade-in duration-150 font-['Plus_Jakarta_Sans',sans-serif]">
+          {/* STUDIO TOP NAVIGATION BAR */}
+          <header className="px-5 sm:px-8 py-3.5 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between shrink-0 shadow-xs z-30">
+            <div className="flex items-center gap-3 min-w-0">
+              <button
+                type="button"
+                onClick={() => setIsModalOpen(false)}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-700 text-xs font-bold transition-all cursor-pointer"
+              >
+                <ArrowLeft size={14} />
+                <span>{lang === 'am' ? 'ተመለስ' : 'Curriculum'}</span>
+              </button>
+              <div className="h-4 w-px bg-slate-200 dark:bg-slate-700" />
+              <div className="min-w-0">
+                <div className="flex items-center gap-2">
+                  <h3 className="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white truncate max-w-sm">
+                    {formData.titleEn || (lang === 'am' ? 'አዲስ የትምህርት ሞጁል' : 'Untitled Health Curriculum')}
                   </h3>
-                  <p className="text-xs text-slate-400 dark:text-slate-500">
-                    {lang === 'am'
-                      ? 'የተሟላ የጤና ትምህርት፣ የዶክተር ማስታወሻና ስዕላዊ መግለጫዎችን ያዘጋጁ'
-                      : 'Author bilingual medical education with clinical templates & mobile preview'}
-                  </p>
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-brand-50 dark:bg-cyan-950/50 text-brand-700 dark:text-cyan-400 border border-brand-200/60 dark:border-cyan-800/50 shrink-0">
+                    {formData.category}
+                  </span>
                 </div>
-              </div>
-
-              <div className="flex items-center gap-2">
-                {/* View Mode Toggle: Form vs Live Mobile Preview */}
-                <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700">
-                  <button
-                    type="button"
-                    onClick={() => setModalTab('form')}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
-                      modalTab === 'form'
-                        ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs'
-                        : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                    }`}
-                  >
-                    <Edit3 size={13} />
-                    <span>{lang === 'am' ? 'አዘጋጅ' : 'Editor'}</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setModalTab('preview')}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
-                      modalTab === 'preview'
-                        ? 'bg-white dark:bg-slate-700 text-brand-700 dark:text-cyan-300 shadow-xs'
-                        : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                    }`}
-                  >
-                    <Smartphone size={13} />
-                    <span>{lang === 'am' ? 'የሞባይል እይታ' : 'Mobile Preview'}</span>
-                  </button>
-                </div>
-
-                <button
-                  onClick={() => setIsModalOpen(false)}
-                  className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
-                >
-                  <X size={20} />
-                </button>
+                <p className="text-[11px] text-slate-400 truncate">
+                  {sections.length} {lang === 'am' ? 'ክፍሎች' : 'Sections'} • {moduleQuestions.length} {lang === 'am' ? 'ፈተናዎች' : 'Quizzes'} • {formData.readTimeMin} min read
+                </p>
               </div>
             </div>
 
-            {/* Modal Body: Form or Mobile Phone Simulator */}
-            <div className="flex-1 overflow-y-auto p-5 sm:p-6">
-              {modalTab === 'preview' ? (
-                /* LIVE MOBILE PREVIEW (REPLICATING IMAGE 2 EXACTLY) */
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between bg-blue-50/70 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900/50 rounded-2xl p-3.5 text-xs text-blue-900 dark:text-blue-300">
-                    <div className="flex items-center gap-2">
-                      <Smartphone size={16} className="text-brand-600 shrink-0" />
-                      <span>
-                        {lang === 'am'
-                          ? 'ይህ የቀጥታ ቅድመ-እይታ ተማሪዎች በሞባይል ስልካቸው ላይ የሚያዩትን ትክክለኛ ገጽታ ያሳያል።'
-                          : 'Live Interactive Mobile Preview: Exactly how this module appears on students\' phones.'}
-                      </span>
-                    </div>
+            {/* Central Segmented Step Navigation Tabs */}
+            <div className="hidden lg:flex items-center gap-1 bg-slate-100 dark:bg-slate-800/80 p-1 rounded-2xl border border-slate-200/70 dark:border-slate-700">
+              {[
+                { id: 'overview', icon: FileText, label: lang === 'am' ? '1. አጠቃላይ' : '1. Overview' },
+                { id: 'note', icon: Lightbulb, label: lang === 'am' ? '2. ማስታወሻ' : '2. Doctor Note' },
+                { id: 'sections', icon: Layers, label: lang === 'am' ? `3. ክፍሎች (${sections.length})` : `3. Sections (${sections.length})` },
+                { id: 'quizzes', icon: HelpCircle, label: lang === 'am' ? `4. ፈተና (${moduleQuestions.length})` : `4. Quiz (${moduleQuestions.length})` },
+                { id: 'preview', icon: Smartphone, label: lang === 'am' ? '5. የሞባይል እይታ' : '5. Phone Preview' },
+              ].map((tab) => {
+                const Icon = tab.icon;
+                const isActive = modalTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => setModalTab(tab.id as any)}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                      isActive
+                        ? 'bg-white dark:bg-slate-700 text-brand-700 dark:text-cyan-300 shadow-xs'
+                        : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+                    }`}
+                  >
+                    <Icon size={13} />
+                    <span>{tab.label}</span>
+                  </button>
+                );
+              })}
+            </div>
 
-                    <div className="flex items-center gap-1">
-                      <button
-                        type="button"
-                        onClick={() => setActiveTab('en')}
-                        className={`px-2.5 py-1 rounded-lg text-xs font-bold ${
-                          activeTab === 'en'
-                            ? 'bg-brand-600 text-white'
-                            : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300'
-                        }`}
-                      >
-                        English
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setActiveTab('am')}
-                        className={`px-2.5 py-1 rounded-lg text-xs font-bold ${
-                          activeTab === 'am'
-                            ? 'bg-brand-600 text-white'
-                            : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300'
-                        }`}
-                      >
-                        አማርኛ
-                      </button>
-                    </div>
-                  </div>
+            {/* Right Language Mode Switcher & Primary Save Action */}
+            <div className="flex items-center gap-2">
+              <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-0.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-bold">
+                <button
+                  type="button"
+                  onClick={() => setViewMode('split')}
+                  className={`px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
+                    viewMode === 'split'
+                      ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs'
+                      : 'text-slate-500 hover:text-slate-800 dark:hover:text-white'
+                  }`}
+                  title="Side-by-side bilingual view"
+                >
+                  Split
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setViewMode('en')}
+                  className={`px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
+                    viewMode === 'en'
+                      ? 'bg-white dark:bg-slate-700 text-brand-600 dark:text-cyan-400 shadow-xs'
+                      : 'text-slate-500 hover:text-slate-800 dark:hover:text-white'
+                  }`}
+                  title="English only view"
+                >
+                  EN
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setViewMode('am')}
+                  className={`px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
+                    viewMode === 'am'
+                      ? 'bg-white dark:bg-slate-700 text-brand-600 dark:text-cyan-400 shadow-xs'
+                      : 'text-slate-500 hover:text-slate-800 dark:hover:text-white'
+                  }`}
+                  title="Amharic only view"
+                >
+                  አማ
+                </button>
+              </div>
 
-                  <ModuleMobilePreview
-                    title={activeTab === 'am' ? formData.titleAm : formData.titleEn}
-                    summary={activeTab === 'am' ? formData.summaryAm : formData.summaryEn}
-                    content={activeTab === 'am' ? formData.contentAm : formData.contentEn}
-                    doctorNote={activeTab === 'am' ? formData.doctorNoteAm : formData.doctorNoteEn}
-                    imageUrl={formData.imageUrl}
-                    authorName={formData.authorName}
-                    readTimeMin={formData.readTimeMin}
-                    category={formData.category}
-                    lang={activeTab}
-                  />
-                </div>
-              ) : (
-                /* FORM EDITOR */
-                <form onSubmit={handleSubmit} className="space-y-5 text-xs md:text-sm">
-                  {/* Template Inserter Toolbar */}
-                  <div className="bg-gradient-to-r from-brand-50 to-indigo-50 dark:from-slate-800/80 dark:to-brand-950/40 border border-brand-200/80 dark:border-brand-900/50 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-xl bg-brand-600 text-white flex items-center justify-center shrink-0 shadow-xs">
-                        <Sparkles size={16} />
+              <button
+                type="button"
+                onClick={() => handleSubmit()}
+                disabled={isSubmitting || !formData.titleEn.trim()}
+                className="px-4 py-2 bg-gradient-to-r from-brand-600 to-cyan-600 hover:from-brand-700 hover:to-cyan-700 text-white rounded-xl text-xs font-extrabold transition-all shadow-sm flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+              >
+                {isSubmitting ? (
+                  <>
+                    <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    <span>{lang === 'am' ? 'በመመዝገብ ላይ...' : 'Saving...'}</span>
+                  </>
+                ) : (
+                  <>
+                    <Save size={14} />
+                    <span>{lang === 'am' ? 'ለውጦችን መዝግብ' : 'Save & Publish'}</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </header>
+
+          {/* Subnav for Tablet/Mobile screen width */}
+          <div className="lg:hidden flex items-center gap-1 px-4 py-2 bg-slate-100 dark:bg-slate-850 border-b border-slate-200 dark:border-slate-800 overflow-x-auto shrink-0">
+            {[
+              { id: 'overview', icon: FileText, label: lang === 'am' ? '1. አጠቃላይ' : '1. Overview' },
+              { id: 'note', icon: Lightbulb, label: lang === 'am' ? '2. ማስታወሻ' : '2. Doctor Note' },
+              { id: 'sections', icon: Layers, label: lang === 'am' ? `3. ክፍሎች (${sections.length})` : `3. Sections (${sections.length})` },
+              { id: 'quizzes', icon: HelpCircle, label: lang === 'am' ? `4. ፈተና (${moduleQuestions.length})` : `4. Quiz (${moduleQuestions.length})` },
+              { id: 'preview', icon: Smartphone, label: lang === 'am' ? '5. እይታ' : '5. Phone Preview' },
+            ].map((tab) => {
+              const Icon = tab.icon;
+              const isActive = modalTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setModalTab(tab.id as any)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap cursor-pointer ${
+                    isActive
+                      ? 'bg-white dark:bg-slate-700 text-brand-700 dark:text-cyan-300 shadow-xs'
+                      : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  <Icon size={12} />
+                  <span>{tab.label}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* MAIN SCROLLABLE STUDIO CANVAS */}
+          <main className="flex-1 overflow-y-auto p-4 sm:p-8 bg-slate-50/70 dark:bg-slate-950">
+            <div className="max-w-5xl mx-auto space-y-6">
+
+              {/* ========================================================================= */}
+              {/* TAB 1: OVERVIEW & COVER STUDIO                                            */}
+              {/* ========================================================================= */}
+              {modalTab === 'overview' && (
+                <div className="space-y-6">
+                  {/* Template Picker Banner */}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-gradient-to-r from-brand-50 to-cyan-50 dark:from-brand-950/40 dark:to-cyan-950/30 p-4 rounded-2xl border border-brand-200/70 dark:border-cyan-900/40">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-brand-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+                        <Sparkles size={20} />
                       </div>
                       <div>
                         <h4 className="font-extrabold text-slate-900 dark:text-white text-sm">
-                          {lang === 'am'
-                            ? 'የተሟሉ የህክምና አብነቶች (Templates)'
-                            : 'Professional Curriculum Templates'}
+                          {lang === 'am' ? 'የክሊኒካል ትምህርት አብነት (Clinical Templates)' : 'Clinical Curriculum Template Library'}
                         </h4>
-                        <p className="text-[11px] text-slate-600 dark:text-slate-400">
+                        <p className="text-xs text-slate-600 dark:text-slate-400">
                           {lang === 'am'
-                            ? 'በአንድ ጠቅታ የተዘጋጀ የጉርምስና፣ የሥነ-ተዋልዶ ወይም የኤች.አይ.ቪ ትምህርት ይምረጡ'
-                            : 'Auto-fill verified clinical texts, doctor note, illustration, and 4 sections'}
+                            ? 'በአንድ ክሊክ የተረጋገጡ የጤና ትምህርቶችን፣ ማስታወሻዎችንና ፈተናዎችን በቀጥታ ይጫኑ'
+                            : 'Load verified, multi-section adolescent health topics, doctor notes, and questions with 1-click'}
                         </p>
                       </div>
                     </div>
@@ -699,50 +1050,34 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
                     <button
                       type="button"
                       onClick={() => setShowTemplatePicker(!showTemplatePicker)}
-                      className="px-3.5 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm transition-all cursor-pointer self-start sm:self-auto"
+                      className="px-3.5 py-2 bg-white dark:bg-slate-800 border border-brand-300 dark:border-brand-700 rounded-xl text-xs font-extrabold text-brand-700 dark:text-cyan-300 hover:bg-brand-50/80 cursor-pointer transition-all shrink-0 flex items-center gap-1.5 shadow-2xs"
                     >
                       <LayoutTemplate size={14} />
-                      <span>
-                        {showTemplatePicker
-                          ? (lang === 'am' ? 'አብነቶችን ዝጋ' : 'Close Templates')
-                          : (lang === 'am' ? 'አብነት ምረጥ (Templates)' : 'Browse Clinical Templates')}
-                      </span>
+                      <span>{showTemplatePicker ? (lang === 'am' ? 'አብነቶችን ዝጋ' : 'Close Templates') : (lang === 'am' ? 'አብነቶችን ተመልከት' : 'Browse Templates')}</span>
                     </button>
                   </div>
 
-                  {/* Template Picker Drawer */}
+                  {/* Template Gallery Accordion */}
                   {showTemplatePicker && (
-                    <div className="bg-white dark:bg-slate-900 border border-brand-300 dark:border-brand-800 rounded-2xl p-4 shadow-lg animate-in fade-in slide-in-from-top-2">
-                      <div className="flex items-center justify-between mb-3 pb-2 border-b border-slate-100 dark:border-slate-800">
-                        <span className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                          {lang === 'am'
-                            ? 'ሊተገብሩት የሚፈልጉትን የትምህርት አብነት ይምረጡ፡'
-                            : 'Select a clinical template to auto-populate the form:'}
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => setShowTemplatePicker(false)}
-                          className="text-slate-400 hover:text-slate-600"
-                        >
-                          <X size={15} />
-                        </button>
-                      </div>
-
-                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 max-h-64 overflow-y-auto p-1">
+                    <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm space-y-3 animate-in fade-in duration-150">
+                      <h5 className="font-extrabold text-xs text-slate-400 uppercase tracking-wider">
+                        {lang === 'am' ? 'ዝግጁ የጤና ትምህርት አብነቶች' : 'Available Clinical Starter Templates'}
+                      </h5>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                         {CURRICULUM_TEMPLATES.map((tmpl) => (
                           <button
                             key={tmpl.id}
                             type="button"
                             onClick={() => applyTemplate(tmpl)}
-                            className="text-left p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/50 hover:border-brand-500 hover:bg-brand-50/40 dark:hover:bg-slate-800 transition-all cursor-pointer group flex flex-col justify-between"
+                            className="text-left p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40 hover:border-brand-500 hover:bg-brand-50/30 dark:hover:bg-slate-800 transition-all cursor-pointer group flex flex-col justify-between"
                           >
                             <div>
                               <div className="flex items-center justify-between gap-1 mb-1">
                                 <span className="text-[10px] font-extrabold uppercase text-brand-600 dark:text-cyan-400">
                                   {tmpl.category}
                                 </span>
-                                <span className="text-[10px] text-slate-400">
-                                  {tmpl.readTimeMin} min
+                                <span className="text-[10px] text-slate-400 font-semibold">
+                                  {tmpl.readTimeMin} min read
                                 </span>
                               </div>
                               <h5 className="font-extrabold text-slate-900 dark:text-white text-xs mb-1 group-hover:text-brand-600 dark:group-hover:text-cyan-400">
@@ -752,9 +1087,9 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
                                 {lang === 'am' ? tmpl.summaryAm : tmpl.summaryEn}
                               </p>
                             </div>
-                            <span className="mt-2 text-[10px] font-bold text-brand-600 dark:text-cyan-400 flex items-center gap-1">
-                              <span>{lang === 'am' ? 'ተግብር' : 'Apply'}</span>
-                              <span>→</span>
+                            <span className="mt-2 text-[11px] font-extrabold text-brand-600 dark:text-cyan-400 flex items-center gap-1">
+                              <span>{lang === 'am' ? 'ተግብር' : 'Apply Template'}</span>
+                              <ChevronRight size={13} />
                             </span>
                           </button>
                         ))}
@@ -762,514 +1097,1355 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
                     </div>
                   )}
 
-                  {/* 1. Category, Reading Time, and Cover Illustration Selector */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                      <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                        {lang === 'am' ? 'የትምህርት ዘርፍ' : 'Health Category'}
-                      </label>
-                      <select
-                        value={formData.category}
-                        onChange={(e) => {
-                          const newCat = e.target.value;
-                          const matchingImg = OFFICIAL_ILLUSTRATIONS.find((i) => i.id === newCat)?.path;
-                          setFormData({
-                            ...formData,
-                            category: newCat,
-                            imageUrl: matchingImg || formData.imageUrl,
-                          });
-                        }}
-                        className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:border-brand-500 focus:outline-hidden"
-                      >
-                        <option value="puberty">Puberty & Growth (ጉርምስና)</option>
-                        <option value="srh">Sexual & Reproductive Health (ሥነ-ተዋልዶ)</option>
-                        <option value="sti">STI Prevention (የአባላዘር በሽታዎች)</option>
-                        <option value="hiv">HIV & AIDS Prevention (ኤች.አይ.ቪ)</option>
-                        <option value="hepatitis">Viral Hepatitis (የጉበት ቫይረስ)</option>
-                        <option value="mental_health">Mental Health & Stress (አእምሮ ጤና)</option>
-                        <option value="gbv">GBV & Consent (ጾታዊ ጥቃት)</option>
-                        <option value="substance">Substance Abuse (የሱስ መከላከል)</option>
-                      </select>
+                  {/* Core Module Metadata Card */}
+                  <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-xs space-y-5">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div>
+                        <label className="block font-bold text-slate-700 dark:text-slate-300 text-xs mb-1.5">
+                          {lang === 'am' ? 'የትምህርት ዘርፍ (Category)' : 'Health Category'}
+                        </label>
+                        <select
+                          value={formData.category}
+                          onChange={(e) => {
+                            const newCat = e.target.value;
+                            const matchingImg = OFFICIAL_ILLUSTRATIONS.find((i) => i.id === newCat)?.path;
+                            setFormData({
+                              ...formData,
+                              category: newCat,
+                              imageUrl: matchingImg || formData.imageUrl,
+                            });
+                          }}
+                          className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50/70 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold text-xs focus:border-brand-500 focus:outline-hidden"
+                        >
+                          <option value="puberty">Puberty & Growth (ጉርምስና)</option>
+                          <option value="srh">Sexual & Reproductive Health (ሥነ-ተዋልዶ)</option>
+                          <option value="sti">STI Prevention (የአባላዘር በሽታዎች)</option>
+                          <option value="hiv">HIV & AIDS Prevention (ኤች.አይ.ቪ)</option>
+                          <option value="hepatitis">Viral Hepatitis (የጉበት ቫይረስ)</option>
+                          <option value="mental_health">Mental Health & Stress (አእምሮ ጤና)</option>
+                          <option value="gbv">GBV & Consent (ጾታዊ ጥቃት)</option>
+                          <option value="substance">Substance Abuse (የሱስ መከላከል)</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block font-bold text-slate-700 dark:text-slate-300 text-xs mb-1.5">
+                          {lang === 'am' ? 'የንባብ ጊዜ (ደቂቃ)' : 'Estimated Reading Time'}
+                        </label>
+                        <div className="relative">
+                          <input
+                            type="number"
+                            min={1}
+                            max={30}
+                            value={formData.readTimeMin}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                readTimeMin: parseInt(e.target.value, 10) || 4,
+                              })
+                            }
+                            className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50/70 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold text-xs focus:border-brand-500 focus:outline-hidden"
+                          />
+                          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400 font-bold">
+                            min
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Cover Illustration Selector */}
+                      <div>
+                        <label className="block font-bold text-slate-700 dark:text-slate-300 text-xs mb-1.5">
+                          {lang === 'am' ? 'የሞጁሉ ስዕል (Cover Illustration)' : 'Cover Illustration'}
+                        </label>
+                        <div className="flex items-center gap-2">
+                          <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 overflow-hidden shrink-0 flex items-center justify-center p-1">
+                            <img
+                              src={currentThumbnailUrl}
+                              alt=""
+                              className="w-full h-full object-contain"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).src =
+                                  '/illustrations/module_01_puberty.jpg';
+                              }}
+                            />
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setShowImagePicker(true)}
+                            className="flex-1 px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 text-slate-700 dark:text-slate-300 text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer"
+                          >
+                            <ImageIcon size={14} />
+                            <span>{lang === 'am' ? 'ስዕል ምረጥ' : 'Choose Cover'}</span>
+                          </button>
+                        </div>
+                      </div>
                     </div>
 
+                    {/* Titles */}
+                    <div className={`grid gap-4 ${viewMode === 'split' ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1'}`}>
+                      {(viewMode === 'split' || viewMode === 'en') && (
+                        <div>
+                          <label className="block font-bold text-slate-700 dark:text-slate-300 text-xs mb-1.5">
+                            Module Title (English) *
+                          </label>
+                          <input
+                            type="text"
+                            required
+                            value={formData.titleEn}
+                            onChange={(e) =>
+                              setFormData({ ...formData, titleEn: e.target.value })
+                            }
+                            placeholder="e.g. Adolescent health & puberty"
+                            className="w-full px-3.5 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-850 text-slate-900 dark:text-white font-extrabold text-sm focus:border-brand-500 focus:outline-hidden"
+                          />
+                        </div>
+                      )}
+
+                      {(viewMode === 'split' || viewMode === 'am') && (
+                        <div>
+                          <label className="block font-bold text-slate-700 dark:text-slate-300 text-xs mb-1.5">
+                            የሞጁሉ ርዕስ (በአማርኛ) *
+                          </label>
+                          <input
+                            type="text"
+                            required
+                            value={formData.titleAm}
+                            onChange={(e) =>
+                              setFormData({ ...formData, titleAm: e.target.value })
+                            }
+                            placeholder="ምሳሌ፡ የጉርምስና ወቅትና አካላዊ ለውጦች"
+                            className="w-full px-3.5 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-850 text-slate-900 dark:text-white font-extrabold text-sm focus:border-brand-500 focus:outline-hidden"
+                          />
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Author Attribution */}
                     <div>
-                      <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                        {lang === 'am' ? 'የንባብ ጊዜ (ደቂቃ)' : 'Estimated Reading Time'}
+                      <label className="block font-bold text-slate-700 dark:text-slate-300 text-xs mb-1.5">
+                        {lang === 'am' ? 'ክሊኒካል ደራሲ ወይም የህክምና ቡድን' : 'Author or Medical Review Team'}
                       </label>
                       <input
-                        type="number"
-                        min={1}
-                        max={30}
-                        value={formData.readTimeMin}
+                        type="text"
+                        value={formData.authorName}
                         onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            readTimeMin: parseInt(e.target.value, 10) || 4,
-                          })
+                          setFormData({ ...formData, authorName: e.target.value })
                         }
-                        className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:border-brand-500 focus:outline-hidden"
+                        placeholder="e.g. Dr. Hanna Bekele, Adolescent Specialist"
+                        className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-850 text-slate-900 dark:text-white text-xs font-semibold focus:border-brand-500 focus:outline-hidden"
                       />
                     </div>
 
-                    {/* Cover Illustration Picker */}
-                    <div>
-                      <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                        {lang === 'am' ? 'የሞጁሉ ስዕል (Cover Illustration)' : 'Cover Illustration'}
-                      </label>
-                      <div className="flex items-center gap-2">
-                        <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 overflow-hidden shrink-0 flex items-center justify-center p-1">
-                          <img
-                            src={currentThumbnailUrl}
-                            alt=""
-                            className="w-full h-full object-contain"
-                            onError={(e) => {
-                              (e.target as HTMLImageElement).src =
-                                '/illustrations/module_01_puberty.jpg';
-                            }}
+                    {/* Summaries */}
+                    <div className={`grid gap-4 ${viewMode === 'split' ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1'}`}>
+                      {(viewMode === 'split' || viewMode === 'en') && (
+                        <div>
+                          <label className="block font-bold text-slate-700 dark:text-slate-300 text-xs mb-1.5">
+                            Overview Summary (English) *
+                          </label>
+                          <textarea
+                            rows={3}
+                            required
+                            value={formData.summaryEn}
+                            onChange={(e) =>
+                              setFormData({ ...formData, summaryEn: e.target.value })
+                            }
+                            placeholder="Clear, engaging 1-2 sentence overview of this health curriculum topic..."
+                            className="w-full px-3.5 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-850 text-slate-900 dark:text-white text-xs focus:border-brand-500 focus:outline-hidden leading-relaxed"
                           />
                         </div>
-                        <button
-                          type="button"
-                          onClick={() => setShowImagePicker(!showImagePicker)}
-                          className="flex-1 px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 text-slate-800 dark:text-slate-200 text-xs font-bold flex items-center justify-between cursor-pointer"
-                        >
-                          <span className="truncate">
-                            {formData.imageUrl.split('/').pop() || 'Choose Image'}
-                          </span>
-                          <ImageIcon size={14} className="text-slate-400 shrink-0" />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
+                      )}
 
-                  {/* Visual Illustration Chooser Gallery */}
-                  {showImagePicker && (
-                    <div className="bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
-                          <ImageIcon size={14} className="text-brand-600" />
-                          <span>
-                            {lang === 'am'
-                              ? 'ከታወቁት የጤና ስዕላዊ መግለጫዎች ይምረጡ፡'
-                              : 'Select from official health curriculum illustrations:'}
-                          </span>
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => setShowImagePicker(false)}
-                          className="text-slate-400 hover:text-slate-600"
-                        >
-                          <X size={15} />
-                        </button>
-                      </div>
-
-                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                        {OFFICIAL_ILLUSTRATIONS.map((ill) => {
-                          const isSelected = formData.imageUrl === ill.path;
-                          return (
-                            <button
-                              key={ill.id}
-                              type="button"
-                              onClick={() => {
-                                setFormData({ ...formData, imageUrl: ill.path });
-                                setShowImagePicker(false);
-                              }}
-                              className={`p-2 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center gap-1.5 ${
-                                isSelected
-                                  ? 'border-brand-500 bg-brand-50/70 dark:bg-brand-950/60 ring-2 ring-brand-500/20'
-                                  : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-slate-300'
-                              }`}
-                            >
-                              <img
-                                src={ill.previewUrl}
-                                alt={ill.name}
-                                className="h-16 w-full object-contain"
-                              />
-                              <span className="text-[10px] font-bold text-slate-700 dark:text-slate-300 truncate w-full">
-                                {ill.name}
-                              </span>
-                            </button>
-                          );
-                        })}
-                      </div>
-
-                      {/* Custom Image URL option */}
-                      <div className="pt-2 border-t border-slate-200 dark:border-slate-700 flex items-center gap-2">
-                        <input
-                          type="text"
-                          value={formData.imageUrl}
-                          onChange={(e) =>
-                            setFormData({ ...formData, imageUrl: e.target.value })
-                          }
-                          placeholder="Or paste custom image asset path or HTTPS image URL..."
-                          className="flex-1 px-3 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-white"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowImagePicker(false)}
-                          className="px-3 py-1.5 bg-brand-600 text-white rounded-lg text-xs font-bold"
-                        >
-                          {lang === 'am' ? 'አረጋግጥ' : 'Done'}
-                        </button>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Language Selector Bar for Bilingual Inputs */}
-                  <div className="flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-2">
-                    <button
-                      type="button"
-                      onClick={() => setActiveTab('en')}
-                      className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
-                        activeTab === 'en'
-                          ? 'bg-brand-600 text-white shadow-xs'
-                          : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
-                      }`}
-                    >
-                      English Content (የእንግሊዝኛ ይዘት)
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setActiveTab('am')}
-                      className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
-                        activeTab === 'am'
-                          ? 'bg-brand-600 text-white shadow-xs'
-                          : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
-                      }`}
-                    >
-                      የአማርኛ ይዘት (Amharic Content)
-                    </button>
-                  </div>
-
-                  {/* Bilingual Fields */}
-                  {activeTab === 'en' ? (
-                    <>
-                      <div>
-                        <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                          Module Title (English)
-                        </label>
-                        <input
-                          type="text"
-                          required
-                          value={formData.titleEn}
-                          onChange={(e) =>
-                            setFormData({ ...formData, titleEn: e.target.value })
-                          }
-                          className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 focus:border-brand-500 focus:outline-hidden"
-                          placeholder="e.g. Adolescent health & puberty"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                          Summary / Overview (English)
-                        </label>
-                        <textarea
-                          rows={2}
-                          required
-                          value={formData.summaryEn}
-                          onChange={(e) =>
-                            setFormData({ ...formData, summaryEn: e.target.value })
-                          }
-                          className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 focus:border-brand-500 focus:outline-hidden"
-                          placeholder="Short summary displayed under the title in the Hero Card..."
-                        />
-                      </div>
-
-                      {/* Doctor's Takeaway Note Container (Matching Image 2 Note) */}
-                      <div className="bg-[#EFF7FD] border border-[#CFE5F7] rounded-2xl p-4 space-y-2">
-                        <div className="flex items-center gap-2">
-                          <div className="w-7 h-7 rounded-full bg-[#D8EDFB] flex items-center justify-center shrink-0">
-                            <Lightbulb size={16} className="text-[#0284C7]" />
-                          </div>
-                          <div>
-                            <span className="font-extrabold text-[#08264A] text-xs sm:text-sm">
-                              Doctor's Key Takeaway Note ("| Note")
-                            </span>
-                            <span className="text-[11px] text-[#0284C7] ml-2 font-medium">
-                              Displayed in the lightbulb callout card on mobile
-                            </span>
-                          </div>
-                        </div>
-
-                        <textarea
-                          rows={2}
-                          value={formData.doctorNoteEn}
-                          onChange={(e) =>
-                            setFormData({ ...formData, doctorNoteEn: e.target.value })
-                          }
-                          placeholder="e.g. Every adolescent experiences puberty at their own unique pace—practicing good hygiene, understanding bodily changes, and embracing self-confidence helps ensure a healthy transition."
-                          className="w-full px-3 py-2 border border-[#BAE6FD] rounded-xl bg-white text-slate-900 text-xs focus:border-[#0284C7] focus:outline-hidden"
-                        />
-                      </div>
-
-                      {/* Expandable Sections Markdown Editor */}
-                      <div>
-                        <div className="flex items-center justify-between mb-1.5">
-                          <label className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
-                            <span>Learning Sections (English Markdown)</span>
-                            <span className="text-[10px] text-slate-400 font-normal">
-                              Each '## Heading' creates an expandable section card
-                            </span>
+                      {(viewMode === 'split' || viewMode === 'am') && (
+                        <div>
+                          <label className="block font-bold text-slate-700 dark:text-slate-300 text-xs mb-1.5">
+                            አጠቃላይ ማጠቃለያ (በአማርኛ) *
                           </label>
-
-                          <div className="flex items-center gap-1">
-                            <button
-                              type="button"
-                              onClick={() => insertMarkdown('**', '**')}
-                              className="p-1 text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded"
-                              title="Bold"
-                            >
-                              <Bold size={13} />
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => insertMarkdown('## ')}
-                              className="p-1 text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded"
-                              title="H2 New Section"
-                            >
-                              <Heading2 size={13} />
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => insertMarkdown('- ')}
-                              className="p-1 text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded"
-                              title="Bullet List"
-                            >
-                              <List size={13} />
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => insertMarkdown('> ')}
-                              className="p-1 text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded"
-                              title="Clinical Tip"
-                            >
-                              <Quote size={13} />
-                            </button>
-                          </div>
+                          <textarea
+                            rows={3}
+                            required
+                            value={formData.summaryAm}
+                            onChange={(e) =>
+                              setFormData({ ...formData, summaryAm: e.target.value })
+                            }
+                            placeholder="ስለዚህ የጤና ትምህርት የተዘጋጀ አጭር ባለ 1-2 ዓረፍተ ነገር ማጠቃለያ..."
+                            className="w-full px-3.5 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-850 text-slate-900 dark:text-white text-xs focus:border-brand-500 focus:outline-hidden leading-relaxed"
+                          />
                         </div>
+                      )}
+                    </div>
+                  </div>
 
-                        <textarea
-                          rows={8}
-                          required
-                          value={formData.contentEn}
-                          onChange={(e) =>
-                            setFormData({ ...formData, contentEn: e.target.value })
-                          }
-                          className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-mono text-xs focus:border-brand-500 focus:outline-hidden"
-                        />
+                  {/* Step Forward Action Button */}
+                  <div className="flex justify-end pt-2">
+                    <button
+                      type="button"
+                      onClick={() => setModalTab('note')}
+                      className="px-5 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-extrabold cursor-pointer transition-all flex items-center gap-1.5 shadow-sm"
+                    >
+                      <span>{lang === 'am' ? 'ቀጣይ፡ የዶክተር ማስታወሻ' : 'Next: Doctor Takeaway Note'}</span>
+                      <ChevronRight size={14} />
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* ========================================================================= */}
+              {/* TAB 2: DOCTOR'S TAKEAWAY NOTE STUDIO                                      */}
+              {/* ========================================================================= */}
+              {modalTab === 'note' && (
+                <div className="space-y-6">
+                  {/* Doctor's Note Instruction Card */}
+                  <div className="flex items-center gap-3 bg-[#EFF7FD] dark:bg-slate-800/80 border border-[#BAE6FD] dark:border-cyan-800/60 p-4 rounded-2xl">
+                    <div className="w-10 h-10 rounded-xl bg-[#0284C7] text-white flex items-center justify-center shrink-0 shadow-xs">
+                      <Lightbulb size={20} />
+                    </div>
+                    <div>
+                      <h4 className="font-extrabold text-slate-900 dark:text-white text-sm">
+                        {lang === 'am' ? 'የዶክተር ቁልፍ ማስታወሻ (| Note Callout)' : 'Doctor’s Key Takeaway Note'}
+                      </h4>
+                      <p className="text-xs text-slate-600 dark:text-slate-400">
+                        {lang === 'am'
+                          ? 'ይህ ማስታወሻ በሞባይል አፑ ላይ ከዋናው ካርድ ስር ባለው ሰማያዊ ሳጥን ውስጥ ጎልቶ ይታያል'
+                          : 'This advice appears prominently in the mobile app inside the blue lightbulb card right below the cover illustration'}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Bilingual Note Inputs */}
+                  <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-6 shadow-xs space-y-4">
+                    <div className={`grid gap-4 ${viewMode === 'split' ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1'}`}>
+                      {(viewMode === 'split' || viewMode === 'en') && (
+                        <div>
+                          <div className="flex items-center justify-between mb-1.5">
+                            <label className="font-bold text-slate-800 dark:text-slate-200 text-xs">
+                              Doctor Takeaway Note (English)
+                            </label>
+                            <span className="text-[11px] text-slate-400">
+                              {formData.doctorNoteEn.length} chars
+                            </span>
+                          </div>
+                          <textarea
+                            rows={4}
+                            value={formData.doctorNoteEn}
+                            onChange={(e) =>
+                              setFormData({ ...formData, doctorNoteEn: e.target.value })
+                            }
+                            placeholder="e.g. Every adolescent experiences puberty at their own unique pace—practicing good hygiene, understanding bodily changes, and embracing self-confidence helps ensure a healthy transition."
+                            className="w-full px-3.5 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50/50 dark:bg-slate-850 text-slate-900 dark:text-white text-xs focus:border-[#0284C7] focus:outline-hidden leading-relaxed"
+                          />
+                        </div>
+                      )}
+
+                      {(viewMode === 'split' || viewMode === 'am') && (
+                        <div>
+                          <div className="flex items-center justify-between mb-1.5">
+                            <label className="font-bold text-slate-800 dark:text-slate-200 text-xs">
+                              የዶክተር ማስታወሻ (በአማርኛ)
+                            </label>
+                            <span className="text-[11px] text-slate-400">
+                              {formData.doctorNoteAm.length} chars
+                            </span>
+                          </div>
+                          <textarea
+                            rows={4}
+                            value={formData.doctorNoteAm}
+                            onChange={(e) =>
+                              setFormData({ ...formData, doctorNoteAm: e.target.value })
+                            }
+                            placeholder="ምሳሌ፡ እያንዳንዱ ታዳጊ በራሱ ተፈጥሯዊ ፍጥነት ያድጋል፤ ንፅህናን መጠበቅ፣ የአካል ለውጦችን መረዳትና በራስ መተማመንን ማዳበር ጤናማ ሽግግርን ያረጋግጣል።"
+                            className="w-full px-3.5 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50/50 dark:bg-slate-850 text-slate-900 dark:text-white text-xs focus:border-[#0284C7] focus:outline-hidden leading-relaxed"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Live Card Preview Box */}
+                  <div className="bg-[#EFF7FD] border border-[#BAE6FD] rounded-2xl p-4 sm:p-5 flex items-start gap-3.5">
+                    <div className="w-8 h-8 rounded-full bg-[#0284C7] text-white flex items-center justify-center shrink-0 shadow-xs">
+                      <Lightbulb size={16} />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <span className="text-[10px] font-extrabold uppercase text-[#0284C7] tracking-wider block mb-1">
+                        Mobile App Callout Preview
+                      </span>
+                      <p className="text-xs text-[#0F172A] leading-relaxed">
+                        {lang === 'am'
+                          ? formData.doctorNoteAm || formData.doctorNoteEn || 'የዶክተር ማስታወሻ እዚህ ይታያል...'
+                          : formData.doctorNoteEn || formData.doctorNoteAm || 'Doctor note takeaway preview will appear here...'}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Tab Navigation Actions */}
+                  <div className="flex justify-between pt-2">
+                    <button
+                      type="button"
+                      onClick={() => setModalTab('overview')}
+                      className="px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 cursor-pointer"
+                    >
+                      ← {lang === 'am' ? 'ተመለስ' : 'Back: Overview'}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setModalTab('sections')}
+                      className="px-5 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-extrabold cursor-pointer transition-all flex items-center gap-1.5 shadow-sm"
+                    >
+                      <span>{lang === 'am' ? 'ቀጣይ፡ የትምህርት ክፍሎች' : 'Next: Learning Sections'}</span>
+                      <ChevronRight size={14} />
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* ========================================================================= */}
+              {/* TAB 3: CURRICULUM LEARNING SECTIONS BUILDER                               */}
+              {/* ========================================================================= */}
+              {modalTab === 'sections' && (
+                <div className="space-y-6">
+                  {/* Mode & Action Toolbar */}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-xl bg-brand-50 dark:bg-brand-950/60 text-brand-600 dark:text-cyan-400 flex items-center justify-center font-extrabold text-sm">
+                        <Layers size={16} />
                       </div>
-                    </>
+                      <div>
+                        <h4 className="font-extrabold text-slate-900 dark:text-white text-sm">
+                          {lang === 'am' ? 'የትምህርት ክፍሎች' : 'Curriculum Learning Sections'}
+                        </h4>
+                        <p className="text-[11px] text-slate-400">
+                          {sections.length} {lang === 'am' ? 'ክፍሎች ተዘጋጅተዋል' : 'sections active'} • {lang === 'am' ? 'በሞባይል አኮርዲዮን መልክ ይታያሉ' : 'expandable accordion cards on mobile'}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 self-end sm:self-auto">
+                      <button
+                        type="button"
+                        onClick={expandedSections.size === sections.length ? collapseAllSections : expandAllSections}
+                        className="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-bold transition-all cursor-pointer"
+                      >
+                        {expandedSections.size === sections.length
+                          ? (lang === 'am' ? 'ሁሉንም አሳንስ' : 'Collapse All')
+                          : (lang === 'am' ? 'ሁሉንም አሳይ' : 'Expand All')}
+                      </button>
+
+                      <div className="flex items-center bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-0.5 text-xs font-bold">
+                        <button
+                          type="button"
+                          onClick={() => handleToggleSectionMode('form')}
+                          className={`px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
+                            sectionEditMode === 'form'
+                              ? 'bg-brand-600 text-white shadow-xs'
+                              : 'text-slate-500 hover:text-slate-800 dark:hover:text-white'
+                          }`}
+                        >
+                          {lang === 'am' ? 'ቀላል ፎርም' : 'Visual Form'}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleToggleSectionMode('markdown')}
+                          className={`px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
+                            sectionEditMode === 'markdown'
+                              ? 'bg-brand-600 text-white shadow-xs'
+                              : 'text-slate-500 hover:text-slate-800 dark:hover:text-white'
+                          }`}
+                        >
+                          Markdown
+                        </button>
+                      </div>
+
+                      {sectionEditMode === 'form' && (
+                        <button
+                          type="button"
+                          onClick={handleAddSection}
+                          className="px-3.5 py-1.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-extrabold flex items-center gap-1.5 shadow-sm cursor-pointer transition-all"
+                        >
+                          <Plus size={14} />
+                          <span>{lang === 'am' ? 'አዲስ ክፍል' : 'Add Section'}</span>
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* FORM MODE: ACCORDION SECTION CARDS */}
+                  {sectionEditMode === 'form' ? (
+                    <div className="space-y-4">
+                      {sections.map((sec, secIdx) => {
+                        const isExpanded = expandedSections.has(secIdx);
+                        const cleanBulletsCount = sec.bulletsEn.filter(Boolean).length;
+                        const hasTip = Boolean(sec.tipEn || sec.tipAm);
+
+                        return (
+                          <div
+                            key={sec.id}
+                            className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl shadow-xs overflow-hidden transition-all"
+                          >
+                            {/* Accordion Card Header */}
+                            <div
+                              onClick={() => toggleSectionExpanded(secIdx)}
+                              className="px-5 py-4 flex items-center justify-between gap-3 cursor-pointer hover:bg-slate-50/60 dark:hover:bg-slate-850/50 transition-colors select-none"
+                            >
+                              <div className="flex items-center gap-3 min-w-0">
+                                <div className="w-8 h-8 rounded-full bg-[#0284C7] text-white flex items-center justify-center font-extrabold text-xs shrink-0 shadow-xs">
+                                  {secIdx + 1}
+                                </div>
+                                <div className="min-w-0">
+                                  <h5 className="font-extrabold text-slate-900 dark:text-white text-sm truncate">
+                                    {sec.titleEn.trim() || sec.titleAm.trim() || `Section ${secIdx + 1}`}
+                                  </h5>
+                                  <div className="flex items-center gap-2 mt-0.5">
+                                    <span className="text-[11px] text-slate-400 truncate">
+                                      {sec.titleAm.trim() && sec.titleAm !== sec.titleEn ? sec.titleAm : ''}
+                                    </span>
+                                    <span className="text-[10px] font-semibold bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-2 py-0.2 rounded-full">
+                                      {cleanBulletsCount} {cleanBulletsCount === 1 ? 'point' : 'points'}
+                                    </span>
+                                    {hasTip && (
+                                      <span className="text-[10px] font-semibold bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400 px-2 py-0.2 rounded-full border border-emerald-200/60 dark:border-emerald-800/40">
+                                        Clinical Tip
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="flex items-center gap-1.5 shrink-0" onClick={(e) => e.stopPropagation()}>
+                                <button
+                                  type="button"
+                                  disabled={secIdx === 0}
+                                  onClick={() => handleMoveSection(secIdx, 'up')}
+                                  className="p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg disabled:opacity-30 cursor-pointer"
+                                  title="Move Up"
+                                >
+                                  <ChevronUp size={15} />
+                                </button>
+                                <button
+                                  type="button"
+                                  disabled={secIdx === sections.length - 1}
+                                  onClick={() => handleMoveSection(secIdx, 'down')}
+                                  className="p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg disabled:opacity-30 cursor-pointer"
+                                  title="Move Down"
+                                >
+                                  <ChevronDown size={15} />
+                                </button>
+                                <button
+                                  type="button"
+                                  disabled={sections.length <= 1}
+                                  onClick={() => handleRemoveSection(secIdx)}
+                                  className="p-1.5 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg disabled:opacity-30 cursor-pointer"
+                                  title="Delete Section"
+                                >
+                                  <Trash2 size={15} />
+                                </button>
+                                <div className="h-4 w-px bg-slate-200 dark:bg-slate-700 mx-0.5" />
+                                <div className="p-1 text-slate-400">
+                                  {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Accordion Card Body (When Expanded) */}
+                            {isExpanded && (
+                              <div className="px-5 pb-5 pt-2 border-t border-slate-100 dark:border-slate-800/80 space-y-5 bg-slate-50/30 dark:bg-slate-900/40">
+                                {/* 1. Section Title & Explanatory Introduction */}
+                                <div className={`grid gap-4 ${viewMode === 'split' ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1'}`}>
+                                  {(viewMode === 'split' || viewMode === 'en') && (
+                                    <div className="space-y-3">
+                                      <div>
+                                        <label className="block font-bold text-slate-700 dark:text-slate-300 text-xs mb-1">
+                                          Section Title (English) *
+                                        </label>
+                                        <input
+                                          type="text"
+                                          value={sec.titleEn}
+                                          onChange={(e) =>
+                                            handleUpdateSection(secIdx, 'titleEn', e.target.value)
+                                          }
+                                          placeholder="e.g. Understanding Puberty & Adolescence"
+                                          className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-850 text-slate-900 dark:text-white font-extrabold text-xs focus:border-[#0284C7] focus:outline-hidden"
+                                        />
+                                      </div>
+                                      <div>
+                                        <label className="block font-bold text-slate-700 dark:text-slate-300 text-xs mb-1">
+                                          Section Intro / Overview (English)
+                                        </label>
+                                        <textarea
+                                          rows={2}
+                                          value={sec.bodyEn}
+                                          onChange={(e) =>
+                                            handleUpdateSection(secIdx, 'bodyEn', e.target.value)
+                                          }
+                                          placeholder="Clinical introduction explaining this section's core topic..."
+                                          className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-850 text-slate-900 dark:text-white text-xs focus:border-[#0284C7] focus:outline-hidden leading-relaxed"
+                                        />
+                                      </div>
+                                    </div>
+                                  )}
+
+                                  {(viewMode === 'split' || viewMode === 'am') && (
+                                    <div className="space-y-3">
+                                      <div>
+                                        <label className="block font-bold text-slate-700 dark:text-slate-300 text-xs mb-1">
+                                          የክፍሉ ርዕስ (በአማርኛ) *
+                                        </label>
+                                        <input
+                                          type="text"
+                                          value={sec.titleAm}
+                                          onChange={(e) =>
+                                            handleUpdateSection(secIdx, 'titleAm', e.target.value)
+                                          }
+                                          placeholder="ምሳሌ፡ የጉርምስና ወቅትና ሽግግርን መረዳት"
+                                          className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-850 text-slate-900 dark:text-white font-extrabold text-xs focus:border-[#0284C7] focus:outline-hidden"
+                                        />
+                                      </div>
+                                      <div>
+                                        <label className="block font-bold text-slate-700 dark:text-slate-300 text-xs mb-1">
+                                          የክፍሉ ማብራሪያ (በአማርኛ)
+                                        </label>
+                                        <textarea
+                                          rows={2}
+                                          value={sec.bodyAm}
+                                          onChange={(e) =>
+                                            handleUpdateSection(secIdx, 'bodyAm', e.target.value)
+                                          }
+                                          placeholder="ስለዚህ ክፍል የሚሰጥ አጠቃላይ ክሊኒካዊ መግቢያ..."
+                                          className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-850 text-slate-900 dark:text-white text-xs focus:border-[#0284C7] focus:outline-hidden leading-relaxed"
+                                        />
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+
+                                {/* 2. Key Takeaways (Bullet Items) */}
+                                <div className="space-y-2.5 pt-2 border-t border-slate-200/60 dark:border-slate-800">
+                                  <div className="flex items-center justify-between">
+                                    <span className="font-extrabold text-slate-700 dark:text-slate-300 text-xs flex items-center gap-1.5">
+                                      <List size={14} className="text-[#0284C7]" />
+                                      <span>
+                                        {lang === 'am'
+                                          ? 'ዋና ዋና ነጥቦች (Key Takeaways / Bullets)'
+                                          : 'Key Learning Takeaways (Bullet Points)'}
+                                      </span>
+                                    </span>
+                                    <button
+                                      type="button"
+                                      onClick={() => handleAddBullet(secIdx)}
+                                      className="px-2.5 py-1 bg-brand-50 hover:bg-brand-100 dark:bg-brand-950/60 dark:hover:bg-brand-900 text-brand-700 dark:text-cyan-300 rounded-lg text-[11px] font-extrabold flex items-center gap-1 cursor-pointer transition-colors"
+                                    >
+                                      <Plus size={12} />
+                                      <span>{lang === 'am' ? '+ ነጥብ ጨምር' : '+ Add Takeaway Point'}</span>
+                                    </button>
+                                  </div>
+
+                                  <div className="space-y-2">
+                                    {sec.bulletsEn.map((_, bIdx) => (
+                                      <div
+                                        key={bIdx}
+                                        className="flex items-center gap-2 bg-white dark:bg-slate-850 p-1.5 rounded-xl border border-slate-200/70 dark:border-slate-750"
+                                      >
+                                        <div className="w-6 h-6 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-extrabold text-[10px] flex items-center justify-center shrink-0">
+                                          {(bIdx + 1).toString().padStart(2, '0')}
+                                        </div>
+
+                                        {(viewMode === 'split' || viewMode === 'en') && (
+                                          <input
+                                            type="text"
+                                            value={sec.bulletsEn[bIdx] || ''}
+                                            onChange={(e) =>
+                                              handleUpdateBullet(secIdx, bIdx, 'en', e.target.value)
+                                            }
+                                            placeholder={`Point ${bIdx + 1} (English)...`}
+                                            className="flex-1 px-2.5 py-1 text-xs bg-transparent text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-hidden"
+                                          />
+                                        )}
+
+                                        {(viewMode === 'split' || viewMode === 'am') && (
+                                          <input
+                                            type="text"
+                                            value={sec.bulletsAm[bIdx] || ''}
+                                            onChange={(e) =>
+                                              handleUpdateBullet(secIdx, bIdx, 'am', e.target.value)
+                                            }
+                                            placeholder={`ነጥብ ${bIdx + 1} (በአማርኛ)...`}
+                                            className="flex-1 px-2.5 py-1 text-xs bg-transparent text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-hidden"
+                                          />
+                                        )}
+
+                                        {sec.bulletsEn.length > 1 && (
+                                          <button
+                                            type="button"
+                                            onClick={() => handleRemoveBullet(secIdx, bIdx)}
+                                            className="p-1 text-slate-400 hover:text-rose-600 rounded cursor-pointer"
+                                            title="Delete Point"
+                                          >
+                                            <X size={14} />
+                                          </button>
+                                        )}
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+
+                                {/* 3. Clinical Tip Box */}
+                                <div className="bg-[#F0FDF4] dark:bg-emerald-950/20 border border-[#BBF7D0] dark:border-emerald-800/40 rounded-xl p-3.5 space-y-2">
+                                  <div className="flex items-center gap-1.5 text-[11px] font-extrabold text-[#166534] dark:text-emerald-400 uppercase tracking-wide">
+                                    <HeartPulse size={14} className="text-[#16A34A]" />
+                                    <span>
+                                      {lang === 'am' ? 'የዶክተር ክሊኒካል ምክር (Clinical Tip)' : 'Clinical Tip & Adolescent Guidance'}
+                                    </span>
+                                  </div>
+
+                                  <div className={`grid gap-2.5 ${viewMode === 'split' ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1'}`}>
+                                    {(viewMode === 'split' || viewMode === 'en') && (
+                                      <input
+                                        type="text"
+                                        value={sec.tipEn}
+                                        onChange={(e) =>
+                                          handleUpdateSection(secIdx, 'tipEn', e.target.value)
+                                        }
+                                        placeholder="Clinical tip in English (e.g. Wash your face twice daily with mild soap to manage skin oil balance)..."
+                                        className="w-full px-3 py-1.5 text-xs rounded-lg border border-[#86EFAC] dark:border-emerald-800 bg-white dark:bg-slate-850 text-slate-900 dark:text-white focus:outline-hidden"
+                                      />
+                                    )}
+
+                                    {(viewMode === 'split' || viewMode === 'am') && (
+                                      <input
+                                        type="text"
+                                        value={sec.tipAm}
+                                        onChange={(e) =>
+                                          handleUpdateSection(secIdx, 'tipAm', e.target.value)
+                                        }
+                                        placeholder="ክሊኒካዊ ምክር በአማርኛ (ምሳሌ፡ ፊትዎን በቀን ሁለት ጊዜ ለስላሳ ሳሙና መታጠብ የቆዳ ቅባትን ለመቆጣጠር ይረዳል።)..."
+                                        className="w-full px-3 py-1.5 text-xs rounded-lg border border-[#86EFAC] dark:border-emerald-800 bg-white dark:bg-slate-850 text-slate-900 dark:text-white focus:outline-hidden"
+                                      />
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
                   ) : (
-                    <>
-                      <div>
-                        <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                          ርዕስ (በአማርኛ)
-                        </label>
-                        <input
-                          type="text"
-                          required
-                          value={formData.titleAm}
-                          onChange={(e) =>
-                            setFormData({ ...formData, titleAm: e.target.value })
-                          }
-                          className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 focus:border-brand-500 focus:outline-hidden"
-                          placeholder="ምሳሌ፡ የጉርምስና ወቅትና አካላዊ ለውጦች"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                          ማጠቃለያ (በአማርኛ)
-                        </label>
-                        <textarea
-                          rows={2}
-                          required
-                          value={formData.summaryAm}
-                          onChange={(e) =>
-                            setFormData({ ...formData, summaryAm: e.target.value })
-                          }
-                          className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 focus:border-brand-500 focus:outline-hidden"
-                          placeholder="በሞባይል ስልኩ ዋና ገጽ ላይ የሚታይ አጭር ማጠቃለያ..."
-                        />
-                      </div>
-
-                      {/* Doctor's Takeaway Note (Amharic) */}
-                      <div className="bg-[#EFF7FD] border border-[#CFE5F7] rounded-2xl p-4 space-y-2">
-                        <div className="flex items-center gap-2">
-                          <div className="w-7 h-7 rounded-full bg-[#D8EDFB] flex items-center justify-center shrink-0">
-                            <Lightbulb size={16} className="text-[#0284C7]" />
-                          </div>
-                          <div>
-                            <span className="font-extrabold text-[#08264A] text-xs sm:text-sm">
-                              የዶክተር ማስታወሻ ("| Note")
-                            </span>
-                            <span className="text-[11px] text-[#0284C7] ml-2 font-medium">
-                              በሞባይሉ ላይ ከስዕሉ በታች ባለው ሰማያዊ ሳጥን ውስጥ የሚቀመጥ
-                            </span>
-                          </div>
+                    /* RAW MARKDOWN MODE */
+                    <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-xs space-y-3">
+                      <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
+                        <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
+                          <button
+                            type="button"
+                            onClick={() => setActiveLangTab('en')}
+                            className={`px-3 py-1 rounded-lg text-xs font-bold cursor-pointer ${
+                              activeLangTab === 'en'
+                                ? 'bg-brand-600 text-white'
+                                : 'text-slate-600 dark:text-slate-300'
+                            }`}
+                          >
+                            English Markdown
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setActiveLangTab('am')}
+                            className={`px-3 py-1 rounded-lg text-xs font-bold cursor-pointer ${
+                              activeLangTab === 'am'
+                                ? 'bg-brand-600 text-white'
+                                : 'text-slate-600 dark:text-slate-300'
+                            }`}
+                          >
+                            የአማርኛ ማርክዳውን
+                          </button>
                         </div>
 
-                        <textarea
-                          rows={2}
-                          value={formData.doctorNoteAm}
-                          onChange={(e) =>
-                            setFormData({ ...formData, doctorNoteAm: e.target.value })
-                          }
-                          placeholder="ምሳሌ፡ እያንዳንዱ ታዳጊ በራሱ ተፈጥሯዊ ፍጥነት ያድጋል፤ ንፅህናን መጠበቅ፣ የአካል ለውጦችን መረዳትና በራስ መተማመንን ማዳበር ጤናማ ሽግግርን ያረጋግጣል።"
-                          className="w-full px-3 py-2 border border-[#BAE6FD] rounded-xl bg-white text-slate-900 text-xs focus:border-[#0284C7] focus:outline-hidden"
-                        />
-                      </div>
-
-                      {/* Expandable Sections Markdown Editor (Amharic) */}
-                      <div>
-                        <div className="flex items-center justify-between mb-1.5">
-                          <label className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
-                            <span>የትምህርት ይዘት (በአማርኛ ማርክዳውን)</span>
-                            <span className="text-[10px] text-slate-400 font-normal">
-                              እያንዳንዱ '## ' የሚጀምር ንዑስ ርዕስ ወደ ተጠቃይ ሳጥንነት ይቀየራል
-                            </span>
-                          </label>
-
-                          <div className="flex items-center gap-1">
-                            <button
-                              type="button"
-                              onClick={() => insertMarkdown('**', '**')}
-                              className="p-1 text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded"
-                              title="ደማቅ"
-                            >
-                              <Bold size={13} />
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => insertMarkdown('## ')}
-                              className="p-1 text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded"
-                              title="ንዑስ ርዕስ (H2)"
-                            >
-                              <Heading2 size={13} />
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => insertMarkdown('- ')}
-                              className="p-1 text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded"
-                              title="ነጥቦች"
-                            >
-                              <List size={13} />
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => insertMarkdown('> ')}
-                              className="p-1 text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded"
-                              title="የዶክተር ማስታወሻ"
-                            >
-                              <Quote size={13} />
-                            </button>
-                          </div>
+                        <div className="flex items-center gap-1">
+                          <button
+                            type="button"
+                            onClick={() => insertMarkdown('**', '**')}
+                            className="p-1.5 text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded"
+                            title="Bold"
+                          >
+                            <Bold size={13} />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => insertMarkdown('## ')}
+                            className="p-1.5 text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded"
+                            title="H2 Section Heading"
+                          >
+                            <Heading2 size={13} />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => insertMarkdown('- ')}
+                            className="p-1.5 text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded"
+                            title="Bullet List"
+                          >
+                            <List size={13} />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => insertMarkdown('> ')}
+                            className="p-1.5 text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded"
+                            title="Clinical Tip"
+                          >
+                            <Quote size={13} />
+                          </button>
                         </div>
-
-                        <textarea
-                          rows={8}
-                          required
-                          value={formData.contentAm}
-                          onChange={(e) =>
-                            setFormData({ ...formData, contentAm: e.target.value })
-                          }
-                          className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-mono text-xs focus:border-brand-500 focus:outline-hidden"
-                        />
                       </div>
-                    </>
+
+                      <textarea
+                        rows={16}
+                        value={activeLangTab === 'am' ? formData.contentAm : formData.contentEn}
+                        onChange={(e) => {
+                          if (activeLangTab === 'am') {
+                            setFormData({ ...formData, contentAm: e.target.value });
+                          } else {
+                            setFormData({ ...formData, contentEn: e.target.value });
+                          }
+                        }}
+                        placeholder="Write structured markdown with ## Headings, - Bullets, and > Clinical Tips..."
+                        className="w-full px-3.5 py-3 border border-slate-200 dark:border-slate-700 rounded-2xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-mono text-xs focus:border-brand-500 focus:outline-hidden leading-relaxed"
+                      />
+                    </div>
                   )}
 
-                  {/* Author Attribution */}
-                  <div>
-                    <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                      {lang === 'am'
-                        ? 'የህክምና ባለሙያ / ደራሲ ስም'
-                        : 'Medical Author / Specialist Attribution'}
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.authorName}
-                      onChange={(e) =>
-                        setFormData({ ...formData, authorName: e.target.value })
-                      }
-                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 focus:border-brand-500 focus:outline-hidden"
-                      placeholder="e.g. Dr. Hanna Bekele, Adolescent Health Specialist"
-                    />
+                  {/* Tab Navigation Actions */}
+                  <div className="flex justify-between pt-2">
+                    <button
+                      type="button"
+                      onClick={() => setModalTab('note')}
+                      className="px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 cursor-pointer"
+                    >
+                      ← {lang === 'am' ? 'ተመለስ' : 'Back: Doctor Note'}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setModalTab('quizzes')}
+                      className="px-5 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-extrabold cursor-pointer transition-all flex items-center gap-1.5 shadow-sm"
+                    >
+                      <span>{lang === 'am' ? 'ቀጣይ፡ ፈተና ጥያቄዎች' : 'Next: Quiz Questions'}</span>
+                      <ChevronRight size={14} />
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* ========================================================================= */}
+              {/* TAB 4: KNOWLEDGE CHECK QUIZ BUILDER                                       */}
+              {/* ========================================================================= */}
+              {modalTab === 'quizzes' && (
+                <div className="space-y-6">
+                  {/* Top Banner */}
+                  <div className="flex items-center justify-between bg-amber-50/70 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50 p-4 rounded-2xl">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center shrink-0 shadow-xs">
+                        <HelpCircle size={20} />
+                      </div>
+                      <div>
+                        <h4 className="font-extrabold text-slate-900 dark:text-white text-sm">
+                          {lang === 'am' ? 'የእውቀት መፈተሻ ጥያቄዎች (Knowledge Check Quiz)' : 'Knowledge Check Quiz Questions'}
+                        </h4>
+                        <p className="text-xs text-slate-600 dark:text-slate-400">
+                          {lang === 'am'
+                            ? 'ተማሪዎች ሞጁሉን ካጠናቀቁ በኋላ እውቀታቸውን የሚለኩባቸው ጥያቄዎች'
+                            : 'Interactive assessment questions presented to learners upon finishing this module'}
+                        </p>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={openAddQuizQuestion}
+                      className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-extrabold flex items-center gap-1.5 shadow-sm cursor-pointer transition-all shrink-0"
+                    >
+                      <Plus size={15} />
+                      <span>{lang === 'am' ? 'ጥያቄ ጨምር' : 'Add Question'}</span>
+                    </button>
                   </div>
 
-                  {/* Submit / Cancel Buttons */}
-                  <div className="pt-4 flex items-center justify-between border-t border-slate-100 dark:border-slate-800">
+                  {/* Focused Question Editor Card (When active) */}
+                  {quizFormOpen && (
+                    <form
+                      onSubmit={handleSaveQuizQuestion}
+                      className="bg-white dark:bg-slate-900 border-2 border-amber-400/90 rounded-2xl p-6 shadow-md space-y-4 animate-in fade-in zoom-in-95"
+                    >
+                      <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+                        <h5 className="font-extrabold text-slate-900 dark:text-white text-sm flex items-center gap-2">
+                          <HelpCircle size={16} className="text-amber-600" />
+                          <span>
+                            {editingQuizIndex !== null
+                              ? lang === 'am'
+                                ? 'የፈተና ጥያቄን አርትዕ'
+                                : 'Edit Quiz Question'
+                              : lang === 'am'
+                              ? 'አዲስ የፈተና ጥያቄ ጨምር'
+                              : 'Create Quiz Question'}
+                          </span>
+                        </h5>
+                        <button
+                          type="button"
+                          onClick={() => setQuizFormOpen(false)}
+                          className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                        >
+                          <X size={16} />
+                        </button>
+                      </div>
+
+                      {/* Question Type Selector */}
+                      <div className="flex items-center gap-3">
+                        <label className="font-bold text-slate-700 dark:text-slate-300 text-xs">
+                          {lang === 'am' ? 'የጥያቄ ዓይነት፡' : 'Question Type:'}
+                        </label>
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setQuizFormData({
+                                ...quizFormData,
+                                type: 'MULTIPLE_CHOICE',
+                                optionsEn:
+                                  quizFormData.optionsEn.length === 4
+                                    ? quizFormData.optionsEn
+                                    : ['', '', '', ''],
+                                optionsAm:
+                                  quizFormData.optionsAm.length === 4
+                                    ? quizFormData.optionsAm
+                                    : ['', '', '', ''],
+                                correctIndex: Math.min(quizFormData.correctIndex, 3),
+                              })
+                            }
+                            className={`px-3 py-1.5 rounded-xl text-xs font-bold cursor-pointer transition-all ${
+                              quizFormData.type === 'MULTIPLE_CHOICE'
+                                ? 'bg-amber-600 text-white shadow-xs'
+                                : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
+                            }`}
+                          >
+                            Multiple Choice (4 Choices)
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setQuizFormData({
+                                ...quizFormData,
+                                type: 'TRUE_FALSE',
+                                optionsEn: ['True', 'False'],
+                                optionsAm: ['እውነት', 'ሐሰት'],
+                                correctIndex: Math.min(quizFormData.correctIndex, 1),
+                              })
+                            }
+                            className={`px-3 py-1.5 rounded-xl text-xs font-bold cursor-pointer transition-all ${
+                              quizFormData.type === 'TRUE_FALSE'
+                                ? 'bg-amber-600 text-white shadow-xs'
+                                : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
+                            }`}
+                          >
+                            True / False (2 Choices)
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Question Prompts */}
+                      <div className={`grid gap-4 ${viewMode === 'split' ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1'}`}>
+                        {(viewMode === 'split' || viewMode === 'en') && (
+                          <div>
+                            <label className="block font-bold text-slate-700 dark:text-slate-300 text-xs mb-1">
+                              Question Prompt (English) *
+                            </label>
+                            <textarea
+                              rows={2}
+                              required
+                              value={quizFormData.questionEn}
+                              onChange={(e) =>
+                                setQuizFormData({ ...quizFormData, questionEn: e.target.value })
+                              }
+                              placeholder="e.g. Which physical change is a typical primary milestone for adolescent males?"
+                              className="w-full px-3.5 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-850 text-slate-900 dark:text-white text-xs focus:border-amber-500 focus:outline-hidden"
+                            />
+                          </div>
+                        )}
+
+                        {(viewMode === 'split' || viewMode === 'am') && (
+                          <div>
+                            <label className="block font-bold text-slate-700 dark:text-slate-300 text-xs mb-1">
+                              የጥያቄው ጽሑፍ (በአማርኛ) *
+                            </label>
+                            <textarea
+                              rows={2}
+                              required
+                              value={quizFormData.questionAm}
+                              onChange={(e) =>
+                                setQuizFormData({ ...quizFormData, questionAm: e.target.value })
+                              }
+                              placeholder="ምሳሌ፡ በጉርምስና ወቅት በወንዶች ላይ የሚታየው ቁልፍ አካላዊ ለውጥ የትኛው ነው?"
+                              className="w-full px-3.5 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-850 text-slate-900 dark:text-white text-xs focus:border-amber-500 focus:outline-hidden"
+                            />
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Options Setup with Radio Selection */}
+                      <div className="space-y-2 pt-2">
+                        <label className="block font-bold text-slate-700 dark:text-slate-300 text-xs">
+                          {lang === 'am' ? 'የመልስ አማራጮች (ትክክለኛውን መልስ በክብ ቁልፉ ይምረጡ)' : 'Answer Choices (Click radio button to mark correct answer):'}
+                        </label>
+                        <div className="space-y-2">
+                          {quizFormData.optionsEn.map((_, oIdx) => {
+                            const isCorrect = quizFormData.correctIndex === oIdx;
+                            const optionLetter = String.fromCharCode(65 + oIdx);
+
+                            return (
+                              <div
+                                key={oIdx}
+                                className={`flex items-center gap-3 p-2.5 rounded-xl border transition-all ${
+                                  isCorrect
+                                    ? 'bg-emerald-50/70 dark:bg-emerald-950/30 border-emerald-400'
+                                    : 'bg-white dark:bg-slate-850 border-slate-200 dark:border-slate-700'
+                                }`}
+                              >
+                                <button
+                                  type="button"
+                                  onClick={() => setQuizFormData({ ...quizFormData, correctIndex: oIdx })}
+                                  className={`w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs shrink-0 cursor-pointer ${
+                                    isCorrect
+                                      ? 'bg-emerald-600 text-white'
+                                      : 'border border-slate-300 dark:border-slate-600 text-slate-500'
+                                  }`}
+                                >
+                                  {isCorrect ? <Check size={12} /> : optionLetter}
+                                </button>
+
+                                {(viewMode === 'split' || viewMode === 'en') && (
+                                  <input
+                                    type="text"
+                                    required
+                                    value={quizFormData.optionsEn[oIdx] || ''}
+                                    onChange={(e) => {
+                                      const next = [...quizFormData.optionsEn];
+                                      next[oIdx] = e.target.value;
+                                      setQuizFormData({ ...quizFormData, optionsEn: next });
+                                    }}
+                                    placeholder={`Choice ${optionLetter} (English)...`}
+                                    className="flex-1 px-3 py-1.5 text-xs bg-transparent text-slate-900 dark:text-white focus:outline-hidden"
+                                  />
+                                )}
+
+                                {(viewMode === 'split' || viewMode === 'am') && (
+                                  <input
+                                    type="text"
+                                    required
+                                    value={quizFormData.optionsAm[oIdx] || ''}
+                                    onChange={(e) => {
+                                      const next = [...quizFormData.optionsAm];
+                                      next[oIdx] = e.target.value;
+                                      setQuizFormData({ ...quizFormData, optionsAm: next });
+                                    }}
+                                    placeholder={`አማራጭ ${optionLetter} (በአማርኛ)...`}
+                                    className="flex-1 px-3 py-1.5 text-xs bg-transparent text-slate-900 dark:text-white focus:outline-hidden"
+                                  />
+                                )}
+
+                                {isCorrect && (
+                                  <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200 shrink-0">
+                                    Correct Answer
+                                  </span>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+
+                      {/* Explanation */}
+                      <div className={`grid gap-4 pt-2 ${viewMode === 'split' ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1'}`}>
+                        {(viewMode === 'split' || viewMode === 'en') && (
+                          <div>
+                            <label className="block font-bold text-slate-700 dark:text-slate-300 text-xs mb-1">
+                              Clinical Explanation (English) *
+                            </label>
+                            <textarea
+                              rows={2}
+                              required
+                              value={quizFormData.explanationEn}
+                              onChange={(e) =>
+                                setQuizFormData({ ...quizFormData, explanationEn: e.target.value })
+                              }
+                              placeholder="Clinical explanation shown after student submits answer..."
+                              className="w-full px-3 py-1.5 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-850 text-slate-900 dark:text-white text-xs focus:border-amber-500 focus:outline-hidden"
+                            />
+                          </div>
+                        )}
+
+                        {(viewMode === 'split' || viewMode === 'am') && (
+                          <div>
+                            <label className="block font-bold text-slate-700 dark:text-slate-300 text-xs mb-1">
+                              የህክምና ማብራሪያ (በአማርኛ) *
+                            </label>
+                            <textarea
+                              rows={2}
+                              required
+                              value={quizFormData.explanationAm}
+                              onChange={(e) =>
+                                setQuizFormData({ ...quizFormData, explanationAm: e.target.value })
+                              }
+                              placeholder="ተማሪዎች ከመለሱ በኋላ የሚታይ የህክምና ማብራሪያ..."
+                              className="w-full px-3 py-1.5 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-850 text-slate-900 dark:text-white text-xs focus:border-amber-500 focus:outline-hidden"
+                            />
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="flex justify-end gap-2 pt-2">
+                        <button
+                          type="button"
+                          onClick={() => setQuizFormOpen(false)}
+                          className="px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 cursor-pointer"
+                        >
+                          {lang === 'am' ? 'ሰርዝ' : 'Cancel'}
+                        </button>
+                        <button
+                          type="submit"
+                          className="px-5 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-extrabold cursor-pointer shadow-xs"
+                        >
+                          {lang === 'am' ? 'ጥያቄውን መዝግብ' : 'Save Question'}
+                        </button>
+                      </div>
+                    </form>
+                  )}
+
+                  {/* List of Configured Questions */}
+                  {moduleQuestions.length === 0 ? (
+                    <div className="text-center py-12 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-2xl p-6 bg-white dark:bg-slate-900">
+                      <HelpCircle size={32} className="mx-auto text-slate-300 dark:text-slate-600 mb-2" />
+                      <p className="text-sm font-bold text-slate-700 dark:text-slate-300">
+                        {lang === 'am' ? 'ለዚህ ሞጁል የተመዘገበ የፈተና ጥያቄ የለም' : 'No quiz questions created yet'}
+                      </p>
+                      <p className="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
+                        {lang === 'am'
+                          ? 'የመጀመሪያውን የፈተና ጥያቄ ለመጨመር ከላይ ያለውን "ጥያቄ ጨምር" ቁልፍ ይጫኑ'
+                          : 'Click "+ Add Question" above to author interactive knowledge-check questions for this module.'}
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {moduleQuestions.map((q, qIdx) => (
+                        <div
+                          key={q.id || qIdx}
+                          className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-5 shadow-xs space-y-4"
+                        >
+                          <div className="flex items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-3">
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/50 text-amber-800 dark:text-amber-400 border border-amber-200 dark:border-amber-900/40">
+                                Question {qIdx + 1} of {moduleQuestions.length}
+                              </span>
+                              <span className="text-[11px] font-bold text-slate-400 uppercase">
+                                • {q.type === 'TRUE_FALSE' ? 'True / False' : 'Multiple Choice'}
+                              </span>
+                            </div>
+
+                            <div className="flex items-center gap-1.5">
+                              <button
+                                type="button"
+                                onClick={() => openEditQuizQuestion(q, qIdx)}
+                                className="p-1.5 text-slate-400 hover:text-amber-600 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg cursor-pointer"
+                                title="Edit Question"
+                              >
+                                <Edit2 size={14} />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleDuplicateQuizQuestion(qIdx)}
+                                className="p-1.5 text-slate-400 hover:text-brand-600 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg cursor-pointer"
+                                title="Duplicate Question"
+                              >
+                                <Copy size={14} />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteQuizQuestion(qIdx)}
+                                className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg cursor-pointer"
+                                title="Delete Question"
+                              >
+                                <Trash2 size={14} />
+                              </button>
+                            </div>
+                          </div>
+
+                          <div>
+                            <h5 className="font-extrabold text-slate-900 dark:text-white text-sm sm:text-base mb-1">
+                              {q.questionEn}
+                            </h5>
+                            {q.questionAm && q.questionAm !== q.questionEn && (
+                              <p className="text-xs text-slate-500 dark:text-slate-400 mb-2">
+                                {q.questionAm}
+                              </p>
+                            )}
+                          </div>
+
+                          {/* Interactive Option Cards (1-Click Correct Selector) */}
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            {q.optionsEn?.map((opt, oIdx) => {
+                              const isCorrect = q.correctIndex === oIdx;
+                              const optionLetter = String.fromCharCode(65 + oIdx);
+
+                              return (
+                                <button
+                                  key={oIdx}
+                                  type="button"
+                                  onClick={() => handleSetCorrectAnswer(qIdx, oIdx)}
+                                  className={`p-3 rounded-xl text-xs flex items-center justify-between text-left transition-all cursor-pointer ${
+                                    isCorrect
+                                      ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-900 dark:text-emerald-200 font-extrabold border-2 border-emerald-500 shadow-2xs'
+                                      : 'bg-slate-50/70 dark:bg-slate-800/60 text-slate-700 dark:text-slate-300 font-medium border border-slate-200 dark:border-slate-700 hover:border-slate-300'
+                                  }`}
+                                  title="Click to mark as correct answer"
+                                >
+                                  <div className="flex items-center gap-2 min-w-0">
+                                    <span className={`w-5 h-5 rounded-md flex items-center justify-center font-bold text-[10px] shrink-0 ${
+                                      isCorrect
+                                        ? 'bg-emerald-600 text-white'
+                                        : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400'
+                                    }`}>
+                                      {optionLetter}
+                                    </span>
+                                    <span className="truncate">{opt}</span>
+                                  </div>
+
+                                  {isCorrect && (
+                                    <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200 shrink-0">
+                                      ✓ Correct
+                                    </span>
+                                  )}
+                                </button>
+                              );
+                            })}
+                          </div>
+
+                          {/* Explanation Card */}
+                          {q.explanationEn && (
+                            <div className="p-3 rounded-xl bg-sky-50/60 dark:bg-sky-950/20 border border-sky-100 dark:border-sky-900/40 text-xs text-slate-600 dark:text-slate-300 flex items-start gap-2">
+                              <Info size={14} className="text-sky-600 shrink-0 mt-0.5" />
+                              <div>
+                                <span className="font-bold text-sky-900 dark:text-sky-300">Explanation: </span>
+                                <span>{q.explanationEn}</span>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Tab Navigation Actions */}
+                  <div className="flex justify-between pt-2">
+                    <button
+                      type="button"
+                      onClick={() => setModalTab('sections')}
+                      className="px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 cursor-pointer"
+                    >
+                      ← {lang === 'am' ? 'ተመለስ' : 'Back: Learning Sections'}
+                    </button>
                     <button
                       type="button"
                       onClick={() => setModalTab('preview')}
-                      className="text-xs font-bold text-brand-600 dark:text-cyan-400 hover:underline flex items-center gap-1 cursor-pointer"
+                      className="px-5 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-extrabold cursor-pointer transition-all flex items-center gap-1.5 shadow-sm"
                     >
+                      <span>{lang === 'am' ? 'ቀጣይ፡ የሞባይል እይታ' : 'Next: Live Phone Simulator'}</span>
                       <Smartphone size={14} />
-                      <span>{lang === 'am' ? 'ሞባይሉ ላይ እንዴት እንደሚታይ እይ' : 'Preview on Mobile First'}</span>
                     </button>
+                  </div>
+                </div>
+              )}
 
-                    <div className="flex items-center gap-3">
+              {/* ========================================================================= */}
+              {/* TAB 5: LIVE PHONE PREVIEW SIMULATOR                                       */}
+              {/* ========================================================================= */}
+              {modalTab === 'preview' && (
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs">
+                    <div>
+                      <h4 className="font-extrabold text-slate-900 dark:text-white text-sm">
+                        {lang === 'am' ? 'ቀጥታ የሞባይል እይታ (Live iPhone Simulator)' : 'Live Mobile Phone Simulator'}
+                      </h4>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">
+                        {lang === 'am'
+                          ? 'ተማሪዎች በሞባይል ስልካቸው ላይ የሚያዩትን ትክክለኛ ገጽታ በእውነተኛ ጊዜ ይመልከቱ'
+                          : 'Real-time pixel-accurate preview replicating the exact mobile learner experience'}
+                      </p>
+                    </div>
+
+                    <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-0.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-bold">
                       <button
                         type="button"
-                        onClick={() => setIsModalOpen(false)}
-                        className="px-4 py-2 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer"
+                        onClick={() => setActiveLangTab('en')}
+                        className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${
+                          activeLangTab === 'en'
+                            ? 'bg-brand-600 text-white shadow-xs'
+                            : 'text-slate-600 dark:text-slate-400'
+                        }`}
                       >
-                        {lang === 'am' ? 'ሰርዝ' : 'Cancel'}
+                        English
                       </button>
                       <button
-                        type="submit"
-                        disabled={isSubmitting}
-                        className="px-5 py-2 bg-brand-600 hover:bg-brand-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-xl shadow-md shadow-brand-600/20 cursor-pointer flex items-center gap-2"
+                        type="button"
+                        onClick={() => setActiveLangTab('am')}
+                        className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${
+                          activeLangTab === 'am'
+                            ? 'bg-brand-600 text-white shadow-xs'
+                            : 'text-slate-600 dark:text-slate-400'
+                        }`}
                       >
-                        {isSubmitting && (
-                          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                        )}
-                        <span>
-                          {isSubmitting
-                            ? (lang === 'am' ? 'በመመዝገብ ላይ...' : 'Saving...')
-                            : editingModule
-                            ? (lang === 'am' ? 'ለውጦችን መዝግብ' : 'Save Changes')
-                            : (lang === 'am' ? 'ሞጁል ፍጠር' : 'Publish Module')}
-                        </span>
+                        አማርኛ
                       </button>
                     </div>
                   </div>
-                </form>
+
+                  <div className="flex justify-center py-4">
+                    <ModuleMobilePreview
+                      title={activeLangTab === 'am' ? formData.titleAm : formData.titleEn}
+                      summary={activeLangTab === 'am' ? formData.summaryAm : formData.summaryEn}
+                      doctorNote={activeLangTab === 'am' ? formData.doctorNoteAm : formData.doctorNoteEn}
+                      content={
+                        sectionEditMode === 'form'
+                          ? serializeSectionsToMarkdown(sections)[
+                              activeLangTab === 'am' ? 'contentAm' : 'contentEn'
+                            ]
+                          : activeLangTab === 'am'
+                          ? formData.contentAm
+                          : formData.contentEn
+                      }
+                      imageUrl={formData.imageUrl}
+                      authorName={formData.authorName}
+                      readTimeMin={formData.readTimeMin}
+                      category={formData.category}
+                      lang={activeLangTab}
+                      quizQuestionsCount={moduleQuestions.length}
+                    />
+                  </div>
+                </div>
               )}
             </div>
-          </div>
+          </main>
+
+          {/* STUDIO BOTTOM ACTION FOOTER */}
+          <footer className="px-5 sm:px-8 py-3.5 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between shrink-0 shadow-xs z-30">
+            <span className="text-xs text-slate-500 font-semibold">
+              {sections.length} {lang === 'am' ? 'ክፍሎች' : 'Sections'} • {moduleQuestions.length} {lang === 'am' ? 'ፈተና ጥያቄዎች' : 'Quiz Questions'}
+            </span>
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setIsModalOpen(false)}
+                className="px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer transition-all"
+              >
+                {lang === 'am' ? 'ሰርዝ' : 'Cancel'}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleSubmit()}
+                disabled={isSubmitting || !formData.titleEn.trim()}
+                className="px-5 py-2 bg-gradient-to-r from-brand-600 to-cyan-600 hover:from-brand-700 hover:to-cyan-700 text-white rounded-xl text-xs font-extrabold transition-all shadow-sm flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+              >
+                {isSubmitting ? (
+                  <>
+                    <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    <span>{lang === 'am' ? 'በመመዝገብ ላይ...' : 'Saving...'}</span>
+                  </>
+                ) : (
+                  <>
+                    <Save size={14} />
+                    <span>
+                      {editingModule
+                        ? lang === 'am'
+                          ? 'ለውጦችን መዝግብ'
+                          : 'Save Changes'
+                        : lang === 'am'
+                        ? 'ሞጁሉን አትም'
+                        : 'Publish Health Module'}
+                    </span>
+                  </>
+                )}
+              </button>
+            </div>
+          </footer>
+
+          {/* Cover Illustration Chooser Modal */}
+          {showImagePicker && (
+            <div className="fixed inset-0 z-60 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-4">
+              <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl max-w-2xl w-full p-6 space-y-4">
+                <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
+                  <h4 className="font-extrabold text-sm text-slate-900 dark:text-white flex items-center gap-2">
+                    <ImageIcon size={18} className="text-brand-600" />
+                    <span>{lang === 'am' ? 'የሞጁሉን ስዕል ምረጥ' : 'Select Official Cover Illustration'}</span>
+                  </h4>
+                  <button
+                    onClick={() => setShowImagePicker(false)}
+                    className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                  >
+                    <X size={16} />
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-h-[60vh] overflow-y-auto p-1">
+                  {OFFICIAL_ILLUSTRATIONS.map((ill) => {
+                    const isSelected = formData.imageUrl === ill.path;
+                    return (
+                      <button
+                        key={ill.id}
+                        type="button"
+                        onClick={() => {
+                          setFormData({ ...formData, imageUrl: ill.path });
+                          setShowImagePicker(false);
+                        }}
+                        className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center justify-between ${
+                          isSelected
+                            ? 'border-brand-600 bg-brand-50/50 dark:bg-cyan-950/30 ring-2 ring-brand-500'
+                            : 'border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-850 hover:border-slate-300'
+                        }`}
+                      >
+                        <div className="w-16 h-16 rounded-lg bg-white dark:bg-slate-800 p-1 flex items-center justify-center mb-2 overflow-hidden">
+                          <img
+                            src={ill.previewUrl}
+                            alt=""
+                            className="w-full h-full object-contain"
+                          />
+                        </div>
+                        <span className="text-[11px] font-extrabold text-slate-800 dark:text-slate-200 line-clamp-1">
+                          {ill.name}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
-      {/* Delete Confirmation Modal */}
-      <ConfirmModal
-        isOpen={Boolean(moduleToDelete)}
-        onClose={() => setModuleToDelete(null)}
-        onConfirm={async () => {
-          if (moduleToDelete) {
-            await onDelete(moduleToDelete.id);
+      {/* Module Deletion Confirmation Modal */}
+      {moduleToDelete && (
+        <ConfirmModal
+          isOpen={true}
+          onClose={() => setModuleToDelete(null)}
+          onConfirm={async () => {
+            if (moduleToDelete) {
+              await onDelete(moduleToDelete.id);
+              setModuleToDelete(null);
+            }
+          }}
+          title={lang === 'am' ? 'ሞጁሉን ሰርዝ' : 'Delete Curriculum Module'}
+          message={
+            lang === 'am'
+              ? `እርግጠኛ ነዎት "${moduleToDelete.titleAm}" የሚለውን የትምህርት ሞጁል መሰረዝ ይፈልጋሉ? የተያያዙ የፈተና ጥያቄዎችና ምዘናዎች በሙሉ ይሰረዛሉ።`
+              : `Are you sure you want to delete "${moduleToDelete.titleEn}"? All associated quiz questions and assessments will be permanently removed.`
           }
-        }}
-        title={
-          lang === 'am'
-            ? 'የትምህርት ሞጁሉ ይሰረዝ?'
-            : 'Delete Health Curriculum Module?'
-        }
-        itemName={
-          moduleToDelete
-            ? lang === 'am'
-              ? moduleToDelete.titleAm || moduleToDelete.titleEn
-              : moduleToDelete.titleEn
-            : ''
-        }
-        message={
-          lang === 'am'
-            ? 'ይህ እርምጃ ሞጁሉንና በውስጡ ያሉትን ትምህርቶች ከመዝገቡ በቋሚነት ያጠፋል። ተማሪዎች ይህንን ይዘት በሞባይል መተግበሪያቸው ማግኘት አይችሉም።'
-            : 'This module and all its authored lessons will be permanently deleted. Students will no longer see this topic in their reading feed.'
-        }
-        lang={lang}
-      />
+          confirmLabel={lang === 'am' ? 'ሰርዝ' : 'Delete Module'}
+          cancelLabel={lang === 'am' ? 'አትሰርዝ' : 'Cancel'}
+        />
+      )}
     </div>
   );
 };

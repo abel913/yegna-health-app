@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart' hide Path;
@@ -271,10 +272,11 @@ class _FacilityMapViewState extends State<FacilityMapView> {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: isSelected
-                      ? const [Color(0xFF0284C7), Color(0xFF0369A1)]
-                      : (facility.type == FacilityType.campusClinic
-                          ? const [Color(0xFF4F46E5), Color(0xFF4338CA)]
-                          : const [Color(0xFF0284C7), Color(0xFF0EA5E9)]),
+                      ? const [Color(0xFF0F172A), Color(0xFF334155)]
+                      : [
+                          facility.categoryColor,
+                          facility.categoryColor.withValues(alpha: 0.85),
+                        ],
                 ),
                 shape: BoxShape.circle,
                 border: Border.all(
@@ -284,7 +286,7 @@ class _FacilityMapViewState extends State<FacilityMapView> {
                 boxShadow: [
                   BoxShadow(
                     color: isSelected
-                        ? const Color(0x770284C7)
+                        ? const Color(0x770F172A)
                         : const Color(0x40000000),
                     blurRadius: isSelected ? 12 : 6,
                     spreadRadius: isSelected ? 2 : 0,
@@ -293,9 +295,7 @@ class _FacilityMapViewState extends State<FacilityMapView> {
                 ],
               ),
               child: Icon(
-                facility.type == FacilityType.campusClinic
-                    ? Icons.school_rounded
-                    : Icons.local_hospital_rounded,
+                facility.categoryIcon,
                 color: Colors.white,
                 size: 19,
               ),
@@ -304,10 +304,8 @@ class _FacilityMapViewState extends State<FacilityMapView> {
               size: const Size(10, 6),
               painter: _PinTipPainter(
                 color: isSelected
-                    ? const Color(0xFF0369A1)
-                    : (facility.type == FacilityType.campusClinic
-                        ? const Color(0xFF4338CA)
-                        : const Color(0xFF0284C7)),
+                    ? const Color(0xFF0F172A)
+                    : facility.categoryColor,
               ),
             ),
           ],
@@ -409,133 +407,191 @@ class _FacilityPreviewCard extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.all(15),
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.96),
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: const [
-            BoxShadow(
-              color: Color(0x2E0284C7),
-              blurRadius: 22,
-              offset: Offset(0, 8),
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(20),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+        child: Container(
+          padding: const EdgeInsets.all(15),
+          decoration: BoxDecoration(
+            color: isDark
+                ? const Color(0xFF131D36).withValues(alpha: 0.82)
+                : Colors.white.withValues(alpha: 0.85),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: isDark
+                  ? [
+                      const Color(0xFF1E293B).withValues(alpha: 0.88),
+                      const Color(0xFF0F172A).withValues(alpha: 0.75),
+                    ]
+                  : [
+                      Colors.white.withValues(alpha: 0.90),
+                      Colors.white.withValues(alpha: 0.60),
+                    ],
             ),
-          ],
-          border: Border.all(
-            color: const Color(0xFFBAE6FD),
-            width: 1.4,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: isDark
+                ? const [
+                    BoxShadow(
+                      color: Color(0x60000000),
+                      blurRadius: 22,
+                      offset: Offset(0, 8),
+                    ),
+                  ]
+                : const [
+                    BoxShadow(
+                      color: Color(0x2E0284C7),
+                      blurRadius: 22,
+                      offset: Offset(0, 8),
+                    ),
+                  ],
+            border: Border.all(
+              color: isDark
+                  ? const Color(0xFF38BDF8).withValues(alpha: 0.28)
+                  : Colors.white,
+              width: 1.4,
+            ),
           ),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        facility.localizedName(isAmharic),
-                        style: const TextStyle(
-                          fontFamily: 'PlusJakartaSans',
-                          fontSize: 15,
-                          fontWeight: FontWeight.w800,
-                          color: Color(0xFF08264A),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          facility.localizedName(isAmharic),
+                          style: TextStyle(
+                            fontFamily: 'PlusJakartaSans',
+                            fontSize: 15,
+                            fontWeight: FontWeight.w800,
+                            color: isDark
+                                ? const Color(0xFFF8FAFC)
+                                : const Color(0xFF08264A),
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                        const SizedBox(height: 3),
+                        Text(
+                          facility.localizedBuilding(isAmharic) != null
+                              ? '${(facility.localizedCampus(isAmharic) ?? facility.subCityEn).replaceAll(RegExp(r'\s+Sub-City', caseSensitive: false), '').trim()} • ${facility.localizedBuilding(isAmharic)}'
+                              : (facility.localizedCampus(isAmharic) ??
+                                  facility.subCityEn).replaceAll(RegExp(r'\s+Sub-City', caseSensitive: false), '').trim(),
+                          style: TextStyle(
+                            fontFamily: 'PlusJakartaSans',
+                            fontSize: 12,
+                            color: isDark
+                                ? const Color(0xFF94A3B8)
+                                : const Color(0xFF64748B),
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? const Color(0xFF1E293B).withValues(alpha: 0.6)
+                          : const Color(0xFFF0F9FF),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: isDark
+                            ? const Color(0xFF38BDF8).withValues(alpha: 0.2)
+                            : const Color(0xFFBAE6FD),
                       ),
-                      const SizedBox(height: 3),
-                      Text(
-                        facility.localizedSubCity(isAmharic),
+                    ),
+                    child: Text(
+                      l10n.distanceKm(facility.distanceKm.toStringAsFixed(1)),
+                      style: TextStyle(
+                        fontFamily: 'PlusJakartaSans',
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        color: isDark
+                            ? const Color(0xFF38BDF8)
+                            : const Color(0xFF0284C7),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () =>
+                          FacilityDetailSheet.show(context, facility),
+                      style: OutlinedButton.styleFrom(
+                        side: BorderSide(
+                          color: isDark
+                              ? const Color(0xFF38BDF8).withValues(alpha: 0.3)
+                              : const Color(0xFFBAE6FD),
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                      ),
+                      child: Text(
+                        l10n.viewDetailsAction,
+                        style: TextStyle(
+                          fontFamily: 'PlusJakartaSans',
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                          color: isDark
+                              ? const Color(0xFF38BDF8)
+                              : const Color(0xFF0284C7),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () => _launchDirections(context),
+                      icon: const Icon(Icons.navigation_rounded,
+                          size: 14, color: Colors.white),
+                      label: Text(
+                        l10n.directionsAction,
                         style: const TextStyle(
                           fontFamily: 'PlusJakartaSans',
                           fontSize: 12,
-                          color: Color(0xFF64748B),
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
                         ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
                       ),
-                    ],
-                  ),
-                ),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF0F9FF),
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: const Color(0xFFBAE6FD)),
-                  ),
-                  child: Text(
-                    l10n.distanceKm(facility.distanceKm.toStringAsFixed(1)),
-                    style: const TextStyle(
-                      fontFamily: 'PlusJakartaSans',
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
-                      color: Color(0xFF0284C7),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: () =>
-                        FacilityDetailSheet.show(context, facility),
-                    style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: Color(0xFFBAE6FD)),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      padding: const EdgeInsets.symmetric(vertical: 8),
-                    ),
-                    child: Text(
-                      l10n.viewDetailsAction,
-                      style: const TextStyle(
-                        fontFamily: 'PlusJakartaSans',
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xFF0284C7),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: isDark
+                            ? const Color(0xFF0284C7)
+                            : const Color(0xFF0284C7),
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 8),
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: () => _launchDirections(context),
-                    icon: const Icon(Icons.navigation_rounded,
-                        size: 14, color: Colors.white),
-                    label: Text(
-                      l10n.directionsAction,
-                      style: const TextStyle(
-                        fontFamily: 'PlusJakartaSans',
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                      ),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF0284C7),
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      padding: const EdgeInsets.symmetric(vertical: 8),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
-      );
+      ),
+    );
+  }
 }
 
 class _MapFloatingButton extends StatelessWidget {
@@ -551,23 +607,45 @@ class _MapFloatingButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final button = Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        shape: BoxShape.circle,
-        boxShadow: [
-          BoxShadow(
-            color: Color(0x1F000000),
-            blurRadius: 10,
-            offset: Offset(0, 3),
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final button = ClipRRect(
+      borderRadius: BorderRadius.circular(25),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
+        child: Container(
+          decoration: BoxDecoration(
+            color: isDark
+                ? const Color(0xFF131D36).withValues(alpha: 0.8)
+                : Colors.white.withValues(alpha: 0.85),
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: isDark
+                  ? const Color(0xFF38BDF8).withValues(alpha: 0.25)
+                  : Colors.white,
+              width: 1.2,
+            ),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x1F000000),
+                blurRadius: 10,
+                offset: Offset(0, 3),
+              ),
+            ],
           ),
-        ],
-      ),
-      child: IconButton(
-        icon: Icon(icon, color: const Color(0xFF0284C7), size: 20),
-        onPressed: onPressed,
-        constraints: const BoxConstraints(minWidth: 42, minHeight: 42),
-        padding: EdgeInsets.zero,
+          child: IconButton(
+            icon: Icon(
+              icon,
+              color: isDark
+                  ? const Color(0xFF38BDF8)
+                  : const Color(0xFF0284C7),
+              size: 20,
+            ),
+            onPressed: onPressed,
+            constraints: const BoxConstraints(minWidth: 42, minHeight: 42),
+            padding: EdgeInsets.zero,
+          ),
+        ),
       ),
     );
 

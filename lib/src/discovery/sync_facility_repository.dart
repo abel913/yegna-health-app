@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 
 import '../sync/api_client.dart';
 import '../sync/offline_sync_store.dart';
@@ -7,7 +8,8 @@ import 'facility_repository.dart';
 
 /// Offline-first facility repository that serves immediately from persistent
 /// cache or bundled seed data, while revalidating against the Node.js backend.
-class SyncFacilityRepository implements FacilityRepository {
+class SyncFacilityRepository extends ChangeNotifier
+    implements FacilityRepository {
   SyncFacilityRepository({
     required OfflineSyncStore store,
     ApiClient? apiClient,
@@ -43,7 +45,37 @@ class SyncFacilityRepository implements FacilityRepository {
     }
 
     // 4. Apply category and query filtering
-    var result = List<Facility>.from(cached);
+    return _applyFilters(cached, query: query, category: category);
+  }
+
+  /// Forces an immediate network fetch from the backend and updates the cache.
+  Future<List<Facility>> refreshFacilities({
+    String? query,
+    FacilityFilterCategory? category,
+  }) async {
+    if (_apiClient != null) {
+      try {
+        final remoteList = await _apiClient.fetchFacilities();
+        if (remoteList != null && remoteList.isNotEmpty) {
+          final facilities =
+              remoteList.map(OfflineSyncStore.facilityFromMap).toList();
+          await _store.saveFacilities(facilities);
+          notifyListeners();
+          return _applyFilters(facilities, query: query, category: category);
+        }
+      } catch (_) {
+        // Fall back to cache on network error
+      }
+    }
+    return getFacilities(query: query, category: category);
+  }
+
+  List<Facility> _applyFilters(
+    List<Facility> input, {
+    String? query,
+    FacilityFilterCategory? category,
+  }) {
+    var result = List<Facility>.from(input);
 
     if (category != null && category != FacilityFilterCategory.all) {
       switch (category) {
@@ -62,7 +94,38 @@ class SyncFacilityRepository implements FacilityRepository {
         case FacilityFilterCategory.mentalHealth:
           result = result
               .where((f) =>
-                  f.services.any((s) => s.toLowerCase().contains('mental')))
+                  f.services.any((s) => s.toLowerCase().contains('mental')) ||
+                  f.category == FacilityCategory.counseling)
+              .toList();
+          break;
+        case FacilityFilterCategory.clinical:
+          result =
+              result.where((f) => f.category == FacilityCategory.clinical).toList();
+          break;
+        case FacilityFilterCategory.counseling:
+          result = result
+              .where((f) => f.category == FacilityCategory.counseling)
+              .toList();
+          break;
+        case FacilityFilterCategory.academic:
+          result =
+              result.where((f) => f.category == FacilityCategory.academic).toList();
+          break;
+        case FacilityFilterCategory.studentAffairs:
+          result = result
+              .where((f) => f.category == FacilityCategory.studentAffairs)
+              .toList();
+          break;
+        case FacilityFilterCategory.sportsDining:
+          result = result
+              .where((f) => f.category == FacilityCategory.sportsDining)
+              .toList();
+          break;
+        case FacilityFilterCategory.accessibility:
+          result = result
+              .where((f) =>
+                  f.category == FacilityCategory.accessibility ||
+                  f.isWheelchairAccessible)
               .toList();
           break;
         case FacilityFilterCategory.all:
@@ -75,10 +138,16 @@ class SyncFacilityRepository implements FacilityRepository {
       result = result.where((f) {
         final matchEn = f.nameEn.toLowerCase().contains(clean) ||
             f.subCityEn.toLowerCase().contains(clean) ||
+            (f.buildingEn?.toLowerCase().contains(clean) ?? false) ||
+            (f.landmarkEn.toLowerCase().contains(clean)) ||
+            (f.focalPerson?.toLowerCase().contains(clean) ?? false) ||
             f.addressEn.toLowerCase().contains(clean) ||
             f.services.any((s) => s.toLowerCase().contains(clean));
         final matchAm = f.nameAm.contains(clean) ||
             f.subCityAm.contains(clean) ||
+            (f.buildingAm?.contains(clean) ?? false) ||
+            (f.landmarkAm.contains(clean)) ||
+            (f.focalPerson?.contains(clean) ?? false) ||
             f.addressAm.contains(clean);
         return matchEn || matchAm;
       }).toList();
@@ -95,6 +164,7 @@ class SyncFacilityRepository implements FacilityRepository {
         final facilities =
             remoteList.map(OfflineSyncStore.facilityFromMap).toList();
         await _store.saveFacilities(facilities);
+        notifyListeners();
       }
     } catch (_) {
       // Offline or network error: silently ignored in background

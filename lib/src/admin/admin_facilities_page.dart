@@ -111,7 +111,7 @@ class _AdminFacilitiesPageState extends State<AdminFacilitiesPage> {
                             style: TextStyle(
                                 fontSize: 13.5, color: glass.titleText),
                             decoration: const InputDecoration(
-                              labelText: 'Sub-City (English)',
+                              labelText: 'UoG Campus (English)',
                               border: OutlineInputBorder(),
                             ),
                           ),

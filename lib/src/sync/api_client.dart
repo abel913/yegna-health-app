@@ -28,8 +28,12 @@ class ApiClient {
     if (envUrl.isNotEmpty) {
       return envUrl;
     }
+    if (kIsWeb) {
+      final host = Uri.base.host.isNotEmpty ? Uri.base.host : 'localhost';
+      return 'http://$host:5000/api';
+    }
     // Android emulator routes host machine loopback to 10.0.2.2
-    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
+    if (defaultTargetPlatform == TargetPlatform.android) {
       return 'http://10.0.2.2:5000/api';
     }
     // iOS Simulator, Web, Desktop (Windows/macOS/Linux)

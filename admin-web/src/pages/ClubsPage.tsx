@@ -13,6 +13,8 @@ import {
   Download,
   Search,
   X,
+  Phone,
+  ShieldCheck,
 } from 'lucide-react';
 import { StudentClub } from '../types/index.js';
 import { api } from '../services/api.js';
@@ -48,12 +50,31 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
     members: [],
   });
 
+  const defaultGuidelines = [
+    'Maintain 100% confidentiality and respect peer privacy.',
+    'Create an inclusive, judgment-free safe space.',
+    'Active participation and support for all members.',
+  ];
+
+  const parseRules = (rules?: string[] | string): string[] => {
+    if (!rules) return defaultGuidelines;
+    if (Array.isArray(rules)) return rules;
+    try {
+      const parsed = JSON.parse(rules);
+      if (Array.isArray(parsed)) return parsed;
+    } catch {}
+    return [rules];
+  };
+
   const [formData, setFormData] = useState({
     name: '',
     description: '',
     category: 'wellness',
     venue: '',
     meetingTime: '',
+    mentorName: '',
+    mentorContact: '',
+    rules: defaultGuidelines,
     isApproved: true,
   });
 
@@ -90,6 +111,9 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
       category: 'wellness',
       venue: '',
       meetingTime: '',
+      mentorName: '',
+      mentorContact: '',
+      rules: defaultGuidelines,
       isApproved: true,
     });
     setIsModalOpen(true);
@@ -103,6 +127,9 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
       category: c.category,
       venue: c.venue || '',
       meetingTime: c.meetingTime || '',
+      mentorName: c.mentorName || '',
+      mentorContact: c.mentorContact || '',
+      rules: parseRules(c.rules),
       isApproved: c.isApproved,
     });
     setIsModalOpen(true);
@@ -358,6 +385,18 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
                       <span>{c.meetingTime}</span>
                     </div>
                   )}
+                  {c.mentorContact && (
+                    <div className="flex items-center gap-1.5 text-brand-600 dark:text-cyan-400 font-semibold">
+                      <Phone size={13} />
+                      <span className="truncate">{c.mentorName ? `${c.mentorName}: ` : ''}{c.mentorContact}</span>
+                    </div>
+                  )}
+                  {c.rules && (
+                    <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
+                      <ShieldCheck size={13} className="text-emerald-500" />
+                      <span>{parseRules(c.rules).length} {lang === 'am' ? 'መመሪያዎች' : 'Guidelines'}</span>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -418,20 +457,26 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
 
       {/* Create / Edit Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl max-w-lg w-full p-6 md:p-8 animate-in fade-in zoom-in-95">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 md:p-4">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl max-w-lg w-full max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95">
+            {/* Modal Header (Sticky / Pinned) */}
+            <div className="flex-shrink-0 flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xs z-10">
               <h3 className="text-lg font-extrabold text-slate-900 dark:text-white">
                 {editingClub
                   ? (lang === 'am' ? 'የተማሪዎች ክለብን አርትዕ' : 'Edit Student Club')
                   : (lang === 'am' ? 'አዲስ የተማሪዎች ክለብ ፍጠር' : 'Register New Student Club')}
               </h3>
-              <button onClick={() => setIsModalOpen(false)} className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer">
+              <button
+                type="button"
+                onClick={() => setIsModalOpen(false)}
+                className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
+              >
                 <X size={20} />
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="mt-4 space-y-3.5 text-xs md:text-sm">
+            {/* Scrollable Form Body */}
+            <form id="clubForm" onSubmit={handleSubmit} className="flex-1 overflow-y-auto px-6 py-5 space-y-4 text-xs md:text-sm">
               <div>
                 <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
                   {lang === 'am' ? 'የክለቡ ስም' : 'Club Name'}
@@ -503,6 +548,84 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
                 </div>
               </div>
 
+              {/* Counselor / Lead Mentor Contact */}
+              <div className="grid grid-cols-2 gap-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/80 dark:border-slate-700/60">
+                <div>
+                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                    {lang === 'am' ? 'የአማካሪው ስም' : 'Counselor / Mentor Name'}
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.mentorName}
+                    onChange={(e) => setFormData({ ...formData, mentorName: e.target.value })}
+                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-850 text-slate-900 dark:text-white rounded-xl focus:border-brand-500 focus:outline-none"
+                    placeholder="e.g. Sister Hanna / Dr. Almaz"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+                    {lang === 'am' ? 'የአማካሪው ስልክ ቁጥር *' : 'Counselor Phone Number *'}
+                  </label>
+                  <input
+                    type="tel"
+                    value={formData.mentorContact}
+                    onChange={(e) => setFormData({ ...formData, mentorContact: e.target.value })}
+                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-850 text-slate-900 dark:text-white rounded-xl focus:border-brand-500 focus:outline-none"
+                    placeholder="+251 91 123 4567"
+                  />
+                  <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1">Direct phone line for youth counseling</p>
+                </div>
+              </div>
+
+              {/* Community Guidelines & Safe Space Rules */}
+              <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/80 dark:border-slate-700/60">
+                <div className="flex items-center justify-between mb-2">
+                  <div>
+                    <label className="block font-bold text-slate-700 dark:text-slate-300">
+                      {lang === 'am' ? 'የማህበረሰብ መመሪያዎች (Community Guidelines)' : 'Community Guidelines & Safe Space Rules'}
+                    </label>
+                    <p className="text-[10px] text-slate-400 dark:text-slate-500">Students must review these before joining</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, rules: [...formData.rules, ''] })}
+                    className="text-xs text-brand-600 dark:text-cyan-400 hover:underline font-bold cursor-pointer"
+                  >
+                    + Add Rule
+                  </button>
+                </div>
+                <div className="space-y-1.5 max-h-40 overflow-y-auto pr-1">
+                  {formData.rules.map((rule, idx) => (
+                    <div key={idx} className="flex items-center gap-1.5">
+                      <span className="text-[10px] w-4 text-center font-bold text-slate-400">{idx + 1}.</span>
+                      <input
+                        type="text"
+                        value={rule}
+                        onChange={(e) => {
+                          const updated = [...formData.rules];
+                          updated[idx] = e.target.value;
+                          setFormData({ ...formData, rules: updated });
+                        }}
+                        className="flex-1 px-2.5 py-1.5 text-xs border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-850 text-slate-900 dark:text-white rounded-lg focus:border-brand-500 focus:outline-none"
+                        placeholder="Guideline / safe-space pledge..."
+                      />
+                      {formData.rules.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const updated = formData.rules.filter((_, i) => i !== idx);
+                            setFormData({ ...formData, rules: updated });
+                          }}
+                          className="p-1 text-rose-500 hover:text-rose-700 cursor-pointer"
+                        >
+                          <X size={14} />
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
               <div className="pt-1 flex items-center gap-2">
                 <input
                   type="checkbox"
@@ -515,25 +638,27 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
                   {lang === 'am' ? 'ይህ ክለብ በይፋ እንዲታይ የተፈቀደ ነው (Approved)' : 'Club is officially approved and active'}
                 </label>
               </div>
-
-              <div className="pt-4 flex items-center justify-end gap-3 border-t border-slate-100 dark:border-slate-800">
-                <button
-                  type="button"
-                  onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl shadow-md shadow-brand-600/20 cursor-pointer"
-                >
-                  {editingClub
-                    ? (lang === 'am' ? 'ለውጦችን መዝግብ' : 'Save Changes')
-                    : (lang === 'am' ? 'ክለብ ፍጠር' : 'Create Club')}
-                </button>
-              </div>
             </form>
+
+            {/* Modal Footer (Sticky / Pinned) */}
+            <div className="flex-shrink-0 px-6 py-4 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xs border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-3 z-10">
+              <button
+                type="button"
+                onClick={() => setIsModalOpen(false)}
+                className="px-4 py-2 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                form="clubForm"
+                className="px-5 py-2 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl shadow-md shadow-brand-600/20 cursor-pointer transition-all"
+              >
+                {editingClub
+                  ? (lang === 'am' ? 'ለውጦችን መዝግብ' : 'Save Changes')
+                  : (lang === 'am' ? 'ክለብ ፍጠር' : 'Create Club')}
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -26,7 +26,8 @@ const mentorSchema = z.object({
   specialties: z.array(z.string()).default([]),
   isAvailable: z.boolean().default(true),
   isVerified: z.boolean().default(true),
-});
+  weeklySchedule: z.record(z.any()).optional().nullable(),
+}).passthrough();
 
 export async function getAllMentors(req: Request, res: Response) {
   try {
@@ -70,9 +71,10 @@ export async function createMentor(req: AuthRequest, res: Response) {
       });
     }
 
+    const { weeklySchedule, ...dataToCreate } = data;
     const mentor = await prisma.mentor.create({
       data: {
-        ...data,
+        ...dataToCreate,
         languages: JSON.stringify(data.languages),
         specialties: JSON.stringify(data.specialties),
       },
@@ -106,7 +108,8 @@ export async function updateMentor(req: AuthRequest, res: Response) {
     const { id } = req.params;
     const data = mentorSchema.partial().parse(req.body);
 
-    const updateData: any = { ...data };
+    const { weeklySchedule, ...fieldsToUpdate } = data;
+    const updateData: any = { ...fieldsToUpdate };
     if (data.languages !== undefined) {
       updateData.languages = JSON.stringify(data.languages);
     }

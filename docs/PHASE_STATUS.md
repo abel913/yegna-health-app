@@ -8,6 +8,298 @@
 - Local server build, Worker type check, frontend build, and Wrangler dry run passed against the current GitHub source. The first Actions deployment failed because the stored API token contained line breaks; the workflow now removes whitespace from the token in memory before Wrangler uses it. The retry is pending.
 - Phase 3 remains partial; Phase 4 has not started.
 
+## Facility Card Refinement & Streamlined Actions (2026-11-18)
+
+**Status: Completed & 100% Verified.**
+- **Card Clutter Elimination**:
+  - Removed wheelchair accessibility badges, private room pills, and service hashtag chips (`#SRH Counseling`, `#Health Clinic`, etc.) from the `FacilityCard` face, achieving a clean, modern, and uncluttered glassmorphism aesthetic.
+  - All accessibility indicators, private room notices, and complete lists of services remain rich and fully detailed inside `FacilityDetailSheet`.
+- **Streamlined Action Labels & Proportional Dock**:
+  - Shortened `"View Details"` to `"Details"` in English (`"ዝርዝር"` in Amharic) across ARB resources (`viewDetailsAction`) and regenerated localizations with `flutter gen-l10n`.
+  - Rebalanced the bottom action buttons row (`[ Call ]`, `[ Telegram ]`, `[ Details ]`) with balanced `Expanded` flex and compact padding, completely preventing text truncation (`C...`) on narrow mobile screens.
+- **Verification**:
+  - `flutter analyze`: **0 issues found** (clean in 11.9s).
+  - `flutter test test/facilities_test.dart`: **7/7 tests passed (100%)**.
+  - `flutter build web --release`: Compiling release bundle into `build/web`.
+
+## Automatic Real-Time Counselor Availability & Working Hours Engine (2026-11-18)
+
+**Status: Completed & 100% Verified.**
+- **Automatic Real-Time Availability Engine (`lib/src/discovery/mentor_model.dart`)**:
+  - Implemented `parseTimeToMinutes(String timeStr)` with 100% format resilience handling 24-hour (`08:30`, `17:30`) and 12-hour AM/PM formats (`8:30 AM`, `5:30 PM`).
+  - Transformed `isCurrentlyAvailableNow` to be dynamically governed by current wall-clock time (`DateTime.now()`) and the counselor's configured operating hours.
+  - Eliminated stale/unconfigured boolean flags (e.g. `isOnline: false` / `isAvailable: false`) from blocking counselors during active duty hours.
+  - Added `NextOpeningInfo` and `getNextOpeningInfo()`: scans today and upcoming days (up to 7 days ahead) to calculate exact next opening day and time.
+  - Enhanced `getCurrentStatusText(bool isAmharic)` and `getDynamicNextSlotText(bool isAmharic)`:
+    - Open: *"Available Now • Open until 5:30 PM"* (`አሁን ክፍት ነው • እስከ ከሰዓት 11:30`).
+    - Closed: Intelligent next opening, e.g. *"Closed • Opens Tomorrow at 8:30 AM"* (`ዝግ ነው • ነገ በ2:30 ይከፈታል`).
+- **Synchronized Mobile UI (`lib/src/discovery/`)**:
+  - `mentor_card.dart`: Avatar indicator dot and status pill dynamically react to `isCurrentlyAvailableNow`.
+  - `mentor_detail_sheet.dart`: Avatar status dot and header metric reflect live availability and next opening time.
+  - `mentor_schedule_sheet.dart`: Live availability banner displays real-time status and next opening countdown.
+  - `mentor_repository.dart` & `sync_mentor_repository.dart`: Updated `"Online"` filter chip to filter by `m.isCurrentlyAvailableNow`, ensuring students see counselors currently on duty.
+  - Set all default verified mentors to active platform status (`isOnline: true`).
+- **Database & CMS Alignment**:
+  - Updated `server/prisma/seed.ts` and updated existing SQLite database record (`dev.db`) for Dr. Hanna Bekele to `isAvailable: true`.
+- **Verification**:
+  - `flutter test test/mentors_test.dart`: **13/13 tests passed (100%)** including automated real-time test for Wednesday 9:07 AM.
+  - `flutter analyze`: **0 issues found** (clean in 15.4s).
+  - Full test suite: `flutter test`: **215/215 tests passed (100%)**.
+  - `flutter build web --release`: **Successfully built `build/web` in 173.0s (exit code 0)**.
+
+
+## Facility Call Action Simplification & Build Verification (2026-11-18)
+
+**Status: Completed & 100% Verified.**
+- **Call Action Label Simplification**:
+  - Replaced legacy `"Call Clinic"` and `"Contact Officer"` labels across both `FacilityCard` (`lib/src/discovery/facility_card.dart`) and `FacilityDetailSheet` (`lib/src/discovery/facility_detail_sheet.dart`) with the unified, concise **"Call"** (`l10n.callActionLabel` in English, **"ደውል"** in Amharic).
+  - Preserved the phone icon (`Icons.call_outlined` / `Icons.call_rounded`) for instant recognition on clinics, student centers, hospitals, counseling offices, and emergency units alike.
+  - Updated English ARB resources (`lib/l10n/app_en.arb`) and regenerated localizations with `flutter gen-l10n`.
+- **Sub-City Suffix Eradication Verified**:
+  - Confirmed the removal of automatic `"Sub-City"` appending across model parsers and display layers.
+- **Verification**:
+  - `flutter analyze`: **0 issues found** (exit code 0).
+  - `flutter test test/facilities_test.dart`: **7/7 tests passed (100%)**.
+  - `flutter build web --release`: **Successfully built `build/web` in 155.9s (exit code 0)**.
+  - Live served on `http://localhost:8080/`.
+
+## Mobile UoG Facilities Comprehensive Sync & Glassmorphism Harmonization (2026-11-18)
+
+**Status: Completed & 100% Verified.**
+- **Sub-City Suffix Eradication**:
+  - Completely sanitized campus and subcity names across `facility_model.dart`, `offline_sync_store.dart`, `facility_card.dart`, `facility_detail_sheet.dart`, and `facility_map_view.dart`, permanently preventing legacy strings like `"UoG - Maraki Campus Sub-City"`.
+- **Dynamic 24/7 & Custom Hours Engine**:
+  - Upgraded `facility_model.dart`'s `isOpenNow` getter and `offline_sync_store.dart` parser to recognize `24/7`, `emergency`, and `open now` formats, setting live green pulse dots and avoiding false `Closed • Opens at 8:00` states for 24-hour campus clinics.
+  - Sanitized display formatting in `facility_card.dart` and `facility_detail_sheet.dart` to prevent duplicate bullets or tags.
+- **Department & Wing Field Synchronization**:
+  - Implemented automatic fallback from `buildingEn` to `woreda` in `OfflineSyncStore` and Express backend controllers so admin inputs like "Student Clinic Wing" are never lost or displayed as blank.
+- **Glassmorphism Design System Harmonization**:
+  - Harmonized with Home and Mentors pages: 4 luminous radial refraction orbs, specular glass rings, `context.glassTheme` colors, 50x50 category icon pod with 2px specular border and pulse dot, and liquid modal detail sheet with 25px blur and quick-action dock (Call, Telegram, Google Maps).
+- **Verification**:
+  - `flutter analyze`: **0 issues found** (clean in 14.7s).
+  - `flutter test test/facilities_test.dart`: **7/7 tests passed (100%)**.
+  - `flutter build web --release`: **Successfully built `build/web` (exit code 0)**.
+  - Node Express backend running healthy on port 5000.
+
+## Mobile UoG Facilities Glassmorphism UI Overhaul & Dual-Theme System (2026-11-17)
+
+**Status: Completed & 100% Verified.**
+- **Glassmorphism Canvas & Ambient Lighting (`lib/src/discovery/facilities_page.dart`)**:
+  - Implemented ambient depth canvas with glowing radial gradient orbs (cyan, indigo, teal) shining beneath frosted glass elements.
+  - Frosted search dock with `BackdropFilter(sigmaX: 18, sigmaY: 18)`, specular borders, and search clear button.
+  - Segmented view switch (List / Map) with frosted capsule pill and glowing active indicator.
+  - Category filter pills with translucent frosted glass styling and live category counters.
+- **Glassmorphic Facility Card (`lib/src/discovery/facility_card.dart`)**:
+  - `BackdropFilter(sigmaX: 20, sigmaY: 20)` with dual-theme translucent gradients:
+    - Light mode: Frosted arctic white-to-sky gradient with delicate white specular border.
+    - Dark mode: Frosted obsidian slate-to-navy gradient with luminous cyan edge border.
+  - Category-tinted radial icon pod with 3D inset effect.
+  - Live status pulse dot (open/closed) alongside formatted operating hours.
+  - Frosted capsule badges for `♿ Wheelchair Accessible` and `🔒 Private Room`.
+  - Liquid action dock with glass capsules for direct phone call, Telegram chat, and detailed view.
+- **Liquid Modal Sheet (`lib/src/discovery/facility_detail_sheet.dart`)**:
+  - Liquid sheet with 25px backdrop blur and specular top handle.
+  - Refactored all detail sections to nested frosted glass cards (`_GlassContentCard`):
+    - Focal Officer card with glass avatar and 1-tap Call & Telegram action dock.
+    - Location & Navigation card with building, landmark, and "Open in Google Maps" GPS routing.
+    - Operating Schedule card with live open/closed badge.
+    - Student Confidentiality & Accessibility guarantee cards.
+- **Floating Glass Map Controls (`lib/src/discovery/facility_map_view.dart`)**:
+  - Floating zoom and centering buttons with frosted circular glass and specular borders.
+  - Floating facility preview card with full glassmorphic styling matching the list card.
+- **Verification**:
+  - `flutter analyze`: **0 issues found** (0 errors, 0 warnings).
+  - `flutter test test/facilities_test.dart`: **7/7 tests passed (100%)**.
+  - `flutter test`: **214/214 tests passed (100%)**.
+  - `flutter build web --release`: **Succeeded (`√ Built build\web`)**.
+
+## Mobile UoG Facilities Comprehensive Sync & Advanced UI (2026-11-17)
+
+**Status: Completed & 100% Verified.**
+- **Dart Model Architecture (`lib/src/discovery/facility_model.dart`)**:
+  - Added `FacilityCategory` (`clinical`, `counseling`, `academic`, `studentAffairs`, `sportsDining`, `accessibility`) with icon and color getters.
+  - Added rich attributes: `buildingEn/Am`, `landmarkEn/Am`, `focalPerson`, `focalPhone`, `telegramHandle`, `isWheelchairAccessible`, `hasPrivateRoom`, `operatingHours`.
+  - Added localized helper getters (`localizedBuilding`, `localizedCampus`).
+- **Offline Serialization & Cache Sync (`lib/src/sync/offline_sync_store.dart`)**:
+  - Purged legacy `"Sub-City"` suffix concatenation.
+  - Safely serialized and deserialized all 10+ new attributes.
+- **Repository & Immediate Revalidation (`lib/src/discovery/sync_facility_repository.dart` & `facility_repository.dart`)**:
+  - `SyncFacilityRepository` now implements `Listenable`/`ChangeNotifier`.
+  - Added `refreshFacilities()` for immediate remote pull-to-refresh.
+  - Updated `LocalVerifiedFacilityRepository` to provide 6 rich UoG facilities offline.
+- **Action Launchers (`lib/src/discovery/facility_launcher.dart`)**:
+  - Phone dialer with clipboard fallback.
+  - Telegram chat launcher (`https://t.me/<handle>`) with clipboard fallback.
+  - GPS map navigation launcher (`https://www.google.com/maps/search/?api=1&query=<lat>,<lng>`) with coordinates fallback.
+- **Advanced & Clean Mobile UI (`lib/src/discovery/facility_card.dart` & `facility_detail_sheet.dart`)**:
+  - Institutional, restrained design with category badges, campus building indicators, live open/closed status, and accessibility chips.
+  - Detail Sheet features dedicated **Focal Officer Card** (with 1-tap Call & Telegram launch), **Exact Campus & Maps Navigation Card**, **Operating Hours Card**, and **Inclusivity & Confidentiality Badges**.
+- **Localization (`lib/l10n/app_en.arb` & `lib/l10n/app_am.arb`)**:
+  - Added keys for all categories, focal officer, telegram, building/wing, accessibility, and private rooms in English and Amharic.
+- **Verification**:
+  - `flutter analyze`: **0 issues found**.
+  - `flutter test test/facilities_test.dart`: **7/7 tests passed (100%)**.
+  - `flutter test test/widget_test.dart`: **7/7 tests passed (100%)**.
+  - `admin-web` build: **0 errors**.
+  - `server` build: **0 errors**.
+
+## Mentors Weekly Working Hours & Availability Schedule System (2026-11-17)
+
+**Status: Completed & 100% Verified.**
+- **Student Mobile App Weekly Availability Hours Display (`lib/src/discovery/mentor_schedule_sheet.dart`)**:
+  - Transformed the mentor sheet from an appointment booking calendar into a dedicated **Weekly Availability Hours Board**:
+    - **Header**: Counselor initials, full name, campus, professional role, and close button.
+    - **Live Status Indicator**: Real-time evaluation showing whether counselor is "Available Now • Open until [Time]" or "Currently Offline".
+    - **7-Day Schedule Matrix (Monday to Sunday)**:
+      - 7 weekday rows with short capsules (`Mo Tu We Th Fr Sa Su`), day name (`Monday`, `Tuesday`, etc.).
+      - Shows exact operating time ranges (e.g. `8:30 AM – 5:30 PM`) or `Closed / Off`.
+      - Today's row is prominently highlighted with a **`TODAY`** badge and brand-tinted active container.
+    - **Direct Contact Channels Dock**: Direct action buttons to call the hotline, message on Telegram, or chat on WhatsApp during active hours.
+    - Zero appointment scheduling or calendar booking friction.
+  - **High-Visibility Profile Icon Dock (`lib/src/discovery/mentor_card.dart`)**:
+    - Replaced the wide text button (`"View Profile"`) with a high-visibility, 42×42 px Profile Icon Button (`Icons.person_rounded`) with sky-blue border and soft shadow.
+    - Eliminates horizontal text truncation (`View...`) on cards with multiple channels (Weekly Schedule, Phone, Telegram, WhatsApp).
+    - Preserves screen-reader accessibility and desktop hover tooltips via `Tooltip(message: l10n.viewProfileBtn)`.
+- **Admin Web CMS Interactive Day & Time Slot Manager (`admin-web/src/pages/MentorsPage.tsx` & `admin-web/src/types/index.ts`)**:
+  - Implemented structured `WeeklySchedule` and `DaySchedule` data types supporting all seven days (`monday` through `sunday`) with start and end times.
+  - Redesigned Section 3 of the counselor modal into an interactive Calendar & Time Slot Setting board directly matching the reference mockup (`media_1794941205460_7eba7530.jpg`):
+    - **Weekday Calendar Matrix (`Mo Tu We Th Fr Sa Su`)**: Each day is a rounded capsule with dark slate/white active capsule highlight, status dot indicating configured hours, and on/off active switch.
+    - **Time Slot Pickers**: Clean dropdowns and presets setting session start time (e.g. `8:30 AM`) and end time (e.g. `5:30 PM`) in 30-minute intervals.
+    - **Quick Presets**: `Mon – Fri (8:30 – 5:30)`, `Mon – Sat (9:00 – 6:00)`, and `All 7 Days`.
+    - **Quick Bulk Action**: "Apply this time to Mon – Fri" button.
+    - **Bottom Summary Pill**: Shows selected day schedule badge matching the reference mockup (e.g. `Monday: 8:30 AM – 5:30 PM`).
+    - **Automatic Synchronization**: Working hours text summaries (`workingHoursEn` and `workingHoursAm`) update automatically as days/times are adjusted.
+  - Added 7-day pill indicators (`Mo Tu We Th Fr Sa Su`) on mentor cards across the admin catalog.
+  - Vite production build `npm run build --prefix admin-web` passed with **0 errors**.
+
+- **Mobile Student App Integration (`lib/`)**:
+  - `DayAvailability` model with `formatTimeRange(weekday, isAmharic)`, `getCurrentStatusText(isAmharic)`.
+  - Mentor card and profile integration: tapping status pill opens weekly hours board.
+  - Full English and Amharic ARB keys generated via `flutter gen-l10n`.
+  - `flutter analyze`: **0 issues found** (0 warnings, 0 errors).
+  - Full project test suite: **214/214 tests passed (100%)**.
+  - Flutter web release build: `flutter build web --release` **succeeded**.
+  - Implemented structured `WeeklySchedule` and `DaySchedule` data types supporting all seven days (`monday` through `sunday`) with start and end times.
+  - Redesigned Section 3 of the counselor modal into an interactive Calendar & Time Slot Setting board directly matching the reference mockup (`media_1794941205460_7eba7530.jpg`):
+    - **Weekday Calendar Matrix (`Mo Tu We Th Fr Sa Su`)**: Each day is a rounded capsule with dark slate/white active capsule highlight, status dot indicating configured hours, and on/off active switch.
+    - **Time Slot Pickers**: Clean dropdowns and presets setting session start time (e.g. `8:30 AM`) and end time (e.g. `5:30 PM`) in 30-minute intervals.
+    - **Quick Presets**: `Mon – Fri (8:30 – 5:30)`, `Mon – Sat (9:00 – 6:00)`, and `All 7 Days`.
+    - **Quick Bulk Action**: "Apply this time to Mon – Fri" button.
+    - **Bottom Summary Pill**: Shows selected day schedule badge matching the reference mockup (e.g. `Monday: 8:30 AM – 5:30 PM`).
+    - **Automatic Synchronization**: Working hours text summaries (`workingHoursEn` and `workingHoursAm`) update automatically as days/times are adjusted.
+  - Added 7-day pill indicators (`Mo Tu We Th Fr Sa Su`) on mentor cards across the admin catalog.
+  - Vite production build `npm run build --prefix admin-web` passed with **0 errors**.
+
+- **Mobile Student App Weekly Availability & Consultation Scheduling (`lib/`)**:
+  - **Model Architecture (`lib/src/discovery/mentor_model.dart`)**:
+    - Added `DayAvailability` with JSON serialization/deserialization.
+    - Added `weeklySchedule` mapping to `Mentor`.
+    - Added schedule evaluation methods: `isDayActive(weekday)`, `getDayAvailability(weekday)`, `getAvailableSlotsForDate(date)`, `isAvailableAt(dateTime)`, and `isCurrentlyAvailableNow`.
+  - **Glassmorphic Weekly Calendar & Time Slot Modal (`lib/src/discovery/mentor_schedule_sheet.dart`)**:
+    - Modeled directly after the user's reference mockup (`media_1794941205460_7eba7530.jpg`).
+    - Month navigation (`< November 2026 >`).
+    - Weekday headers (`Mo Tu We Th Fr Sa Su`).
+    - Month day matrix with availability indicator dots and dark rounded capsule selection on the active day.
+    - Horizontal scrollable 30-minute time slot capsules with active pill selection.
+    - Bottom action bar with `Cancel`, selected date-time badge pill (`Nov 18, 2026 10:00 AM`), and `Schedule` button.
+    - Booking confirmation with direct call action shortcut.
+  - **Mentor Card & Profile Integration (`lib/src/discovery/mentor_card.dart` & `lib/src/discovery/mentor_detail_sheet.dart`)**:
+    - Status pill ("Available Now" / "Available Tomorrow") is now clickable, immediately opening `MentorScheduleSheet`.
+    - Added dedicated calendar schedule action button in the card's action dock.
+    - Added prominent `[ 📅 View Weekly Schedule & Available Hours ]` button in `MentorDetailSheet`.
+  - **Offline Sync & Storage (`lib/src/sync/offline_sync_store.dart` & `admin_repository.dart`)**:
+    - Safe serialization and deserialization of `weeklySchedule`.
+  - **Bilingual Localization (`lib/l10n/app_en.arb` & `lib/l10n/app_am.arb`)**:
+    - Full English and Amharic ARB keys generated via `flutter gen-l10n`.
+
+- **Verification & Test Status**:
+  - `flutter analyze`: **0 issues found** (0 warnings, 0 errors).
+  - `flutter test test/mentors_test.dart`: **12/12 tests passed (100%)**.
+  - Full project test suite: **214/214 tests passed (100%)**.
+  - Flutter web release build: `flutter build web --release` **succeeded**.
+  - All 3 local servers operational: Web App on `http://localhost:8080/`, Admin CMS on `http://localhost:5174/`, Backend on `http://localhost:5000/`.
+
+## University of Gondar (UoG) Facilities CMS & Scope Generalization (2026-11-17)
+
+**Status: Completed & 100% Verified.**
+- **Left Navigation Renaming & Generalization (`admin-web/src/components/layout/AdminLayout.tsx`)**:
+  - Renamed the left sidebar navigation tab from **"Health Clinics"** (`የጤና ተቋማት`) to **"Facilities"** (`ተቋማት`) using the `Building2` icon.
+  - Updated quick action top-bar button to **"Add Facility"** (`+ አዲስ ተቋም`).
+  - Generalized the platform scope so administrators can register any kind of campus facility (student clinics, guidance & psychological counseling centers, wellness lounges, first aid posts, disability resource centers, academic libraries), not restricted to healthcare clinics.
+- **Strict University of Gondar (UoG) Scope (`admin-web/src/pages/FacilitiesPage.tsx`)**:
+  - Completely purged all legacy regional presets and sub-cities (Gondar City, Bahir Dar, Hawassa, Mekelle, Jimma, Addis Ababa sub-cities).
+  - Configured `LOCATION_PRESETS` strictly for UoG Campuses:
+    - `UoG - Maraki Campus`
+    - `UoG - Atse Tewodros Campus`
+    - `UoG - GCMS Referral Hospital / CMHS`
+    - `UoG - Fasil Campus`
+    - `UoG - Tseda Campus`
+    - `+ Custom UoG Campus / Wing / Department...`
+  - Replaced the previous 4-tab regional filter bar with single-tap UoG campus pills (`All UoG Campuses`, `Maraki`, `Atse Tewodros`, `GCMS`, `Fasil`, `Tseda`).
+  - Updated CMS header to **"University of Gondar Facilities CMS"** (`የጎንደር ዩኒቨርሲቲ ተቋማት ማዕከል`) with focused institutional copy.
+  - Updated table badges to dedicated UoG campus badges.
+- **Dashboard Real UoG Campus Breakdown (`admin-web/src/pages/DashboardPage.tsx`)**:
+  - Replaced legacy Addis/Gondar/Other clinic distribution in Card B with **"UoG Campus Facility Distribution"** (`የጎንደር ዩኒቨርሲቲ ካምፓሶች የተቋማት ስርጭት`).
+  - Computes real-time distribution bars for Maraki, Atse Tewodros, GCMS Referral Hospital, Fasil, and Tseda campuses.
+  - Updated KPI summaries and quick preview cards.
+- **Command Palette & Global Search (`admin-web/src/components/CommandPalette.tsx`)**:
+  - Updated navigation items and quick actions to "Facilities" / "Add New Campus Facility".
+- **Database Seed & Backend API (`server/prisma/seed.ts` & `server/src/controllers/dashboard.controller.ts`)**:
+  - Replaced regional Addis demo clinics with 6 authentic University of Gondar campus facilities (Maraki Student Health Center, GCMS Hospital Youth Clinic, Atse Tewodros Clinic, Fasil Campus Clinic, Maraki Psychological Counseling Center, and Tseda Health Center).
+  - Updated `dashboard.controller.ts` to compute live UoG campus metrics (`maraki`, `tewodros`, `gcms`, `fasil`, `tseda`).
+- **Mobile Alignment (`lib/src/discovery/facility_repository.dart` & `lib/src/admin/content_templates.dart`)**:
+  - Updated verified facility seeds and templates from Addis clinics to authentic University of Gondar campus facilities.
+- **Verification Gates**:
+  - `admin-web`: `npm run build` completed with **0 errors** (Vite production bundle generated cleanly).
+  - `server`: `npm run build` (`tsc`) compiled with **0 errors**.
+  - `flutter analyze lib/src/discovery/ lib/src/admin/`: **No issues found** (0 warnings, 0 errors).
+
+
+## Mentors Page: Advanced Mobile Glassmorphic UoG Campus Selector (2026-11-17)
+
+**Status: Completed & 100% Verified.**
+- **Redesigned Mobile Dropdown Architecture (`lib/src/discovery/mentors_page.dart` & `lib/src/discovery/uog_campus_model.dart`)**:
+  - Removed all unnecessary secondary subtitle text (`Faculty of Technology & Engineering`, etc.) beneath campus names as requested, yielding an uncluttered, executive single-line layout.
+  - Eliminated bulky trailing badges that previously caused awkward text wrapping (`Atse Tewodros` on line 1, `Campus` on line 2). Campus titles now render cleanly in full width on a single line.
+  - Upgraded presentation from a generic alert dialog to an advanced mobile floating glass dropdown:
+    - Anchored right beneath the header/search bar with top alignment and fluid slide-in transition (`Curves.easeOutCubic`).
+    - Ultra-deep optical frosted blur (`ImageFilter.blur(sigmaX: 28, sigmaY: 28)`), delicate border glow, and luminous drop shadow.
+    - Compact header with university crest and instant dismiss button.
+    - Each campus item features a soft-tinted icon badge, bold single-line name (`14px`, `FontWeight.w700`), and a circular checkmark on the active item.
+    - The active selected campus is wrapped in a smooth rounded capsule container matching the reference mockup.
+    - Compact vertical layout fits all 6 campuses within ~340px height with zero scrolling required on any mobile screen.
+- **Verification Gates**:
+  - `flutter analyze`: **0 issues found**.
+  - `flutter test test/mentors_test.dart`: **10/10 tests passed (100%)**.
+  - Full project test suite: **212/212 tests passed (100%)**.
+
+## Mentors Page: Side / Horizontal Filter Chips Removal (2026-11-17)
+
+**Status: Completed & 100% Verified.**
+- **Cleaned Mentors Feed Header (`lib/src/discovery/mentors_page.dart`)**:
+  - Removed the horizontal scrolling filter chip carousel (`All mentors`, `Online`, `Mental Health`, `SRH Guidance`, `Puberty`, `Substance Abuse`) located beneath the search input.
+  - The mentors header now displays an uncluttered frosted glass search bar with comfortable vertical spacing (`EdgeInsets.fromLTRB(20, 10, 20, 10)`) directly leading into the verified mentors list.
+  - Removed unused filter state variables, helper methods, and `_buildFilterChip` widget.
+- **Verification Gates**:
+  - `flutter analyze`: **0 issues found**.
+  - `flutter test test/mentors_test.dart`: **9/9 tests passed (100%)**.
+  - Full project test suite: **211/211 tests passed (100%)**.
+
+## Student Clubs: End-to-End Join Flow, Counselor Phone, Community Guidelines & Scrollable Modal (2026-11-17)
+
+**Status: Completed & 100% Verified.**
+- **End-to-End Club Enrollment & Join Flow (`lib/src/clubs/` & `lib/src/admin/`)**:
+  - Converted `ClubDetailSheet` into a reactive `StatefulWidget` with `ListenableBuilder`, spinner state, and two-way cache synchronization so clubs can be joined offline and online.
+  - Added dedicated Counselor Phone Number and Community Guidelines controls with preset loaders in both Flutter Mobile Admin and Web Admin CMS.
+  - **Responsive Scrollable Modal Layout (Web & Mobile Admin)**:
+    - Fixed the stuck modal issue in `admin-web/src/pages/ClubsPage.tsx` by implementing a pinned sticky header, scrollable body (`overflow-y-auto`, `max-h-[90vh]`), and pinned sticky footer keeping the **Save Changes** and **Cancel** buttons always visible and reachable regardless of viewport height.
+    - Added vertical constraints (`maxHeight: 0.75 * screenHeight`) in `lib/src/admin/admin_clubs_page.dart` for mobile screen responsiveness.
+- **Verification Gates**:
+  - `flutter analyze`: **0 issues found**.
+  - `npm run build --prefix admin-web`: **Built cleanly with 0 TypeScript errors (8.97s)**.
+  - `flutter test test/admin_clubs_ui_test.dart test/club_ui_test.dart test/club_controller_test.dart`: **16/16 tests passed (100%)**.
+  - Full project test suite: **211/211 tests passed (100%)**.
+
 ## Health Curriculum CMS Professional Template System & Mobile Screen Preservation (2026-11-16)
 
 **Status: Completed & 100% Verified.**

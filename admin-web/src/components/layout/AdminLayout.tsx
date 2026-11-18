@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   LayoutDashboard,
-  Hospital,
+  Building2,
   Users2,
   BookOpen,
   HelpCircle,
@@ -67,7 +67,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
       category: lang === 'am' ? 'አጠቃላይ' : 'General',
       items: [
         { id: 'dashboard', label: lang === 'am' ? 'ዳሽቦርድ' : 'Dashboard', icon: LayoutDashboard },
-        { id: 'facilities', label: lang === 'am' ? 'የጤና ተቋማት' : 'Health Clinics', icon: Hospital },
+        { id: 'facilities', label: lang === 'am' ? 'ተቋማት' : 'Facilities', icon: Building2 },
         { id: 'mentors', label: lang === 'am' ? 'አማካሪዎች' : 'Peer Mentors', icon: Users2 },
       ],
     },
@@ -664,7 +664,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
                 className="flex items-center gap-1.5 px-2.5 sm:px-3.5 py-1.5 bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold rounded-xl shadow-sm shadow-brand-600/20 transition-colors cursor-pointer"
               >
                 <Plus size={16} />
-                <span className="hidden sm:inline">{lang === 'am' ? 'አዲስ ክሊኒክ' : 'Add Facility'}</span>
+                <span className="hidden sm:inline">{lang === 'am' ? 'አዲስ ተቋም' : 'Add Facility'}</span>
               </button>
             )}
           </div>

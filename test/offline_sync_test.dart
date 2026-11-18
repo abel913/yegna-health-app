@@ -22,8 +22,10 @@ import 'package:yegna_health_app/src/sync/sync_manager.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  setUp(() {
+  setUp(() async {
     SharedPreferences.setMockInitialValues({});
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
   });
 
   group('OfflineSyncStore Tests', () {
@@ -204,7 +206,7 @@ void main() {
 
       final facilities = await repo.getFacilities();
       expect(facilities.isNotEmpty, isTrue);
-      expect(facilities.any((f) => f.nameEn.contains('Arada')), isTrue);
+      expect(facilities.any((f) => f.nameEn.contains('Maraki')), isTrue);
 
       // Verify it cached the fallback seed so subsequent reads are immediate
       final cached = await store.getCachedFacilities();
@@ -232,10 +234,10 @@ void main() {
       final store = OfflineSyncStore();
       final repo = SyncFacilityRepository(store: store);
 
-      final searchEn = await repo.getFacilities(query: 'kirkos');
+      final searchEn = await repo.getFacilities(query: 'maraki');
       expect(searchEn.isNotEmpty, isTrue);
 
-      final searchAm = await repo.getFacilities(query: 'አራዳ');
+      final searchAm = await repo.getFacilities(query: 'ማራኪ');
       expect(searchAm.isNotEmpty, isTrue);
     });
   });

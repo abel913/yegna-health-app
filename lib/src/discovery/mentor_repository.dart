@@ -8,6 +8,7 @@ abstract class MentorRepository {
     MentorTopic? topic,
     String? language,
     bool? onlineOnly,
+    String? campus,
   });
 }
 
@@ -20,6 +21,7 @@ class UnconfiguredMentorRepository implements MentorRepository {
     MentorTopic? topic,
     String? language,
     bool? onlineOnly,
+    String? campus,
   }) async =>
       const [];
 }
@@ -57,6 +59,7 @@ class LocalVerifiedMentorRepository implements MentorRepository {
       phoneNumber: '+251911234567',
       displayPhoneNumber: '+251 91 123 4567',
       telegramHandle: 'selam_tya_peer',
+      campus: 'Atse Fasil Campus',
       workingHoursEn: 'Mon – Fri: 8:30 AM – 5:30 PM',
       workingHoursAm: 'ከሰኞ – ዓርብ፡ 2:30 – 11:30',
     ),
@@ -73,7 +76,7 @@ class LocalVerifiedMentorRepository implements MentorRepository {
       bioAm:
           'ወጣቶች አሉታዊ የአቻ ግፊትን እንዲቋቋሙ፣ ጤናማ የአኗኗር ዘይቤ እንዲከተሉ እና ከዕፅ ሱስ እንዲጠበቁ የሚያግዝ የሰለጠነ አቻ አስተማሪ።',
       isVerified: true,
-      isOnline: false,
+      isOnline: true,
       nextAvailableSlotEn: 'Today at 3:00 PM',
       nextAvailableSlotAm: 'ዛሬ ከቀኑ 9:00',
       languages: ['Amharic', 'Afaan Oromoo', 'English'],
@@ -88,6 +91,7 @@ class LocalVerifiedMentorRepository implements MentorRepository {
       phoneNumber: '+251922345678',
       displayPhoneNumber: '+251 92 234 5678',
       telegramHandle: 'dawit_redcross_youth',
+      campus: 'Atse Tewodros Campus',
       workingHoursEn: 'Mon – Sat: 9:00 AM – 6:00 PM',
       workingHoursAm: 'ከሰኞ – ቅዳሜ፡ 3:00 – 12:00',
     ),
@@ -119,6 +123,7 @@ class LocalVerifiedMentorRepository implements MentorRepository {
       phoneNumber: '+251933456789',
       displayPhoneNumber: '+251 93 345 6789',
       telegramHandle: 'hana_aau_peer',
+      campus: 'CMHS / Health College',
       workingHoursEn: 'Mon – Fri: 8:00 AM – 5:00 PM',
       workingHoursAm: 'ከሰኞ – ዓርብ፡ 2:00 – 11:00',
     ),
@@ -135,7 +140,7 @@ class LocalVerifiedMentorRepository implements MentorRepository {
       bioAm:
           'የወጣቶችን በራስ መተማመን የሚያበረታታ፣ ስሜታዊ ጥንካሬን የሚያዳብር እና ለጭንቀት አያያዝ አጋዥ የሆነ አማካሪ።',
       isVerified: true,
-      isOnline: false,
+      isOnline: true,
       nextAvailableSlotEn: 'Tomorrow at 10:00 AM',
       nextAvailableSlotAm: 'ነገ ጠዋት 4:00',
       languages: ['Amharic', 'Tigrinya', 'English'],
@@ -149,6 +154,7 @@ class LocalVerifiedMentorRepository implements MentorRepository {
       phoneNumber: '+251944567890',
       displayPhoneNumber: '+251 94 456 7890',
       telegramHandle: 'yohannes_mhe_peer',
+      campus: 'Maraki Campus',
       workingHoursEn: 'Mon – Fri: 9:00 AM – 5:30 PM',
       workingHoursAm: 'ከሰኞ – ዓርብ፡ 3:00 – 11:30',
     ),
@@ -181,6 +187,7 @@ class LocalVerifiedMentorRepository implements MentorRepository {
       phoneNumber: '+251955678901',
       displayPhoneNumber: '+251 95 567 8901',
       telegramHandle: 'betty_dkt_ambassador',
+      campus: 'Teda Campus',
       workingHoursEn: 'Mon – Sat: 8:30 AM – 5:00 PM',
       workingHoursAm: 'ከሰኞ – ቅዳሜ፡ 2:30 – 11:00',
     ),
@@ -192,11 +199,12 @@ class LocalVerifiedMentorRepository implements MentorRepository {
     MentorTopic? topic,
     String? language,
     bool? onlineOnly,
+    String? campus,
   }) async {
     var result = List<Mentor>.from(_verifiedMentors);
 
     if (onlineOnly == true) {
-      result = result.where((m) => m.isOnline).toList();
+      result = result.where((m) => m.isCurrentlyAvailableNow).toList();
     }
 
     if (topic != null && topic != MentorTopic.all) {
@@ -205,6 +213,17 @@ class LocalVerifiedMentorRepository implements MentorRepository {
 
     if (language != null && language.isNotEmpty && language != 'All') {
       result = result.where((m) => m.languages.contains(language)).toList();
+    }
+
+    if (campus != null &&
+        campus.isNotEmpty &&
+        campus != 'all' &&
+        campus != 'Central Directorate / All Campuses') {
+      final target = campus.toLowerCase();
+      result = result.where((m) {
+        final c = m.campus.toLowerCase();
+        return c.contains(target) || target.contains(c);
+      }).toList();
     }
 
     if (query != null && query.trim().isNotEmpty) {
@@ -216,6 +235,7 @@ class LocalVerifiedMentorRepository implements MentorRepository {
             m.telegramHandle.toLowerCase().contains(clean) ||
             m.phoneNumber.contains(clean) ||
             m.displayPhoneNumber.contains(clean) ||
+            m.campus.toLowerCase().contains(clean) ||
             m.languages.any((l) => l.toLowerCase().contains(clean));
         final matchAm = m.nameAm.contains(clean) ||
             m.organizationAm.contains(clean) ||
@@ -243,12 +263,14 @@ class DynamicMentorRepository implements MentorRepository {
     MentorTopic? topic,
     String? language,
     bool? onlineOnly,
+    String? campus,
   }) async {
     final base = await fallback.getMentors(
       query: query,
       topic: topic,
       language: language,
       onlineOnly: onlineOnly,
+      campus: campus,
     );
     if (fallback is UnconfiguredMentorRepository) {
       return base;
@@ -257,7 +279,17 @@ class DynamicMentorRepository implements MentorRepository {
     try {
       final custom = await customMentorsProvider!();
       final ids = base.map((m) => m.id).toSet();
-      final extras = custom.where((m) => !ids.contains(m.id)).toList();
+      var extras = custom.where((m) => !ids.contains(m.id)).toList();
+      if (campus != null &&
+          campus.isNotEmpty &&
+          campus != 'all' &&
+          campus != 'Central Directorate / All Campuses') {
+        final target = campus.toLowerCase();
+        extras = extras.where((m) {
+          final c = m.campus.toLowerCase();
+          return c.contains(target) || target.contains(c);
+        }).toList();
+      }
       return [...base, ...extras];
     } catch (_) {
       return base;

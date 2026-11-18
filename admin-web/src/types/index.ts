@@ -5,12 +5,28 @@ export interface AdminUser {
   role: string;
 }
 
+export type FacilityCategory =
+  | 'clinical'
+  | 'counseling'
+  | 'academic'
+  | 'student_affairs'
+  | 'sports_dining'
+  | 'accessibility';
+
 export interface Facility {
   id: string;
   nameEn: string;
   nameAm: string;
+  category?: FacilityCategory;
   subCity: string;
-  woreda?: string;
+  woreda?: string; // Branch / Wing
+  buildingEn?: string;
+  buildingAm?: string;
+  landmarkEn?: string;
+  landmarkAm?: string;
+  focalPerson?: string;
+  focalPhone?: string;
+  telegramHandle?: string;
   addressEn: string;
   addressAm: string;
   phone: string;
@@ -18,9 +34,22 @@ export interface Facility {
   longitude: number;
   operatingHours: string;
   isVerified: boolean;
+  isWheelchairAccessible?: boolean;
+  hasPrivateRoom?: boolean;
   services: string[];
   createdAt: string;
 }
+
+export interface DaySchedule {
+  enabled: boolean;
+  start: string; // e.g. "08:30"
+  end: string;   // e.g. "17:30"
+}
+
+export type WeeklySchedule = Record<
+  'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday',
+  DaySchedule
+>;
 
 export interface Mentor {
   id: string;
@@ -37,6 +66,7 @@ export interface Mentor {
   sessionsCount?: number;
   workingHoursEn?: string;
   workingHoursAm?: string;
+  weeklySchedule?: WeeklySchedule;
   bioEn?: string;
   bioAm?: string;
   languages: string[];
@@ -100,6 +130,9 @@ export interface StudentClub {
   category: string;
   venue?: string;
   meetingTime?: string;
+  mentorName?: string;
+  mentorContact?: string;
+  rules?: string[] | string;
   isApproved: boolean;
   memberCount?: number;
   createdAt: string;

@@ -219,6 +219,35 @@ class AdminController extends ChangeNotifier {
     return _repository.getClubRoster(clubId);
   }
 
+  Future<List<ClubMembership>> getAllClubMemberships() async {
+    return _repository.getAllClubMemberships();
+  }
+
+  Future<void> removeClubMember(String clubId, String userId) async {
+    await _repository.removeClubMember(clubId, userId,
+        adminEmail: _currentAdminEmail);
+    _clubs = await _repository.getClubs();
+    _metrics = await _repository.getDashboardMetrics();
+    _auditLogs = await _repository.getAuditLogs();
+    notifyListeners();
+  }
+
+  Future<void> updateClubMemberRole(
+      String clubId, String userId, String newRole) async {
+    await _repository.updateClubMemberRole(clubId, userId, newRole,
+        adminEmail: _currentAdminEmail);
+    _auditLogs = await _repository.getAuditLogs();
+    notifyListeners();
+  }
+
+  Future<void> toggleClubActive(String clubId) async {
+    await _repository.toggleClubActive(clubId, adminEmail: _currentAdminEmail);
+    _clubs = await _repository.getClubs();
+    _metrics = await _repository.getDashboardMetrics();
+    _auditLogs = await _repository.getAuditLogs();
+    notifyListeners();
+  }
+
   // --- USER ACTIONS ---
   Future<void> updateUserRole(String userId, String role) async {
     await _repository.updateUserRole(userId, role,

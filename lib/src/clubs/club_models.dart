@@ -63,6 +63,14 @@ class StudentClub {
 
   bool get isAtCapacity => maxCapacity != null && memberCount >= maxCapacity!;
 
+  double get capacityUtilization =>
+      (maxCapacity != null && maxCapacity! > 0)
+          ? (memberCount / maxCapacity!).clamp(0.0, 1.0)
+          : 0.0;
+
+  bool get isNearCapacity =>
+      maxCapacity != null && memberCount >= (maxCapacity! * 0.8) && !isAtCapacity;
+
   StudentClub copyWith({
     String? nameEn,
     String? nameAm,
@@ -182,6 +190,23 @@ class ClubMembership {
   final String userName;
   final DateTime joinedAt;
   final String role; // member, lead
+
+  ClubMembership copyWith({
+    String? clubId,
+    String? userId,
+    String? userEmail,
+    String? userName,
+    DateTime? joinedAt,
+    String? role,
+  }) =>
+      ClubMembership(
+        clubId: clubId ?? this.clubId,
+        userId: userId ?? this.userId,
+        userEmail: userEmail ?? this.userEmail,
+        userName: userName ?? this.userName,
+        joinedAt: joinedAt ?? this.joinedAt,
+        role: role ?? this.role,
+      );
 
   Map<String, Object?> toJson() => {
         'clubId': clubId,

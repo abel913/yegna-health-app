@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import {
   Search,
   LayoutDashboard,
-  Hospital,
+  Building2,
   Users2,
   BookOpen,
   HelpCircle,
@@ -99,9 +99,9 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
       {
         id: 'nav-facilities',
         tab: 'facilities',
-        title: lang === 'am' ? 'የጤና ተቋማትና ክሊኒኮች' : 'Health Clinics & Facilities',
-        subtitle: lang === 'am' ? 'የጎንደር ዩኒቨርሲቲና የክልል ጤና ጣቢያዎች' : 'UoG campuses & regional youth clinics',
-        icon: Hospital,
+        title: lang === 'am' ? 'ተቋማት' : 'Facilities',
+        subtitle: lang === 'am' ? 'የጎንደር ዩኒቨርሲቲ ካምፓስ ተቋማት' : 'University of Gondar campus facilities',
+        icon: Building2,
       },
       {
         id: 'nav-mentors',
@@ -225,8 +225,8 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
         id: 'act-add-facility',
         groupId: 'actions',
         groupLabel: lang === 'am' ? 'ፈጣን ትዕዛዛት' : 'Quick Actions',
-        title: lang === 'am' ? 'አዲስ የጤና ተቋም መዝግብ' : 'Add New Health Facility',
-        subtitle: lang === 'am' ? 'የጎንደር ዩኒቨርሲቲ ወይም የክልል ክሊኒክ ያክሉ' : 'Register UoG campus clinic or regional youth center',
+        title: lang === 'am' ? 'አዲስ ተቋም መዝግብ' : 'Add New Campus Facility',
+        subtitle: lang === 'am' ? 'የጎንደር ዩኒቨርሲቲ ተቋም ያክሉ' : 'Register University of Gondar campus facility',
         badge: 'Create',
         icon: PlusCircle,
         iconBgColor: 'bg-cyan-50 text-cyan-600',
@@ -278,11 +278,11 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
       items.push({
         id: `fac-${f.id}`,
         groupId: 'facilities',
-        groupLabel: lang === 'am' ? 'የጤና ተቋማት' : 'Healthcare Clinics',
+        groupLabel: lang === 'am' ? 'ተቋማት' : 'Campus Facilities',
         title: lang === 'am' ? f.nameAm || f.nameEn : f.nameEn,
         subtitle: `${f.subCity} • ${f.phone || 'No phone'}`,
         badge: f.subCity,
-        icon: Hospital,
+        icon: Building2,
         iconBgColor: 'bg-blue-50 text-blue-600',
         iconColor: 'text-blue-600',
         onSelect: () => {

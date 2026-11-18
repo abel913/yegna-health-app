@@ -2260,10 +2260,52 @@ class AppLocalizationsAm extends AppLocalizations {
   String get callClinicAction => 'ደውል';
 
   @override
+  String get focalOfficerLabel => 'የተቋም ተወካይ / ኃላፊ';
+
+  @override
+  String get contactOfficerAction => 'ኃላፊውን ያግኙ';
+
+  @override
+  String get telegramChatAction => 'ቴሌግራም';
+
+  @override
+  String get openInMapsAction => 'ካርታ ላይ ክፈት';
+
+  @override
+  String get buildingWingLabel => 'ህንፃ / ክንፍ';
+
+  @override
+  String get wheelchairAccessibleBadge => 'ለአካል ጉዳተኞች ምቹ';
+
+  @override
+  String get privateRoomBadge => 'ሚስጥራዊ ክፍል ያለው';
+
+  @override
+  String get uogVerifiedBadge => 'የተረጋገጠ የዩኦጂ ተቋም';
+
+  @override
+  String get categoryClinical => 'ክሊኒካል እና ጤና';
+
+  @override
+  String get categoryCounseling => 'የስነ-ልቦና ምክር';
+
+  @override
+  String get categoryAcademic => 'የትምህርት ድጋፍ';
+
+  @override
+  String get categoryStudentAffairs => 'የተማሪዎች ጉዳይ';
+
+  @override
+  String get categorySports => 'ስፖርት እና ምግብ';
+
+  @override
+  String get categoryAccessibility => 'የተደራሽነት አገልግሎት';
+
+  @override
   String get directionsAction => 'አቅጣጫ';
 
   @override
-  String get viewDetailsAction => 'ዝርዝር ይመልከቱ';
+  String get viewDetailsAction => 'ዝርዝር';
 
   @override
   String get confidentialityNoticeTitle => 'የወጣቶች ሚስጥራዊነት ዋስትና';
@@ -2990,10 +3032,25 @@ class AppLocalizationsAm extends AppLocalizations {
   String get callMentorAction => 'ለአማካሪው ይደውሉ';
 
   @override
-  String get telegramChatAction => 'በቴሌግራም ያውሩ';
+  String get whatsappChatAction => 'ዋትስአፕ';
 
   @override
-  String get whatsappChatAction => 'በዋትስአፕ ያውሩ';
+  String get telegramChannelTitle => 'ቴሌግራም';
+
+  @override
+  String get whatsappChannelTitle => 'ዋትስአፕ';
+
+  @override
+  String get voiceCallChannelTitle => 'የስልክ ጥሪ';
+
+  @override
+  String get emailChannelTitle => 'ኢሜይል';
+
+  @override
+  String get callActionLabel => 'ደውል';
+
+  @override
+  String get emailActionLabel => 'ኢሜይል';
 
   @override
   String get directContactsHeading => 'ቀጥታ የመገናኛ መንገዶች';
@@ -3026,6 +3083,21 @@ class AppLocalizationsAm extends AppLocalizations {
 
   @override
   String get campusLabel => 'ግቢ';
+
+  @override
+  String get filterByCampus => 'በግቢ ለይ';
+
+  @override
+  String get allCampuses => 'ሁሉም ግቢዎች';
+
+  @override
+  String get uogCampusesTitle => 'የጎንደር ዩኒቨርሲቲ';
+
+  @override
+  String get uogCampusesSubtitle => 'የተረጋገጡ አቻ አማካሪዎችን በተማሩበት ግቢ ይለዩ';
+
+  @override
+  String get clearCampusFilter => 'አጽዳ';
 
   @override
   String get sendEmailAction => 'ኢሜይል ይላኩ';
@@ -3689,4 +3761,69 @@ class AppLocalizationsAm extends AppLocalizations {
 
   @override
   String get accountDeletedSuccess => 'መለያዎ በተሳካ ሁኔታ ተሰርዟል።';
+
+  @override
+  String get weeklyAvailabilityTitle => 'የሳምንቱ የስራ ሰዓት እና ክፍት ቀናት';
+
+  @override
+  String get viewScheduleBtn => 'ቀጠሮ';
+
+  @override
+  String get scheduleActionBtn => 'ቀጠሮ ያዝ';
+
+  @override
+  String get cancelActionBtn => 'ይቅር';
+
+  @override
+  String get noSlotsOnDay => 'በዚህ ቀን ክፍት የምክር ሰዓት የለም';
+
+  @override
+  String get selectSlotPrompt => 'ክፍት የሆነውን ሰዓት ይምረጡ';
+
+  @override
+  String sessionBookedSuccess(String slot, String name) {
+    return 'ከ$name ጋር ለ$slot ቀጠሮ ተመዝግቧል። ለማረጋገጥ ይደውሉ ወይም መልዕክት ይላኩ።';
+  }
+
+  @override
+  String get availableHoursSubtitle => 'በጎንደር ዩኒቨርሲቲ ግቢዎች የአቻ ምክክር ሰዓታት';
+
+  @override
+  String get activeHoursDot => 'ክፍት የምክር ሰዓት ያላቸው ቀናት';
+
+  @override
+  String get weeklyHoursTitle => 'የሳምንቱ የስራ ሰዓት';
+
+  @override
+  String get weeklyHoursSubtitle => 'በካምፓስ አስተዳደር የተመደቡ የአማካሪ ሰዓታት';
+
+  @override
+  String get todayLabel => 'ዛሬ';
+
+  @override
+  String get dayClosed => 'ዝግ ነው';
+
+  @override
+  String get monday => 'ሰኞ';
+
+  @override
+  String get tuesday => 'ማክሰኞ';
+
+  @override
+  String get wednesday => 'ረቡዕ';
+
+  @override
+  String get thursday => 'ሐሙስ';
+
+  @override
+  String get friday => 'ዓርብ';
+
+  @override
+  String get saturday => 'ቅዳሜ';
+
+  @override
+  String get sunday => 'እሑድ';
+
+  @override
+  String get connectDuringHours => 'በክፍት ሰዓታት ውስጥ ከአማካሪው ጋር ይገናኙ፡';
 }

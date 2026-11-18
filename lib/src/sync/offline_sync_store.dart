@@ -203,12 +203,19 @@ class OfflineSyncStore {
         'id': f.id,
         'nameEn': f.nameEn,
         'nameAm': f.nameAm,
+        'category': f.category.toDbString(),
+        'subCity': f.subCityEn,
         'subCityEn': f.subCityEn,
         'subCityAm': f.subCityAm,
-        'addressEn': f.addressEn,
-        'addressAm': f.addressAm,
+        'buildingEn': f.buildingEn,
+        'buildingAm': f.buildingAm,
         'landmarkEn': f.landmarkEn,
         'landmarkAm': f.landmarkAm,
+        'focalPerson': f.focalPerson,
+        'focalPhone': f.focalPhone,
+        'telegramHandle': f.telegramHandle,
+        'addressEn': f.addressEn,
+        'addressAm': f.addressAm,
         'phone': f.phone,
         'type': f.type.name,
         'latitude': f.latitude,
@@ -216,34 +223,67 @@ class OfflineSyncStore {
         'distanceKm': f.distanceKm,
         'isYouthFriendly': f.isYouthFriendly,
         'isFreeForYouth': f.isFreeForYouth,
+        'isWheelchairAccessible': f.isWheelchairAccessible,
+        'hasPrivateRoom': f.hasPrivateRoom,
+        'operatingHours': f.operatingHours,
         'openingHour': f.openingHour,
         'closingHour': f.closingHour,
+        'isVerified': f.isVerified,
         'services': f.services,
-        'campusNameEn': f.campusNameEn,
-        'campusNameAm': f.campusNameAm,
+        'campusNameEn': f.campusNameEn ?? f.subCityEn,
+        'campusNameAm': f.campusNameAm ?? f.subCityAm,
         'confidentialityPolicyEn': f.confidentialityPolicyEn,
         'confidentialityPolicyAm': f.confidentialityPolicyAm,
       };
 
   static Facility facilityFromMap(Map<String, dynamic> map) {
-    // Determine if parsing from Backend REST API or Internal Cache
-    final subCityRaw = map['subCity'] as String?;
-    final subCityEn = map['subCityEn'] as String? ??
-        (subCityRaw != null ? '$subCityRaw Sub-City' : 'Addis Ababa');
-    final subCityAm = map['subCityAm'] as String? ??
-        (subCityRaw != null ? '$subCityRaw ክፍለ ከተማ' : 'አዲስ አበባ');
+    String cleanSubCityStr(String? raw) {
+      if (raw == null) return '';
+      return raw.replaceAll(RegExp(r'\s+Sub-City', caseSensitive: false), '').trim();
+    }
 
-    // Parse operating hours if provided as "08:00 - 18:00"
+    final rawCampus = (map['subCity'] ?? map['campusNameEn'] ?? map['subCityEn']) as String?;
+    final cleanCampus = rawCampus != null && cleanSubCityStr(rawCampus).isNotEmpty
+        ? cleanSubCityStr(rawCampus)
+        : 'University of Gondar';
+
+    final subCityEn = cleanSubCityStr(map['subCityEn'] as String?).isNotEmpty
+        ? cleanSubCityStr(map['subCityEn'] as String?)
+        : cleanCampus;
+    final subCityAm = cleanSubCityStr(map['subCityAm'] as String?).isNotEmpty
+        ? cleanSubCityStr(map['subCityAm'] as String?)
+        : (cleanSubCityStr(map['campusNameAm'] as String?).isNotEmpty
+            ? cleanSubCityStr(map['campusNameAm'] as String?)
+            : cleanCampus);
+
+    // Category parsing
+    final category = FacilityCategory.fromString(map['category'] as String?);
+
+    // Operating hours parsing with 24/7 & "Open Now" resilience
+    final operatingHours = map['operatingHours'] as String? ?? '08:30 - 17:30';
+    final lowerHours = operatingHours.toLowerCase().trim();
     int openingHour = map['openingHour'] as int? ?? 8;
     int closingHour = map['closingHour'] as int? ?? 18;
-    final hoursStr = map['operatingHours'] as String?;
-    if (hoursStr != null && hoursStr.contains('-')) {
-      final parts = hoursStr.split('-');
-      if (parts.length == 2) {
-        final start = int.tryParse(parts[0].trim().split(':')[0]);
-        final end = int.tryParse(parts[1].trim().split(':')[0]);
-        if (start != null) openingHour = start;
-        if (end != null) closingHour = end;
+
+    if (lowerHours.contains('24/7') ||
+        lowerHours.contains('24 hours') ||
+        lowerHours.contains('emergency') ||
+        lowerHours.startsWith('open now')) {
+      openingHour = 0;
+      closingHour = 24;
+    } else if (operatingHours.contains('-')) {
+      final parts = operatingHours.split('-');
+      if (parts.length >= 2) {
+        final startRaw = parts[0].trim().replaceAll(RegExp(r'[^0-9]'), '');
+        final endRaw = parts[1].trim().replaceAll(RegExp(r'[^0-9]'), '');
+        if (startRaw.isNotEmpty) {
+          final start = int.tryParse(startRaw.padRight(2, '0').substring(0, 2));
+          if (start != null) openingHour = start;
+        }
+        if (endRaw.isNotEmpty) {
+          final end = int.tryParse(endRaw.padRight(2, '0').substring(0, 2));
+          if (end != null) closingHour = end;
+        }
       }
     }
 
@@ -255,32 +295,55 @@ class OfflineSyncStore {
     final typeStr = map['type'] as String? ?? '';
     final type = FacilityType.values.firstWhere(
       (t) => t.name == typeStr,
-      orElse: () => FacilityType.youthCenter,
+      orElse: () => FacilityType.campusClinic,
     );
+
+    // Building/Department fallback to woreda if building is empty
+    final rawBuildingEn = (map['buildingEn'] as String?)?.trim();
+    final rawWoreda = (map['woreda'] as String?)?.trim();
+    final buildingEn = (rawBuildingEn != null && rawBuildingEn.isNotEmpty)
+        ? rawBuildingEn
+        : ((rawWoreda != null && rawWoreda.isNotEmpty) ? rawWoreda : null);
 
     return Facility(
       id: map['id']?.toString() ??
           'fac_${DateTime.now().millisecondsSinceEpoch}',
-      nameEn: map['nameEn'] as String? ?? 'Youth Health Clinic',
-      nameAm: map['nameAm'] as String? ?? 'የወጣቶች ጤና ክሊኒክ',
+      nameEn: map['nameEn'] as String? ?? 'UoG Campus Facility',
+      nameAm: map['nameAm'] as String? ?? 'የዩኒቨርሲቲ ተቋም',
       subCityEn: subCityEn,
       subCityAm: subCityAm,
-      addressEn: map['addressEn'] as String? ?? 'Addis Ababa, Ethiopia',
-      addressAm: map['addressAm'] as String? ?? 'አዲስ አበባ፣ ኢትዮጵያ',
+      category: category,
+      buildingEn: buildingEn,
+      buildingAm: map['buildingAm'] as String?,
       landmarkEn: map['landmarkEn'] as String? ?? '',
       landmarkAm: map['landmarkAm'] as String? ?? '',
-      phone: map['phone'] as String? ?? '+251-11-000-0000',
+      focalPerson: map['focalPerson'] as String?,
+      focalPhone: map['focalPhone'] as String?,
+      telegramHandle: map['telegramHandle'] as String?,
+      addressEn: map['addressEn'] as String? ?? 'University of Gondar, Gondar, Ethiopia',
+      addressAm: map['addressAm'] as String? ?? 'የጎንደር ዩኒቨርሲቲ፣ ጎንደር፣ ኢትዮጵያ',
+      phone: map['phone'] as String? ?? '+251-58-114-1234',
       type: type,
-      latitude: (map['latitude'] as num?)?.toDouble() ?? 9.0300,
-      longitude: (map['longitude'] as num?)?.toDouble() ?? 38.7400,
+      latitude: (map['latitude'] as num?)?.toDouble() ?? 12.6075,
+      longitude: (map['longitude'] as num?)?.toDouble() ?? 37.4589,
       distanceKm: (map['distanceKm'] as num?)?.toDouble() ?? 1.5,
       isYouthFriendly: map['isYouthFriendly'] as bool? ?? true,
       isFreeForYouth: map['isFreeForYouth'] as bool? ?? true,
+      isWheelchairAccessible: map['isWheelchairAccessible'] as bool? ?? false,
+      hasPrivateRoom: map['hasPrivateRoom'] as bool? ?? false,
+      operatingHours: operatingHours,
       openingHour: openingHour,
       closingHour: closingHour,
+      isVerified: map['isVerified'] as bool? ?? true,
       services: servicesList,
-      campusNameEn: map['campusNameEn'] as String?,
-      campusNameAm: map['campusNameAm'] as String?,
+      campusNameEn: cleanCampus,
+      campusNameAm: cleanSubCityStr(map['campusNameAm'] as String?).isNotEmpty
+          ? cleanSubCityStr(map['campusNameAm'] as String?)
+          : cleanCampus,
+      confidentialityPolicyEn: map['confidentialityPolicyEn'] as String? ??
+          'Private and youth-friendly services. All student health, guidance, and counseling sessions are strictly confidential without mandatory disclosure.',
+      confidentialityPolicyAm: map['confidentialityPolicyAm'] as String? ??
+          'ሚስጥራዊ እና ለወጣቶች ምቹ የጤና አገልግሎት። ሁሉም የተማሪዎች ጤና፣ ምክር እና ድጋፍ አገልግሎቶች በጥብቅ ሚስጥራዊነት የተጠበቁ ናቸው።',
     );
   }
 
@@ -314,6 +377,7 @@ class OfflineSyncStore {
         'workingHoursAm': m.workingHoursAm,
         'safeguardingPolicyEn': m.safeguardingPolicyEn,
         'safeguardingPolicyAm': m.safeguardingPolicyAm,
+        'weeklySchedule': m.weeklySchedule?.map((k, v) => MapEntry(k, v.toJson())),
       };
 
   static Mentor mentorFromMap(Map<String, dynamic> map) {
@@ -332,27 +396,29 @@ class OfflineSyncStore {
     final isVerified = map['isVerified'] as bool? ?? true;
 
     // Parse topics from specialties or stored topic names
-    final topicsList = <MentorTopic>[];
+    final topicsSet = <MentorTopic>{};
     final rawTopics = (map['topics'] ?? map['specialties']) as List<dynamic>?;
     if (rawTopics != null) {
       for (final t in rawTopics) {
         final str = t.toString().toLowerCase();
-        if (str.contains('mental')) topicsList.add(MentorTopic.mentalHealth);
+        if (str.contains('mental')) topicsSet.add(MentorTopic.mentalHealth);
         if (str.contains('srh') || str.contains('reproduct')) {
-          topicsList.add(MentorTopic.srhGuidance);
+          topicsSet.add(MentorTopic.srhGuidance);
         }
-        if (str.contains('pubert')) topicsList.add(MentorTopic.puberty);
+        if (str.contains('pubert')) topicsSet.add(MentorTopic.puberty);
         if (str.contains('substance') || str.contains('addict')) {
-          topicsList.add(MentorTopic.substanceAbuse);
+          topicsSet.add(MentorTopic.substanceAbuse);
         }
       }
     }
-    if (topicsList.isEmpty) {
-      topicsList.addAll([MentorTopic.mentalHealth, MentorTopic.srhGuidance]);
+    if (topicsSet.isEmpty) {
+      topicsSet.addAll([MentorTopic.mentalHealth, MentorTopic.srhGuidance]);
     }
+    final topicsList = topicsSet.toList();
 
     final langs = (map['languages'] as List<dynamic>?)
-            ?.map((e) => e.toString())
+            ?.map((e) => e.toString().trim())
+            .where((e) => e.isNotEmpty)
             .toList() ??
         ['Amharic', 'English'];
 
@@ -377,6 +443,18 @@ class OfflineSyncStore {
     final phone = map['phoneNumber'] as String? ??
         map['phone'] as String? ??
         '+251911234567';
+
+    Map<String, DayAvailability>? weeklySchedule;
+    final rawSched = map['weeklySchedule'];
+    if (rawSched is Map) {
+      weeklySchedule = {};
+      rawSched.forEach((key, val) {
+        if (val is Map) {
+          weeklySchedule![key.toString().toLowerCase()] =
+              DayAvailability.fromJson(Map<String, dynamic>.from(val));
+        }
+      });
+    }
 
     return Mentor(
       id: map['id']?.toString() ??
@@ -415,6 +493,7 @@ class OfflineSyncStore {
           map['workingHoursEn'] as String? ?? 'Mon – Fri: 8:30 AM – 5:30 PM',
       workingHoursAm:
           map['workingHoursAm'] as String? ?? 'ከሰኞ – ዓርብ፡ 2:30 – 11:30',
+      weeklySchedule: weeklySchedule,
     );
   }
 
@@ -438,6 +517,30 @@ class OfflineSyncStore {
         map['description'] as String? ?? 'Youth health engagement club';
     final venue = map['venue'] as String? ?? 'Youth Center';
     final meetingTime = map['meetingTime'] as String? ?? 'Saturdays 10:00 AM';
+    final mentorContact = map['mentorContact'] as String? ??
+        map['counselorPhone'] as String? ??
+        map['phone'] as String? ??
+        '+251 91 123 4567';
+
+    List<String> rulesList = const [
+      'Maintain 100% confidentiality and respect peer privacy.',
+      'Create an inclusive, judgment-free safe space.',
+      'Active participation and support for all members.',
+    ];
+
+    if (map['rules'] is List) {
+      rulesList = (map['rules'] as List).map((e) => e.toString()).toList();
+    } else if (map['guidelines'] is List) {
+      rulesList =
+          (map['guidelines'] as List).map((e) => e.toString()).toList();
+    } else if (map['rules'] is String && (map['rules'] as String).isNotEmpty) {
+      try {
+        final decoded = jsonDecode(map['rules'] as String);
+        if (decoded is List) {
+          rulesList = decoded.map((e) => e.toString()).toList();
+        }
+      } catch (_) {}
+    }
 
     return StudentClub(
       id: map['id']?.toString() ??
@@ -453,7 +556,10 @@ class OfflineSyncStore {
       meetingLocationAm: map['meetingLocationAm'] as String? ?? venue,
       mentorNameEn: map['mentorName'] as String? ?? 'Certified Peer Counselor',
       mentorNameAm: map['mentorNameAm'] as String? ?? 'የተረጋገጠ አቻ አማካሪ',
+      mentorContact: mentorContact,
       memberCount: map['memberCount'] as int? ?? 0,
+      rulesEn: rulesList,
+      rulesAm: rulesList,
       isActive: map['isApproved'] as bool? ?? true,
       createdAt: DateTime.tryParse(map['createdAt']?.toString() ?? '') ??
           DateTime.now(),

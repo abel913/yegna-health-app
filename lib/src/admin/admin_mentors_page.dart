@@ -18,6 +18,29 @@ class AdminMentorsPage extends StatefulWidget {
 }
 
 class _AdminMentorsPageState extends State<AdminMentorsPage> {
+  static const _presetLanguages = [
+    'Amharic',
+    'English',
+    'Afaan Oromoo',
+    'Tigrinya',
+    'Somali',
+  ];
+
+  static String _topicName(MentorTopic topic) {
+    switch (topic) {
+      case MentorTopic.mentalHealth:
+        return 'Mental Health';
+      case MentorTopic.srhGuidance:
+        return 'SRH & Guidance';
+      case MentorTopic.puberty:
+        return 'Puberty & Growth';
+      case MentorTopic.substanceAbuse:
+        return 'Substance Abuse';
+      case MentorTopic.all:
+        return 'All';
+    }
+  }
+
   void _openMentorEditor([Mentor? initial]) {
     final isEditing = initial != null;
     final idController = TextEditingController(
@@ -39,6 +62,26 @@ class _AdminMentorsPageState extends State<AdminMentorsPage> {
         TextEditingController(text: initial?.telegramHandle ?? 'yegna_mentor');
     final hours = TextEditingController(
         text: initial?.workingHoursEn ?? 'Mon – Fri: 8:30 AM – 5:30 PM');
+
+    final selectedTopics = <MentorTopic>{
+      if (initial != null && initial.topics.isNotEmpty)
+        ...initial.topics
+      else ...[
+        MentorTopic.mentalHealth,
+        MentorTopic.srhGuidance,
+      ]
+    };
+
+    final selectedLanguages = <String>[
+      if (initial != null && initial.languages.isNotEmpty)
+        ...initial.languages
+      else ...[
+        'Amharic',
+        'English',
+      ]
+    ];
+
+    final customLangController = TextEditingController();
 
     showDialog<void>(
       context: context,
@@ -75,6 +118,12 @@ class _AdminMentorsPageState extends State<AdminMentorsPage> {
                       phone.text = t.phoneNumber;
                       telegram.text = t.telegramHandle;
                       hours.text = t.workingHoursEn;
+                      selectedTopics
+                        ..clear()
+                        ..addAll(t.topics);
+                      selectedLanguages
+                        ..clear()
+                        ..addAll(t.languages);
                     });
                   },
                 ),
@@ -85,6 +134,7 @@ class _AdminMentorsPageState extends State<AdminMentorsPage> {
               child: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     TextField(
                       controller: nameEn,
@@ -168,6 +218,183 @@ class _AdminMentorsPageState extends State<AdminMentorsPage> {
                         border: OutlineInputBorder(),
                       ),
                     ),
+                    const SizedBox(height: 16),
+                    // Focus Areas / Specialties
+                    Text(
+                      'Focus Areas / Specialties',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        color: glass.titleText,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Wrap(
+                      spacing: 6,
+                      runSpacing: 6,
+                      children: [
+                        MentorTopic.mentalHealth,
+                        MentorTopic.srhGuidance,
+                        MentorTopic.puberty,
+                        MentorTopic.substanceAbuse,
+                      ].map((topic) {
+                        final isSelected = selectedTopics.contains(topic);
+                        return FilterChip(
+                          label: Text(
+                            _topicName(topic),
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight:
+                                  isSelected ? FontWeight.w700 : FontWeight.w500,
+                              color: isSelected ? Colors.white : glass.titleText,
+                            ),
+                          ),
+                          selected: isSelected,
+                          selectedColor: const Color(0xFF0284C7),
+                          backgroundColor: glass.cardBackground,
+                          checkmarkColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            side: BorderSide(
+                              color: isSelected
+                                  ? const Color(0xFF0284C7)
+                                  : glass.cardBorder,
+                            ),
+                          ),
+                          onSelected: (selected) {
+                            setDialogState(() {
+                              if (selected) {
+                                selectedTopics.add(topic);
+                              } else {
+                                if (selectedTopics.length > 1) {
+                                  selectedTopics.remove(topic);
+                                }
+                              }
+                            });
+                          },
+                        );
+                      }).toList(),
+                    ),
+                    const SizedBox(height: 16),
+                    // Languages Spoken
+                    Text(
+                      'Languages Spoken',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        color: glass.titleText,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Wrap(
+                      spacing: 6,
+                      runSpacing: 6,
+                      children: selectedLanguages.map((lang) {
+                        return Chip(
+                          label: Text(
+                            lang,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFF0284C7),
+                            ),
+                          ),
+                          backgroundColor:
+                              const Color(0xFF0284C7).withValues(alpha: 0.12),
+                          deleteIcon: const Icon(
+                            Icons.close_rounded,
+                            size: 14,
+                            color: Color(0xFF0284C7),
+                          ),
+                          onDeleted: () {
+                            if (selectedLanguages.length > 1) {
+                              setDialogState(() {
+                                selectedLanguages.remove(lang);
+                              });
+                            }
+                          },
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            side: const BorderSide(color: Color(0xFFBAE6FD)),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 6,
+                      runSpacing: 4,
+                      children: _presetLanguages
+                          .where((lang) => !selectedLanguages.contains(lang))
+                          .map((lang) {
+                        return ActionChip(
+                          avatar: const Icon(Icons.add,
+                              size: 14, color: Color(0xFF0284C7)),
+                          label: Text(
+                            lang,
+                            style:
+                                TextStyle(fontSize: 11, color: glass.titleText),
+                          ),
+                          backgroundColor: glass.cardBackground,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            side: BorderSide(color: glass.cardBorder),
+                          ),
+                          onPressed: () {
+                            setDialogState(() {
+                              selectedLanguages.add(lang);
+                            });
+                          },
+                        );
+                      }).toList(),
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: customLangController,
+                            style:
+                                TextStyle(fontSize: 13, color: glass.titleText),
+                            decoration: InputDecoration(
+                              isDense: true,
+                              hintText: 'Add another language (e.g. Sidama)',
+                              hintStyle: TextStyle(
+                                  fontSize: 12, color: glass.subtitleText),
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 8),
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8)),
+                            ),
+                            onSubmitted: (value) {
+                              final trimmed = value.trim();
+                              if (trimmed.isNotEmpty &&
+                                  !selectedLanguages.contains(trimmed)) {
+                                setDialogState(() {
+                                  selectedLanguages.add(trimmed);
+                                  customLangController.clear();
+                                });
+                              }
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        IconButton.filledTonal(
+                          icon: const Icon(Icons.add, size: 18),
+                          tooltip: 'Add Language',
+                          onPressed: () {
+                            final trimmed = customLangController.text.trim();
+                            if (trimmed.isNotEmpty &&
+                                !selectedLanguages.contains(trimmed)) {
+                              setDialogState(() {
+                                selectedLanguages.add(trimmed);
+                                customLangController.clear();
+                              });
+                            }
+                          },
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),
@@ -206,11 +433,15 @@ class _AdminMentorsPageState extends State<AdminMentorsPage> {
                     isOnline: true,
                     nextAvailableSlotEn: 'Available Today',
                     nextAvailableSlotAm: 'ዛሬ ክፍት ነው',
-                    languages: const ['Amharic', 'English'],
-                    topics: const [
-                      MentorTopic.mentalHealth,
-                      MentorTopic.srhGuidance
-                    ],
+                    languages: selectedLanguages.isNotEmpty
+                        ? selectedLanguages.toList()
+                        : const ['Amharic', 'English'],
+                    topics: selectedTopics.isNotEmpty
+                        ? selectedTopics.toList()
+                        : const [
+                            MentorTopic.mentalHealth,
+                            MentorTopic.srhGuidance
+                          ],
                     sessionsCount: initial?.sessionsCount ?? 150,
                     experienceYears: initial?.experienceYears ?? 3,
                     initials: nameEn.text.trim().isNotEmpty
@@ -351,6 +582,46 @@ class _AdminMentorsPageState extends State<AdminMentorsPage> {
                               fontWeight: FontWeight.w600,
                               color: Color(0xFF0284C7),
                             ),
+                          ),
+                          const SizedBox(height: 6),
+                          Wrap(
+                            spacing: 4,
+                            runSpacing: 4,
+                            children: [
+                              ...m.topics.map((t) => Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 6, vertical: 2),
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFF0284C7)
+                                          .withValues(alpha: 0.1),
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    child: Text(
+                                      _topicName(t),
+                                      style: const TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.w600,
+                                        color: Color(0xFF0284C7),
+                                      ),
+                                    ),
+                                  )),
+                              ...m.languages.map((l) => Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 6, vertical: 2),
+                                    decoration: BoxDecoration(
+                                      color:
+                                          Colors.grey.withValues(alpha: 0.15),
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    child: Text(
+                                      l,
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        color: glass.subtitleText,
+                                      ),
+                                    ),
+                                  )),
+                            ],
                           ),
                         ],
                       ),

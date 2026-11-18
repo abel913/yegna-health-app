@@ -9,6 +9,12 @@ const clubSchema = z.object({
   category: z.string().min(2),
   venue: z.string().optional(),
   meetingTime: z.string().optional(),
+  mentorName: z.string().optional(),
+  mentorContact: z.string().optional(),
+  rules: z.union([z.string(), z.array(z.string())]).optional().transform((val) => {
+    if (Array.isArray(val)) return JSON.stringify(val);
+    return val;
+  }),
   isApproved: z.boolean().default(true),
 });
 

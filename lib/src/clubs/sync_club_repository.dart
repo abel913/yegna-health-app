@@ -86,7 +86,20 @@ class SyncClubRepository implements ClubRepository {
     String? userEmail,
     String? userName,
   }) async {
-    // Always persist locally first so student membership works offline
+    // 1. Ensure target club exists in local repository before joining
+    final localExisting = await _local.getClubById(clubId);
+    if (localExisting == null) {
+      final cached = await _store.getCachedClubs();
+      final fromCache = cached?.cast<StudentClub?>().firstWhere(
+            (c) => c != null && c.id == clubId,
+            orElse: () => null,
+          );
+      if (fromCache != null) {
+        await _local.saveClub(fromCache);
+      }
+    }
+
+    // 2. Always persist locally first so student membership works offline
     final success = await _local.joinClub(
       clubId,
       userId,
@@ -94,7 +107,25 @@ class SyncClubRepository implements ClubRepository {
       userName: userName,
     );
 
-    // If online, asynchronously notify backend
+    // 3. Keep offline store cache in sync with updated member count
+    if (success) {
+      final updated = await _local.getClubById(clubId);
+      if (updated != null) {
+        final cached = await _store.getCachedClubs();
+        if (cached != null) {
+          final list = List<StudentClub>.from(cached);
+          final idx = list.indexWhere((c) => c.id == clubId);
+          if (idx >= 0) {
+            list[idx] = updated;
+          } else {
+            list.add(updated);
+          }
+          await _store.saveClubs(list);
+        }
+      }
+    }
+
+    // 4. If online, asynchronously notify backend
     if (success && _apiClient != null) {
       unawaited(_apiClient.joinClub(clubId));
     }
@@ -103,8 +134,23 @@ class SyncClubRepository implements ClubRepository {
   }
 
   @override
-  Future<bool> leaveClub(String clubId, String userId) {
-    return _local.leaveClub(clubId, userId);
+  Future<bool> leaveClub(String clubId, String userId) async {
+    final success = await _local.leaveClub(clubId, userId);
+    if (success) {
+      final updated = await _local.getClubById(clubId);
+      if (updated != null) {
+        final cached = await _store.getCachedClubs();
+        if (cached != null) {
+          final list = List<StudentClub>.from(cached);
+          final idx = list.indexWhere((c) => c.id == clubId);
+          if (idx >= 0) {
+            list[idx] = updated;
+            await _store.saveClubs(list);
+          }
+        }
+      }
+    }
+    return success;
   }
 
   @override
@@ -124,6 +170,26 @@ class SyncClubRepository implements ClubRepository {
   @override
   Future<List<ClubMembership>> getClubMembers(String clubId) {
     return _local.getClubMembers(clubId);
+  }
+
+  @override
+  Future<List<ClubMembership>> getAllMemberships() {
+    return _local.getAllMemberships();
+  }
+
+  @override
+  Future<bool> removeMember(String clubId, String userId) {
+    return _local.removeMember(clubId, userId);
+  }
+
+  @override
+  Future<bool> updateMemberRole(String clubId, String userId, String newRole) {
+    return _local.updateMemberRole(clubId, userId, newRole);
+  }
+
+  @override
+  Future<void> toggleClubActive(String clubId) {
+    return _local.toggleClubActive(clubId);
   }
 
   Future<void> _revalidateInBackground() async {

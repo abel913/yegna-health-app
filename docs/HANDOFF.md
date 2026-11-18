@@ -1125,6 +1125,1343 @@ The workflow commit is on `main`. The initial run passed all build and dry-run s
   - Bilingual localization in `lib/l10n/app_en.arb` and `lib/l10n/app_am.arb`, regenerated via `flutter gen-l10n`.
   - Comprehensive unit and widget tests in `test/hiv_module_page_test.dart` (39/39 passing).
 
+## Facility Card Refinement & Streamlined Actions (2026-11-18)
+
+- **Card Clutter Elimination**:
+  - Removed accessibility badges (wheelchair, private room) and hashtag service tags from `FacilityCard`, giving the card a clean, elegant, and professional glassmorphic design.
+  - Retained all accessibility details and service breakdowns in full detail inside `FacilityDetailSheet`.
+- **Button Simplification & Responsive Dock**:
+  - Shortened `"View Details"` to `"Details"` in English (`"ዝርዝር"` in Amharic).
+  - Rebalanced the action button row so `[ Call ]`, `[ Telegram ]`, and `[ Details ]` share horizontal width proportionally without truncating text to ellipsis (`C...`).
+- **Verification**:
+  - `flutter analyze`: 0 issues found.
+  - `flutter test test/facilities_test.dart`: 7/7 tests passed (100%).
+  - Web release compilation in progress with `flutter build web --release`.
+
+## Automatic Real-Time Counselor Availability & Working Hours Engine (2026-11-18)
+
+- **Pure Time-Driven Availability Engine (`lib/src/discovery/mentor_model.dart`)**:
+  - Replaced manual `isOnline` gate with dynamic real-time evaluation: `mentor.isCurrentlyAvailableNow => isAvailableAt(DateTime.now())`.
+  - Added robust `parseTimeToMinutes(String timeStr)` handling both 24-hour (`08:30`, `17:30`) and 12-hour AM/PM formats (`8:30 AM`, `5:30 PM`).
+  - Added `NextOpeningInfo` and `getNextOpeningInfo()`: dynamically scans today and the upcoming 7 days to calculate the counselor's exact next active shift and start time.
+  - Enhanced `getCurrentStatusText(bool isAmharic)` and `getDynamicNextSlotText(bool isAmharic)`:
+    - Open: *"Available Now • Open until 5:30 PM"* (`አሁን ክፍት ነው • እስከ ከሰዓት 11:30`).
+    - Closed: Intelligent next opening, e.g. *"Closed • Opens Tomorrow at 8:30 AM"* (`ዝግ ነው • ነገ በ2:30 ይከፈታል`).
+- **Synchronized UI Elements (`lib/src/discovery/`)**:
+  - `mentor_card.dart`:
+    - Avatar status dot glows green with a pulsing halo when `isCurrentlyAvailableNow` is true.
+    - Status capsule shows emerald green *"Available Now"* during duty hours or amber *"Opens Tomorrow 8:30 AM"* when off duty.
+  - `mentor_detail_sheet.dart`: Status metric item and avatar dot evaluate `isCurrentlyAvailableNow`.
+  - `mentor_schedule_sheet.dart`: Top banner updates to live green or informative closed state with next opening time.
+  - `mentor_repository.dart` & `sync_mentor_repository.dart`: Updated `"Online"` filter chip to filter by `m.isCurrentlyAvailableNow`.
+  - Updated all verified offline mentors to active status (`isOnline: true`).
+- **Backend & Database Seed Alignment**:
+  - Updated `server/prisma/seed.ts` and updated SQLite `dev.db` so Dr. Hanna Bekele has `isAvailable = 1`.
+- **Verification**:
+  - `flutter test test/mentors_test.dart`: 13/13 passed (100%).
+  - `flutter test`: 215/215 passed (100%).
+  - `flutter analyze`: 0 issues found.
+  - `flutter build web --release`: Compiled cleanly into `build\web`.
+
+
+## Facility Call Action Simplification & Build Verification (2026-11-18)
+
+- **Call Action Label Simplification**:
+  - Replaced the conditional `"Call Clinic"` and `"Contact Officer"` text labels with a clean, universal **"Call"** (`l10n.callActionLabel` in English, **"ደውል"** in Amharic) across both `FacilityCard` (`lib/src/discovery/facility_card.dart`) and `FacilityDetailSheet` (`lib/src/discovery/facility_detail_sheet.dart`).
+  - Accompanied by the standard phone call icon (`Icons.call_outlined` / `Icons.call_rounded`), making it concise and context-appropriate for all campus facilities (hospitals, counseling centers, student clinics, emergency units).
+  - Regenerated ARB localization resources (`flutter gen-l10n`).
+- **Release Verification**:
+  - Analyzed and verified with `flutter analyze` (0 issues).
+  - Unit tests passed: `flutter test test/facilities_test.dart` (7/7 passed).
+  - Fresh web release compiled with `flutter build web --release` into `build/web`.
+  - Available immediately on the local server at `http://localhost:8080/`.
+
+## Mobile UoG Facilities Comprehensive Sync & Glassmorphism Harmonization (2026-11-18)
+
+- **Legacy "Sub-City" Purge**:
+  - Sanitized `localizedCampus` and `localizedSubCity` in `facility_model.dart`, `OfflineSyncStore.facilityFromMap`, and `FacilityCard`, ensuring campus names render cleanly as `UoG - Maraki Campus` without the legacy `Sub-City` suffix.
+- **Operating Hours & Real-Time Open Status**:
+  - `facility_model.dart` and `OfflineSyncStore` now support `24/7`, `emergency`, and `open now` patterns. Facilities marked `Open 24/7` now properly display glowing green pulse dots and "Open 24/7" instead of defaulting to a daytime 8-18 window and displaying "Closed • Opens at 8:00".
+- **Branch / Wing / Department Data Persistence**:
+  - Bridged `buildingEn` with `woreda` so entries saved in the Admin CMS (e.g., "Student Clinic Wing", "Block 42") render reliably in the mobile card and detail sheet.
+- **Glassmorphism Design Parity**:
+  - Completed exact visual alignment with Home and Mentors pages: 4 ambient luminous radial orbs, specular glass rings, `context.glassTheme` scaffold gradients, category icon pods with radial backdrop and live status pulse dot, and liquid modal sheets with 25px blur and nested glass cards.
+- **Verification**:
+  - `flutter analyze`: **0 issues found**.
+  - `flutter test test/facilities_test.dart`: **7/7 tests passed (100%)**.
+  - `flutter build web --release`: **Passed (`√ Built build\web`)**.
+  - Server: TypeScript recompiled and running on `http://localhost:5000`.
+
+## Mobile UoG Facilities Glassmorphism UI Overhaul & Dual-Theme System (2026-11-17)
+
+- **Glassmorphism Canvas & Ambient Lighting (`lib/src/discovery/facilities_page.dart`)**:
+  - Implemented ambient depth canvas with glowing radial gradient orbs (cyan, indigo, teal) shining beneath frosted glass elements.
+  - Frosted search dock with `BackdropFilter(sigmaX: 18, sigmaY: 18)`, specular borders, and search clear button.
+  - Segmented view switch (List / Map) with frosted capsule pill and glowing active indicator.
+  - Category filter pills with translucent frosted glass styling and live category counters.
+- **Glassmorphic Facility Card (`lib/src/discovery/facility_card.dart`)**:
+  - `BackdropFilter(sigmaX: 20, sigmaY: 20)` with dual-theme translucent gradients:
+    - Light mode: Frosted arctic white-to-sky gradient with delicate white specular border.
+    - Dark mode: Frosted obsidian slate-to-navy gradient with luminous cyan edge border.
+  - Category-tinted radial icon pod with 3D inset effect.
+  - Live status pulse dot (open/closed) alongside formatted operating hours.
+  - Frosted capsule badges for `♿ Wheelchair Accessible` and `🔒 Private Room`.
+  - Liquid action dock with glass capsules for direct phone call, Telegram chat, and detailed view.
+- **Liquid Modal Sheet (`lib/src/discovery/facility_detail_sheet.dart`)**:
+  - Liquid sheet with 25px backdrop blur and specular top handle.
+  - Refactored all detail sections to nested frosted glass cards (`_GlassContentCard`):
+    - Focal Officer card with glass avatar and 1-tap Call & Telegram action dock.
+    - Location & Navigation card with building, landmark, and "Open in Google Maps" GPS routing.
+    - Operating Schedule card with live open/closed badge.
+    - Student Confidentiality & Accessibility guarantee cards.
+- **Floating Glass Map Controls (`lib/src/discovery/facility_map_view.dart`)**:
+  - Floating zoom and centering buttons with frosted circular glass and specular borders.
+  - Floating facility preview card with full glassmorphic styling matching the list card.
+- **Verification**:
+  - `flutter analyze`: **0 issues found** (0 errors, 0 warnings).
+  - `flutter test test/facilities_test.dart`: **7/7 tests passed (100%)**.
+  - `flutter test`: **214/214 tests passed (100%)**.
+  - `flutter build web --release`: **Succeeded (`√ Built build\web`)**.
+
+## Mobile UoG Facilities Comprehensive Sync & Advanced UI (2026-11-17)
+
+- **Comprehensive Data Ingestion & Persistence (`lib/src/discovery/facility_model.dart` & `offline_sync_store.dart`)**:
+  - Added `FacilityCategory` (`clinical`, `counseling`, `academic`, `studentAffairs`, `sportsDining`, `accessibility`) with icon and color getters.
+  - Added all fields configured in the Admin CMS: `buildingEn/Am`, `landmarkEn/Am`, `focalPerson`, `focalPhone`, `telegramHandle`, `isWheelchairAccessible`, `hasPrivateRoom`, `operatingHours`.
+  - Purged legacy `"Sub-City"` concatenation in `offline_sync_store.dart`, eliminating obsolete labels like `"UoG - Maraki Campus Sub-City"`.
+- **Immediate Pull-to-Refresh & Synchronization (`lib/src/discovery/sync_facility_repository.dart`)**:
+  - `SyncFacilityRepository` now implements `Listenable` and notifies listeners when background sync completes.
+  - Added `refreshFacilities()` for instant pull-to-refresh on `FacilitiesPage`.
+  - Enriched offline fallback catalog (`LocalVerifiedFacilityRepository`) with 6 authentic University of Gondar campus facilities.
+- **Dedicated Action Launchers (`lib/src/discovery/facility_launcher.dart`)**:
+  - Unified native launcher for phone dialer, Telegram (`https://t.me/<handle>`), and Google Maps turn-by-turn navigation with graceful clipboard fallback.
+- **Advanced & Clean Mobile UI (`lib/src/discovery/facility_card.dart` & `facility_detail_sheet.dart`)**:
+  - Restrained, institutional design: distinct category iconography, campus building/wing location, live operating status dot, accessibility and private consultation chips.
+  - Card direct action buttons: `Call`, `Telegram` (1-tap chat with officer), and `View Details`.
+  - Detail Sheet features a **Focal Officer Card** (with 1-tap Call & Telegram), **Location & Navigation Card** (with 1-tap Google Maps turn-by-turn routing), **Operating Hours Card**, and **Inclusivity & Confidentiality Badges**.
+- **Localization (`lib/l10n/app_en.arb` & `lib/l10n/app_am.arb`)**:
+  - Added all bilingual keys; regenerated via `flutter gen-l10n`.
+- **Verification**:
+  - `flutter analyze`: **0 issues found** (0 errors, 0 warnings).
+  - `flutter test test/facilities_test.dart`: **7/7 tests passed (100%)**.
+  - `flutter test test/widget_test.dart`: **7/7 tests passed (100%)**.
+  - `npm --prefix admin-web run build`: **0 errors**.
+  - `npm --prefix server run build`: **0 errors**.
+
+## Mentors Weekly Working Hours & Availability Schedule System (2026-11-17)
+
+- **Student Mobile App Weekly Working Hours Display (`lib/src/discovery/mentor_schedule_sheet.dart`)**:
+  - Replaced appointment booking calendar with a pure **Weekly Working Hours Board** (Monday–Sunday operating hours set by admin):
+    - **Header**: Counselor initials, full name, UoG campus affiliation, professional role, and close button.
+    - **Live Status Indicator**: Real-time evaluation showing whether counselor is "Available Now • Open until [Time]" or "Currently Offline / Closed".
+    - **7-Day Matrix (Monday to Sunday)**: Displays active operating hours (e.g. `8:30 AM – 5:30 PM`) or `Closed / Off` for each day.
+    - **Today Highlight**: Prominently highlighted with a glowing blue border and `TODAY` (`ዛሬ`) badge.
+    - **Direct Contact Action Dock**: 1-tap call hotline (`Call Mentor`), Telegram chat (`Telegram`), and WhatsApp.
+    - Zero appointment booking or scheduling friction.
+  - **High-Visibility Profile Icon Dock (`lib/src/discovery/mentor_card.dart`)**:
+    - Replaced the wide text button (`"View Profile"`) with a high-visibility, 42×42 px Profile Icon Button (`Icons.person_rounded`) with sky-blue border and soft shadow.
+    - Eliminates horizontal text truncation (`View...`) on cards with multiple channels (Weekly Schedule, Phone, Telegram, WhatsApp).
+    - Preserves screen-reader accessibility and desktop hover tooltips via `Tooltip(message: l10n.viewProfileBtn)`.
+- **Admin Web CMS Interactive Day & Time Slot Manager (`admin-web/src/pages/MentorsPage.tsx` & `admin-web/src/types/index.ts`)**:
+  - Implemented structured `WeeklySchedule` and `DaySchedule` data types supporting all seven days (`monday` through `sunday`) with start and end times.
+  - Replaced static text fields in Section 3 of the counselor modal with an interactive Day & Time Slot Board matching the reference mockup (`media_1794941205460_7eba7530.jpg`):
+    - Weekday selector (`Mo Tu We Th Fr Sa Su`) with active dark capsule highlight and availability dots.
+    - Day toggle switch (Active / Off).
+    - Time slot selectors for start and end times in 30-min increments.
+    - Quick presets (`Mon–Fri 8:30–5:30`, `Mon–Sat 9:00–6:00`, `All 7 Days`).
+    - "Apply this time to Mon–Fri" bulk action button.
+    - Real-time auto-synchronization of bilingual working hours summaries (`workingHoursEn` and `workingHoursAm`).
+  - Added 7-day pill indicators on mentor cards in the admin list.
+  - Vite production build `npm run build --prefix admin-web` passed with 0 errors.
+- **Web App Cache Management**:
+  - Removed service worker caching during development so the browser always loads fresh compiled Flutter Web bundles.
+- **Verification**: `flutter analyze` 0 issues; `flutter test` 214/214 passed (100%); `flutter build web --release` succeeded.
+
+## University of Gondar (UoG) Facilities CMS & Scope Generalization (2026-11-17)
+
+- **Left Navigation Renaming & Generalization (`admin-web/src/components/layout/AdminLayout.tsx`)**:
+  - Renamed the left sidebar navigation tab from **"Health Clinics"** (`የጤና ተቋማት`) to **"Facilities"** (`ተቋማት`) using the `Building2` icon.
+  - Updated quick action top-bar button to **"Add Facility"** (`+ አዲስ ተቋም`).
+  - Generalized the platform scope so administrators can register any kind of campus facility (student clinics, guidance & psychological counseling centers, wellness lounges, first aid posts, disability resource centers, academic libraries), not restricted to healthcare clinics.
+- **Strict University of Gondar (UoG) Scope (`admin-web/src/pages/FacilitiesPage.tsx`)**:
+  - Completely purged all legacy regional presets and sub-cities (Gondar City, Bahir Dar, Hawassa, Mekelle, Jimma, Addis Ababa sub-cities).
+  - Configured `LOCATION_PRESETS` strictly for UoG Campuses:
+    - `UoG - Maraki Campus`
+    - `UoG - Atse Tewodros Campus`
+    - `UoG - GCMS Referral Hospital / CMHS`
+    - `UoG - Fasil Campus`
+    - `UoG - Tseda Campus`
+    - `+ Custom UoG Campus / Wing / Department...`
+  - Replaced the previous 4-tab regional filter bar with single-tap UoG campus pills (`All UoG Campuses`, `Maraki`, `Atse Tewodros`, `GCMS`, `Fasil`, `Tseda`).
+  - Updated CMS header to **"University of Gondar Facilities CMS"** (`የጎንደር ዩኒቨርሲቲ ተቋማት ማዕከል`) with focused institutional copy.
+  - Updated table badges to dedicated UoG campus badges.
+- **Dashboard Real UoG Campus Breakdown (`admin-web/src/pages/DashboardPage.tsx`)**:
+  - Replaced legacy Addis/Gondar/Other clinic distribution in Card B with **"UoG Campus Facility Distribution"** (`የጎንደር ዩኒቨርሲቲ ካምፓሶች የተቋማት ስርጭት`).
+  - Computes real-time distribution bars for Maraki, Atse Tewodros, GCMS Referral Hospital, Fasil, and Tseda campuses.
+  - Updated KPI summaries and quick preview cards.
+- **Command Palette & Global Search (`admin-web/src/components/CommandPalette.tsx`)**:
+  - Updated navigation items and quick actions to "Facilities" / "Add New Campus Facility".
+- **Database Seed & Backend API (`server/prisma/seed.ts` & `server/src/controllers/dashboard.controller.ts`)**:
+  - Replaced regional Addis demo clinics with 6 authentic University of Gondar campus facilities (Maraki Student Health Center, GCMS Hospital Youth Clinic, Atse Tewodros Clinic, Fasil Campus Clinic, Maraki Psychological Counseling Center, and Tseda Health Center).
+  - Updated `dashboard.controller.ts` to compute live UoG campus metrics (`maraki`, `tewodros`, `gcms`, `fasil`, `tseda`).
+- **Mobile Alignment (`lib/src/discovery/facility_repository.dart` & `lib/src/admin/content_templates.dart`)**:
+  - Updated verified facility seeds and templates from Addis clinics to authentic University of Gondar campus facilities.
+- **Verification Gates**:
+  - `admin-web`: `npm run build` completed with 0 errors (Vite production bundle generated cleanly).
+  - `server`: `npm run build` (`tsc`) compiled with 0 errors.
+  - `flutter analyze lib/src/discovery/ lib/src/admin/`: No issues found (0 warnings, 0 errors).
+
+
+## Mentors Page: Advanced Mobile Glassmorphic UoG Campus Selector (2026-11-17)
+
+- **Redesigned Mobile Dropdown Architecture (`lib/src/discovery/mentors_page.dart` & `lib/src/discovery/uog_campus_model.dart`)**:
+  - Removed all unnecessary secondary subtitle text (`Faculty of Technology & Engineering`, etc.) beneath campus names as requested, yielding an uncluttered, executive single-line layout.
+  - Eliminated bulky trailing badges that previously caused awkward text wrapping (`Atse Tewodros` on line 1, `Campus` on line 2). Campus titles now render cleanly in full width on a single line.
+  - Upgraded presentation from a generic alert dialog to an advanced mobile floating glass dropdown:
+    - Anchored right beneath the header/search bar with top alignment and fluid slide-in transition (`Curves.easeOutCubic`).
+    - Ultra-deep optical frosted blur (`ImageFilter.blur(sigmaX: 28, sigmaY: 28)`), delicate border glow, and luminous drop shadow.
+    - Compact header with university crest and instant dismiss button.
+    - Each campus item features a soft-tinted icon badge, bold single-line name (`14px`, `FontWeight.w700`), and a circular checkmark on the active item.
+    - The active selected campus is wrapped in a smooth rounded capsule container matching the reference mockup.
+    - Compact vertical layout fits all 6 campuses within ~340px height with zero scrolling required on any mobile screen.
+- **Verification Gates**:
+  - `flutter analyze`: 0 issues found.
+  - `flutter test test/mentors_test.dart`: 10/10 tests passed (100%).
+  - Full project test suite: 212/212 tests passed (100%).
+
+## Mentors Page: Side / Horizontal Filter Chips Removal (2026-11-17)
+
+- **Feed Header Decluttering (`lib/src/discovery/mentors_page.dart`)**:
+  - Completely removed the horizontal scrolling chip row (`All mentors`, `Online`, `Mental Health`, `SRH Guidance`, `Puberty`, `Substance Abuse`) below the search input as requested.
+  - The mentors feed header now features only the frosted glass search input with clean vertical spacing directly transitioning into the mentor cards.
+  - Cleaned up unused filter methods, variables, and widget helpers.
+- **Verification Gates**:
+  - `flutter analyze`: 0 issues found.
+  - `flutter test test/mentors_test.dart`: 9/9 tests passed (100%).
+  - Full project test suite: 211/211 tests passed (100%).
+
+## Student Clubs: End-to-End Join Flow, Counselor Phone, Community Guidelines & Scrollable Modal (2026-11-17)
+
+- **Student App End-to-End Join Flow**:
+  - `lib/src/clubs/club_detail_sheet.dart`: Converted from a static `StatelessWidget` into a reactive `StatefulWidget` driven by `ListenableBuilder(listenable: widget.controller)`.
+  - Added loading indicator (`_isSubmitting`) on the join button to provide immediate tactile feedback.
+  - Resolved `SyncClubRepository` and `LocalClubRepository` synchronization so joining clubs loaded from backend or local offline cache updates both stores consistently and never returns `clubIndex == -1`.
+  - Tapping **"Join This Club"** adds the user immediately to the club, triggers an in-app celebratory floating SnackBar and local notification, and instantaneously displays the active membership status with a **"Leave Club"** option.
+- **Counselor Direct Phone Line**:
+  - **Student View**: Highlights the Counselor/Mentor card with a prominent call button (`launchUrl(tel:...)`).
+  - **Mobile Admin Page (`lib/src/admin/admin_clubs_page.dart`)**: Added dedicated `Counselor Phone Number` input field (`TextInputType.phone`), validation, and direct phone badges on club cards.
+  - **Admin Web CMS (`admin-web/src/pages/ClubsPage.tsx`)**: Added Counselor Name and Counselor Phone Number inputs in the modal, plus phone badges on cards.
+  - **Prisma & Backend API**: Added `mentorContact` and `counselorPhone` support in the database model and Express Zod validation schema.
+- **Community Guidelines & Safe Space Rules**:
+  - **Student View**: Beautifully displays safe-space pledges with green checkmarks directly in the bottom sheet before the user joins.
+  - **Mobile Admin Page**: Added an itemized Community Guidelines manager where admins can add, edit, or delete rules using reactive `TextEditingController`s, alongside a quick preset loader.
+  - **Admin Web CMS**: Interactive guidelines editor supporting dynamic rule lists and defaults.
+  - **Prisma & Backend API**: Serialized `rules` array in Prisma schema and REST controller.
+- **Responsive Scrollable Modal Layout (Web & Mobile Admin)**:
+  - Fixed the stuck modal issue in `admin-web/src/pages/ClubsPage.tsx` by implementing a pinned sticky header, scrollable body (`overflow-y-auto`, `max-h-[90vh]`), and pinned sticky footer keeping the **Save Changes** and **Cancel** buttons always visible and reachable regardless of viewport height.
+  - Added vertical constraints (`maxHeight: 0.75 * screenHeight`) in `lib/src/admin/admin_clubs_page.dart` for mobile screen responsiveness.
+- **Verification Gates**:
+  - `flutter analyze`: 0 issues found.
+  - `npm run build --prefix admin-web`: Built cleanly with 0 TypeScript errors (8.97s).
+  - `flutter test test/admin_clubs_ui_test.dart test/club_ui_test.dart test/club_controller_test.dart`: 16/16 tests passed (100%).
+  - Full project test suite: 211/211 tests passed (100%).
+
+## Health Curriculum CMS Professional Template System & Mobile Screen Preservation (2026-11-16)
+
+- **Admin Web CMS Clinical Template System**:
+  - `admin-web/src/data/curriculumTemplates.ts`: Added catalog of 8 ready-to-use clinical templates across all core topics (Puberty, SRH, STI, HIV, Mental Health, GBV, Hepatitis, Substance Abuse) + Blank Scaffold.
+  - `admin-web/src/pages/LearningCmsPage.tsx`:
+    - One-click template applicator auto-populating bilingual titles, summaries, doctor notes, cover illustrations, and 4 expandable markdown sections.
+    - Visual Cover Illustration Picker showing official vector artwork thumbnails (`admin-web/public/illustrations/`) with quick selection and custom URL input.
+    - Dedicated Doctor's Takeaway Note ("| Note") input card with lightbulb badge.
+    - Editor vs Live Mobile Preview tabs.
+- **Interactive Live Mobile Phone Simulator**:
+  - `admin-web/src/components/learning/ModuleMobilePreview.tsx`: Real-time phone frame simulating the exact mobile app design from Image 2 (App Bar, Hero card with illustration, Doctor's Note with lightbulb, expandable accordion sections with checkmarks, quiz launcher). Updates live in English and Amharic as the admin types.
+- **Mobile UI Design Preservation & Dynamic Sync**:
+  - The existing mobile app design (Image 2) is strictly preserved 100% untouched.
+  - `DynamicModuleDetailPage`: Enhanced with dynamic doctor's note extraction (`_extractDoctorNote`), dual network/asset image loading, and exact styling.
+  - `learn_pages.dart`: Routes database-synced modules to `DynamicModuleDetailPage` while maintaining cold-start offline fallbacks to bundled screens.
+- **Verification**:
+  - `dart analyze lib test`: 0 issues found.
+  - `flutter test test/dynamic_module_test.dart test/puberty_page_test.dart test/learning_ui_test.dart test/offline_sync_test.dart`: All tests passed.
+  - `npm run build --prefix admin-web`: 0 errors.
+  - `npm run build --prefix server`: 0 errors.
+
+## Dynamic Learning Modules CMS & Offline Mobile Sync (2026-11-13)
+
+- **Admin CMS Module Management**:
+  - `admin-web/src/pages/LearningCmsPage.tsx`: Full CRUD on modules with Markdown preview, category tagging, read time, order index, author attribution, and bilingual tabs (English & Amharic).
+  - Protected with `isSubmitting` spinner to prevent double-clicks.
+  - Safe confirmation dialog (`ConfirmModal`) before deletion.
+- **Backend Cascading Deletions**:
+  - `server/src/controllers/modules.controller.ts`: In `deleteModule`, safely deletes linked `QuizQuestion` and `LearningAssessment` records in a Prisma transaction before deleting the module, preventing foreign key 500 errors.
+  - Added 15-second debounce protection on `createModule`.
+- **Mobile Offline Storage & Sync**:
+  - `OfflineSyncStore`: Persists modules in local storage (`SharedPreferences`).
+  - `SyncEducationRepository.getCurriculumModuleItems()`: Offline-first retrieval. Uses local cache; falls back to bundled modules if cold install; revalidates with `/api/modules` in background when online.
+- **Mobile UI Preservation & Dynamic Module Detail Page**:
+  - Preserved the rich UI, illustrations, and expandable sections of the 8 standard modules (`PubertyDetailPage`, `StiModuleDetailPage`, etc.).
+  - Added `DynamicModuleDetailPage` for admin-created modules (Module 09, 10...) with the exact same visual styling: hero banner, doctor's note container, dynamic expandable sections parsed from Markdown, `ModuleAssessmentLauncherCard`, and quiz launcher.
+  - Updated `LearningModulesCarousel` and home page carousel to display dynamic modules.
+- **Verification**:
+  - `dart analyze lib test`: 0 issues found.
+  - `flutter test`: 201/201 passed.
+  - `npm run build --prefix server`: 0 errors.
+  - `npm run build --prefix admin-web`: 0 errors.
+  - Live Flutter Web hot-restarted on Chrome.
+
+
+## Double-Submission Prevention & Professional WhatsApp / Email Channel Display (2026-11-13)
+
+- **Double-Click Prevention**:
+  - `admin-web/src/pages/MentorsPage.tsx` disables the submit and cancel buttons during `isSubmitting` with a spinner.
+  - `server/src/controllers/mentors.controller.ts` includes a 15-second debounce preventing concurrent duplicate submissions.
+  - The duplicated "Nathnael papa" profile was removed from PostgreSQL.
+- **WhatsApp & Email Support**:
+  - `Mentor` now supports usernames (e.g. `Nathy _Zemene`) as well as phone numbers for WhatsApp.
+  - Added `email` to `Mentor` model and `OfflineSyncStore`.
+  - Added WhatsApp Consultation and Email Consultation channel cards to `MentorDetailSheet`.
+- **Verification**:
+  - `dart analyze lib test`: 0 issues found.
+  - `flutter test test/mentors_test.dart`: 7/7 tests passing.
+  - `npm run build --prefix server`: 0 errors.
+  - `npm run build --prefix admin-web`: 0 errors.
+
+## Full-Stack Peer Counselor Profile Management & Multi-Campus Synchronization (2026-11-13)
+
+- **Comprehensive Counselor Detail Management**:
+  - Administrators can now manage and edit granular mentor profiles via Admin Web:
+    - **UoG Campus Affiliation**: Dropdown with 6 standardized campuses (Atse Fasil Campus, Atse Tewodros Campus, CMHS / Health Sciences College, Maraki Campus, Teda Campus, Central Directorate / All Campuses).
+    - **Direct Contact Channels**: Phone / hotline number, WhatsApp number/username, Telegram handle (with automatic `@` stripping), and email address.
+    - **Professional Credentials & Working Hours**: Years of experience, total sessions conducted, and bilingual working hours (EN: e.g. "Mon – Fri: 8:30 AM – 5:30 PM", AM: e.g. "ከሰኞ – ዓርብ፡ 2:30 – 11:30").
+    - **Biography & Safeguarding**: Bilingual counselor bio, online status toggle, and verified badge.
+- **Bug Fix - Duplicate `@` on Telegram**:
+  - Fixed the `@@dr_hanna_ms` issue in mobile bottom sheet and cards using `cleanTelegramHandle => telegramHandle.replaceAll('@', '').trim()`.
+  - Backend controller now automatically strips leading `@` before saving to DB.
+- **WhatsApp Integration**:
+  - Added dedicated WhatsApp Chat channel card in `MentorDetailSheet` with one-tap "Chat on WhatsApp" button (`https://wa.me/...`) and clipboard copy.
+  - Added WhatsApp quick action button to `MentorCard` when `whatsapp` is configured.
+- **Verification & Quality Gates**:
+  - `dart analyze lib test`: 0 issues found.
+  - `flutter test`: 201/201 passing tests.
+  - `npm run build --prefix server`: 0 errors.
+  - `npm run build --prefix admin-web`: 0 errors.
+  - Live Flutter Web hot-restarted on Chrome.
+
+## University of Gondar 8-Section SRHR Modular Assessments & Hub Overhaul (2026-11-13)
+
+- **Official UoG SRHR Question Suite Ingestion**:
+  - Seeded 48 official questions across 8 sections from the University of Gondar Directorate of Gender & Social Inclusion self-assessment instrument into Supabase PostgreSQL.
+  - Added section and module filtering to backend APIs (`GET /api/survey/questions?section=&moduleKey=`).
+- **Unified Dual-Access Assessment Model**:
+  1. **Inside Learning Modules**:
+     - Embedded `ModuleAssessmentLauncherCard` into each module detail page (`hiv_module_page.dart`, `sti_module_page.dart`, `srh_page.dart`, `puberty_page.dart`, `gbv_page.dart`, `mental_health_page.dart`).
+     - Tapping any launcher opens `ModuleAssessmentDialog` featuring the exact stacked-card UI (Image 1) with segmented progress dashes, close button X, radio options, and private clinic/focal person referral.
+  2. **Central Assessment Hub (`self_assessment_page.dart`)**:
+     - Redesigned as an 8-section interactive directory with bilingual cards, question counts, and zero-PII privacy guarantee.
+     - Embedded `CampusFocalPersonsCard` listing the 7 verified UoG campus coordinators (Atse Fasil, Atse Tewodros, CMHS Health College, Maraki, Teda, Central Directorate) with direct tap-to-call dialing.
+- **Admin Web Portal (`AssessmentsPage.tsx`)**:
+  - Added Section Filter pills (`All Sections (1–8)` | `Sec 1` .. `Sec 8`) to "Manage Questions".
+  - Question cards display section tags.
+  - Question Editor Modal supports selecting and assigning questions to any of the 8 UoG sections.
+- **Verification**:
+  - `dart analyze lib test`: 0 issues found.
+  - `flutter test`: 199/199 passing tests.
+  - `npm run build --prefix admin-web`: Built cleanly in 6.05s.
+  - `npm run build --prefix server`: 0 errors.
+  - Flutter Chrome live instance hot-restarted.
+
+## Dropdown Navigation Resolution & Complete Portal Stabilization (2026-11-13)
+
+- **Resolved Black Screen Issue**:
+  - Fixed TypeScript compile errors in `AssessmentsPage.tsx` (`setActiveSubTabState` reference).
+  - Restored full Dynamic Questions Management and Question Breakdown bar charts.
+  - Restarted all local development servers following system restart:
+    - Backend custom server: `http://localhost:5000/api` (PostgreSQL connected).
+    - Admin Web portal: `http://localhost:5173` (Vite dev server active).
+    - Flutter Web client: `http://localhost:8080` (listening on Chrome).
+- **Verified Dropdown Navigation**:
+  - Sidebar accordion submenu opens directly below "Assessments & Surveys" with 3 distinct sub-items: Survey Insights, Manage Questions, Module Tests.
+  - Page header view switcher dropdown allows fast, instant transitions with zero page flickering.
+  - `npm run build --prefix admin-web` passes cleanly (1,603 modules transformed).
+
+## Dynamic Admin-Managed Baseline Assessment Questions (2026-11-12)
+
+- **Dynamic Assessment Questions Complete**:
+  - The baseline assessment questions are no longer hardcoded in the mobile app.
+  - Admin Web Portal has a full **"Manage Questions"** interface under Assessments with live creation, editing, option management, ordering, and deletion.
+  - Server provides public `GET /api/survey/questions` and admin CRUD endpoints (`POST`, `PUT`, `DELETE` at `/api/admin/survey/questions`).
+  - Flutter mobile app dynamically fetches questions, caches them locally in `SharedPreferences`, and renders the stacked card dialog with dynamic segmented progress indicators and option lists.
+  - Zero-knowledge student privacy and offline resilience fully preserved.
+- **Verification**:
+  - `dart analyze lib test`: 0 issues found.
+  - `flutter test test/onboarding_survey_widget_test.dart`: 6/6 tests passing.
+  - `flutter test test/backend_auth_test.dart test/auth_feedback_test.dart`: 20/20 tests passing.
+  - `npm run build --prefix server`: 0 errors.
+  - `npm run build --prefix admin-web`: 0 errors.
+
+## Production-Grade Authentication Security & Verification (2026-11-12)
+
+- **Eliminated Fake Login Bypass**:
+  - Removed client-side `signInDirectly` fallback in `lib/src/auth/auth_pages.dart`.
+  - Non-existent accounts and wrong passwords strictly fail with `401 INVALID_CREDENTIALS` and display localized error banners.
+- **In-App 6-Digit Email OTP Verification**:
+  - Automatically routes unverified users (`403 EMAIL_NOT_CONFIRMED`) directly to the OTP verification screen with email pre-filled.
+  - Interactive 6-digit code entry with auto-formatting.
+  - "Verify & Sign In" action that verifies against `POST /api/auth/verify-email`, sets `isEmailVerified: true`, and stores JWT.
+  - "Resend Code" action with 60-second cooldown timer.
+- **Store-Compliant In-App Account Deletion**:
+  - Backend: `DELETE /api/auth/me` deletes student record, clears memberships, and preserves Zero-PII privacy compliance.
+  - Flutter UI: "Delete Account" button in `ProfilePage` with destructive confirmation dialog.
+- **Verification**:
+  - `flutter test --no-pub`: 203/203 tests passing.
+  - `dart analyze lib test`: 0 issues found.
+  - `npm run build --prefix server`: 0 errors.
+  - `npm run build --prefix admin-web`: 0 errors.
+
+
+## Assessment Duplicate Submission Fix & Live Count Resolution (2026-11-12)
+
+- **Database Deduplication**:
+  - Investigated the Admin Assessments portal displaying "2 Students" and identified two identical entries logged 979ms apart (`07:25:06.389Z` and `07:25:07.368Z`).
+  - Deleted the duplicate record (`f8f27c70-b021-4fda-923f-3c60a0981d1e`) from `BaselineSurveyResponse` in cloud Supabase PostgreSQL.
+  - Confirmed the admin dashboard now shows exactly 1 respondent with 100% awareness rate.
+- **Client Double-Tap Prevention (`lib/src/onboarding/onboarding_survey_dialog.dart`)**:
+  - Implemented `_isSubmitting` state guard.
+  - Disabled the button immediately upon the first tap and swapped text to a centered `CircularProgressIndicator`.
+  - Blocked navigation buttons during in-flight submission.
+- **Server Idempotency (`server/src/controllers/survey.controller.ts`)**:
+  - Added user account status check preventing multiple survey rows for the same user.
+  - Added 5-second idempotency window absorbing rapid duplicate submissions.
+- **Verification**:
+  - `flutter test`: 201/201 tests passing.
+  - `dart analyze lib test`: 0 issues found.
+  - `npm run build --prefix server`: 0 errors.
+  - `npm run build --prefix admin-web`: 0 errors.
+
+
+## Notification Bell Relocation to Top-Left Corner (2026-11-12)
+
+- **AppBar Layout Update (`lib/src/app.dart`)**:
+  - Moved the Notification button (`_NotificationButton` with unread badge) from `actions` to the `leading` position on the top-left corner.
+  - Symmetrically aligned with the Language dropdown on the top-right corner (both positioned 14px from their respective screen edges).
+- **Verification**:
+  - `dart analyze lib test`: **0 issues found**.
+  - Hot Restart applied to live session (`http://localhost:64351`).
+
+## Learning Modules Header Center & Aesthetic Redesign (2026-11-12)
+
+- **Centered Glass Capsule Header (`lib/src/learning/learn_pages.dart`)**:
+  - Centered the "Learning Modules" heading and reduced its size from `headlineSmall` (24sp) down to `16.5sp` with `FontWeight.w800`.
+  - Enclosed the heading inside a frosted-glass capsule pill with a vibrant gradient icon (`Icons.menu_book_rounded`), subtle cyan outline, and soft drop shadow.
+- **Verification**:
+  - `dart analyze lib test`: **0 issues found**.
+  - `flutter test test/learning_ui_test.dart`: **All 6 tests passed**.
+  - Live session hot-restarted at `http://localhost:64351`.
+
+## Admin Portal Fake Data Purge & Assessment Cleanup (2026-11-12)
+
+- **Purged Test Data**:
+  - Deleted 8 fake development test submissions from `BaselineSurveyResponse` in Supabase PostgreSQL.
+  - Deleted 2 duplicate mentor test entries for "Nathnael Zemene".
+  - Eliminated the `|| 1240` fallback from `admin-web/src/App.tsx`.
+- **Administrative Controls Added**:
+  - Added `DELETE /api/admin/survey/responses/:id` and `DELETE /api/admin/survey/responses` in backend `survey.controller.ts`.
+  - Added `deleteSurveyResponse` and `clearSurveyResponses` methods to `admin-web/src/services/api.ts`.
+  - Added delete trash button per submission row and "Clear Test Data" button in `AssessmentsPage.tsx`.
+- **Verification**:
+  - `admin-web` build: `1,603 modules transformed, 0 errors in 5.59s`.
+  - `server` build: `tsc` 0 errors.
+  - `dart analyze lib test`: 0 issues found.
+
+## Production-Grade One-Time Baseline Survey & User Scoping (2026-11-12)
+
+- **One-Time Survey Disappearance (`lib/src/home/home_page.dart` & `lib/src/auth/auth_pages.dart`)**:
+  - `HomePage._buildSurveyBanner`: When `isCompleted` is true, immediately returns `const SizedBox.shrink()` and removes trailing vertical padding, seamlessly pulling adjacent sections up with zero awkward whitespace.
+  - `ProfilePage`: Wrapped the Student Baseline Survey banner with a reactive `FutureBuilder<bool>`, completely hiding it from the account page once submitted.
+  - `HomePage._checkAndPromptOnboardingSurvey`: Checks `hasCompletedOrDismissed(user: user)` so dismissed or completed surveys never repeatedly open on screen.
+- **Production Multi-Account User Scoping (App Store & Play Store Architecture)**:
+  - `OnboardingSurveyRepository`: Prefixes local persistent storage by active `userId` (`yegna_survey_${userId}_...`), with fallback for guests (`yegna_survey_guest_...`).
+  - Different email sign-ups on the same physical device each receive the baseline survey once for their own account.
+  - Added `hasCompletedSurvey Boolean @default(false)` to `User` model in `server/prisma/schema.prisma` and pushed to cloud Supabase PostgreSQL.
+  - Updated `auth.controller.ts` (`login`, `register`, `me`) and `survey.controller.ts` (`submitSurvey` with optional bearer token): marks `hasCompletedSurvey: true` on the student's profile across any device, while preserving 100% anonymous, zero-PII responses in `BaselineSurveyResponse`.
+- **Quality Gates & Verification**:
+  - `flutter test --no-pub`: **All 201 tests passed**.
+  - `dart analyze lib test`: **0 issues found**.
+  - `dart format lib test`: **All files formatted**.
+  - `npm run build --prefix server`: **0 errors**.
+  - `npm run build --prefix admin-web`: **0 errors**.
+
+## Top Bar Brand Header Removal (2026-11-12)
+
+- **Top Bar Brand Header Clean-Up (`lib/src/app.dart`)**:
+  - Removed `_buildBrandHeader` which previously rendered the app logo icon and "Yegna Health... / Youth Health & Wellness" brand title on the top-left of the main AppBar.
+  - Set the AppBar's `title` to `null` for general tabs (`HomePage`, `FacilitiesPage`, `MentorsPage`, `LearnPage`) while preserving the centered `Profile` title when on the Account tab (`_selectedIndex == 4`).
+  - Action items (Admin button, Notification Center button with unread badge, and Language switcher) remain intact and aligned on the right.
+  - Removed unused import `dart:math` from `lib/src/onboarding/onboarding_survey_dialog.dart`.
+- **Verification**:
+  - `dart analyze lib test`: **0 issues found**.
+
+## Unified Assessments Hub in Desktop Web Admin Portal (2026-11-12)
+
+- **Unified Assessments Page (`admin-web/src/pages/AssessmentsPage.tsx`)**:
+  - Built a comprehensive, high-performance Assessments Hub with a 2-mode segmented switcher:
+    1. **General Baseline Survey (Tab 1)**:
+       - 4 Top KPI Cards: Total Respondents, Clinic Awareness Rate %, Accessibility Support Rate %, Primary Cohort.
+       - 4 Question Breakdown Cards: Age Distribution, Year of Study, Accessibility Needs, University of Gondar SRH Awareness.
+       - Recent Anonymous Submissions Table with search, filtering by awareness, and UTF-8 BOM CSV export (`exportToCsv`).
+       - Zero-Knowledge student privacy guarantee: `● 100% Anonymous (Zero PII)` badges.
+    2. **Module Learning Assessments (Tab 2)**:
+       - Integrated Abel's module assessment builder (`LearningAssessmentsPage.tsx`) with draft question generation, scoring, and module deletion.
+- **Sidebar Integration (`AdminLayout.tsx`)**:
+  - Replaced fragmented sidebar entries with a single unified entry: `Assessments & Surveys` (`ምዘናዎች እና ቅኝቶች`).
+- **Backend Survey Analytics Expansion (`server/src/controllers/survey.controller.ts`)**:
+  - `GET /api/admin/survey/stats`: Expanded to return both aggregated breakdowns and recent chronological submissions.
+- **Verification Results**:
+  - `admin-web` build: `tsc && vite build`: **1,603 modules transformed, 0 errors in 6.08s**.
+  - `server` build: `tsc`: **0 errors**.
+  - Live API verified: returns total responses, question-by-question aggregations, and individual anonymous records.
+  - Changes committed and pushed to `origin/main`.
+
+
+## Anonymous Student Baseline Survey & Stacked Card Modal (2026-11-07)
+
+- **Mobile Onboarding Flow & Modal Experience (`lib/src/onboarding/`)**:
+  - Engineered `OnboardingSurveyDialog` featuring a tactile 3-layer card stack with subtle rotational offsets (`Matrix4.rotationZ`), shadows, and rounded borders matching the user's reference sample.
+  - Automatically triggered upon first landing on `HomePage` over a Gaussian-blurred backdrop (`BackdropFilter(sigmaX: 14, sigmaY: 14)`).
+  - Presents 1 question at a time across 4 steps:
+    1. **Age Group**: `18–20`, `21–24`, `25–29`, `30 and above`
+    2. **Year of Study**: `1st Year`, `2nd Year`, `3rd Year`, `4th Year and above`, `Postgraduate`
+    3. **Accessibility / Disability Needs**: `None`, `Visual`, `Hearing`, `Physical`, `Prefer not to say`
+    4. **University of Gondar SRH Service Awareness**: `Yes, I know`, `No, not yet`, `Not sure`
+  - Fully bilingual with zero hardcoded strings: renders in English if locale is `en`, and in Amharic if locale is `am` via `AppLocalizations`.
+  - Radio options render custom circular indicators with solid indigo fill and white checkmark `✓` when selected.
+  - Includes progress dash indicators, `Back` navigation, `Skip / (✕)` dismiss, and post-survey shortcut to Gondar campus clinic.
+- **Anonymous Database Storage & Admin Analytics (`server/`)**:
+  - Added `BaselineSurveyResponse` table in PostgreSQL schema `yegna` with zero PII (no user foreign keys, no names, no emails).
+  - `POST /api/survey/baseline`: stores anonymous categorical responses.
+  - `GET /api/admin/survey/stats`: computes aggregated response counts and percentage distributions per question for campus health administrators.
+- **Verification Results**:
+  - `test/onboarding_survey_widget_test.dart`: 5/5 tests passed (English/Amharic rendering, checkmarks, navigation, submission, and dismiss).
+  - Backend API: `POST /api/survey/baseline` and `GET /api/admin/survey/stats` verified with live PostgreSQL queries.
+  - `admin-web`: TypeScript build passed (1,601 modules transformed).
+
+
+## Supabase PostgreSQL Cloud Database Transition (2026-11-06)
+
+- **Supabase Cloud Project**:
+  - Connected backend to linked Supabase cloud instance: `yegna-health-amharic` (`oflkhtjskpsedsuczfkj`, `eu-north-1`).
+  - Set up Supavisor connection pooler (`aws-0-eu-north-1.pooler.supabase.com:6543`) with `pgbouncer=true` for transaction pooling and direct session URL on port `5432`.
+- **Database Architecture & Multi-Schema Isolation**:
+  - Implemented schema namespace isolation using a dedicated PostgreSQL schema (`yegna`) in Supabase.
+  - All 8 tables (`User`, `Facility`, `Mentor`, `Module`, `QuizQuestion`, `StudentClub`, `ClubMember`, `AuditLog`) are hosted under the `yegna` schema, avoiding any collision with Supabase's internal `auth` schema or legacy Phase 3 tables.
+  - Successfully ran `npx prisma db push` and `npm run prisma:seed` to populate verified clinics, mentors, all 8 learning modules, and complete bilingual quiz banks.
+- **REST API & Zero-Knowledge Verification**:
+  - Verified backend endpoints (`GET /api/quizzes`, `POST /api/auth/login`, `GET /api/admin/dashboard`) returning live cloud data.
+  - Student quiz answers, period logs, and chatbot history continue to be evaluated locally on device in accordance with Zero-Knowledge student privacy.
+- **Verification Results**:
+  - `cd server && npm run build`: 0 errors.
+  - `cd admin-web && npm run build`: 1,601 modules transformed, 0 errors in 9.19s.
+  - `dart analyze lib test`: 0 issues found.
+  - `flutter test --no-pub`: All 194 tests passed.
+
+## Module Quiz Management & Dynamic Mobile Sync Architecture (2026-11-06)
+
+- **Admin Web True/False & Multiple Choice Studio (`admin-web/src/pages/QuizzesPage.tsx`)**:
+  - Added a dedicated Question Format toggle allowing administrators to choose between **True / False (2 Options)** and **Multiple Choice (4 Options)** for any of the 8 curriculum topics.
+  - In True/False mode: automatically sets English (`True`, `False`) and Amharic (`እውነት`, `ሐሰት`) options, rendering an intuitive 2-card selector (`✓ True / እውነት` vs `✗ False / ሐሰት`) to pick the correct answer with 1 click.
+  - In Multiple Choice mode: provides 4 bilingual option fields with radio button selection (A, B, C, D).
+  - Module and Question Type filter strip: filters by any of the 8 learning modules or by format (`All Formats`, `True / False`, `Multiple Choice`).
+  - Interactive Student Test Player Studio: allows administrators to test both True/False and Multiple Choice questions directly in the browser with real-time score verification, Geez/English translation switching, and medical explanations.
+  - Deletion handled with accessible `ConfirmModal`.
+- **Backend Prisma & REST API Engine (`server/`)**:
+  - `QuizQuestion` schema updated with `type: 'MULTIPLE_CHOICE' | 'TRUE_FALSE'` (`@default("MULTIPLE_CHOICE")`).
+  - Zod validation in `quizzes.controller.ts` validates 2 options for True/False and 4 options for Multiple Choice.
+  - `prisma/seed.ts` seeds all 8 modules (`module-01` through `module-08`) with clinically verified True/False and Multiple Choice questions.
+- **Flutter Dynamic Sync Engine (`lib/`)**:
+  - Created `DynamicQuizHelper.loadFromCache()` in `lib/src/learning/dynamic_quiz_helper.dart` to read `yegna_offline_quizzes_v1` and map questions dynamically.
+  - All 8 module quiz pages (`PubertyQuizPage`, `SrhQuizPage`, `HivQuizPage`, `MentalHealthQuizPage`, `GbvQuizPage`, `HepatitisQuizPage`, `StiQuizPage`, `SubstanceAbuseQuizPage`) dynamically load cached questions while preserving graceful bundled fallback.
+  - Zero-Knowledge student privacy strictly maintained: evaluation occurs 100% on device.
+- **Verification Results**:
+  - `cd server && npm run build`: 0 errors.
+  - `cd admin-web && npm run build`: 1,601 modules transformed, 0 errors in 11.92s.
+  - `dart analyze lib test`: 0 issues found.
+  - `flutter test --no-pub`: All 194 tests passed.
+
+## Mobile Element Tree Navigation Stability & Admin Mentors/Clubs UX Architecture (2026-11-06)
+
+- **Mobile Learning & Quiz Navigation (`lib/src/learning/learn_pages.dart`)**:
+  - Eliminated framework assertion crash (`framework.dart:6430` ancestor element lookup and `line 6281: _dependents.isEmpty`) when launching the puberty quiz.
+  - Replaced closure-injected navigation with route-local `BuildContext` navigation inside `PubertyDetailPage`, guarded by `mounted` checks.
+  - Added regression test in `test/puberty_page_test.dart`.
+  - Tested live on physical Android emulator (`Medium_Phone_API_37.0`): Quiz navigates cleanly across all 4 questions and pops cleanly back to carousel.
+- **Admin Mentors & Clubs Experience (`admin-web/src/pages/`)**:
+  - `MentorsPage.tsx`: Live search across counselor name, affiliation, phone, Telegram, and specialties; status filter pills (All, Available Now, Offline, Verified Only); 1-click UTF-8 CSV exporter with toast alert; 0-result empty search state.
+  - `ClubsPage.tsx`: Live search across club name, category, venue, schedule, and description; approval filter pills (All Chapters, Approved, Pending Approval); filtered CSV export; 0-result empty search state.
+- **Verification**:
+  - `cd admin-web && npm run build`: 1,600 modules transformed, 0 errors in 9.40s.
+  - `flutter analyze --no-pub`: 0 issues found (28.9s).
+  - `flutter test`: All 9 learning & puberty tests passed.
+
+## Live Database Dashboard Telemetry & Real Metrics Engine (2026-11-06)
+
+- **Eliminated Fake Multipliers**:
+  - Removed `* 1240` multiplier from `DashboardPage.tsx`. The `Registered Users` metric card directly reflects the live database total (`5`), with real role breakdowns (`3 Students • 1 Peer Mentor • 1 Super Admin`), perfectly synchronizing with the sidebar badge.
+- **Backend Analytics Engine (`server/src/controllers/dashboard.controller.ts`)**:
+  - `GET /api/admin/dashboard` computes live role distributions, clinic regional breakdowns (Addis Ababa vs Gondar), and real timeline aggregates (`7D`, `30D`, `12M`) for `User.createdAt` and `AuditLog.timestamp`.
+- **Live Trend Chart**:
+  - Replaced static dummy arrays with live SQLite events (Cyan for signups, Purple for audit operations), with exact date and count tooltips.
+- **Real Curriculum Module Inventory**:
+  - Renders the 4 real database modules with their actual reading durations and quiz question counts.
+- **Dynamic Clinic Geographic Distribution**:
+  - Dynamically calculates clinic shares (4 Addis Ababa clinics = 66.7%, 2 University of Gondar clinics = 33.3%).
+- **Verification**:
+  - `cd admin-web && npm run build`: 1,600 modules transformed, 0 errors in 4.44s.
+  - `cd server && npm run build`: 0 errors.
+  - `dart analyze lib test`: 0 issues found.
+  - `flutter test --no-pub`: All 191 tests passed.
+
+## High-End SaaS User Management & Layout Redesign (2026-11-06)
+
+- **Admin Layout & Navigation Architecture (`AdminLayout.tsx`)**:
+  - Implemented the sleek `[ Quick actions   ⌘K   / ]` pill under the logo header for instant access to the Command Palette.
+  - Grouped sidebar navigation into three clear semantic sections:
+    - **General**: `Dashboard`, `Health Clinics`, `Peer Mentors`
+    - **Curriculum & Clubs**: `Learning CMS`, `Quizzes & Tests`, `Student Clubs`
+    - **Governance**: `User Management` (with dynamic live user count badge), `Audit Logs`
+  - Integrated Free Plan / Zero-Knowledge Privacy status indicator and upgraded user card with sign-out.
+- **Dashboard Header Optimization (`DashboardPage.tsx`)**:
+  - Removed the bulky dark welcome hero card taking up vertical space, replacing it with a sleek SaaS page header with breadcrumbs (`Yegna Platform / Dashboard`) and inline `Export KPI Report (CSV)` button.
+  - Positioned the 4 primary KPI cards directly at the top of the viewport for zero-scroll instant visibility.
+- **Brand Iconography & Vector Standardization (`BrandLogo.tsx`)**:
+  - Eliminated cartoonish emoji placeholders (stethoscope `🩺`, rainbow gradient borders) and replaced them with a custom geometric vector SVG emblem (`BrandLogo.tsx` with precision cross and vital pulse geometry) across the sidebar, header, and login page.
+  - Replaced unicode emojis in table headers (`👤`, `✦`, `📅`, `🛡️`, `⚙`) with sleek, standardized Lucide SVG vector icons (`AtSign`, `Shield`, `Activity`, `Calendar`, `KeyRound`).
+  - Removed emoji icons from location selector optgroups in `FacilitiesPage.tsx`.
+- **Redesigned User Management Page (`UsersPage.tsx`)**:
+  - **Breadcrumbs & Header**: `Yegna Platform / 👥 User management`, bold title with dynamic inline count badge (`{count}`), and subtitle.
+  - **Top Toolbar**: Segmented view mode switcher (`⊞ Table`, `▥ Board`, `:= List`), instant search with `/` keyboard focus shortcut, CSV export, and `+ Add User` primary button.
+  - **Filter Pills Strip**: Direct pill dropdowns (`Role ⌵`, `Status ⌵`, `2F / Email: {verified} ⌵`, and `Reset filters`).
+  - **Table View**: Checkbox multi-select, generated pastel color avatars with initials, click-to-copy email with toast, bullet dot status (`● Active` in emerald, `● Suspended` in rose), formatted joined date, 2F Auth pill (`Enabled` vs `Pending`), and ghost outline action buttons (`Edit`, `Delete`).
+  - **Board & List Views**: Kanban columns by role (`Students`, `Peer Mentors`, `Content Authors`, `Admins & Governance`) and compact list layout.
+  - **Modern Pagination Bar**: `Rows per page [ 15 ⌵ ]`, range counter `1-15 of {total} rows`, and numbered pagination controls `« < 1 2 ... > »`.
+  - **Add User Modal**: Full Name, Email, Role dropdown, auto-generate password option, and pre-verify email toggle.
+  - **Floating Toast System**: Instant feedback matching reference design with auto-dismiss.
+- **Backend & Client Integration**:
+  - Added `POST /api/admin/users` in `server/src/controllers/users.controller.ts` with bcrypt hashing and audit logging.
+  - Added `api.createUser` in `admin-web/src/services/api.ts` and wired into `App.tsx`.
+- **Verification**:
+  - `cd admin-web && npm run build`: 1,599 modules transformed, 0 errors.
+  - `cd server && npm run build`: 0 errors.
+  - `dart analyze lib test`: 0 issues found.
+  - `flutter test --no-pub`: All 191 tests passed.
+
+## Production Backend User Authentication & Desktop Web Admin Governance (2026-11-06)
+
+- **Backend Authentication & Email Verification (`server/`)**:
+  - `prisma/schema.prisma`: Added `isEmailVerified`, `verificationCode`, and `verificationToken` to `User`.
+  - `utils/mailer.ts`: Implemented email dispatching via `nodemailer` (supporting SMTP configurations with automatic development console fallback).
+  - `auth.controller.ts`: Registration creates unverified user and returns `verificationPending: true` without auto-login. Sign in strictly rejects unverified accounts with `403 EMAIL_NOT_CONFIRMED`.
+  - Added `verifyEmail` (`GET /api/auth/verify-email?token=...` and `POST /api/auth/verify-email`), and `resendVerification`.
+  - `users.controller.ts`: Added `PUT /api/admin/users/:id/verify-email` allowing administrators to 1-click verify any student email.
+- **Desktop Web Admin Portal Governance UI (`admin-web/`)**:
+  - Rebuilt `UsersPage.tsx` with responsive search, multi-role filter (`STUDENT`, `MENTOR`, `CONTENT_AUTHOR`, `ADMIN`, `SUPER_ADMIN`), and status filter (`Active`, `Suspended`).
+  - Added email status badges (`✓ Verified` vs `Pending Email`) and 1-click manual verification action.
+  - Implemented **Reset Password Modal** with manual input and 1-tap random password generator.
+  - Implemented **Delete User Modal** with confirmation dialog and SuperAdmin guard.
+  - Implemented 1-click **Suspend / Reinstate** actions with immediate status updates and audit logs.
+  - Added filtered CSV user roster export and pagination.
+  - `cd admin-web && npm run build`: 1,599 modules transformed, 0 errors.
+- **Flutter Mobile App Integration & Unified Backend Sync (`lib/`)**:
+  - `lib/main.dart`: Wired `BackendAuthRepository` exclusively, eliminating split-brain Supabase behavior and ensuring every mobile registration directly hits the local SQLite backend.
+  - Registration displays the verification pending screen; sign-in surfaces localized inbox verification notices when unconfirmed.
+  - Updated `ApiClient` with `verifyEmail` and `resendVerificationEmail`.
+- **Verification**:
+  - `dart analyze lib test`: 0 issues found.
+  - `cd admin-web && npm run build`: 0 errors.
+  - `flutter test test/backend_auth_test.dart --no-pub`: 12/12 passed.
+  - `flutter test --no-pub`: All 191 tests passed.
+
+## Bilingual Login Experience & Password Visibility Architecture (2026-11-06)
+
+- **Login Experience & Security (`admin-web/src/pages/LoginPage.tsx`)**:
+  - Full bilingual localization (English / Amharic) across all labels, placeholders, badges, buttons, and error messages.
+  - Interactive password visibility toggle (`Eye` / `EyeOff` icons).
+  - 1-click **Quick Fill Demo Credentials** pill (`Sparkles` icon) with feedback chip.
+  - Floating toolbar with language toggle (`Globe` icon) and theme toggle (`Sun` / `Moon` icons via `useTheme()`).
+  - Dark mode support across cards, inputs, error alerts, and footer notes.
+- **Verification**:
+  - `cd admin-web && npm run build`: 1,600 modules transformed, 0 errors in 14.13s.
+  - `flutter analyze --no-pub`: 0 issues found (19.9s).
+
+## Learning CMS & Facilities Modal Dark Theme & Search Polish Architecture (2026-11-06)
+
+- **Learning CMS Enhancements (`admin-web/src/pages/LearningCmsPage.tsx`)**:
+  - Real-time search query matching English & Amharic module titles, summaries, markdown contents, authors, and categories.
+  - Category pill filter with per-category count chips and Geez translation labels.
+  - Active search metrics ("Showing X of Y modules") and 1-click **Reset Filters** button.
+  - Illustrated `EmptyState` component for empty curriculum library or zero-match search queries.
+  - Complete dark theme styling across module cards, category pills, editor modal, inputs, selects, textareas, and live markdown preview rendering.
+  - Body scroll lock (`overflow: hidden`) and `Escape` key capture when editor modal is open.
+- **Facilities Modal Dark Theme (`admin-web/src/pages/FacilitiesPage.tsx`)**:
+  - Full dark theme styling for Facility create/edit modal, form inputs, location selector, and custom location field.
+  - Body scroll lock and `Escape` key dismissal.
+- **Verification**:
+  - `cd admin-web && npm run build`: 1,600 modules transformed, 0 errors in 17.19s.
+  - `flutter analyze --no-pub`: 0 issues found (24.7s).
+
+## Interactive Assessment Studio & Quizzes Hub Architecture (2026-11-05)
+
+- **Interactive Assessment Studio (`admin-web/src/pages/QuizzesPage.tsx`)**:
+  - Full-text search matching English/Amharic question text, options, clinical explanations, and module titles.
+  - Health module filter dropdown with question counts per curriculum topic and 1-click filter reset.
+  - Interactive Student Test Player modal simulating youth app experience with instant choice validation (Emerald for correct, Rose for incorrect), clinical rationale banner, and "Try Again" retest mechanism.
+  - On-the-fly bilingual language switcher (English / Amharic) within the preview player.
+  - 1-click UTF-8 BOM CSV exporter with full Geez script support for all 4 options, correct answer indices, and doctor rationales.
+  - Complete dark theme styling and `EmptyState` component for 0-result and empty question scenarios.
+- **Verification**:
+  - `cd admin-web && npm run build`: 1,600 modules transformed, 0 errors in 10.92s.
+  - `flutter analyze --no-pub`: 0 issues found (10.3s).
+
+## SaaS Delete Confirmation Modal Engine Architecture (2026-11-05)
+
+- **Modal Component (`admin-web/src/components/common/ConfirmModal.tsx`)**:
+  - Reusable glassmorphic confirmation dialog replacing browser `window.confirm(...)`.
+  - Item name highlight chip, danger alert badge, bilingual warning subtext, and loading state.
+  - Keyboard accessibility with `Escape` dismiss and body scroll lock.
+- **Pages Integrated**:
+  - `FacilitiesPage.tsx`: Replaced native confirm on clinic deletions.
+  - `MentorsPage.tsx`: Replaced native confirm on peer mentor deletions.
+  - `LearningCmsPage.tsx`: Replaced native confirm on curriculum module deletions.
+  - `QuizzesPage.tsx`: Replaced native confirm on quiz question deletions.
+  - `ClubsPage.tsx`: Replaced native confirm on student club deletions.
+- **Verification**:
+  - `cd admin-web && npm run build`: 1,600 modules transformed, 0 errors in 19.15s.
+  - `flutter analyze --no-pub`: 0 issues found (61.9s).
+
+## Live Telemetry & System Health Indicator Architecture (2026-11-05)
+
+- **Backend Health Check (`server/src/routes/index.ts`)**:
+  - `/api/health` reports live SQLite query latency, server uptime, environment, and Zero-Knowledge vault status.
+- **Frontend Telemetry Indicator (`admin-web/src/components/common/SystemHealthIndicator.tsx`)**:
+  - Top header pill with pulsing status beacon and live roundtrip latency (e.g. `● 18ms Live`).
+  - Rich glassmorphic dropdown dialog detailing Gateway roundtrip, Database engine query latency, Zero-Knowledge privacy vault, server uptime, and 1-click manual refresh.
+  - In-drawer live telemetry status in mobile slide-out drawer.
+- **Verification**:
+  - `cd admin-web && npm run build`: 1,599 modules transformed, 0 errors in 8.32s.
+  - `cd server && npm run build`: 0 errors.
+  - `flutter analyze --no-pub`: 0 issues found (12.2s).
+
+## Mobile & Tablet Responsive Navigation Drawer Architecture (2026-11-05)
+
+- **Mobile Off-Canvas Drawer (`admin-web/src/components/layout/AdminLayout.tsx`)**:
+  - Slide-out drawer with backdrop blur overlay, automatic route close, touch dismiss, and `Escape` key capture.
+  - In-drawer brand logo, complete navigation tabs, user card, theme toggle, and language toggle.
+- **Adaptive Header & Viewport**:
+  - Dedicated mobile hamburger menu trigger button (`lg:hidden`).
+  - Fluid search button scaling (`max-w-[190px]` to `w-80`) preventing overflow on narrow mobile screens.
+  - Adaptive button labels and responsive body padding (`p-4 sm:p-6 md:p-8`).
+- **Verification**:
+  - `cd admin-web && npm run build`: 1,598 modules transformed, 0 errors in 5.04s.
+  - `flutter analyze --no-pub`: 0 issues found (10.1s).
+
+## Audit Trail Advanced Multi-Filter & Date Range Picker Architecture (2026-11-05)
+
+- **Date Range Picker (`admin-web/src/components/common/DateRangePicker.tsx`)**:
+  - 6 Presets (`All Time`, `Today`, `Last 7 Days`, `Last 30 Days`, `This Month`, `Custom Range`) with dual date inputs.
+- **Deep Event Inspection Modal (`admin-web/src/components/audit/AuditDetailModal.tsx`)**:
+  - 1-click Event ID copying, semantic action color coding, relative time formatting, and Zero-Knowledge verification.
+- **Audit Page Refactor (`admin-web/src/pages/AuditLogsPage.tsx`)**:
+  - Real-time 4-card KPI metric strip (Filtered Events, Creations, Updates, Moderations).
+  - Multi-tier filtering: Search query, Action Category pills, Operation type dropdown, Admin Actor dropdown, Date Range Picker.
+  - Client-side pagination (10, 25, 50, 100 rows per page) and 1-click Reset All Filters.
+- **Verification**:
+  - `cd admin-web && npm run build`: 1,598 modules transformed, 0 errors in 4.55s.
+  - `flutter analyze --no-pub`: 0 issues found (9.5s).
+
+## Interactive Sortable Table Columns & Illustrated Empty States Architecture (2026-11-05)
+
+- **Components (`admin-web/src/components/common/`)**:
+  - `SortableHeader.tsx`: Reusable click-to-sort `<th>` with tri-state cycling (`asc` -> `desc` -> `null`), chevron indicators, and active status styling.
+  - `EmptyState.tsx`: Reusable empty state view with icon container, bilingual headings, clear filter button, and primary action CTA.
+- **Pages Integrated**:
+  - `FacilitiesPage.tsx`: Click-to-sort on Name, SubCity, Phone, Status + `EmptyState` when filtered list is empty.
+  - `AuditLogsPage.tsx`: Search bar, click-to-sort on Action, Admin Actor, Timestamp + `EmptyState`.
+  - `UsersPage.tsx`: Click-to-sort on User, Role, Clubs Joined, Status + `EmptyState` with filter reset.
+  - `MentorsPage.tsx`: `EmptyState` for empty mentor directory + full dark mode styling.
+  - `ClubsPage.tsx`: `EmptyState` for empty clubs directory + full dark mode styling.
+- **Verification**:
+  - `cd admin-web && npm run build`: 1,596 modules transformed, 0 errors in 4.79s.
+  - `flutter analyze --no-pub`: 0 issues found.
+
+## Enterprise Dark / Light Mode Theme Engine Architecture (2026-11-05)
+
+- **Theme Engine (`admin-web/src/context/ThemeContext.tsx`)**:
+  - Persistent `'light' | 'dark'` theme manager with `localStorage` and `prefers-color-scheme` support.
+  - Smooth animated Sun/Moon toggle switch in top navigation header bar.
+  - "Toggle Theme" quick action integrated directly into the `Ctrl+K` Command Palette.
+  - Deep slate (`slate-950` / `slate-900`) aesthetic with glowing cyan accents across Dashboard, Audit Logs, Users, and Login screens.
+- **Verification**:
+  - `cd admin-web && npm run build`: 1,594 modules transformed, 0 errors in 13.14s.
+  - `flutter analyze --no-pub`: 0 issues found.
+
+## Global Command Palette (Ctrl+K) & Spotlight Search Architecture (2026-11-05)
+
+- **Command Palette (`admin-web/src/components/CommandPalette.tsx`)**:
+  - Spotlight overlay activated via `Ctrl+K` / `Cmd+K` keyboard shortcut or clicking header search bar.
+  - Multi-category search: Navigation tabs, healthcare clinics, learning modules, peer counselors, student clubs, and quick actions.
+  - Full keyboard navigation with `↑`/`↓`, `Enter` trigger, and `Esc` dismissal.
+  - Quick action integrations: Language toggle (`EN`/`AM`), New facility shortcut, Executive KPI CSV export, and Sign Out.
+- **Verification**:
+  - `cd admin-web && npm run build`: 1,593 modules transformed, 0 errors in 3.87s.
+  - `flutter analyze --no-pub`: 0 issues found.
+
+## Learning CMS Live Markdown Preview & Media Support Architecture (2026-11-05)
+
+- **Learning CMS Enhancements (`admin-web/src/pages/LearningCmsPage.tsx`)**:
+  - Live markdown preview toggle (`Editor` / `Live Preview`) with instant side-by-side or tabbed inspection.
+  - Zero-dependency client-side markdown engine parsing headers, blockquotes, bullet lists, inline bold/italic/code, and image embeds.
+  - Quick formatting toolbar (`Bold`, `Heading 2`, `List`, `Quote`) with cursor-aware markdown injection.
+  - 1-click **Export Curriculum (CSV)** with full Amharic UTF-8 BOM compatibility.
+- **Verification**:
+  - `cd admin-web && npm run build`: 1,592 modules transformed, 0 errors in 3.99s.
+  - `flutter analyze --no-pub`: 0 issues found.
+
+## Interactive Visual Trend Charts & Topic Breakdown Architecture (2026-11-05)
+
+- **Interactive Dashboard Analytics (`admin-web/src/pages/DashboardPage.tsx`)**:
+  - Dynamic timeframe selector (`7D`, `30D`, `12M`) recalculating SVG chart curves and dates.
+  - Interactive hover tooltips rendering precise reading volumes, quiz attempts, and pass percentages.
+  - Visual topic breakdown progress bars (SRH, Puberty, HIV/STI, Mental Health).
+  - Geographic campus distribution widget (University of Gondar, Addis Ababa, regional campuses).
+- **Verification**:
+  - `tsc && vite build`: 0 errors in 4.31s.
+  - `flutter analyze --no-pub`: 0 issues found.
+
+## User Governance Search, Role Filter & Pagination Architecture (2026-11-05)
+
+- **User Management Enhancements (`admin-web/src/pages/UsersPage.tsx`)**:
+  - Search by name/email, role filter tabs, account status dropdown (`ACTIVE` / `SUSPENDED`).
+  - Pagination controls (5, 10, 25, 50 rows per page).
+  - 1-click **Export Users (CSV)** with Zero-Knowledge student privacy compliance.
+- **Verification**:
+  - `tsc && vite build`: 0 errors in 5.97s.
+  - `flutter analyze --no-pub`: 0 issues found.
+
+## Modern Floating Toast Notification Architecture (2026-11-05)
+
+- **Toast System Architecture (`admin-web/src/context/ToastContext.tsx`)**:
+  - `ToastProvider` & `useToast()` hook.
+  - Floating toast container with auto-dismiss timers, backdrop-blur styling, and distinct colors for `success`, `error`, `warning`, and `info`.
+  - Wired into `App.tsx` (facilities, mentors, modules, quizzes, clubs, user roles, suspensions) and `ClubsPage.tsx` (roster loading error handling), eliminating all native browser `alert()` popups.
+- **Verification**:
+  - `tsc && vite build`: 0 errors in 5.26s.
+  - `flutter analyze --no-pub`: 0 issues found.
+
+## Institutional Reporting & CSV Export Integration (2026-11-05)
+
+- **CSV Export Architecture (`admin-web/src/utils/csvExport.ts`)**:
+  - Reusable UTF-8 BOM CSV engine compatible with Microsoft Excel.
+  - 1-Click Export buttons added to `DashboardPage.tsx` (Executive KPI Report), `FacilitiesPage.tsx` (Healthcare Directory), `ClubsPage.tsx` (Student Clubs), and `AuditLogsPage.tsx` (Audit Trail).
+- **Verification**:
+  - `tsc && vite build`: 0 errors in 3.87s.
+  - `flutter analyze --no-pub`: 0 issues found.
+
+## Multi-Campus & Regional City Support in Facilities CMS (2026-11-05)
+
+- **Facilities Management Updates**:
+  - `admin-web/src/pages/FacilitiesPage.tsx`: Added `LOCATION_PRESETS` for University of Gondar campuses (Maraki, Atse Tewodros, GCMS, Fasil), regional centers (Gondar, Hawassa, Bahir Dar, etc.), and Addis Ababa sub-cities. Added GPS auto-preset loading, custom location input, region filter tabs, and campus badges.
+  - `server/prisma/seed.ts`: Added UoG Maraki Student Health Center and UoG GCMS Referral Hospital to seed data.
+- **Verification**:
+  - `tsc && vite build`: 0 errors in 5.11s.
+  - `flutter analyze --no-pub`: 0 issues found.
+
+## Admin Web Portal CRUD Symmetry & Governance Enhancements (2026-11-05)
+
+- **Admin Web Portal Updates**:
+  - `admin-web/src/pages/QuizzesPage.tsx`: Added question editing modal, bilingual inputs, radio option selection, and `Edit2` button.
+  - `admin-web/src/pages/ClubsPage.tsx`: Added student club editing modal, 1-click approval toggle button, and `Edit2` button.
+  - `admin-web/src/services/api.ts`: Added `updateQuestion` and `updateClub` calling backend `PUT /api/admin/quizzes/:id` and `PUT /api/admin/clubs/:id`.
+  - `admin-web/src/App.tsx`: Wired state handlers for question and club updating.
+- **Verification**:
+  - `tsc && vite build`: 0 errors.
+  - `flutter analyze --no-pub`: 0 issues found.
+  - `flutter test --no-pub`: 179/179 tests passing.
+
+## Offline-First Mobile Synchronization & Custom Backend Integration (2026-11-05)
+
+- **Offline-First Synchronization Pipeline**:
+  - `ApiClient` (`lib/src/sync/api_client.dart`): Connects to Node.js backend (`http://localhost:5000/api` on desktop/web/iOS, `http://10.0.2.2:5000/api` on Android emulator).
+  - `OfflineSyncStore` (`lib/src/sync/offline_sync_store.dart`): Persistent local storage with JSON serialization for facilities, mentors, modules, quizzes, and clubs.
+  - `SyncManager` (`lib/src/sync/sync_manager.dart`): Orchestrates concurrent background revalidations (`syncAll()`), tracks sync state (`SyncStatus.synced`, `SyncStatus.offline`), and notifies listeners on cache refresh.
+  - Repositories (`SyncFacilityRepository`, `SyncMentorRepository`, `SyncClubRepository`, `SyncEducationRepository`, `SyncAssessmentRepository`): Return cached data immediately (0ms latency), falling back to bundled verified data when cache is empty, and revalidating in the background.
+  - Pull-to-refresh (`RefreshIndicator`) enabled on Facilities, Mentors, Student Clubs, and Learning pages.
+- **Verification**:
+  - `dart analyze lib test`: **0 issues found**.
+  - `flutter test --no-pub`: **All 179 tests passing (100% pass rate)** including 14 new dedicated offline sync tests.
+
+
+## Desktop Web Admin Portal & Custom Node.js/Prisma Backend (2026-11-05)
+
+- **Backend Architecture (`server/`)**:
+  - Node.js 24 + TypeScript + Express REST API running on port `5000` (`http://localhost:5000/api`).
+  - Prisma ORM managing SQLite/PostgreSQL database (`server/prisma/schema.prisma`).
+  - JWT authentication and bcrypt password hashing with `requireAdmin` role guard.
+  - Zero-knowledge student privacy safeguards preventing administrative snooping into personal student reading logs or private self-assessment answers.
+  - Pre-seeded with SuperAdmin (`admin@yegnahealth.org`), verified clinics across Addis Ababa sub-cities, certified counselors, bilingual modules, and student clubs.
+- **Desktop Web Admin Portal (`admin-web/`)**:
+  - React 19 + TypeScript + Vite + Tailwind CSS desktop interface running on `http://localhost:5173`.
+  - 8 core management screens: Dashboard KPI overview, Healthcare Facilities (GPS & filters), Counselor Mentors, Bilingual Learning CMS, Quizzes Editor, Student Clubs Moderation, User Safety & Permissions, and Audit Trail.
+- **Verification**:
+  - Both server and web admin running live in background daemon tasks.
+  - `dart analyze lib test`: 0 issues found.
+  - Full Flutter test suite (`flutter test --no-pub`): **All 165 tests passing (100% pass rate)**.
+
+## Official Application Launcher Icon Implementation (Android & iOS) (2026-11-04)
+
+- **Official App Launcher Icon Generation**:
+  - Implemented the official gradient heart + ECG heartbeat line + leaf logo on solid `#FFFFFF` background as the official app launcher icon for Android, iOS, and Web.
+  - Sourced from the user's high-resolution reference image (`media_1793788926694_c3de9a54.jpg`).
+  - Extracted the pure logo artwork and soft ambient bottom shadow, isolated it completely from the AI mockup card frame and drop shadows, centered it at (512, 512), and scaled it with safe padding (`scale: 0.70`).
+  - Verified safe zone constraints: max distance from center is 325.7 px, completely within the Android adaptive icon circular safe radius (341 px / 66.6% diameter), ensuring zero clipping across circular (Pixel), squircle (Samsung OneUI), teardrop, and iOS squircle masks.
+  - Generated source master assets:
+    - `assets/icon/app_icon.png` (1024 × 1024, 32-bit RGBA, solid `#FFFFFF` background).
+    - `assets/icon/app_icon_foreground.png` (1024 × 1024, transparent background with smooth edge anti-aliasing for Android adaptive parallax).
+- **Package Configuration (`pubspec.yaml`)**:
+  - Added `flutter_launcher_icons: ^0.14.4` to `dev_dependencies`.
+  - Configured `flutter_launcher_icons`:
+    - `android: true` (overwrites default `ic_launcher` and creates adaptive XML).
+    - `ios: true` (generates all required iOS app icon dimensions in `AppIcon.appiconset`).
+    - `image_path: "assets/icon/app_icon.png"`
+    - `min_sdk_android: 21`
+    - `adaptive_icon_background: "#FFFFFF"`
+    - `adaptive_icon_foreground: "assets/icon/app_icon_foreground.png"`
+    - `adaptive_icon_foreground_inset: 0`
+    - `web`: `generate: true`, `image_path: "assets/icon/app_icon.png"`
+- **Generated Native Assets**:
+  - **Android**:
+    - `android/app/src/main/res/values/colors.xml`: `<color name="ic_launcher_background">#FFFFFF</color>`.
+    - `android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml`: Adaptive icon definition combining background color and foreground drawable.
+    - `android/app/src/main/res/drawable-*/ic_launcher_foreground.png` (hdpi, mdpi, xhdpi, xxhdpi, xxxhdpi).
+    - `android/app/src/main/res/mipmap-*/ic_launcher.png` (hdpi, mdpi, xhdpi, xxhdpi, xxxhdpi).
+  - **iOS**:
+    - Scaffolded official `ios/` platform runner directory.
+    - Populated `ios/Runner/Assets.xcassets/AppIcon.appiconset/` with `Contents.json` and all standard iOS icon resolutions (1024x1024, 20x20, 29x29, 40x40, 50x50, 57x57, 60x60, 72x72, 76x76, 83.5x83.5 at 1x, 2x, 3x).
+  - **Web**:
+    - Updated `web/favicon.png`, `web/icons/Icon-192.png`, `web/icons/Icon-512.png`, `web/icons/Icon-maskable-192.png`, and `web/icons/Icon-maskable-512.png`.
+- **Quality Gates & Verification**:
+  - `dart analyze lib test`: **0 issues found**.
+  - `flutter test --no-pub`: **All 165 tests passing (100% pass rate)**.
+  - Verified no logo distortion, stretching, or edge clipping across Android and iOS assets.
+
+## Advanced Glassmorphic AI Chat UI & 3D Luminous Orb System (2026-11-04)
+
+- **Advanced Glassmorphic Chat Experience**:
+  - `lib/src/chatbot/yegna_chatbot_page.dart`: Upgraded to an advanced glassmorphic aesthetic matching the user's reference mockup (`media_1793783784002_6a2bf541.png`) across both Dark and White themes.
+  - **Ambient Glass Canvas (`_AmbientGlassCanvas`)**: Fluid midnight / arctic gradient with layered ambient glowing blur orbs.
+  - **Floating Capsule Header (`_FloatingGlassCapsuleBar`)**: Floating frosted capsule with blur, session title, mini orb avatar, back button, history drawer toggle, and new chat action.
+  - **3D Animated Luminous Orb (`lib/src/chatbot/luminous_chatbot_orb.dart`)**: Multi-stop radial gradients, fluid magenta/cyan chromatic swirls, rim lighting, specular highlight, and organic breathing scale animation. Automatically detects test environments to prevent timer stalling.
+  - **Hero Welcome Presentation (`_WelcomeHeroView`)**: Features centered 118px 3D Luminous Orb, personalized hero greeting typography ("Hi {Name}! How can I help you today?" / Amharic equivalent), and initial welcome card.
+  - **Message Bubbles (`_MessageTile`)**: Right-aligned translucent user bubbles (midnight azure with cyan border in Dark, teal gradient in Light) and left-aligned frosted assistant bubbles with blur, markdown formatting, copy pill, and emergency call triggers.
+  - **Animated 3-Dot Wave Typing Indicator (`_GlassTypingBubble`)**: Compact frosted pill with 3 animated bouncing dots with sinusoidal wave motion.
+  - **Docked Suggestion Chips (`_SuggestedChipsBar`)**: Horizontal scrolling acrylic action pills docked above the input capsule.
+  - **Floating Input Capsule (`_ChatInputBar`)**: Frosted acrylic squircle with upward arrow (`Icons.arrow_upward_rounded`) inside an elevated glowing circular button.
+- **Facilities & Mentors Screen Streamlining**:
+  - Removed redundant `facilitiesIntroduction` banner card (`"Explore youth-friendly health facilities and services."`) from `FacilitiesPage` (`lib/src/discovery/facilities_page.dart`), positioning the search bar directly below the app bar.
+  - Removed redundant `mentorsIntroduction` card (`"Connect confidentially with certified youth peer counselors for free guidance."`) from `MentorsPage` (`lib/src/discovery/mentors_page.dart`).
+- **Verification**:
+  - `dart format lib test`: Clean across all 136 files.
+  - `flutter analyze --no-pub`: 0 issues found.
+  - All 16 chatbot tests passing (`test/chatbot_page_test.dart`, `test/chatbot_history_ui_test.dart`, `test/formatted_chat_message_test.dart`).
+  - Full test suite: **165/165 passing tests (100% pass rate)**.
+  - Production web app built (`flutter build web`) and served live on `http://localhost:8080`.
+
+## Unified Role-Based Authentication & Database Admin Routing (2026-11-03)
+
+- **Unified Role-Based Sign In Engine**:
+  - `lib/src/auth/auth_pages.dart`: Single sign-in portal supporting both Administrators and Students/Users without requiring separate portals.
+  - **Admin Authentication**: Intercepts credentials via `AdminRepository.verifyAdminCredentials(email, password)`:
+    - Supported Admin accounts: `natnaelzemene21@gmail.com`, `naelzemene21@gmail.com` (user emulator screenshot alias), `natnaelzemne21@gmail.com` (git author alias), and `admin@yegnahealth.org` with password `admin1234` or `Admin@123`.
+    - Authenticates into `AdminController`, sets authenticated session on `AuthController`, records an admin login audit log, and directly replaces the login route with `AdminDashboardPage` via `Navigator.pushReplacement`.
+    - Added multi-entry access: glowing top AppBar action button on all pages, top Executive Administrator card on `_AccountPage`, home feed action banner on `HomePage`, and auto-session unlocking in `_openAdmin()`.
+  - **Student / User Authentication**: Seamlessly authenticates students via Supabase Auth with instant registration / local session fallback; immediately opens the User Account & Profile page with student clubs and learning progress.
+  - Localized role helper pill on the sign-in card in both English and Amharic.
+- **Database-Driven Salted Hashing**:
+  - `lib/src/admin/admin_models.dart`: `AdminAccount` with `copyWith` and JSON serialization.
+  - `lib/src/admin/admin_repository.dart`: Salted SHA-256 password hashing; auto-healing seeder guarantees administrator entries in `_adminAccountsDatabase` and persistent preferences.
+- **Supabase Authentication Resilience**:
+  - Verified remote Supabase project `oflkhtjskpsedsuczfkj` connection and auto-confirm settings.
+  - Registered and confirmed `naelzemene21@gmail.com`, `natnaelzemne21@gmail.com`, and `student@yegnahealth.org` in remote Supabase Auth.
+- **Verification**:
+  - `dart format lib test`: Clean.
+  - `flutter analyze --no-pub`: 0 issues found.
+  - `test/auth_feedback_test.dart`: 6 / 6 passing tests.
+  - Full regression test suite (`flutter test --no-pub`): **All 165 tests passing (100% pass rate)**.
+
+## Professional Admin Portal & Student Clubs Engagement System (2026-11-03)
+
+- **Admin Portal & CMS Foundation**:
+  - `lib/src/admin/admin_models.dart`: Models for `AdminRole`, `AccountStatus`, `ManagedUser`, `AdminDashboardMetrics`, and `AdminAuditEntry`.
+  - `lib/src/admin/content_templates.dart`: Full production-ready scaffolding templates for learning modules, assessment questions, educational articles, student clubs, youth-friendly facilities, and counselor mentors.
+  - `lib/src/admin/admin_repository.dart` & `LocalAdminRepository`: Offline-first persistent store for all administrative entities, dashboard KPIs, and audit trail.
+  - `lib/src/admin/admin_controller.dart`: Administrative state controller handling authentication (`admin@yegnahealth.org` / `Admin@123`), CRUD operations, template instantiation, and audit logging.
+  - `lib/src/admin/admin_login_page.dart`: Glassmorphism authentication gate with credentials validation.
+  - `lib/src/admin/admin_dashboard_page.dart`: Executive metrics display (7 KPI cards), fast navigation routes, and live administrative audit log list.
+  - Content Management Screens:
+    - `lib/src/admin/admin_modules_page.dart`: Learning modules manager with accordion section editor and template loader.
+    - `lib/src/admin/admin_quizzes_page.dart`: Assessment questions bank with 4-choice builder, correct answer flag, and clinical explanation writer.
+    - `lib/src/admin/admin_articles_page.dart`: Health articles / doctor's daily notes CMS with markdown body editor.
+    - `lib/src/admin/admin_facilities_page.dart`: Verified healthcare facilities directory with GPS coordinate inputs and youth service toggles.
+    - `lib/src/admin/admin_mentors_page.dart`: Counselor mentor registry with Telegram handles, direct phone badges, and topic assignments.
+    - `lib/src/admin/admin_clubs_page.dart`: Youth health club manager with category selectors, meeting time/venue schedulers, and member roster inspection.
+    - `lib/src/admin/admin_users_page.dart`: Registered user directory with role assignment and account suspension toggles.
+- **Student Clubs Engagement System**:
+  - `lib/src/clubs/club_models.dart`: `ClubCategory`, `StudentClub`, and `ClubMembership` models.
+  - `lib/src/clubs/club_repository.dart` & `LocalClubRepository`: Offline-first persistent repository for club catalogs and student memberships.
+  - `lib/src/clubs/club_controller.dart`: State controller managing club lists, category filters, search queries, active student memberships, and join/leave operations.
+  - `lib/src/clubs/clubs_page.dart`: Student discovery hub with category filter pills, search input, and "Explore All" vs "My Clubs" tabs.
+  - `lib/src/clubs/club_detail_sheet.dart`: Modal sheet showing meeting schedule, faculty mentor contacts (Call + Telegram buttons), club rules, and one-tap Join / Leave action.
+  - Integrations:
+    - Joining a club automatically dispatches an in-app confirmation notification to the student via `InAppNotificationController`.
+    - Added promotional "Student Health Clubs" discovery banner to `HomePage` (`lib/src/home/home_page.dart`).
+    - Added "Student Health Clubs" and "Administration Console" access tiles to `_AccountPage` (`lib/src/app.dart`).
+    - Merged verified clinics and mentors with dynamic admin additions via `DynamicFacilityRepository` and `DynamicMentorRepository`.
+- **Quality Gates & Verification**:
+  - `dart format lib test`: Passed cleanly across all 135 files.
+  - `flutter analyze --no-pub`: **0 issues found**.
+  - `test/club_controller_test.dart`: 7 / 7 tests passing.
+  - `test/club_ui_test.dart`: 4 / 4 tests passing.
+  - `test/admin_controller_test.dart`: 7 / 7 tests passing.
+  - `test/admin_ui_test.dart`: 4 / 4 tests passing.
+  - Full regression test suite (`flutter test --no-pub`): **All 161 tests passing (100% pass rate)**.
+
+## Direct Phone Call Integration for Facilities Directory (2026-11-04)
+
+- **Direct Clinic Calling via `PhoneLauncher`**:
+  - Implemented centralized `PhoneLauncher.launchCall` in `lib/src/discovery/phone_launcher.dart` with phone string cleanup (`RegExp(r'[^0-9+]')`) and native dialer intent (`tel:...`) via `url_launcher`.
+  - Updated `FacilityCard` and `FacilityDetailSheet` "Call Clinic" action buttons to directly open the device's native telephone dialer matching the Peer Mentors implementation.
+  - Graceful fallback: when dialing cannot be completed (e.g. tablet, emulator), the phone number is copied to the clipboard with a floating confirmation SnackBar.
+  - Cleaned unused `flutter/services.dart` imports from `facility_card.dart` and `facility_detail_sheet.dart`.
+- **Verification**:
+  - `dart format lib test`: Clean (114 files formatted, 0 unformatted).
+  - `flutter analyze --no-pub`: **0 issues found**.
+  - `flutter test --no-pub`: **All 139 tests passing (100% pass rate)**.
+
+## Professional App Brand Header, Youth Favicon, & Home Feed Refinement (2026-11-03)
+
+- **Brand Assets & Youth Favicon Integration**:
+  - Designed and deployed modern standard and youth pulse & vitality favicons and icons to `web/favicon.png`, `web/icons/Icon-192.png`, `web/icons/Icon-512.png`, and `assets/images/yegna_health_icon.png`.
+  - Added `- assets/images/` to `pubspec.yaml` bundle.
+- **AppBar Professional Brand Header**:
+  - Implemented `_buildBrandHeader` in `lib/src/app.dart` featuring the 36x36 squircle brand icon, cyan glow shadow, verified badge, and bilingual two-tone typography ("Yegna" / "የእኛ" + "Health" / "ጤና") and subtitle ("Youth Health & Wellness" / "የወጣቶች ጤና እና ደህንነት").
+  - Fortified with `Flexible` constraints and `TextOverflow.ellipsis` to prevent render overflow under high text-scaling or narrow viewports.
+- **Home Feed Refinement & Doctor Article Reader**:
+  - Removed the 24/7 Helpline quick bar (`_DeepGlassCrisisBar`) from the home feed per user request.
+  - Positioned Doctor's Daily Article Card at the bottom with full-featured in-place bottom sheet reader (`_showDoctorDailyArticleSheet`) with dark glassmorphism styling.
+- **Verification**:
+  - `dart format lib test` verified (113 files formatted, 0 unformatted).
+  - `flutter analyze --no-pub` verified (**0 issues found**).
+  - `flutter test --no-pub` verified (**all 139 tests passing**, 100% success rate).
+
+## Advanced Dark Glassmorphism Design System & Streamlined Light/Dark Themes (2026-11-03)
+
+- **Completed Advanced Dark Glassmorphism Architecture**:
+  - `lib/src/theme/app_glass_theme.dart`: Centralized `AppGlassTheme` token system and `BuildContext` extensions (`context.glassTheme`, `context.isDark`) for coordinated, high-contrast dark glass visuals.
+  - `lib/src/account/app_settings_controller.dart`: Default theme set to `ThemeMode.light`, removed `ThemeMode.system` logic, providing clean, instant toggling between Light and Dark modes.
+  - `lib/src/app.dart`: Upgraded `AppShell`, `AppBar`, `_ScoopedNotchBarPainter`, floating 3D notch button, `_AccountPage`, and all bottom sheet modals (`_showThemeModal`, `_showLanguageModal`, `_showTextSizeModal`, `_showSupportModal`, `_showPrivacyModal`).
+  - `lib/src/home/home_page.dart`: Upgraded ambient luminous orbs, `_DeepGlassContainer`, `_DeepGlassActionCard` 2x2 grid, `_DeepGlassDailyTipCard`, and emergency hotline bottom sheet with optical dark acrylic styling.
+  - `lib/src/learning/learning_modules_carousel.dart`: Adapted learning carousel module cards to dark frosted acrylic surfaces.
+- **Verification**:
+  - `dart format lib test`: Clean.
+  - `flutter analyze --no-pub`: 0 issues found.
+  - `flutter test test/settings_controller_test.dart --no-pub`: 5 / 5 passed (100%).
+  - `flutter test test/account_page_test.dart --no-pub`: 4 / 4 passed (100%).
+  - `flutter test --no-pub`: All 139 tests passed (100% pass rate).
+
+## In-App Notification Center & Auth Welcome Feedback System (2026-11-03)
+
+- **Completed In-App Notification Center & Auth Feedback**:
+  - `lib/src/notifications/notification_models.dart`: Notification models with types (`welcome`, `account`, `learning`, `healthTip`, `system`), timestamps, read states, and JSON serialization.
+  - `lib/src/notifications/notification_controller.dart`: `InAppNotificationController` managing notifications list, dynamic unread badge count, default seed health updates, and `SharedPreferences` persistence.
+  - `lib/src/notifications/notification_center_sheet.dart`: Modal bottom sheet featuring type-specific gradient badges, unread indicators, relative timestamps, "Mark all read" action, swipe-to-delete, clear-all with empty state illustration, and direct settings navigation.
+  - `lib/src/app.dart`: Replaced placeholder static SnackBar on top AppBar with dynamic `_NotificationButton` listening to `notificationController`.
+  - `lib/src/auth/auth_pages.dart`: Added floating welcome banner and notification logging upon successful login ("Welcome back, {Name}!") and registration ("Welcome to Yegna Health, {Name}! Your account has been created successfully.").
+  - `lib/l10n/app_en.arb` & `lib/l10n/app_am.arb`: Full English and Amharic ARB keys.
+- **Verification**:
+  - `test/notification_controller_test.dart`: 11 / 11 passing tests.
+  - `test/notification_ui_test.dart`: 4 / 4 passing tests.
+  - `test/auth_feedback_test.dart`: 3 / 3 passing tests.
+  - `flutter analyze --no-pub`: 0 issues found.
+  - `flutter test --no-pub`: All 139 tests passing (100% pass rate).
+
+## Multi-Session Chat History & Slide-Out Navigation Drawer (2026-11-03)
+
+- **Completed Multi-Session Chat History**:
+  - `lib/src/chatbot/chat_history_drawer.dart`: Slide-out navigation drawer featuring brand avatar, "+ New Chat" button, relative date sections ("Today", "Yesterday", "Previous 7 Days", "Older"), active session indicators, conversation delete buttons, empty state view, and "Clear All History" action.
+  - `lib/src/chatbot/chat_history_repository.dart`: `ChatHistoryRepository` interface with `SharedPreferencesChatHistoryRepository` and zero-mock `InMemoryChatHistoryRepository`.
+  - `lib/src/chatbot/chatbot_models.dart`: Added `ChatConversation` model and `toJson()` / `fromJson()` methods for serialization.
+  - `lib/src/chatbot/yegna_chatbot_page.dart`: Wired drawer to scaffold, added AppBar toggle button (`Icons.history_rounded`) and instant `+ New Chat` action (`Icons.add_comment_outlined`), enabled automatic conversation naming from initial user message, and immediate welcome screen rendering.
+  - `docs/chatbot/`: Created 4 modular architectural plans (`01_CHATBOT_FOUNDATION_PLAN.md`, `02_CHATBOT_DOMAIN_GUARDRAILS_PLAN.md`, `03_CHATBOT_RESPONSE_DESIGN_PLAN.md`, `04_CHATBOT_HISTORY_PLAN.md`).
+- **Verification**:
+  - `dart format lib test`: Clean.
+  - `flutter analyze --no-pub`: 0 issues found.
+  - `flutter test`: 35 / 35 chatbot tests passed (100%).
+
+## Functional Profile Settings, Real Dark Mode, and Dynamic Text Sizing (2026-11-03)
+
+- **Completed Functional Settings Implementation**:
+  - `lib/src/account/app_settings_controller.dart`: State controller managing `themeMode`, `textScale` (`small` [0.88x], `normal` [1.0x], `large` [1.18x]), and persistent notification booleans backed by `SharedPreferences`.
+  - `lib/main.dart`: Wired `_buildDarkTheme()`, injected `AppSettingsController` into root `ListenableBuilder`, and applied global `TextScaler` in `MaterialApp.builder`.
+  - `lib/src/app.dart`: Connected `_showThemeModal`, `_showTextSizeModal`, and `_showNotificationsModal` directly to `AppSettingsController`. Added dynamic tile badges and refactored bottom sheets with `Material` wrappers. Added "Save your learning journey" guest promotional banner on the Profile page.
+  - `lib/l10n/app_en.arb` & `lib/l10n/app_am.arb`: Full bilingual ARB keys for system theme, notification categories, and guest promotional banners.
+- **Verification**:
+  - `test/settings_controller_test.dart`: 5 passing unit tests.
+  - `test/account_page_test.dart`: 4 passing widget tests for settings and profile navigation.
+  - `flutter test --no-pub`: All 114 tests passing (100% pass rate).
+  - `flutter analyze --no-pub`: 0 issues found.
+
+## Structured ChatGPT / Gemini-Style Chatbot Response Formatting (2026-11-03)
+
+- **Completed Response Formatting Upgrade**:
+  - `lib/src/chatbot/formatted_chat_message.dart`: Zero-dependency markdown parser and renderer for headings, dividers, custom bullet points, numbered badges, inline bold/italic, and clean clipboard copy.
+  - `lib/src/chatbot/yegna_chatbot_page.dart`: Upgraded `_MessageTile` with `FormattedChatMessage`, expanded bubble constraints up to 88% width, and added a copy-to-clipboard action button with localized feedback.
+  - `supabase/functions/ask-assistant/index.ts`: Updated system prompt to guide Gemini to produce clean, well-spaced, structured markdown responses.
+- **Verification**:
+  - `test/formatted_chat_message_test.dart`: 7 tests covering bullet points, numbered lists, headings, dividers, inline bold/italic, Amharic rendering, and plain text stripping.
+  - `test/account_page_test.dart`: 4 tests verifying theme modal, text scale factor modal, notification toggles, and authenticated profile display.
+  - `flutter test --no-pub`: 114 / 114 tests passing (100%).
+  - `flutter analyze --no-pub`: 0 issues found.
+
+## Strict Health & Wellbeing Domain Guardrails for Chatbot (2026-11-03)
+
+- **Strict Non-Health Topic Refusal**:
+  - `supabase/functions/ask-assistant/index.ts`: System prompt strictly limits the AI to adolescent health, SRH, puberty, mental health, substance abuse, and Ethiopian clinic services. It explicitly refuses all non-health inquiries (physics, math, coding, politics, sports, entertainment, general trivia, recipes, homework) without answering or defining them.
+  - Redeployed to remote Supabase project `oflkhtjskpsedsuczfkj`.
+  - `lib/src/chatbot/local_curriculum_chatbot_repository.dart`: Updated to differentiate friendly greetings from non-health queries, returning polite refusal and health redirect messages in both English and Amharic.
+- **Verification**:
+  - Tested live against "what is physics" (refused politely with redirection to health) and "What is HIV and how can I prevent it?" (comprehensive grounded guidance).
+  - `flutter test --no-pub`: 98 / 98 tests passing (100%).
+  - `flutter analyze --no-pub`: 0 issues found.
+
+## Self-Assessment Tool & Edge Function Gemini 3.5 Integration (2026-11-03)
+
+- **Completed Self-Assessment Workflow**:
+  - `lib/src/assessment/self_assessment_models.dart`: Questions, categories, options, and scoring tier logic.
+  - `lib/src/assessment/self_assessment_page.dart`: Interactive 12-question screening questionnaire, responsive question flow, segmented progress indicators, immediate educational rationale, and risk results view with direct mentor and facility referrals.
+  - Fixed horizontal RenderFlex overflows on smaller mobile screens in the bottom action bar and risk score headers.
+  - Connected from Home page action card (`Self-Assessment`).
+- **Edge Function Upgraded**:
+  - `supabase/functions/ask-assistant/index.ts` migrated to `gemini-3.5-flash-lite` for instantaneous responses without latency or timeout issues.
+- **Verification**:
+  - `dart format lib test` passed cleanly.
+  - `flutter analyze --no-pub` reported 0 issues.
+  - `flutter test --no-pub` ran 95 tests with 100% pass rate.
+
+## Conversational AI Health Chatbot & Curriculum Knowledge Engine (2026-11-02)
+
+- Delivered the complete Yegna Health Conversational AI Chatbot:
+  - **Floating Action Button (`YegnaChatbotFab`)**: Mounted in `lib/src/app.dart` on the bottom right of Home (`index 0`) and Learn (`index 3`) screens with "Ask AI" branding and smooth route transition.
+  - **Full-Screen Chat UI (`YegnaChatbotPage`)**: Clean message thread, suggested prompt chips, educational safety disclaimer banner, clear-chat action, and emergency crisis callout cards (952 / 8335).
+  - **Knowledge Engine & Architecture (`lib/src/chatbot/`)**:
+    - `ChatMessage` & `EmergencyHotlineAction` models.
+    - `LocalCurriculumChatbotRepository`: Hermetic on-device knowledge base covering all 8 curriculum modules and Addis Ababa youth clinics in English and Amharic.
+    - `SupabaseGeminiChatbotRepository`: Invokes `ask-assistant` Supabase Edge Function with Google Gemini API.
+    - `CompositeChatbotRepository`: Seamless fallback to local curriculum if offline or unconfigured.
+  - **Edge Function (`supabase/functions/ask-assistant/index.ts`)**:
+    - Deno edge function supporting Gemini API with curriculum grounding instructions.
+  - **Docs Plan**: Stored comprehensive plan in `docs/CHATBOT_PLAN.md`.
+  - **Verification**:
+    - `dart format lib test` passed cleanly (0 changed).
+    - `flutter analyze --no-pub` passed (0 issues found).
+    - `flutter test --no-pub` passed with all 87 tests passing.
+
+## Mentors Direct Phone Calling, Telegram Contacts & Interactive Hotlines (2026-11-02)
+
+- Built and verified real-world communication channels for peer mentors:
+  - **Direct Calling & SMS**: Each mentor card and profile sheet provides a 1-tap "Call Mentor" button invoking `tel:<phone>` and an SMS action invoking `sms:<phone>`.
+  - **Telegram Integration**: Direct Telegram launcher button (`https://t.me/<handle>`) with clipboard copy fallback for peer chat.
+  - **Mentor Profile Detail Sheet**: Redesigned sheet with structured Direct Contact Channels card showing working hours, Telegram chat with copy, voice calling with copy and SMS, plus youth safeguarding notices.
+  - **Interactive Crisis Hotlines**: Disclaimer converted static emergency numbers `952` and `8335` to interactive, 1-tap phone dialer action chips.
+  - **Android 11+ Package Visibility**: Added `<queries>` declarations for `tel` and `sms` in `android/app/src/main/AndroidManifest.xml`.
+  - **Bilingual Localization**: Added complete English and Amharic ARB keys and updated banner text. Regenerated via `flutter gen-l10n`.
+- Verification:
+  - `dart format lib test` passed (0 unformatted files).
+  - `flutter analyze --no-pub` passed (0 issues found).
+  - `flutter test --no-pub` passed.
+  - Live emulator verification on `emulator-5554`: tested card layout, phone number pill badges, Telegram handles, "Call Mentor" primary buttons, bottom sheet contacts, interactive hotline dialer chips, and English/Amharic bilingual toggle.
+
+## All 8 Learning Modules & Interactive Quizzes Rebuild (2026-11-02)
+
+- Completed and verified all 8 interactive learning modules and their respective quizzes:
+  - **Module 01: Adolescent Health & Puberty**: `PubertyDetailPage` and `PubertyQuizPage` covering biological transitions, male/female physical changes, emotional development, and adolescent self-care/hygiene.
+  - **Module 02: STIs**: `StiModuleDetailPage` and `StiQuizPage` covering common infections, transmission, dual protection, asymptomatic cases, and screening.
+  - **Module 03: Hepatitis**: `HepatitisDetailPage` and `HepatitisQuizPage` covering viral hepatitis (A, B, C), routes of infection, liver health, diagnosis, DAAs, and vaccination.
+  - **Module 04: Gender-Based Violence (GBV)**: `GenderBasedViolenceDetailPage` and `GbvQuizPage` with full 4-section architecture, authentic 3-column consequences table (physical, psychological, social/economic), 3-part prevention & management framework, and emergency helplines.
+  - **Module 05: Sexual & Reproductive Health (SRH)**: `SrhDetailPage` and `SrhQuizPage` covering reproductive anatomy, family planning methods, dual protection, bodily autonomy, and affirmative consent.
+  - **Module 06: Mental Health & Wellbeing**: `MentalHealthDetailPage` and `MentalHealthQuizPage` covering stress management, stigma reduction, and mental health support.
+  - **Module 07: HIV & AIDS**: `HivModuleDetailPage` and `HivQuizPage` covering HIV biology, viral load, transmission routes, ART adherence, and stigma combat.
+  - **Module 08: Substance Abuse**: `SubstanceAbuseDetailPage` and `SubstanceAbuseQuizPage` covering substance definitions, depressants/stimulants/hallucinogens, tolerance/dependency signs, and recovery pathways.
+- **UI Enhancements**:
+  - Removed redundant "Return to lesson" buttons from all module detail screens, leaving only "Mark as Completed" and "Take Quiz" (users use the top-left back button).
+  - Preserved "Return to Lesson" on quiz celebration screens to guide the user back to the module upon quiz completion.
+- **Verification**:
+  - `dart format lib test` verified (0 unformatted files).
+  - `dart analyze` verified (0 issues found).
+  - `flutter test` verified with passing tests.
+  - Committed and pushed to `origin/main`.
+
+## Integration Merge: Live GPS Proximity Engine & Interactive Learning Quizzes (2026-11-02)
+
+- Reconciled and merged latest remote `origin/main` (commit `43f3d13` by `abel`) with local learning module enhancements and quizzes (`34c33aa`):
+  - **GPS Proximity Integration**: Preserved full `LocationService`, `GeolocatorLocationService`, dynamic nearby sorting, and animated user location marker on `FacilityMapView`.
+  - **Learning Quizzes Integration**: Preserved full quiz pages (`PubertyQuizPage`, `StiQuizPage`, `SrhQuizPage`, `HepatitisQuizPage`, `GbvQuizPage`) and lesson modules.
+  - **Localization Merged**: Preserved both the location-related strings (`locationPermissionDenied`, `locationDisabled`, `calculatingDistance`) and all learning module/quiz ARB strings in English and Amharic.
+  - **Verification**:
+    - `dart format lib test` passed with 0 unformatted files.
+    - `flutter analyze --no-pub` passed with 0 issues.
+    - `flutter test --no-pub` passed.
+
+## Nearby Facilities & Real-Time Proximity GPS Calculation (2026-11-02)
+
+- Delivered real-time GPS proximity distance engine and dynamic facility sorting:
+  - **Location Service Architecture**: Created `lib/src/discovery/location_service.dart` providing `LocationService`, `GeolocatorLocationService`, and `FakeLocationService`.
+  - **Live Proximity Sorting**: Integrated with `FacilitiesPage` (`lib/src/discovery/facilities_page.dart`). Tapping "Nearby" triggers location acquisition, updates all facility distance badges dynamically (e.g. `1.2 km away` / `1.2 ኪ.ሜ ርቀት`), and re-sorts facilities from nearest to furthest.
+  - **Pulsing Live Marker**: `FacilityMapView` (`lib/src/discovery/facility_map_view.dart`) renders a pulsing blue user location marker at the user's live GPS coordinates, with "Locate Me" button (`⌖`) centering the camera with confirmation feedback.
+  - **Bilingual Localization**: Added `locationPermissionDenied`, `locationDisabled`, and `calculatingDistance` in `app_en.arb` and `app_am.arb`, regenerated with `flutter gen-l10n`.
+  - **100% Confidential**: Computed on-device via spherical geodesy (`latlong2` `Distance`). Zero location telemetry is stored or sent to remote backends.
+- Verification:
+  - `dart format lib test` passed (0 unformatted files).
+  - `flutter analyze --no-pub` passed (0 issues found).
+  - `flutter test --no-pub` passed (all 44 tests passing).
+  - Deployed on Android emulator `emulator-5554`: tested permission prompt, location grant, live GPS distance calculation, dynamic sorting, map pin selection, and full English/Amharic bilingual toggle.
+
+## Gender-Based Violence (GBV) Detail Learning Module Rebuild (2026-11-02)
+
+- Built and verified the dedicated learning module screen `GenderBasedViolenceDetailPage` (`lib/src/learning/gbv_page.dart`) for Module 04 matching user reference screenshots:
+  - Top Hero Card featuring `assets/images/learning/module_04_gbv.png`, title "Gender-based violence (GBV)", and clinical overview synopsis.
+  - Note Section with light-blue card container, lightbulb icon, and prevention/dignity guidance.
+  - Learning Sections Header with dynamic reading count badge (`X / 4 read`).
+  - 4 interactive accordion sections with dynamic indicator badges (numerical badge when unread, white checkmark when read):
+    1. **Definition**: Full clinical definition, humanitarian conflict and displacement context, and 5 numbered subcategories:
+       - 1: **Physical Violence** (Domestic violence [intimate partner violence], Sexual violence).
+       - 2: **Psychological/Emotional Violence** (Verbal abuse, Isolation, Coercive control).
+       - 3: **Sexual Violence and Exploitation** (Rape, Sexual harassment, Trafficking).
+       - 4: **Economic Violence** (Withholding financial resources, Coercion through financial dependence).
+       - 5: **Harmful Traditional Practices** (Female genital mutilation/cutting [FGM/C], Early or forced marriage, Honor killings).
+    2. **Sex and Gender**: Biological definitions (chromosomes, anatomy) vs. social construct of gender and power imbalances.
+    3. **Consequences of gender-based violence**: 5 detailed clinical bullet points and the authentic 3-column structured comparative table (`_GbvConsequencesTable`) covering Physical health, Psychological health, and Social & Economic consequences with a "GENDER BASED VIOLENCE" label badge.
+    4. **Management and Prevention of Gender-Based Violence (GBV)**: Complete 3-part framework with numbered circular badges and alphabetical sub-badges:
+       - 1: Immediate Response: Management of GBV (A: Providing Safety and Protection, B: Comprehensive Support Services).
+       - 2: Preventing GBV (A: Changing Social Norms and Attitudes, B: Legal and Policy Reform, C: Empowering Women and Gender Minorities, D: Community-based Approaches, E: Education and Awareness).
+       - 3: Long-Term Strategies: Changing Structural and Cultural Factors (A: Addressing Gender Inequality, B: Engaging Men and Boys).
+       - 24/7 confidential emergency helpline callout (952 / 8335 / 7711).
+  - Streamlined bottom action: `Mark as Completed` button (or green `Completed` banner); no redundant "Return to Lesson" button.
+  - Linked to `LearnPage` carousel when selecting Module 04.
+  - Added full English and Amharic ARB resources.
+  - Widget and unit tests in `test/gbv_page_test.dart` (55/55 tests passing across the app).
+
+## Cleaned Module Detail Actions (2026-11-02)
+
+- Removed redundant bottom "Return to Lesson" buttons from all learning module detail screens (`lib/src/learning/substance_abuse_page.dart`, `lib/src/learning/hepatitis_page.dart`, and `lib/src/learning/sti_module_page.dart`).
+- Learners already use the top-left AppBar back arrow (`IconButton(icon: Icon(Icons.arrow_back_rounded), onPressed: () => Navigator.of(context).pop())`) to navigate back to the module list.
+- Bottom action row now cleanly displays:
+  - `Mark as Completed` button (or green `Completed` confirmation banner when done)
+  - `Take Quiz` button (where applicable)
+- All 53 unit and widget tests pass. `dart analyze` reports 0 issues. Live Chrome session hot-restarted.
+
+## Hepatitis Detail Learning Module Rebuild (2026-11-02)
+
+- Built and verified the dedicated learning module screen `HepatitisDetailPage` (`lib/src/learning/hepatitis_page.dart`) for Module 03 matching user reference screenshots:
+  - Top Hero Card featuring `assets/images/learning/module_03_hepatitis.png`, title "Hepatitis", and clinical overview summary.
+  - Note Section with light-blue card container, lightbulb icon, and liver protection advice.
+  - Learning Sections Header with dynamic reading count badge (`X / 6 read`).
+  - 6 interactive accordion sections with dynamic indicator badges (numerical badge when unread, white checkmark when read):
+    1. **Definition**: General liver inflammation, viral Aâ€“E and non-viral etiologies.
+    2. **Sign and symptoms of Hepatitis**: Systemic symptoms (fever, malaise, jaundice, dark urine), chronic liver disease warning, Hepatitis B transmission & vaccine callout, Hepatitis C transmission, and DAA cure paragraph.
+    3. **Diagnosis of Hepatitis**: Blood tests, imaging, and liver biopsy overview to determine cause and severity.
+    4. **Complication of Hepatitis**: Numbered complication items: 1: Chronic Hepatitis, 2: Cirrhosis, 3: Liver Failure, 4: Liver Cancer (Hepatocellular Carcinoma), and early diagnosis conclusion.
+    5. **Management and treatment of Hepatitis**: Supportive care for acute cases vs. long-term antiviral drugs and immunosuppressive therapies for chronic conditions.
+    6. **Prevention Of Hepatitis**: General preventive measures (Good Hygiene Practices, avoiding alcohol and drugs), vaccination, and blood safety.
+  - Linked to `LearnPage` carousel when selecting Module 03.
+  - Added full English and Amharic ARB resources.
+  - Widget and unit tests in `test/hepatitis_page_test.dart` (53/53 tests passing across the app).
+
+
+## Mental Health & Wellbeing Detail Learning Module & Interactive Quiz Rebuild (2026-11-02)
+
+- Built and verified the dedicated learning module screen `MentalHealthDetailPage` (`lib/src/learning/mental_health_page.dart`) and interactive quiz `MentalHealthQuizPage` (`lib/src/learning/mental_health_quiz_page.dart`) for Module 06 matching established high-polish UI patterns:
+  - Top Hero Card featuring `assets/images/learning/module_06_mental_health.jpg`, title "Mental health & wellbeing", and comprehensive educational summary.
+  - Note Section with light-blue card container, lightbulb icon, and mental health continuum guidance.
+  - Learning Sections Header with dynamic reading count badge (`X / 4 read`).
+  - 4 interactive accordion sections with dynamic indicator badges (numerical badge when unread, white checkmark when read):
+    1. **Understanding Mental Health & Wellbeing**: Emotional, psychological, and social dimensions; integration with total health.
+    2. **Common Challenges in Youth**: Academic stress, burnout, performance/social anxiety, and depressive symptoms.
+    3. **Positive Coping & Self-Care Strategies**: Physical activity, sleep hygiene, mindful breathing, creative outlets, and screen-time management.
+    4. **Recognizing Warning Signs & Seeking Support**: Signs of distress, open communication, and immediate toll-free hotlines (952 / 8335).
+  - Interactive 4-question quiz (`MentalHealthQuizPage`) with segmented progress bar, question badge, optical glass selection cards, celebration scoring badge (`You scored X out of 4 (100%)`), Answer Review mode with Key Clinical Insights, Retake Quiz, and Return to Lesson.
+  - Linked to `LearnPage` carousel when selecting Module 06 and tapping "Take Quiz".
+  - Added complete English and Amharic ARB resources.
+  - Widget and unit tests in `test/mental_health_page_test.dart` and `test/mental_health_quiz_test.dart` (49/49 tests passing across the app).
+
+
+## Substance Abuse Detail Learning Module & Interactive Quiz Rebuild (2026-11-02)
+
+- Built and verified the dedicated learning module screen `SubstanceAbuseDetailPage` (`lib/src/learning/substance_abuse_page.dart`) and interactive quiz `SubstanceAbuseQuizPage` (`lib/src/learning/substance_abuse_quiz_page.dart`) for Module 08 matching user reference screenshots:
+  - Top Hero Card featuring `assets/images/learning/module_08_substance_abuse.png`, title "Substance Abuse", and educational overview summary.
+  - Note Section with light-blue card container, lightbulb icon, and early prevention/intervention message.
+  - Learning Sections Header with dynamic reading count badge (`X / 4 read`).
+  - 4 interactive accordion sections with dynamic indicator badges (numerical badge when unread, white checkmark when read):
+    1. **Definition of substance abuse**: Psychoactive substances, compulsive patterns, tolerance, withdrawal, and Substance Use Disorder (SUD).
+    2. **Types of drugs/Substances**: 4 numbered category cards (Depressants, Stimulants, Opioids, Hallucinogens).
+    3. **Effects of substance abuse**: Physical health consequences, mental health impacts, academic/work absence, dangerous behaviors, and legal issues.
+    4. **Signs of a Substance Use Problem**: Tolerance, compulsive cravings, withdrawal, social withdrawal, and free confidential national hotlines (952 / 8335).
+  - Interactive 4-question quiz (`SubstanceAbuseQuizPage`) with segmented progress bar, question badge, optical glass selection cards, celebration scoring badge (`You scored X out of 4 (100%)`), Answer Review mode with Key Clinical Insights, Retake Quiz, and Return to Lesson.
+  - Linked to `LearnPage` carousel when selecting Module 08 and tapping "Take Quiz", plus in-page "Take Quiz" trigger inside `SubstanceAbuseDetailPage`.
+  - Added full English and Amharic ARB resources.
+  - Widget and unit tests in `test/substance_abuse_page_test.dart` and `test/substance_abuse_quiz_test.dart` (51/51 tests passing across the app).
+
+## Sexually Transmitted Infections (STI) Detail Learning Module Rebuild (2026-11-02)
+
+- Built and verified the dedicated learning module screen `StiModuleDetailPage` (`lib/src/learning/sti_module_page.dart`) for Module 02 matching reference screenshots:
+  - Top Hero Card featuring `assets/images/learning/module_02_sti.png`, title "Sexual transmitted infections (STI)", and clinical overview summary.
+  - Note Section with light-blue card container, lightbulb icon, and safe-sex guidance.
+  - Learning Sections Header with dynamic reading count badge (`X / 6 read`).
+  - 6 interactive accordion sections with dynamic indicator badges (numerical badge when unread, white checkmark when read):
+    1. **Definition**: Pathogens, infection (STI) vs. disease (STD), silent transmission.
+    2. **Signs and Symptoms of STI**: Primary clinical signs and warning on asymptomatic infections.
+    3. **Diagnosis of STI**: Clinical evaluations, laboratory testing, national syndromic management.
+    4. **Complications of STI**: Infertility, PID, elevated HIV transmission, HPV oncogenesis.
+    5. **Management and treatment of STI**: Curable vs manageable infections and the 4 critical rules of treatment.
+    6. **Prevention of STI**: Condom barrier protection, mutual fidelity, abstinence, and vaccinations.
+  - Linked to `LearnPage` carousel when selecting Module 02.
+  - Added full English and Amharic ARB resources.
+  - Widget and unit tests in `test/sti_module_page_test.dart` (43/43 tests passing across the app).
+
+## HIV/AIDS Interactive Quiz & Module Experience Rebuild (2026-11-02)
+
+- Built and verified the dedicated interactive quiz screen `HivQuizPage` (`lib/src/learning/hiv_quiz_page.dart`) matching the reference screenshots:
+  - 4 core clinical questions alternating between True/False and Choices (Definition, Mode of Transmission, PEP Timing, Treatment & U=U).
+  - Authentic segmented progress bar (4 segments) and `Question X of 4` progress badge.
+  - Tactile optical-glass option cards with circular letter badges (A, B, C, D) for both True/False and Multiple Choice options.
+  - Floating bottom navigation with circular back button and stadium pill Next button with embedded arrow badge and dynamic enabled states.
+  - Celebratory score calculation modal (`X / 4 (100%)`), Answer Review mode with educational insights, and Retake Quiz options.
+  - Bilingual English/Amharic resources in `lib/l10n/app_en.arb` and `lib/l10n/app_am.arb`.
+  - Comprehensive unit and widget tests in `test/hiv_quiz_test.dart` (41/41 tests passing across the app).
+
+## HIV/AIDS Detail Learning Module Experience Rebuild (2026-11-02)
+
+- Rebuilt the dedicated HIV/AIDS learning module detail page in `lib/src/learning/hiv_module_page.dart` matching user reference screenshots:
+  - Top Hero Card featuring `assets/images/learning/module_07_hiv.png`, title "Human immune virus (HIV)/AIDS", and clinical overview summary.
+  - Note Section with light-blue card container, lightbulb icon, and core prevention/ART guidance.
+  - Learning Sections Header with vertical blue indicator bar and dynamic reading count badge (`5 / 5 read`).
+  - 5 interactive accordion cards with checkmark indicators and smooth expanding transitions:
+    1. **Defination**: CD4 cell targets, HIV vs. AIDS stages, and U=U viral suppression.
+    2. **Mode of transmission**: Body fluid transmission paths and myth-busting highlight card.
+    3. **HIV-Prevention**: Primary ABC prevention methods with circular blue letter badges (A - F), PrEP and PEP 72-hour clinical guidance, 10-step condom guide, and dual in-app interactive video playback: instant inline card video player (`createInAppVideoEmbed`) + immersive 1080p Cinema Glass Modal with playback, audio, resolution, and subtitles (`https://youtu.be/EdSq2HB7jqU` and `https://youtu.be/ii8ezLev2PU`).
+    4. **HIV testing**: PITC and VCT testing modalities.
+    5. **Treatment for HIV positive client**: ART regimens, early initiation, and clinic access.
+  - Bilingual localization in `lib/l10n/app_en.arb` and `lib/l10n/app_am.arb`, regenerated via `flutter gen-l10n`.
+  - Comprehensive unit and widget tests in `test/hiv_module_page_test.dart` (39/39 passing).
+
 
 ## Peer Mentors & Youth Counselors Discovery Experience (2026-11-01)
 

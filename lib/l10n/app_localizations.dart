@@ -4019,8 +4019,92 @@ abstract class AppLocalizations {
   /// No description provided for @callClinicAction.
   ///
   /// In en, this message translates to:
-  /// **'Call Clinic'**
+  /// **'Call'**
   String get callClinicAction;
+
+  /// No description provided for @focalOfficerLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Focal Officer'**
+  String get focalOfficerLabel;
+
+  /// No description provided for @contactOfficerAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Officer'**
+  String get contactOfficerAction;
+
+  /// No description provided for @telegramChatAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Telegram'**
+  String get telegramChatAction;
+
+  /// No description provided for @openInMapsAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Open in Maps'**
+  String get openInMapsAction;
+
+  /// No description provided for @buildingWingLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Building / Wing'**
+  String get buildingWingLabel;
+
+  /// No description provided for @wheelchairAccessibleBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Wheelchair Accessible'**
+  String get wheelchairAccessibleBadge;
+
+  /// No description provided for @privateRoomBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Private Room'**
+  String get privateRoomBadge;
+
+  /// No description provided for @uogVerifiedBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Verified UoG Facility'**
+  String get uogVerifiedBadge;
+
+  /// No description provided for @categoryClinical.
+  ///
+  /// In en, this message translates to:
+  /// **'Clinical & Health'**
+  String get categoryClinical;
+
+  /// No description provided for @categoryCounseling.
+  ///
+  /// In en, this message translates to:
+  /// **'Counseling & Guidance'**
+  String get categoryCounseling;
+
+  /// No description provided for @categoryAcademic.
+  ///
+  /// In en, this message translates to:
+  /// **'Academic Support'**
+  String get categoryAcademic;
+
+  /// No description provided for @categoryStudentAffairs.
+  ///
+  /// In en, this message translates to:
+  /// **'Student Affairs'**
+  String get categoryStudentAffairs;
+
+  /// No description provided for @categorySports.
+  ///
+  /// In en, this message translates to:
+  /// **'Sports & Dining'**
+  String get categorySports;
+
+  /// No description provided for @categoryAccessibility.
+  ///
+  /// In en, this message translates to:
+  /// **'Accessibility Support'**
+  String get categoryAccessibility;
 
   /// No description provided for @directionsAction.
   ///
@@ -4031,7 +4115,7 @@ abstract class AppLocalizations {
   /// No description provided for @viewDetailsAction.
   ///
   /// In en, this message translates to:
-  /// **'View Details'**
+  /// **'Details'**
   String get viewDetailsAction;
 
   /// No description provided for @confidentialityNoticeTitle.
@@ -5282,17 +5366,47 @@ abstract class AppLocalizations {
   /// **'Call Mentor'**
   String get callMentorAction;
 
-  /// No description provided for @telegramChatAction.
-  ///
-  /// In en, this message translates to:
-  /// **'Chat on Telegram'**
-  String get telegramChatAction;
-
   /// No description provided for @whatsappChatAction.
   ///
   /// In en, this message translates to:
-  /// **'Chat on WhatsApp'**
+  /// **'WhatsApp'**
   String get whatsappChatAction;
+
+  /// No description provided for @telegramChannelTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Telegram'**
+  String get telegramChannelTitle;
+
+  /// No description provided for @whatsappChannelTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'WhatsApp'**
+  String get whatsappChannelTitle;
+
+  /// No description provided for @voiceCallChannelTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice Call'**
+  String get voiceCallChannelTitle;
+
+  /// No description provided for @emailChannelTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get emailChannelTitle;
+
+  /// No description provided for @callActionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Call'**
+  String get callActionLabel;
+
+  /// No description provided for @emailActionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get emailActionLabel;
 
   /// No description provided for @directContactsHeading.
   ///
@@ -5353,6 +5467,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Campus'**
   String get campusLabel;
+
+  /// No description provided for @filterByCampus.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter by Campus'**
+  String get filterByCampus;
+
+  /// No description provided for @allCampuses.
+  ///
+  /// In en, this message translates to:
+  /// **'All Campuses'**
+  String get allCampuses;
+
+  /// No description provided for @uogCampusesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'University of Gondar'**
+  String get uogCampusesTitle;
+
+  /// No description provided for @uogCampusesSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter certified peer mentors by study campus'**
+  String get uogCampusesSubtitle;
+
+  /// No description provided for @clearCampusFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get clearCampusFilter;
 
   /// No description provided for @sendEmailAction.
   ///
@@ -6529,6 +6673,132 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your account has been deleted successfully.'**
   String get accountDeletedSuccess;
+
+  /// No description provided for @weeklyAvailabilityTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly Availability & Schedule'**
+  String get weeklyAvailabilityTitle;
+
+  /// No description provided for @viewScheduleBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Schedule'**
+  String get viewScheduleBtn;
+
+  /// No description provided for @scheduleActionBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Schedule'**
+  String get scheduleActionBtn;
+
+  /// No description provided for @cancelActionBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancelActionBtn;
+
+  /// No description provided for @noSlotsOnDay.
+  ///
+  /// In en, this message translates to:
+  /// **'No counseling hours available on this day'**
+  String get noSlotsOnDay;
+
+  /// No description provided for @selectSlotPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Select an available time slot'**
+  String get selectSlotPrompt;
+
+  /// No description provided for @sessionBookedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Consultation scheduled for {slot} with {name}. Call or message to confirm.'**
+  String sessionBookedSuccess(String slot, String name);
+
+  /// No description provided for @availableHoursSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Peer counseling sessions across UoG campuses'**
+  String get availableHoursSubtitle;
+
+  /// No description provided for @activeHoursDot.
+  ///
+  /// In en, this message translates to:
+  /// **'Active days with open hours'**
+  String get activeHoursDot;
+
+  /// No description provided for @weeklyHoursTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly Availability Hours'**
+  String get weeklyHoursTitle;
+
+  /// No description provided for @weeklyHoursSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Official consultation hours set by campus administration'**
+  String get weeklyHoursSubtitle;
+
+  /// No description provided for @todayLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get todayLabel;
+
+  /// No description provided for @dayClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'Closed / Off'**
+  String get dayClosed;
+
+  /// No description provided for @monday.
+  ///
+  /// In en, this message translates to:
+  /// **'Monday'**
+  String get monday;
+
+  /// No description provided for @tuesday.
+  ///
+  /// In en, this message translates to:
+  /// **'Tuesday'**
+  String get tuesday;
+
+  /// No description provided for @wednesday.
+  ///
+  /// In en, this message translates to:
+  /// **'Wednesday'**
+  String get wednesday;
+
+  /// No description provided for @thursday.
+  ///
+  /// In en, this message translates to:
+  /// **'Thursday'**
+  String get thursday;
+
+  /// No description provided for @friday.
+  ///
+  /// In en, this message translates to:
+  /// **'Friday'**
+  String get friday;
+
+  /// No description provided for @saturday.
+  ///
+  /// In en, this message translates to:
+  /// **'Saturday'**
+  String get saturday;
+
+  /// No description provided for @sunday.
+  ///
+  /// In en, this message translates to:
+  /// **'Sunday'**
+  String get sunday;
+
+  /// No description provided for @connectDuringHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect with counselor during active hours:'**
+  String get connectDuringHours;
 }
 
 class _AppLocalizationsDelegate

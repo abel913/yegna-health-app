@@ -28,6 +28,7 @@ interface ModuleMobilePreviewProps {
   readTimeMin?: number;
   category?: string;
   lang?: 'en' | 'am';
+  quizQuestionsCount?: number;
 }
 
 export const ModuleMobilePreview: React.FC<ModuleMobilePreviewProps> = ({
@@ -39,6 +40,7 @@ export const ModuleMobilePreview: React.FC<ModuleMobilePreviewProps> = ({
   authorName,
   readTimeMin = 4,
   lang = 'en',
+  quizQuestionsCount,
 }) => {
   const [expandedSections, setExpandedSections] = useState<number[]>([0]);
   const [readSections, setReadSections] = useState<number[]>([0]);
@@ -261,13 +263,13 @@ export const ModuleMobilePreview: React.FC<ModuleMobilePreviewProps> = ({
                       >
                         <div className="flex items-center gap-2.5 min-w-0">
                           <div
-                            className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 transition-colors ${
-                              isRead
-                                ? 'bg-[#0284C7] text-white'
-                                : 'border border-slate-300 text-transparent'
-                            }`}
+                            className="w-6 h-6 rounded-full bg-[#0284C7] text-white flex items-center justify-center shrink-0 text-[11px] font-extrabold shadow-2xs"
                           >
-                            <Check size={13} className="stroke-[3]" />
+                            {isRead ? (
+                              <Check size={13} className="stroke-[3]" />
+                            ) : (
+                              <span>{idx + 1}</span>
+                            )}
                           </div>
                           <span className="text-[13px] font-extrabold text-[#08264A] truncate">
                             {sec.title}
@@ -334,7 +336,9 @@ export const ModuleMobilePreview: React.FC<ModuleMobilePreviewProps> = ({
                       {lang === 'am' ? 'የእውቀት መፈተሻ ፈተና' : 'Knowledge Check Quiz'}
                     </h4>
                     <p className="text-[10px] text-slate-400">
-                      {lang === 'am' ? '2 ጥያቄዎች • 2 ደቂቃ' : '2 Questions • 2 Minutes'}
+                      {lang === 'am'
+                        ? `${quizQuestionsCount ?? 2} ጥያቄዎች • ${Math.max(1, Math.round((quizQuestionsCount ?? 2) * 1.5))} ደቂቃ`
+                        : `${quizQuestionsCount ?? 2} Questions • ${Math.max(1, Math.round((quizQuestionsCount ?? 2) * 1.5))} Minutes`}
                     </p>
                   </div>
                 </div>

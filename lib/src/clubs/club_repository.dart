@@ -28,6 +28,14 @@ abstract class ClubRepository {
   Future<void> deleteClub(String clubId);
 
   Future<List<ClubMembership>> getClubMembers(String clubId);
+
+  Future<List<ClubMembership>> getAllMemberships();
+
+  Future<bool> removeMember(String clubId, String userId);
+
+  Future<bool> updateMemberRole(String clubId, String userId, String newRole);
+
+  Future<void> toggleClubActive(String clubId);
 }
 
 class LocalClubRepository implements ClubRepository {
@@ -77,6 +85,62 @@ class LocalClubRepository implements ClubRepository {
             _inMemoryMemberships.add(ClubMembership.fromJson(item));
           }
         }
+      } else {
+        // Pre-seed realistic youth enrollments across clubs
+        _inMemoryMemberships.clear();
+        _inMemoryMemberships.addAll([
+          ClubMembership(
+            clubId: 'template_mental_health',
+            userId: 'student_usr_02',
+            userEmail: 'student1@aau.edu.et',
+            userName: 'Bethlehem T.',
+            role: 'lead',
+            joinedAt: DateTime.now().subtract(const Duration(days: 10)),
+          ),
+          ClubMembership(
+            clubId: 'template_mental_health',
+            userId: 'student_usr_03',
+            userEmail: 'natnael.k@gmail.com',
+            userName: 'Natnael K.',
+            role: 'member',
+            joinedAt: DateTime.now().subtract(const Duration(days: 4)),
+          ),
+          ClubMembership(
+            clubId: 'template_girls_hygiene',
+            userId: 'student_usr_02',
+            userEmail: 'student1@aau.edu.et',
+            userName: 'Bethlehem T.',
+            role: 'member',
+            joinedAt: DateTime.now().subtract(const Duration(days: 8)),
+          ),
+          ClubMembership(
+            clubId: 'template_anti_substance',
+            userId: 'student_usr_03',
+            userEmail: 'natnael.k@gmail.com',
+            userName: 'Natnael K.',
+            role: 'member',
+            joinedAt: DateTime.now().subtract(const Duration(days: 3)),
+          ),
+          ClubMembership(
+            clubId: 'template_srh_wellness',
+            userId: 'student_usr_02',
+            userEmail: 'student1@aau.edu.et',
+            userName: 'Bethlehem T.',
+            role: 'member',
+            joinedAt: DateTime.now().subtract(const Duration(days: 6)),
+          ),
+        ]);
+        for (var i = 0; i < _inMemoryClubs.length; i++) {
+          final cid = _inMemoryClubs[i].id;
+          final count =
+              _inMemoryMemberships.where((m) => m.clubId == cid).length;
+          if (count > 0) {
+            _inMemoryClubs[i] =
+                _inMemoryClubs[i].copyWith(memberCount: count);
+          }
+        }
+        await _persistMemberships();
+        await _persistClubs();
       }
     } catch (_) {
       if (_inMemoryClubs.isEmpty) {
@@ -164,8 +228,48 @@ class LocalClubRepository implements ClubRepository {
     String? userName,
   }) async {
     await _ensureLoaded();
-    final clubIndex = _inMemoryClubs.indexWhere((c) => c.id == clubId);
-    if (clubIndex == -1) return false;
+    var clubIndex = _inMemoryClubs.indexWhere((c) => c.id == clubId);
+    if (clubIndex == -1) {
+      // Check offline sync store cached clubs
+      try {
+        final prefs = await _getPrefs();
+        final cached = prefs.getString('yegna_offline_clubs_v1');
+        if (cached != null && cached.isNotEmpty) {
+          final decoded = jsonDecode(cached) as List<Object?>;
+          for (final item in decoded) {
+            if (item is Map<String, Object?> && item['id']?.toString() == clubId) {
+              final newClub = StudentClub.fromJson(item);
+              _inMemoryClubs.add(newClub);
+              await _persistClubs();
+              clubIndex = _inMemoryClubs.length - 1;
+              break;
+            }
+          }
+        }
+      } catch (_) {}
+    }
+
+    if (clubIndex == -1) {
+      // Create minimal placeholder club so student membership is preserved end-to-end
+      final placeholder = StudentClub(
+        id: clubId,
+        nameEn: 'Student Club',
+        nameAm: 'የተማሪዎች ክበብ',
+        descriptionEn: 'Youth health engagement club',
+        descriptionAm: 'የወጣቶች ጤና ክበብ',
+        category: ClubCategory.srhWellness,
+        meetingScheduleEn: 'Weekly',
+        meetingScheduleAm: 'በየሳምንቱ',
+        meetingLocationEn: 'Campus Hall',
+        meetingLocationAm: 'የግቢው አዳራሽ',
+        mentorNameEn: 'Certified Peer Counselor',
+        mentorNameAm: 'የተረጋገጠ አቻ አማካሪ',
+        createdAt: DateTime.now(),
+      );
+      _inMemoryClubs.add(placeholder);
+      await _persistClubs();
+      clubIndex = _inMemoryClubs.length - 1;
+    }
 
     final alreadyJoined = _inMemoryMemberships
         .any((m) => m.clubId == clubId && m.userId == userId);
@@ -239,5 +343,42 @@ class LocalClubRepository implements ClubRepository {
   Future<List<ClubMembership>> getClubMembers(String clubId) async {
     await _ensureLoaded();
     return _inMemoryMemberships.where((m) => m.clubId == clubId).toList();
+  }
+
+  @override
+  Future<List<ClubMembership>> getAllMemberships() async {
+    await _ensureLoaded();
+    return List.unmodifiable(_inMemoryMemberships);
+  }
+
+  @override
+  Future<bool> removeMember(String clubId, String userId) async {
+    return leaveClub(clubId, userId);
+  }
+
+  @override
+  Future<bool> updateMemberRole(
+      String clubId, String userId, String newRole) async {
+    await _ensureLoaded();
+    final index = _inMemoryMemberships
+        .indexWhere((m) => m.clubId == clubId && m.userId == userId);
+    if (index >= 0) {
+      _inMemoryMemberships[index] =
+          _inMemoryMemberships[index].copyWith(role: newRole);
+      await _persistMemberships();
+      return true;
+    }
+    return false;
+  }
+
+  @override
+  Future<void> toggleClubActive(String clubId) async {
+    await _ensureLoaded();
+    final index = _inMemoryClubs.indexWhere((c) => c.id == clubId);
+    if (index >= 0) {
+      final current = _inMemoryClubs[index];
+      _inMemoryClubs[index] = current.copyWith(isActive: !current.isActive);
+      await _persistClubs();
+    }
   }
 }

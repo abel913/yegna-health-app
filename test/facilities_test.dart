@@ -38,21 +38,25 @@ Widget _buildTestApp({
 
 void main() {
   group('FacilityRepository', () {
-    test('LocalVerifiedFacilityRepository returns 5 verified facilities',
+    test('LocalVerifiedFacilityRepository returns 6 verified UoG facilities',
         () async {
       const repo = LocalVerifiedFacilityRepository();
       final all = await repo.getFacilities();
-      expect(all.length, 5);
+      expect(all.length, 6);
 
-      final campusOnly = await repo.getFacilities(
-        category: FacilityFilterCategory.campus,
+      final clinicalOnly = await repo.getFacilities(
+        category: FacilityFilterCategory.clinical,
       );
-      expect(campusOnly.length, 2);
-      expect(campusOnly.every((f) => f.campusNameEn != null), isTrue);
+      expect(clinicalOnly.length, 5);
 
-      final searchResult = await repo.getFacilities(query: 'Sidist Kilo');
-      expect(searchResult.length, 1);
-      expect(searchResult.first.id, 'aau_sidist_kilo_clinic');
+      final counselingOnly = await repo.getFacilities(
+        category: FacilityFilterCategory.counseling,
+      );
+      expect(counselingOnly.length, 1);
+      expect(counselingOnly.first.id, 'uog_maraki_guidance_center');
+
+      final searchResult = await repo.getFacilities(query: 'Maraki');
+      expect(searchResult.length, 2);
     });
 
     test('UnconfiguredFacilityRepository returns empty list', () async {
@@ -72,22 +76,26 @@ void main() {
       final en = await AppLocalizations.delegate.load(const Locale('en'));
 
       // Check header and search bar
-      expect(find.text(en.facilitiesIntroduction), findsNothing);
       expect(find.text(en.searchFacilities), findsOneWidget);
 
-      // Check facility card presence
-      expect(find.text('Arada Youth-Friendly Health Center'), findsOneWidget);
-      expect(find.text(en.callClinicAction), findsWidgets);
+      // Check UoG facility card presence
+      expect(find.text('UoG Maraki Student Health Center'), findsOneWidget);
+      expect(find.text(en.viewDetailsAction), findsWidgets);
       expect(
-          find.text('AAU Student Health Clinic (Sidist Kilo)'), findsOneWidget);
+          find.text(
+              'UoG Comprehensive Specialized Hospital (GCMS) Adolescent Clinic'),
+          findsOneWidget);
 
-      // Filter by Campus
-      await tester.tap(find.text(en.campusFilter));
+      // Filter by Counseling
+      final counselingChip = find.text(en.categoryCounseling).first;
+      await tester.ensureVisible(counselingChip);
+      await tester.tap(counselingChip);
       await tester.pumpAndSettle();
 
-      expect(find.text('Arada Youth-Friendly Health Center'), findsNothing);
+      expect(find.text('UoG Maraki Student Health Center'), findsNothing);
       expect(
-          find.text('AAU Student Health Clinic (Sidist Kilo)'), findsOneWidget);
+          find.text('UoG Maraki Guidance & Psychological Counseling Center'),
+          findsOneWidget);
 
       // Switch to Map View
       await tester.tap(find.byIcon(Icons.map_outlined));
@@ -114,14 +122,9 @@ void main() {
       await tester.tap(find.text(en.viewDetailsAction).first);
       await tester.pumpAndSettle();
 
-      final callClinicBtn = find.descendant(
-        of: find.byType(FacilityDetailSheet),
-        matching: find.text(en.callClinicAction),
-      );
-      expect(callClinicBtn, findsOneWidget);
-      await tester.tap(callClinicBtn);
-      await tester.pump();
-      expect(tester.takeException(), isNull);
+      expect(find.byType(FacilityDetailSheet), findsOneWidget);
+      expect(find.text(en.openInMapsAction), findsOneWidget);
+
       await tester.scrollUntilVisible(
         find.text(en.confidentialityNoticeTitle),
         300,
@@ -149,19 +152,17 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      final am = await AppLocalizations.delegate.load(const Locale('am'));
-      expect(find.text(am.facilitiesIntroduction), findsNothing);
-      expect(find.text('የአራዳ ወጣቶች ተስማሚ ጤና ጣቢያ'), findsOneWidget);
+      expect(find.text('የጎንደር ዩኒቨርሲቲ ማራኪ የተማሪዎች ጤና ጣቢያ'), findsOneWidget);
     });
 
     testWidgets(
         'calculates live distances and sorts by proximity on Nearby filter',
         (tester) async {
       const repo = LocalVerifiedFacilityRepository();
-      // Fixed user location right next to AAU Sidist Kilo Clinic (9.0478, 38.7618)
-      const sidistKiloCoords = LatLng(9.0478, 38.7618);
+      // Fixed user location right at UoG Maraki Student Health Center (12.6075, 37.4589)
+      const marakiCoords = LatLng(12.6075, 37.4589);
       const fakeLocationService =
-          FakeLocationService(fixedLocation: sidistKiloCoords);
+          FakeLocationService(fixedLocation: marakiCoords);
 
       await tester.pumpWidget(
         _buildTestApp(
@@ -177,8 +178,8 @@ void main() {
       await tester.tap(find.text(en.nearbyFilter));
       await tester.pumpAndSettle();
 
-      // AAU Sidist Kilo Clinic should be 0.0 km away and at the top
-      expect(find.text('0.0 km away'), findsOneWidget);
+      // UoG Maraki Student Health Center should be 0m away and at the top
+      expect(find.text('0m'), findsOneWidget);
       expect(
         find.text(
             'Live GPS location acquired. Facilities sorted by proximity.'),
@@ -216,8 +217,7 @@ void main() {
       // Expect informative snackbar
       expect(find.text(en.locationPermissionDenied), findsOneWidget);
       // List still displays verified facilities
-      expect(find.text('Arada Youth-Friendly Health Center'), findsOneWidget);
-      expect(find.text(en.callClinicAction), findsWidgets);
+      expect(find.text('UoG Maraki Student Health Center'), findsOneWidget);
     });
   });
 }

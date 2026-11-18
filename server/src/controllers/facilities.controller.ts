@@ -6,8 +6,16 @@ import { AuthRequest } from '../middleware/auth.middleware.js';
 const facilitySchema = z.object({
   nameEn: z.string().min(2),
   nameAm: z.string().min(2),
+  category: z.string().default('clinical'),
   subCity: z.string().min(2),
   woreda: z.string().optional(),
+  buildingEn: z.string().optional(),
+  buildingAm: z.string().optional(),
+  landmarkEn: z.string().optional(),
+  landmarkAm: z.string().optional(),
+  focalPerson: z.string().optional(),
+  focalPhone: z.string().optional(),
+  telegramHandle: z.string().optional(),
   addressEn: z.string().min(2),
   addressAm: z.string().min(2),
   phone: z.string().min(5),
@@ -15,6 +23,8 @@ const facilitySchema = z.object({
   longitude: z.number(),
   operatingHours: z.string().default('08:30 - 17:30'),
   isVerified: z.boolean().default(true),
+  isWheelchairAccessible: z.boolean().default(false),
+  hasPrivateRoom: z.boolean().default(false),
   services: z.array(z.string()).default([]),
 });
 
@@ -59,11 +69,15 @@ export async function getFacilityById(req: Request, res: Response) {
 export async function createFacility(req: AuthRequest, res: Response) {
   try {
     const data = facilitySchema.parse(req.body);
+    const createData: any = {
+      ...data,
+      services: JSON.stringify(data.services),
+    };
+    if (data.woreda && !data.buildingEn) {
+      createData.buildingEn = data.woreda;
+    }
     const facility = await prisma.facility.create({
-      data: {
-        ...data,
-        services: JSON.stringify(data.services),
-      },
+      data: createData,
     });
 
     // Record audit log
@@ -97,6 +111,9 @@ export async function updateFacility(req: AuthRequest, res: Response) {
     const updateData: any = { ...data };
     if (data.services !== undefined) {
       updateData.services = JSON.stringify(data.services);
+    }
+    if (data.woreda && !data.buildingEn) {
+      updateData.buildingEn = data.woreda;
     }
 
     const facility = await prisma.facility.update({

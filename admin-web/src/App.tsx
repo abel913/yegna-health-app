@@ -106,7 +106,7 @@ export function App() {
   const handleExportKpiCsv = () => {
     const rows = [
       { category: 'Platform Metric', item: 'Registered Students (Zero-Knowledge)', value: metrics?.registeredUsers ?? users.length, details: 'End-to-end confidential accounts' },
-      { category: 'Platform Metric', item: 'Verified Health Clinics', value: metrics?.verifiedFacilities || facilities.length, details: 'Campuses & regional youth centers' },
+      { category: 'Platform Metric', item: 'Verified Campus Facilities', value: metrics?.verifiedFacilities || facilities.length, details: 'University of Gondar campus facilities' },
       { category: 'Platform Metric', item: 'Peer Mentors & Counselors', value: metrics?.counselorMentors || mentors.length, details: 'Active adolescent counselors' },
       { category: 'Platform Metric', item: 'Bilingual Health Modules', value: metrics?.learningModules || modules.length, details: 'Puberty, SRH, STI, Substance prevention' },
       { category: 'Platform Metric', item: 'Interactive Quiz Questions', value: metrics?.quizQuestions || questions.length, details: 'Clinical assessments' },
@@ -137,7 +137,7 @@ export function App() {
         toast.success(lang === 'am' ? 'የተቋሙ መረጃ ተዘምኗል' : 'Facility updated successfully', 'Facilities CMS');
       } else {
         await api.createFacility(data);
-        toast.success(lang === 'am' ? 'አዲስ ተቋም ተመዝግቧል' : 'New health facility added', 'Facilities CMS');
+        toast.success(lang === 'am' ? 'አዲስ ተቋም ተመዝግቧል' : 'New facility added', 'Facilities CMS');
       }
       await loadAllData();
     } catch (err: any) {
@@ -182,15 +182,38 @@ export function App() {
   };
 
   // Module Actions
-  const handleSaveModule = async (data: Partial<Module>, id?: string) => {
+  const handleSaveModule = async (
+    data: Partial<Module>,
+    id?: string,
+    extraQuizzes?: Array<Partial<QuizQuestion>>
+  ) => {
     try {
+      let targetModuleId = id;
       if (id) {
         await api.updateModule(id, data);
         toast.success(lang === 'am' ? 'ሞጁሉ ተዘምኗል' : 'Learning module updated', 'Learning CMS');
       } else {
-        await api.createModule(data);
+        const res = await api.createModule(data);
+        targetModuleId = res.module.id;
         toast.success(lang === 'am' ? 'አዲስ ሞጁል ታትሟል' : 'New health module published', 'Learning CMS');
       }
+
+      // If extra quiz questions were authored directly inside the module form
+      if (extraQuizzes && extraQuizzes.length > 0 && targetModuleId) {
+        for (const q of extraQuizzes) {
+          try {
+            if (q.id && !q.id.startsWith('temp-')) {
+              await api.updateQuestion(q.id, { ...q, moduleId: targetModuleId });
+            } else {
+              const { id: _tempId, ...createPayload } = q;
+              await api.createQuestion({ ...createPayload, moduleId: targetModuleId });
+            }
+          } catch (qErr) {
+            console.error('Failed to sync module question:', qErr);
+          }
+        }
+      }
+
       await loadAllData();
     } catch (err: any) {
       toast.error(err.message || 'Failed to save module', 'Error');
@@ -439,9 +462,12 @@ export function App() {
         {currentTab === 'modules' && (
           <LearningCmsPage
             modules={modules}
+            questions={questions}
             lang={lang}
             onSave={handleSaveModule}
             onDelete={handleDeleteModule}
+            onSaveQuestion={handleSaveQuestion}
+            onDeleteQuestion={handleDeleteQuestion}
           />
         )}
         {currentTab === 'quizzes' && (

@@ -431,7 +431,7 @@ export const api = {
       environment: data.environment || 'development',
       uptimeSeconds: data.uptimeSeconds || 0,
       database: {
-        type: data.database?.type || 'SQLite (Prisma ORM)',
+        type: data.database?.type || 'Supabase PostgreSQL (Prisma ORM)',
         status: data.database?.status || 'connected',
         latencyMs: data.database?.latencyMs ?? 5,
       },

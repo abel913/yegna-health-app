@@ -26,13 +26,14 @@ class SyncMentorRepository implements MentorRepository {
     MentorTopic? topic,
     String? language,
     bool? onlineOnly,
+    String? campus,
   }) async {
     // 1. Retrieve from local persistent cache
     List<Mentor>? cached = await _store.getCachedMentors();
 
     // 2. If no cache yet, fall back to bundled verified mentors and seed cache
     if (cached == null || cached.isEmpty) {
-      cached = await _fallback.getMentors();
+      cached = await _fallback.getMentors(campus: campus);
       if (cached.isNotEmpty) {
         unawaited(_store.saveMentors(cached));
       }
@@ -47,7 +48,7 @@ class SyncMentorRepository implements MentorRepository {
     var result = List<Mentor>.from(cached);
 
     if (onlineOnly == true) {
-      result = result.where((m) => m.isOnline).toList();
+      result = result.where((m) => m.isCurrentlyAvailableNow).toList();
     }
 
     if (topic != null && topic != MentorTopic.all) {
@@ -58,12 +59,24 @@ class SyncMentorRepository implements MentorRepository {
       result = result.where((m) => m.languages.contains(language)).toList();
     }
 
+    if (campus != null &&
+        campus.isNotEmpty &&
+        campus != 'all' &&
+        campus != 'Central Directorate / All Campuses') {
+      final target = campus.toLowerCase();
+      result = result.where((m) {
+        final c = m.campus.toLowerCase();
+        return c.contains(target) || target.contains(c);
+      }).toList();
+    }
+
     if (query != null && query.trim().isNotEmpty) {
       final clean = query.trim().toLowerCase();
       result = result.where((m) {
         final matchEn = m.nameEn.toLowerCase().contains(clean) ||
             m.titleEn.toLowerCase().contains(clean) ||
             m.organizationEn.toLowerCase().contains(clean) ||
+            m.campus.toLowerCase().contains(clean) ||
             m.topics.any((t) => t.name.toLowerCase().contains(clean));
         final matchAm = m.nameAm.contains(clean) ||
             m.titleAm.contains(clean) ||

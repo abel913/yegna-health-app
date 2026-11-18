@@ -2306,13 +2306,55 @@ class AppLocalizationsEn extends AppLocalizations {
   String get freeForYouthBadge => 'Free Services';
 
   @override
-  String get callClinicAction => 'Call Clinic';
+  String get callClinicAction => 'Call';
+
+  @override
+  String get focalOfficerLabel => 'Focal Officer';
+
+  @override
+  String get contactOfficerAction => 'Contact Officer';
+
+  @override
+  String get telegramChatAction => 'Telegram';
+
+  @override
+  String get openInMapsAction => 'Open in Maps';
+
+  @override
+  String get buildingWingLabel => 'Building / Wing';
+
+  @override
+  String get wheelchairAccessibleBadge => 'Wheelchair Accessible';
+
+  @override
+  String get privateRoomBadge => 'Private Room';
+
+  @override
+  String get uogVerifiedBadge => 'Verified UoG Facility';
+
+  @override
+  String get categoryClinical => 'Clinical & Health';
+
+  @override
+  String get categoryCounseling => 'Counseling & Guidance';
+
+  @override
+  String get categoryAcademic => 'Academic Support';
+
+  @override
+  String get categoryStudentAffairs => 'Student Affairs';
+
+  @override
+  String get categorySports => 'Sports & Dining';
+
+  @override
+  String get categoryAccessibility => 'Accessibility Support';
 
   @override
   String get directionsAction => 'Directions';
 
   @override
-  String get viewDetailsAction => 'View Details';
+  String get viewDetailsAction => 'Details';
 
   @override
   String get confidentialityNoticeTitle => 'Youth Confidentiality Guarantee';
@@ -3052,10 +3094,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get callMentorAction => 'Call Mentor';
 
   @override
-  String get telegramChatAction => 'Chat on Telegram';
+  String get whatsappChatAction => 'WhatsApp';
 
   @override
-  String get whatsappChatAction => 'Chat on WhatsApp';
+  String get telegramChannelTitle => 'Telegram';
+
+  @override
+  String get whatsappChannelTitle => 'WhatsApp';
+
+  @override
+  String get voiceCallChannelTitle => 'Voice Call';
+
+  @override
+  String get emailChannelTitle => 'Email';
+
+  @override
+  String get callActionLabel => 'Call';
+
+  @override
+  String get emailActionLabel => 'Email';
 
   @override
   String get directContactsHeading => 'Direct Contact Channels';
@@ -3089,6 +3146,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get campusLabel => 'Campus';
+
+  @override
+  String get filterByCampus => 'Filter by Campus';
+
+  @override
+  String get allCampuses => 'All Campuses';
+
+  @override
+  String get uogCampusesTitle => 'University of Gondar';
+
+  @override
+  String get uogCampusesSubtitle =>
+      'Filter certified peer mentors by study campus';
+
+  @override
+  String get clearCampusFilter => 'Clear';
 
   @override
   String get sendEmailAction => 'Send Email';
@@ -3769,4 +3842,72 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get accountDeletedSuccess =>
       'Your account has been deleted successfully.';
+
+  @override
+  String get weeklyAvailabilityTitle => 'Weekly Availability & Schedule';
+
+  @override
+  String get viewScheduleBtn => 'Schedule';
+
+  @override
+  String get scheduleActionBtn => 'Schedule';
+
+  @override
+  String get cancelActionBtn => 'Cancel';
+
+  @override
+  String get noSlotsOnDay => 'No counseling hours available on this day';
+
+  @override
+  String get selectSlotPrompt => 'Select an available time slot';
+
+  @override
+  String sessionBookedSuccess(String slot, String name) {
+    return 'Consultation scheduled for $slot with $name. Call or message to confirm.';
+  }
+
+  @override
+  String get availableHoursSubtitle =>
+      'Peer counseling sessions across UoG campuses';
+
+  @override
+  String get activeHoursDot => 'Active days with open hours';
+
+  @override
+  String get weeklyHoursTitle => 'Weekly Availability Hours';
+
+  @override
+  String get weeklyHoursSubtitle =>
+      'Official consultation hours set by campus administration';
+
+  @override
+  String get todayLabel => 'Today';
+
+  @override
+  String get dayClosed => 'Closed / Off';
+
+  @override
+  String get monday => 'Monday';
+
+  @override
+  String get tuesday => 'Tuesday';
+
+  @override
+  String get wednesday => 'Wednesday';
+
+  @override
+  String get thursday => 'Thursday';
+
+  @override
+  String get friday => 'Friday';
+
+  @override
+  String get saturday => 'Saturday';
+
+  @override
+  String get sunday => 'Sunday';
+
+  @override
+  String get connectDuringHours =>
+      'Connect with counselor during active hours:';
 }

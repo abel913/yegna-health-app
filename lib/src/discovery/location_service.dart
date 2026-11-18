@@ -6,6 +6,16 @@ abstract class LocationService {
   Future<LatLng?> getCurrentLocation();
   Future<bool> requestPermission();
   double calculateDistanceKm(LatLng from, LatLng to);
+
+  static String formatDistance(double distanceKm, bool isAmharic) {
+    if (distanceKm < 1.0) {
+      final meters = (distanceKm * 1000).round();
+      return isAmharic ? '$meters ሜ' : '${meters}m';
+    }
+    return isAmharic
+        ? '${distanceKm.toStringAsFixed(1)} ኪ.ሜ'
+        : '${distanceKm.toStringAsFixed(1)} km';
+  }
 }
 
 class GeolocatorLocationService implements LocationService {
@@ -16,9 +26,11 @@ class GeolocatorLocationService implements LocationService {
   @override
   Future<LatLng?> getCurrentLocation() async {
     try {
-      final serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!serviceEnabled) {
-        return null;
+      if (!kIsWeb) {
+        final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+        if (!serviceEnabled) {
+          return null;
+        }
       }
 
       var permission = await Geolocator.checkPermission();
@@ -33,12 +45,12 @@ class GeolocatorLocationService implements LocationService {
         return null;
       }
 
-      // Try current position with timeout, fallback to last known
+      // Try current position with generous timeout, fallback to last known
       try {
         final position = await Geolocator.getCurrentPosition(
           locationSettings: const LocationSettings(
-            accuracy: LocationAccuracy.medium,
-            timeLimit: Duration(seconds: 6),
+            accuracy: LocationAccuracy.high,
+            timeLimit: Duration(seconds: 12),
           ),
         );
         return LatLng(position.latitude, position.longitude);

@@ -41,22 +41,31 @@ export async function getDashboardMetrics(req: AuthRequest, res: Response) {
       authors: allUsers.filter((u) => u.role === 'CONTENT_AUTHOR').length,
     };
 
-    // 2. Real Facility Geographic Breakdown
-    let addis = 0;
-    let gondar = 0;
+    // 2. Real University of Gondar (UoG) Campus Breakdown
+    let maraki = 0;
+    let tewodros = 0;
+    let gcms = 0;
+    let fasil = 0;
+    let tseda = 0;
     let other = 0;
     allFacilities.forEach((f) => {
       const sc = f.subCity.toLowerCase();
-      if (sc.includes('gondar') || sc.includes('uog') || sc.includes('maraki') || sc.includes('gcms')) {
-        gondar++;
-      } else if (['arada', 'kirkos', 'bole', 'lideta', 'addis'].some((k) => sc.includes(k))) {
-        addis++;
+      if (sc.includes('maraki')) {
+        maraki++;
+      } else if (sc.includes('tewodros')) {
+        tewodros++;
+      } else if (sc.includes('gcms') || sc.includes('hospital') || sc.includes('cmhs')) {
+        gcms++;
+      } else if (sc.includes('fasil')) {
+        fasil++;
+      } else if (sc.includes('tseda')) {
+        tseda++;
       } else {
         other++;
       }
     });
 
-    const facilitiesByRegion = { addis, gondar, other };
+    const facilitiesByRegion = { maraki, tewodros, gcms, fasil, tseda, other, addis: 0, gondar: allFacilities.length };
 
     // 3. Real Timeline Aggregation (7D, 30D, 12M)
     const now = new Date();

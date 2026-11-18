@@ -384,7 +384,7 @@ export async function submitSurvey(req: Request, res: Response): Promise<void> {
         yearOfStudy,
         disabilityNeed,
         knowsGondarSrh,
-        answers: finalAnswers,
+        answers: typeof finalAnswers === 'string' ? finalAnswers : JSON.stringify(finalAnswers),
       },
     });
 
@@ -541,7 +541,7 @@ export async function getSurveyStats(_req: Request, res: Response): Promise<void
         yearOfStudy: s.yearOfStudy || 'N/A',
         disabilityNeed: s.disabilityNeed || 'NONE',
         knowsGondarSrh: s.knowsGondarSrh || 'NOT_SURE',
-        answers: s.answers,
+        answers: typeof s.answers === 'string' ? (() => { try { return JSON.parse(s.answers); } catch { return s.answers; } })() : s.answers,
         submittedAt: s.submittedAt,
       })),
     });

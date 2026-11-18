@@ -1,6 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import {
-  Hospital,
   Plus,
   Search,
   CheckCircle2,
@@ -11,14 +10,23 @@ import {
   X,
   GraduationCap,
   Building2,
-  Compass,
   Download,
+  Stethoscope,
+  HeartHandshake,
+  BookOpen,
+  Dumbbell,
+  Accessibility,
+  Clock,
+  Lock,
+  UserCheck,
 } from 'lucide-react';
-import { Facility } from '../types/index.js';
+import { Facility, FacilityCategory } from '../types/index.js';
 import { exportToCsv } from '../utils/csvExport.js';
 import { SortableHeader, SortOrder } from '../components/common/SortableHeader.js';
 import { EmptyState } from '../components/common/EmptyState.js';
 import { ConfirmModal } from '../components/common/ConfirmModal.js';
+import { CampusMapPicker } from '../components/common/CampusMapPicker.js';
+import { TagInputManager } from '../components/common/TagInputManager.js';
 
 interface FacilitiesPageProps {
   facilities: Facility[];
@@ -31,34 +39,33 @@ export interface LocationPreset {
   id: string;
   nameEn: string;
   nameAm: string;
-  category: 'uog' | 'regional' | 'addis';
   defaultLat: number;
   defaultLng: number;
 }
 
 export const LOCATION_PRESETS: LocationPreset[] = [
-  // 1. University of Gondar Campuses
-  { id: 'UoG - Maraki Campus', nameEn: 'UoG - Maraki Campus', nameAm: 'ዩኦጂ ማራኪ ካምፓስ', category: 'uog', defaultLat: 12.6075, defaultLng: 37.4589 },
-  { id: 'UoG - Atse Tewodros Campus', nameEn: 'UoG - Atse Tewodros Campus', nameAm: 'ዩኦጂ አፄ ቴዎድሮስ ካምፓስ', category: 'uog', defaultLat: 12.6092, defaultLng: 37.4611 },
-  { id: 'UoG - GCMS Referral Hospital', nameEn: 'UoG - GCMS Referral Hospital', nameAm: 'ዩኦጂ ሪፈራል ሆስፒታል (GCMS)', category: 'uog', defaultLat: 12.6033, defaultLng: 37.4522 },
-  { id: 'UoG - Fasil Campus', nameEn: 'UoG - Fasil Campus', nameAm: 'ዩኦጂ ፋሲል ካምፓስ', category: 'uog', defaultLat: 12.6135, defaultLng: 37.4720 },
-
-  // 2. Regional Cities & Hubs
-  { id: 'Gondar City', nameEn: 'Gondar City', nameAm: 'ጎንደር ከተማ', category: 'regional', defaultLat: 12.6030, defaultLng: 37.4521 },
-  { id: 'Bahir Dar', nameEn: 'Bahir Dar', nameAm: 'ባሕር ዳር', category: 'regional', defaultLat: 11.5742, defaultLng: 37.3614 },
-  { id: 'Hawassa', nameEn: 'Hawassa', nameAm: 'ሐዋሳ', category: 'regional', defaultLat: 7.0504, defaultLng: 38.4955 },
-  { id: 'Mekelle', nameEn: 'Mekelle', nameAm: 'መቐለ', category: 'regional', defaultLat: 13.4967, defaultLng: 39.4753 },
-  { id: 'Jimma', nameEn: 'Jimma', nameAm: 'ጅማ', category: 'regional', defaultLat: 7.6734, defaultLng: 36.8344 },
-
-  // 3. Addis Ababa Sub-Cities
-  { id: 'Arada', nameEn: 'Arada (Addis Ababa)', nameAm: 'አራዳ (አዲስ አበባ)', category: 'addis', defaultLat: 9.0345, defaultLng: 38.7523 },
-  { id: 'Kirkos', nameEn: 'Kirkos (Addis Ababa)', nameAm: 'ቂርቆስ (አዲስ አበባ)', category: 'addis', defaultLat: 9.0125, defaultLng: 38.7610 },
-  { id: 'Bole', nameEn: 'Bole (Addis Ababa)', nameAm: 'ቦሌ (አዲስ አበባ)', category: 'addis', defaultLat: 8.9950, defaultLng: 38.7890 },
-  { id: 'Lideta', nameEn: 'Lideta (Addis Ababa)', nameAm: 'ልደታ (አዲስ አበባ)', category: 'addis', defaultLat: 9.0150, defaultLng: 38.7380 },
-  { id: 'Yeka', nameEn: 'Yeka (Addis Ababa)', nameAm: 'የካ (አዲስ አበባ)', category: 'addis', defaultLat: 9.0410, defaultLng: 38.7950 },
-  { id: 'Gullele', nameEn: 'Gullele (Addis Ababa)', nameAm: 'ጉለሌ (አዲስ አበባ)', category: 'addis', defaultLat: 9.0680, defaultLng: 38.7300 },
-  { id: 'Addis Ketema', nameEn: 'Addis Ketema (Addis Ababa)', nameAm: 'አዲስ ከተማ (አዲስ አበባ)', category: 'addis', defaultLat: 9.0350, defaultLng: 38.7300 },
+  { id: 'UoG - Maraki Campus', nameEn: 'UoG - Maraki Campus', nameAm: 'ዩኦጂ ማራኪ ካምፓስ', defaultLat: 12.6075, defaultLng: 37.4589 },
+  { id: 'UoG - Atse Tewodros Campus', nameEn: 'UoG - Atse Tewodros Campus', nameAm: 'ዩኦጂ አፄ ቴዎድሮስ ካምፓስ', defaultLat: 12.6092, defaultLng: 37.4611 },
+  { id: 'UoG - GCMS Referral Hospital', nameEn: 'UoG - GCMS Referral Hospital / CMHS', nameAm: 'ዩኦጂ ሪፈራል ሆስፒታል / CMHS', defaultLat: 12.6033, defaultLng: 37.4522 },
+  { id: 'UoG - Fasil Campus', nameEn: 'UoG - Fasil Campus', nameAm: 'ዩኦጂ ፋሲል ካምፓስ', defaultLat: 12.6135, defaultLng: 37.4720 },
+  { id: 'UoG - Tseda Campus', nameEn: 'UoG - Tseda Campus', nameAm: 'ዩኦጂ ጼዳ ካምፓስ', defaultLat: 12.5312, defaultLng: 37.4728 },
 ];
+
+export const FACILITY_CATEGORIES: {
+  id: FacilityCategory;
+  nameEn: string;
+  nameAm: string;
+  icon: any;
+}[] = [
+  { id: 'clinical', nameEn: 'Health & Clinic', nameAm: 'ጤና እና ክሊኒክ', icon: Stethoscope },
+  { id: 'counseling', nameEn: 'Counseling & Guidance', nameAm: 'ምክር እና ስነ-ልቦና', icon: HeartHandshake },
+  { id: 'academic', nameEn: 'Academic & Library', nameAm: 'ትምህርትና ቤተ-መጽሐፍት', icon: BookOpen },
+  { id: 'student_affairs', nameEn: 'Student Affairs', nameAm: 'የተማሪዎች አገልግሎት', icon: Building2 },
+  { id: 'sports_dining', nameEn: 'Sports & Dining', nameAm: 'ስፖርትና ካፌ', icon: Dumbbell },
+  { id: 'accessibility', nameEn: 'Accessibility & Support', nameAm: 'ማካተትና ልዩ ድጋፍ', icon: Accessibility },
+];
+
+const HOURS_PRESETS = ['Open 24/7', '08:00 - 18:00', '08:30 - 17:30', '08:00 - 20:00', '09:00 - 17:00'];
 
 export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
   facilities,
@@ -67,8 +74,8 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
   onDelete,
 }) => {
   const [search, setSearch] = useState('');
-  const [regionFilter, setRegionFilter] = useState<'all' | 'uog' | 'regional' | 'addis'>('all');
-  const [selectedSubCity, setSelectedSubCity] = useState('All');
+  const [selectedCampus, setSelectedCampus] = useState('All');
+  const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingFacility, setEditingFacility] = useState<Facility | null>(null);
   const [facilityToDelete, setFacilityToDelete] = useState<Facility | null>(null);
@@ -96,9 +103,17 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
   const [formData, setFormData] = useState({
     nameEn: '',
     nameAm: '',
+    category: 'clinical' as FacilityCategory,
     subCity: 'UoG - Maraki Campus',
     customSubCity: '',
-    woreda: 'Student Clinic',
+    woreda: 'Student Health Wing',
+    buildingEn: '',
+    buildingAm: '',
+    landmarkEn: '',
+    landmarkAm: '',
+    focalPerson: '',
+    focalPhone: '',
+    telegramHandle: '',
     addressEn: '',
     addressAm: '',
     phone: '+251',
@@ -106,15 +121,12 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
     longitude: 37.4589,
     operatingHours: '08:30 - 17:30',
     isVerified: true,
-    services: ['#Youth_Friendly', '#SRH_Counseling', '#Free_Condoms'],
+    isWheelchairAccessible: false,
+    hasPrivateRoom: false,
+    services: ['#Health_Clinic', '#Youth_Friendly', '#SRH_Counseling'],
   });
 
   const [isCustomLocation, setIsCustomLocation] = useState(false);
-
-  // Available subcities based on region tab
-  const activePresets = regionFilter === 'all'
-    ? LOCATION_PRESETS
-    : LOCATION_PRESETS.filter((p) => p.category === regionFilter);
 
   const filtered = facilities.filter((f) => {
     const matchesSearch =
@@ -122,23 +134,31 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
       f.nameAm.includes(search) ||
       f.subCity.toLowerCase().includes(search.toLowerCase()) ||
       (f.addressEn && f.addressEn.toLowerCase().includes(search.toLowerCase())) ||
-      (f.addressAm && f.addressAm.includes(search));
+      (f.addressAm && f.addressAm.includes(search)) ||
+      (f.buildingEn && f.buildingEn.toLowerCase().includes(search.toLowerCase())) ||
+      (f.landmarkEn && f.landmarkEn.toLowerCase().includes(search.toLowerCase())) ||
+      (f.focalPerson && f.focalPerson.toLowerCase().includes(search.toLowerCase())) ||
+      (f.services && f.services.some((s) => s.toLowerCase().includes(search.toLowerCase())));
 
-    const matchesPreset = selectedSubCity === 'All' || f.subCity === selectedSubCity;
-
-    let matchesRegion = true;
-    if (regionFilter !== 'all') {
-      const preset = LOCATION_PRESETS.find((p) => p.id === f.subCity);
-      if (preset) {
-        matchesRegion = preset.category === regionFilter;
-      } else if (regionFilter === 'uog') {
-        matchesRegion = f.subCity.toLowerCase().includes('uog') || f.subCity.toLowerCase().includes('gondar');
-      } else if (regionFilter === 'addis') {
-        matchesRegion = ['arada', 'kirkos', 'bole', 'lideta', 'yeka', 'gullele', 'addis ketema'].includes(f.subCity.toLowerCase());
-      }
+    let matchesCampus = true;
+    if (selectedCampus !== 'All') {
+      const sc = f.subCity.toLowerCase();
+      const target = selectedCampus.toLowerCase();
+      matchesCampus =
+        sc === target ||
+        (target.includes('maraki') && sc.includes('maraki')) ||
+        (target.includes('tewodros') && sc.includes('tewodros')) ||
+        (target.includes('gcms') && (sc.includes('gcms') || sc.includes('hospital') || sc.includes('cmhs'))) ||
+        (target.includes('fasil') && sc.includes('fasil')) ||
+        (target.includes('tseda') && sc.includes('tseda'));
     }
 
-    return matchesSearch && matchesPreset && matchesRegion;
+    let matchesCategory = true;
+    if (selectedCategory !== 'All') {
+      matchesCategory = (f.category || 'clinical') === selectedCategory;
+    }
+
+    return matchesSearch && matchesCampus && matchesCategory;
   });
 
   const [sortField, setSortField] = useState<string>('name');
@@ -185,9 +205,17 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
     setFormData({
       nameEn: '',
       nameAm: '',
+      category: 'clinical',
       subCity: 'UoG - Maraki Campus',
       customSubCity: '',
-      woreda: 'Student Clinic',
+      woreda: 'Student Health Wing',
+      buildingEn: '',
+      buildingAm: '',
+      landmarkEn: '',
+      landmarkAm: '',
+      focalPerson: '',
+      focalPhone: '',
+      telegramHandle: '',
       addressEn: '',
       addressAm: '',
       phone: '+251',
@@ -195,7 +223,9 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
       longitude: 37.4589,
       operatingHours: '08:30 - 17:30',
       isVerified: true,
-      services: ['#Youth_Friendly', '#SRH_Counseling', '#Free_Condoms'],
+      isWheelchairAccessible: false,
+      hasPrivateRoom: false,
+      services: ['#Health_Clinic', '#Youth_Friendly', '#SRH_Counseling'],
     });
     setIsModalOpen(true);
   };
@@ -207,9 +237,17 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
     setFormData({
       nameEn: f.nameEn,
       nameAm: f.nameAm,
+      category: f.category || 'clinical',
       subCity: isKnownPreset ? f.subCity : '__custom__',
       customSubCity: isKnownPreset ? '' : f.subCity,
       woreda: f.woreda || '',
+      buildingEn: f.buildingEn || '',
+      buildingAm: f.buildingAm || '',
+      landmarkEn: f.landmarkEn || '',
+      landmarkAm: f.landmarkAm || '',
+      focalPerson: f.focalPerson || '',
+      focalPhone: f.focalPhone || '',
+      telegramHandle: f.telegramHandle || '',
       addressEn: f.addressEn,
       addressAm: f.addressAm,
       phone: f.phone,
@@ -217,6 +255,8 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
       longitude: f.longitude,
       operatingHours: f.operatingHours,
       isVerified: f.isVerified,
+      isWheelchairAccessible: Boolean(f.isWheelchairAccessible),
+      hasPrivateRoom: Boolean(f.hasPrivateRoom),
       services: f.services || [],
     });
     setIsModalOpen(true);
@@ -256,8 +296,16 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
     const payload: Partial<Facility> = {
       nameEn: formData.nameEn,
       nameAm: formData.nameAm,
+      category: formData.category,
       subCity: finalSubCity,
       woreda: formData.woreda,
+      buildingEn: formData.buildingEn,
+      buildingAm: formData.buildingAm,
+      landmarkEn: formData.landmarkEn,
+      landmarkAm: formData.landmarkAm,
+      focalPerson: formData.focalPerson,
+      focalPhone: formData.focalPhone,
+      telegramHandle: formData.telegramHandle,
       addressEn: formData.addressEn,
       addressAm: formData.addressAm,
       phone: formData.phone,
@@ -265,6 +313,8 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
       longitude: formData.longitude,
       operatingHours: formData.operatingHours,
       isVerified: formData.isVerified,
+      isWheelchairAccessible: formData.isWheelchairAccessible,
+      hasPrivateRoom: formData.hasPrivateRoom,
       services: formData.services,
     };
 
@@ -272,31 +322,21 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
     setIsModalOpen(false);
   };
 
-  const getLocationBadge = (subCity: string) => {
-    const isUog = subCity.toLowerCase().includes('uog') || subCity.toLowerCase().includes('gondar');
-    const isRegional = ['bahir dar', 'hawassa', 'mekelle', 'jimma'].some((c) => subCity.toLowerCase().includes(c));
-
-    if (isUog) {
-      return (
-        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-indigo-50 border border-indigo-200 text-indigo-700 text-[11px] font-extrabold tracking-wide">
-          <GraduationCap size={13} className="text-indigo-600" />
-          <span>{subCity}</span>
-        </span>
-      );
-    }
-
-    if (isRegional) {
-      return (
-        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-800 text-[11px] font-extrabold tracking-wide">
-          <Compass size={13} className="text-emerald-600" />
-          <span>{subCity}</span>
-        </span>
-      );
-    }
-
+  const getCategoryBadge = (category?: FacilityCategory) => {
+    const cat = FACILITY_CATEGORIES.find((c) => c.id === category) || FACILITY_CATEGORIES[0];
+    const Icon = cat.icon;
     return (
-      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-800 text-[11px] font-bold">
-        <Building2 size={13} className="text-slate-500" />
+      <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[11px] font-semibold border border-slate-200/60 dark:border-slate-700">
+        <Icon size={12} className="text-slate-500 dark:text-slate-400" />
+        <span>{lang === 'am' ? cat.nameAm : cat.nameEn}</span>
+      </span>
+    );
+  };
+
+  const getLocationBadge = (subCity: string) => {
+    return (
+      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200/70 dark:border-indigo-800/60 text-indigo-700 dark:text-indigo-300 text-[11px] font-bold">
+        <GraduationCap size={12} className="text-indigo-600 dark:text-indigo-400" />
         <span>{subCity}</span>
       </span>
     );
@@ -304,44 +344,54 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
 
   const handleExportCsv = () => {
     exportToCsv(
-      'Yegna_Health_Facilities_Directory',
+      'Yegna_UoG_Facilities_Directory',
       [
         { header: 'Facility Name (English)', accessor: (f) => f.nameEn },
         { header: 'Facility Name (Amharic)', accessor: (f) => f.nameAm },
-        { header: 'Campus / City', accessor: (f) => f.subCity },
-        { header: 'Ward / Woreda', accessor: (f) => f.woreda || '' },
+        { header: 'Category', accessor: (f) => f.category || 'clinical' },
+        { header: 'Campus & Location', accessor: (f) => f.subCity },
+        { header: 'Building / Block / Room', accessor: (f) => f.buildingEn || f.woreda || '' },
+        { header: 'Nearby Landmark', accessor: (f) => f.landmarkEn || '' },
+        { header: 'Focal Officer', accessor: (f) => f.focalPerson || '' },
         { header: 'Contact Phone', accessor: (f) => f.phone },
         { header: 'Operating Hours', accessor: (f) => f.operatingHours },
         { header: 'Address (English)', accessor: (f) => f.addressEn },
-        { header: 'Address (Amharic)', accessor: (f) => f.addressAm },
         { header: 'GPS Latitude', accessor: (f) => f.latitude },
         { header: 'GPS Longitude', accessor: (f) => f.longitude },
+        { header: 'Wheelchair Accessible', accessor: (f) => (f.isWheelchairAccessible ? 'YES' : 'NO') },
         { header: 'Verification Status', accessor: (f) => (f.isVerified ? 'VERIFIED' : 'PENDING') },
-        { header: 'Services', accessor: (f) => (f.services || []).join('; ') },
+        { header: 'Services & Tags', accessor: (f) => (f.services || []).join('; ') },
       ],
       filtered
     );
   };
+
+  const selectedPreset = LOCATION_PRESETS.find((p) => p.id === formData.subCity);
 
   return (
     <div className="space-y-6">
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl md:text-2xl font-extrabold text-slate-900 flex items-center gap-2">
-            <Hospital className="text-brand-600" size={24} />
-            <span>{lang === 'am' ? 'የጤና ተቋማትና ክሊኒኮች ማዕከል' : 'Campus & Regional Health Facilities CMS'}</span>
+          <div className="flex items-center gap-2">
+            <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-[10px] font-bold uppercase tracking-wider border border-slate-200/60 dark:border-slate-700">
+              {lang === 'am' ? 'የጎንደር ዩኒቨርሲቲ' : 'University of Gondar'}
+            </span>
+          </div>
+          <h2 className="text-xl md:text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2 mt-1">
+            <Building2 className="text-brand-600 dark:text-cyan-400" size={24} />
+            <span>{lang === 'am' ? 'የጎንደር ዩኒቨርሲቲ ተቋማት ማዕከል' : 'Campus Facilities Directory CMS'}</span>
           </h2>
-          <p className="text-xs md:text-sm text-slate-500 mt-1">
+          <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
             {lang === 'am'
-              ? 'የጎንደር ዩኒቨርሲቲ ካምፓሶችን፣ የክልል ከተሞችንና የአዲስ አበባ የወጣቶች ተስማሚ የጤና ተቋማትን ያስተዳድሩ።'
-              : 'Manage verified campus clinics (University of Gondar), regional centers, and youth-friendly health posts.'}
+              ? 'የጎንደር ዩኒቨርሲቲ ካምፓስ ክሊኒኮችን፣ የማማከር ማዕከላትን፣ የተማሪዎች አገልግሎቶችንና ሌሎች ተቋማትን ያስተዳድሩ።'
+              : 'Manage verified University of Gondar health centers, counseling units, libraries, and student welfare facilities.'}
           </p>
         </div>
         <div className="flex items-center gap-2 self-start sm:self-auto">
           <button
             onClick={handleExportCsv}
-            className="flex items-center gap-1.5 px-3.5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs md:text-sm font-bold rounded-xl border border-slate-200 transition-all cursor-pointer"
+            className="flex items-center gap-1.5 px-3.5 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs md:text-sm font-bold rounded-xl border border-slate-200 dark:border-slate-700 transition-all cursor-pointer"
             title={lang === 'am' ? 'ወደ ኤክሴል (CSV) አውርድ' : 'Export directory to Excel CSV'}
           >
             <Download size={15} />
@@ -352,13 +402,13 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
             className="flex items-center gap-2 px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-xs md:text-sm font-bold rounded-xl shadow-md shadow-brand-600/20 transition-all cursor-pointer"
           >
             <Plus size={16} />
-            <span>{lang === 'am' ? '+ አዲስ ተቋም ጨምር' : '+ Add Health Facility'}</span>
+            <span>{lang === 'am' ? '+ አዲስ ተቋም ጨምር' : '+ Add Facility'}</span>
           </button>
         </div>
       </div>
 
-      {/* Search & Location Filters */}
-      <div className="bg-white p-4 md:p-5 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
+      {/* Search & Refined Multi-Axis Filters */}
+      <div className="bg-white dark:bg-slate-900 p-4 md:p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-3.5">
         <div className="flex flex-col md:flex-row gap-3">
           <div className="relative flex-1">
             <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -368,101 +418,79 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
               onChange={(e) => setSearch(e.target.value)}
               placeholder={
                 lang === 'am'
-                  ? 'በተቋም ስም፣ በካምፓስ ወይም በከተማ ፈልግ...'
-                  : 'Search by clinic name, campus (e.g. Maraki), city, or address...'
+                  ? 'በተቋም ስም፣ በካምፓስ፣ በህንፃ ወይም በባለሙያ ፈልግ...'
+                  : 'Search by facility name, campus, building, room, focal officer...'
               }
-              className="w-full pl-9 pr-4 py-2 text-xs md:text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-brand-500 focus:outline-none transition-all"
+              className="w-full pl-9 pr-4 py-2 text-xs md:text-sm bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl focus:bg-white dark:focus:bg-slate-800 focus:border-brand-500 focus:outline-none text-slate-900 dark:text-white transition-all"
             />
           </div>
         </div>
 
-        {/* Region Categorization Tabs */}
-        <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-slate-100">
-          <span className="text-xs font-bold text-slate-400 mr-1">
-            {lang === 'am' ? 'ክልል / ካምፓስ:' : 'Region:'}
+        {/* Axis 1: UoG Campus Filter Pills */}
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs pt-1 border-t border-slate-100 dark:border-slate-800">
+          <span className="text-xs font-bold text-slate-400 dark:text-slate-500 mr-1 shrink-0 flex items-center gap-1">
+            <GraduationCap size={13} />
+            <span>{lang === 'am' ? 'ካምፓስ:' : 'Campus:'}</span>
           </span>
           <button
-            onClick={() => {
-              setRegionFilter('all');
-              setSelectedSubCity('All');
-            }}
-            className={`px-3 py-1 rounded-xl text-xs font-bold transition-all ${
-              regionFilter === 'all'
-                ? 'bg-slate-900 text-white shadow-xs'
-                : 'bg-slate-100 text-slate-600 hover:bg-slate-200/80'
+            onClick={() => setSelectedCampus('All')}
+            className={`px-3 py-1 rounded-lg font-bold transition-all whitespace-nowrap cursor-pointer text-xs ${
+              selectedCampus === 'All'
+                ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-2xs'
+                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200/80 dark:hover:bg-slate-700'
             }`}
           >
-            {lang === 'am' ? 'ሁሉም አካባቢዎች' : 'All Locations'} ({facilities.length})
+            {lang === 'am' ? 'ሁሉም ካምፓሶች' : 'All Campuses'} ({facilities.length})
           </button>
-          <button
-            onClick={() => {
-              setRegionFilter('uog');
-              setSelectedSubCity('All');
-            }}
-            className={`px-3 py-1 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-              regionFilter === 'uog'
-                ? 'bg-indigo-600 text-white shadow-xs'
-                : 'bg-indigo-50 text-indigo-700 hover:bg-indigo-100/80 border border-indigo-200/60'
-            }`}
-          >
-            <GraduationCap size={14} />
-            <span>{lang === 'am' ? 'የጎንደር ዩኒቨርሲቲ ካምፓሶች' : 'University of Gondar'}</span>
-          </button>
-          <button
-            onClick={() => {
-              setRegionFilter('regional');
-              setSelectedSubCity('All');
-            }}
-            className={`px-3 py-1 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-              regionFilter === 'regional'
-                ? 'bg-emerald-600 text-white shadow-xs'
-                : 'bg-emerald-50 text-emerald-800 hover:bg-emerald-100/80 border border-emerald-200/60'
-            }`}
-          >
-            <Compass size={14} />
-            <span>{lang === 'am' ? 'የክልል ከተሞች' : 'Regional Hubs'}</span>
-          </button>
-          <button
-            onClick={() => {
-              setRegionFilter('addis');
-              setSelectedSubCity('All');
-            }}
-            className={`px-3 py-1 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-              regionFilter === 'addis'
-                ? 'bg-brand-600 text-white shadow-xs'
-                : 'bg-brand-50 text-brand-800 hover:bg-brand-100/80 border border-brand-200/60'
-            }`}
-          >
-            <Building2 size={14} />
-            <span>{lang === 'am' ? 'አዲስ አበባ' : 'Addis Ababa'}</span>
-          </button>
-        </div>
-
-        {/* Specific SubCity / Campus Pills */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
-          <button
-            onClick={() => setSelectedSubCity('All')}
-            className={`px-2.5 py-1 rounded-lg font-bold transition-colors whitespace-nowrap ${
-              selectedSubCity === 'All'
-                ? 'bg-brand-600 text-white'
-                : 'bg-slate-100 text-slate-600 hover:bg-slate-200/70'
-            }`}
-          >
-            {lang === 'am' ? 'ሁሉም ንዑስ አካባቢዎች' : 'All Sub-Locations'}
-          </button>
-          {activePresets.map((preset) => (
+          {LOCATION_PRESETS.map((preset) => (
             <button
               key={preset.id}
-              onClick={() => setSelectedSubCity(preset.id)}
-              className={`px-2.5 py-1 rounded-lg font-bold transition-colors whitespace-nowrap ${
-                selectedSubCity === preset.id
-                  ? 'bg-brand-600 text-white'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200/70'
+              onClick={() => setSelectedCampus(preset.id)}
+              className={`px-3 py-1 rounded-lg font-bold transition-all whitespace-nowrap cursor-pointer text-xs ${
+                selectedCampus === preset.id
+                  ? 'bg-brand-600 text-white shadow-2xs'
+                  : 'bg-slate-100/70 dark:bg-slate-800/70 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
               }`}
             >
               {lang === 'am' ? preset.nameAm : preset.nameEn}
             </button>
           ))}
+        </div>
+
+        {/* Axis 2: Facility Category Filter Pills */}
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
+          <span className="text-xs font-bold text-slate-400 dark:text-slate-500 mr-1 shrink-0 flex items-center gap-1">
+            <Building2 size={13} />
+            <span>{lang === 'am' ? 'ዘርፍ:' : 'Category:'}</span>
+          </span>
+          <button
+            onClick={() => setSelectedCategory('All')}
+            className={`px-2.5 py-1 rounded-lg font-bold transition-all whitespace-nowrap cursor-pointer text-[11px] ${
+              selectedCategory === 'All'
+                ? 'bg-slate-800 dark:bg-slate-200 text-white dark:text-slate-900 shadow-2xs'
+                : 'bg-slate-100/80 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200/80'
+            }`}
+          >
+            {lang === 'am' ? 'ሁሉም ዘርፎች' : 'All Categories'}
+          </button>
+          {FACILITY_CATEGORIES.map((cat) => {
+            const Icon = cat.icon;
+            const isSel = selectedCategory === cat.id;
+            return (
+              <button
+                key={cat.id}
+                onClick={() => setSelectedCategory(cat.id)}
+                className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg font-bold transition-all whitespace-nowrap cursor-pointer text-[11px] ${
+                  isSel
+                    ? 'bg-brand-600 text-white shadow-2xs'
+                    : 'bg-slate-100/80 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200/80'
+                }`}
+              >
+                <Icon size={12} />
+                <span>{lang === 'am' ? cat.nameAm : cat.nameEn}</span>
+              </button>
+            );
+          })}
         </div>
       </div>
 
@@ -473,27 +501,27 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
             <thead className="bg-slate-50 dark:bg-slate-800/80 border-b border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400 font-bold uppercase text-[11px] tracking-wider">
               <tr>
                 <SortableHeader
-                  label={lang === 'am' ? 'የተቋሙ ስም' : 'Facility Name'}
+                  label={lang === 'am' ? 'የተቋሙ ስም እና ዘርፍ' : 'Facility & Category'}
                   field="name"
                   currentField={sortField}
                   currentOrder={sortOrder}
                   onSort={handleSort}
                 />
                 <SortableHeader
-                  label={lang === 'am' ? 'ካምፓስ / ከተማ / አድራሻ' : 'Campus / City & Address'}
+                  label={lang === 'am' ? 'ካምፓስ እና ህንፃ' : 'Campus & Building'}
                   field="subCity"
                   currentField={sortField}
                   currentOrder={sortOrder}
                   onSort={handleSort}
                 />
                 <SortableHeader
-                  label={lang === 'am' ? 'ስልክ ቁጥር' : 'Contact Phone'}
+                  label={lang === 'am' ? 'ስልክ እና ኃላፊ' : 'Contact & Officer'}
                   field="phone"
                   currentField={sortField}
                   currentOrder={sortOrder}
                   onSort={handleSort}
                 />
-                <th className="py-3 px-4">{lang === 'am' ? 'አገልግሎቶች' : 'Services'}</th>
+                <th className="py-3 px-4">{lang === 'am' ? 'አገልግሎቶችና ማካተት' : 'Services & Features'}</th>
                 <SortableHeader
                   label={lang === 'am' ? 'ሁኔታ' : 'Status'}
                   field="status"
@@ -507,43 +535,94 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-medium">
               {sortedFacilities.map((f) => (
                 <tr key={f.id} className="hover:bg-slate-50/70 dark:hover:bg-slate-800/50 transition-colors">
+                  {/* Facility Name & Category */}
                   <td className="py-3.5 px-4">
-                    <div>
-                      <p className="font-bold text-slate-900 dark:text-white">{lang === 'am' ? f.nameAm : f.nameEn}</p>
-                      <p className="text-[11px] text-slate-400 dark:text-slate-500">{lang === 'am' ? f.nameEn : f.nameAm}</p>
-                    </div>
-                  </td>
-                  <td className="py-3.5 px-4 text-slate-600 dark:text-slate-300">
-                    <div className="flex items-center gap-1.5 mb-1">
-                      {getLocationBadge(f.subCity)}
-                      {f.woreda && <span className="text-slate-400 dark:text-slate-500 text-xs">• {f.woreda}</span>}
-                    </div>
-                    <div className="flex items-center gap-1 text-[11px] text-slate-400 dark:text-slate-500 truncate max-w-xs">
-                      <MapPin size={11} className="text-slate-400 dark:text-slate-500 flex-shrink-0" />
-                      <span>{lang === 'am' ? f.addressAm : f.addressEn}</span>
-                    </div>
-                  </td>
-                  <td className="py-3.5 px-4">
-                    <a
-                      href={`tel:${f.phone}`}
-                      className="inline-flex items-center gap-1.5 text-xs font-bold text-brand-600 dark:text-cyan-400 hover:underline"
-                    >
-                      <Phone size={12} />
-                      {f.phone}
-                    </a>
-                  </td>
-                  <td className="py-3.5 px-4">
-                    <div className="flex flex-wrap gap-1 max-w-xs">
-                      {(f.services || []).map((s, idx) => (
-                        <span
-                          key={idx}
-                          className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[10px] font-bold border border-slate-200/60 dark:border-slate-700"
-                        >
-                          {s}
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-1.5">
+                        <p className="font-bold text-slate-900 dark:text-white">{lang === 'am' ? f.nameAm : f.nameEn}</p>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        {getCategoryBadge(f.category)}
+                        <span className="text-[11px] text-slate-400 dark:text-slate-500">
+                          {lang === 'am' ? f.nameEn : f.nameAm}
                         </span>
-                      ))}
+                      </div>
                     </div>
                   </td>
+
+                  {/* Campus & Building / Landmark */}
+                  <td className="py-3.5 px-4 text-slate-600 dark:text-slate-300">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-1.5">
+                        {getLocationBadge(f.subCity)}
+                        {(f.buildingEn || f.woreda) && (
+                          <span className="text-slate-600 dark:text-slate-400 text-xs font-semibold truncate max-w-[200px]">
+                            • {f.buildingEn || f.woreda}
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-1 text-[11px] text-slate-400 dark:text-slate-500 truncate max-w-xs">
+                        <MapPin size={11} className="shrink-0" />
+                        <span>{f.landmarkEn ? `${f.landmarkEn} (${f.addressEn})` : f.addressEn}</span>
+                      </div>
+                    </div>
+                  </td>
+
+                  {/* Contact & Focal Person */}
+                  <td className="py-3.5 px-4">
+                    <div className="space-y-1">
+                      <a
+                        href={`tel:${f.phone}`}
+                        className="inline-flex items-center gap-1.5 text-xs font-bold text-brand-600 dark:text-cyan-400 hover:underline"
+                      >
+                        <Phone size={12} />
+                        {f.phone}
+                      </a>
+                      {f.focalPerson && (
+                        <div className="flex items-center gap-1 text-[11px] text-slate-500 dark:text-slate-400 truncate max-w-[180px]">
+                          <UserCheck size={11} className="shrink-0 text-slate-400" />
+                          <span className="truncate">{f.focalPerson}</span>
+                        </div>
+                      )}
+                      {f.operatingHours && (
+                        <div className="flex items-center gap-1 text-[10px] text-slate-400">
+                          <Clock size={10} className="shrink-0" />
+                          <span>{f.operatingHours}</span>
+                        </div>
+                      )}
+                    </div>
+                  </td>
+
+                  {/* Services & Accessibility Badges */}
+                  <td className="py-3.5 px-4">
+                    <div className="space-y-1.5 max-w-xs">
+                      <div className="flex flex-wrap gap-1">
+                        {(f.services || []).map((s, idx) => (
+                          <span
+                            key={idx}
+                            className="px-1.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[10px] font-semibold border border-slate-200/60 dark:border-slate-700"
+                          >
+                            {s}
+                          </span>
+                        ))}
+                      </div>
+                      <div className="flex items-center gap-1 text-[10px]">
+                        {f.isWheelchairAccessible && (
+                          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 font-bold border border-emerald-200 dark:border-emerald-800/60">
+                            ♿ {lang === 'am' ? 'ተደራሽ' : 'Accessible'}
+                          </span>
+                        )}
+                        {f.hasPrivateRoom && (
+                          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400 font-bold border border-blue-200 dark:border-blue-800/60">
+                            <Lock size={10} />
+                            {lang === 'am' ? 'ሚስጥራዊ' : 'Private'}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </td>
+
+                  {/* Status */}
                   <td className="py-3.5 px-4">
                     {f.isVerified ? (
                       <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2.5 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800/60">
@@ -556,6 +635,8 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
                       </span>
                     )}
                   </td>
+
+                  {/* Actions */}
                   <td className="py-3.5 px-4 text-right">
                     <div className="inline-flex items-center gap-1">
                       <button
@@ -579,19 +660,19 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
               {sortedFacilities.length === 0 && (
                 <EmptyState
                   colSpan={6}
-                  icon={Hospital}
-                  title={lang === 'am' ? 'ምንም የጤና ተቋም አልተገኘም' : 'No health facilities found'}
+                  icon={Building2}
+                  title={lang === 'am' ? 'ምንም ተቋም አልተገኘም' : 'No campus facilities found'}
                   description={
-                    search || selectedSubCity !== 'All' || regionFilter !== 'all'
+                    search || selectedCampus !== 'All' || selectedCategory !== 'All'
                       ? lang === 'am'
                         ? 'በተመረጡት ማጣሪያዎች የሚገኝ ተቋም የለም። እባክዎ ማጣሪያዎቹን ያጽዱ ወይም አዲስ ተቋም ይመዝግቡ።'
-                        : 'No campus clinics match your current search and location filter criteria.'
+                        : 'No facilities match your current search and filter criteria.'
                       : lang === 'am'
-                      ? 'እስካሁን የተመዘገበ የጤና ተቋም የለም። የመጀመሪያውን ተቋም እዚህ ይመዝግቡ።'
-                      : 'No healthcare clinics or youth posts registered yet.'
+                      ? 'እስካሁን የተመዘገበ የዩኦጂ ተቋም የለም። የመጀመሪያውን ተቋም እዚህ ይመዝግቡ።'
+                      : 'No University of Gondar campus facilities registered yet.'
                   }
                   clearLabel={
-                    search || selectedSubCity !== 'All' || regionFilter !== 'all'
+                    search || selectedCampus !== 'All' || selectedCategory !== 'All'
                       ? lang === 'am'
                         ? 'ማጣሪያዎችን አጽዳ'
                         : 'Reset Filters'
@@ -599,10 +680,10 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
                   }
                   onClear={() => {
                     setSearch('');
-                    setSelectedSubCity('All');
-                    setRegionFilter('all');
+                    setSelectedCampus('All');
+                    setSelectedCategory('All');
                   }}
-                  actionLabel={lang === 'am' ? '+ አዲስ ክሊኒክ መዝግብ' : '+ Add Facility'}
+                  actionLabel={lang === 'am' ? '+ አዲስ ተቋም መዝግብ' : '+ Add Facility'}
                   onAction={openCreateModal}
                 />
               )}
@@ -611,257 +692,367 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
         </div>
       </div>
 
-      {/* Add / Edit Facility Modal Dialog */}
+      {/* Advanced Clean Add / Edit Facility Modal Dialog */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl max-w-xl w-full max-h-[90vh] overflow-y-auto p-6 md:p-8 animate-in fade-in zoom-in-95 duration-150">
-            <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
-              <h3 className="text-lg font-extrabold text-slate-900 dark:text-white">
-                {editingFacility
-                  ? (lang === 'am' ? 'የጤና ተቋምን አርትዕ' : 'Edit Healthcare Facility')
-                  : (lang === 'am' ? 'አዲስ የጤና ተቋም መዝግብ' : 'Add New Healthcare Facility')}
-              </h3>
+        <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl max-w-2xl w-full max-h-[92vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+            {/* Pinned Modal Header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800 shrink-0">
+              <div>
+                <div className="flex items-center gap-1.5">
+                  <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-500 text-[10px] font-bold uppercase tracking-wider">
+                    {lang === 'am' ? 'የጎንደር ዩኒቨርሲቲ' : 'University of Gondar'}
+                  </span>
+                </div>
+                <h3 className="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white mt-0.5">
+                  {editingFacility
+                    ? lang === 'am' ? 'የካምፓስ ተቋምን አርትዕ' : 'Edit Campus Facility'
+                    : lang === 'am' ? 'አዲስ የካምፓስ ተቋም መዝግብ' : 'Add New Campus Facility'}
+                </h3>
+              </div>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
+                className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer transition-colors"
               >
-                <X size={20} />
+                <X size={18} />
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="mt-5 space-y-4 text-xs md:text-sm">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                    {lang === 'am' ? 'የተቋሙ ስም (እንግሊዝኛ)' : 'Facility Name (English)'}
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.nameEn}
-                    onChange={(e) => setFormData({ ...formData, nameEn: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-brand-500 focus:outline-hidden"
-                    placeholder="e.g. UoG Maraki Youth Health Clinic"
-                  />
+            {/* Scrollable Form Body */}
+            <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-5 text-xs sm:text-sm">
+              {/* Card 1: Identification & Classification */}
+              <div className="p-4 rounded-2xl bg-slate-50/70 dark:bg-slate-800/40 border border-slate-200/70 dark:border-slate-800 space-y-3.5">
+                <div className="flex items-center gap-2 pb-1 border-b border-slate-200/50 dark:border-slate-700/50">
+                  <span className="w-1.5 h-1.5 rounded-full bg-brand-600" />
+                  <h4 className="font-extrabold text-slate-900 dark:text-white text-xs uppercase tracking-wider">
+                    {lang === 'am' ? '1. የተቋሙ መለያ እና ዘርፍ' : '1. Facility Identity & Classification'}
+                  </h4>
                 </div>
-                <div>
-                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                    {lang === 'am' ? 'የተቋሙ ስም (በአማርኛ)' : 'Facility Name (Amharic)'}
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.nameAm}
-                    onChange={(e) => setFormData({ ...formData, nameAm: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-brand-500 focus:outline-hidden"
-                    placeholder="ምሳሌ፡ የጎንደር ዩኒቨርሲቲ ማራኪ የወጣቶች ክሊኒክ"
-                  />
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1 text-xs">
+                      {lang === 'am' ? 'የተቋሙ ስም (እንግሊዝኛ)' : 'Facility Name (English)'}
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={formData.nameEn}
+                      onChange={(e) => setFormData({ ...formData, nameEn: e.target.value })}
+                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-brand-500 focus:outline-hidden text-xs"
+                      placeholder="e.g. UoG Maraki Student Health Center"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1 text-xs">
+                      {lang === 'am' ? 'የተቋሙ ስም (በአማርኛ)' : 'Facility Name (Amharic)'}
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={formData.nameAm}
+                      onChange={(e) => setFormData({ ...formData, nameAm: e.target.value })}
+                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-brand-500 focus:outline-hidden text-xs"
+                      placeholder="ምሳሌ፡ የጎንደር ዩኒቨርሲቲ ማራኪ የተማሪዎች ጤና ጣቢያ"
+                    />
+                  </div>
                 </div>
-              </div>
 
-              {/* Campus / Location Selector */}
-              <div className="space-y-2">
-                <label className="block font-bold text-slate-700 dark:text-slate-300">
-                  {lang === 'am' ? 'ካምፓስ ወይም የከተማ አካባቢ' : 'Campus / Regional City / Sub-City'}
-                </label>
-                <select
-                  value={isCustomLocation ? '__custom__' : formData.subCity}
-                  onChange={(e) => handleLocationPresetChange(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl focus:border-brand-500 focus:outline-hidden bg-white dark:bg-slate-800 font-medium text-slate-800 dark:text-slate-200"
-                >
-                  <optgroup label="University of Gondar Campuses" className="dark:bg-slate-800 dark:text-white">
-                    {LOCATION_PRESETS.filter((p) => p.category === 'uog').map((p) => (
-                      <option key={p.id} value={p.id}>
-                        {p.nameEn} ({p.nameAm})
-                      </option>
-                    ))}
-                  </optgroup>
-                  <optgroup label="Regional Cities & Health Hubs" className="dark:bg-slate-800 dark:text-white">
-                    {LOCATION_PRESETS.filter((p) => p.category === 'regional').map((p) => (
-                      <option key={p.id} value={p.id}>
-                        {p.nameEn} ({p.nameAm})
-                      </option>
-                    ))}
-                  </optgroup>
-                  <optgroup label="Addis Ababa Sub-Cities" className="dark:bg-slate-800 dark:text-white">
-                    {LOCATION_PRESETS.filter((p) => p.category === 'addis').map((p) => (
-                      <option key={p.id} value={p.id}>
-                        {p.nameEn} ({p.nameAm})
-                      </option>
-                    ))}
-                  </optgroup>
-                  <optgroup label="Custom Location" className="dark:bg-slate-800 dark:text-white">
-                    <option value="__custom__">
-                      {lang === 'am' ? '+ የተለየ ካምፓስ ወይም ከተማ በጽሑፍ ጻፍ...' : '+ Custom Campus / City Name...'}
-                    </option>
-                  </optgroup>
-                </select>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1 text-xs">
+                      {lang === 'am' ? 'የተቋሙ ዘርፍ' : 'Facility Category'}
+                    </label>
+                    <select
+                      value={formData.category}
+                      onChange={(e) => setFormData({ ...formData, category: e.target.value as FacilityCategory })}
+                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl focus:border-brand-500 focus:outline-hidden bg-white dark:bg-slate-800 font-semibold text-slate-800 dark:text-slate-200 text-xs"
+                    >
+                      {FACILITY_CATEGORIES.map((c) => (
+                        <option key={c.id} value={c.id}>
+                          {lang === 'am' ? c.nameAm : c.nameEn}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1 text-xs">
+                      {lang === 'am' ? 'ካምፓስ' : 'Campus Location'}
+                    </label>
+                    <select
+                      value={isCustomLocation ? '__custom__' : formData.subCity}
+                      onChange={(e) => handleLocationPresetChange(e.target.value)}
+                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl focus:border-brand-500 focus:outline-hidden bg-white dark:bg-slate-800 font-semibold text-slate-800 dark:text-slate-200 text-xs"
+                    >
+                      <optgroup label="University of Gondar Campuses" className="dark:bg-slate-800 dark:text-white">
+                        {LOCATION_PRESETS.map((p) => (
+                          <option key={p.id} value={p.id}>
+                            {p.nameEn} ({p.nameAm})
+                          </option>
+                        ))}
+                      </optgroup>
+                      <optgroup label="Custom Location" className="dark:bg-slate-800 dark:text-white">
+                        <option value="__custom__">
+                          {lang === 'am' ? '+ የተለየ ካምፓስ ወይም የሕንፃ ቦታ...' : '+ Custom Campus / Wing...'}
+                        </option>
+                      </optgroup>
+                    </select>
+                  </div>
+                </div>
 
-                {/* Conditional Custom Location Input */}
                 {isCustomLocation && (
-                  <div className="animate-in fade-in duration-150 pt-1">
+                  <div className="pt-1 animate-in fade-in duration-150">
                     <label className="block font-semibold text-slate-600 dark:text-slate-400 text-xs mb-1">
-                      {lang === 'am' ? 'የተለየ ካምፓስ ወይም ከተማ ስም ያስገቡ' : 'Enter Custom Campus or Location Name'}
+                      {lang === 'am' ? 'የተለየ ካምፓስ ወይም የሕንፃ ስም ያስገቡ' : 'Enter Custom Campus or Location Name'}
                     </label>
                     <input
                       type="text"
                       required
                       value={formData.customSubCity}
                       onChange={(e) => setFormData({ ...formData, customSubCity: e.target.value })}
-                      className="w-full px-3 py-2 border border-brand-300 dark:border-brand-700 bg-brand-50/30 dark:bg-brand-950/30 text-slate-900 dark:text-white rounded-xl focus:border-brand-500 focus:outline-hidden text-xs"
-                      placeholder="e.g. Debre Berhan Campus or Jimma Specialized Clinic"
+                      className="w-full px-3 py-2 border border-brand-300 dark:border-brand-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:border-brand-500 focus:outline-hidden text-xs"
+                      placeholder="e.g. Tseda Agriculture Block or Maraki ICT Building"
                     />
                   </div>
                 )}
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                    {lang === 'am' ? 'ክፍል / ወረዳ' : 'Branch / Ward / Woreda'}
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.woreda}
-                    onChange={(e) => setFormData({ ...formData, woreda: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-brand-500 focus:outline-hidden"
-                    placeholder="e.g. Student Health Wing"
-                  />
+              {/* Card 2: Campus Building, Landmark & Interactive Map */}
+              <div className="p-4 rounded-2xl bg-slate-50/70 dark:bg-slate-800/40 border border-slate-200/70 dark:border-slate-800 space-y-3.5">
+                <div className="flex items-center gap-2 pb-1 border-b border-slate-200/50 dark:border-slate-700/50">
+                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-500" />
+                  <h4 className="font-extrabold text-slate-900 dark:text-white text-xs uppercase tracking-wider">
+                    {lang === 'am' ? '2. በካምፓስ ውስጥ ትክክለኛ መገኛ እና ካርታ' : '2. Campus Building & Precise Location'}
+                  </h4>
                 </div>
-                <div>
-                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                    {lang === 'am' ? 'የሥራ ሰዓት' : 'Operating Hours'}
-                  </label>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1 text-xs">
+                      {lang === 'am' ? 'ህንፃ / ፎቅ / ክፍል ቁጥር' : 'Building / Floor / Room No.'}
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.buildingEn}
+                      onChange={(e) => setFormData({ ...formData, buildingEn: e.target.value, woreda: e.target.value })}
+                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-brand-500 focus:outline-hidden text-xs"
+                      placeholder="e.g. Block 14, 2nd Floor, Room 204"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1 text-xs">
+                      {lang === 'am' ? 'አቅራቢያ የሚገኝ ምልክት (Landmark)' : 'Campus Landmark / Near'}
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.landmarkEn}
+                      onChange={(e) => setFormData({ ...formData, landmarkEn: e.target.value })}
+                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-brand-500 focus:outline-hidden text-xs"
+                      placeholder="e.g. Opposite Maraki Main Library & Dining Hall"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1 text-xs">
+                      {lang === 'am' ? 'አድራሻ (እንግሊዝኛ)' : 'Physical Address (English)'}
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={formData.addressEn}
+                      onChange={(e) => setFormData({ ...formData, addressEn: e.target.value })}
+                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-brand-500 focus:outline-hidden text-xs"
+                      placeholder="Inside Maraki Campus, Student Services Wing"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1 text-xs">
+                      {lang === 'am' ? 'አድራሻ (በአማርኛ)' : 'Physical Address (Amharic)'}
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={formData.addressAm}
+                      onChange={(e) => setFormData({ ...formData, addressAm: e.target.value })}
+                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-brand-500 focus:outline-hidden text-xs"
+                      placeholder="ማራኪ ካምፓስ ውስጥ፣ የተማሪዎች አገልግሎት ዘርፍ"
+                    />
+                  </div>
+                </div>
+
+                {/* Interactive Leaflet Campus Map Picker with Street/Satellite toggle */}
+                <CampusMapPicker
+                  latitude={formData.latitude}
+                  longitude={formData.longitude}
+                  campusName={formData.subCity}
+                  defaultLat={selectedPreset?.defaultLat}
+                  defaultLng={selectedPreset?.defaultLng}
+                  onChange={(lat, lng) => setFormData({ ...formData, latitude: lat, longitude: lng })}
+                  lang={lang}
+                />
+              </div>
+
+              {/* Card 3: Operating Hours & Focal Officer Contact */}
+              <div className="p-4 rounded-2xl bg-slate-50/70 dark:bg-slate-800/40 border border-slate-200/70 dark:border-slate-800 space-y-3.5">
+                <div className="flex items-center gap-2 pb-1 border-b border-slate-200/50 dark:border-slate-700/50">
+                  <span className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
+                  <h4 className="font-extrabold text-slate-900 dark:text-white text-xs uppercase tracking-wider">
+                    {lang === 'am' ? '3. የሥራ ሰዓት እና የኃላፊው መረጃ' : '3. Hours, Contact & Focal Officer'}
+                  </h4>
+                </div>
+
+                {/* Operating Hours with 1-Click Quick Presets */}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <label className="block font-bold text-slate-700 dark:text-slate-300 text-xs">
+                      {lang === 'am' ? 'የሥራ ሰዓት' : 'Operating Hours'}
+                    </label>
+                    <div className="flex items-center gap-1 overflow-x-auto">
+                      {HOURS_PRESETS.map((hp) => (
+                        <button
+                          key={hp}
+                          type="button"
+                          onClick={() => setFormData({ ...formData, operatingHours: hp })}
+                          className={`px-2 py-0.5 rounded text-[10px] font-bold transition-colors cursor-pointer ${
+                            formData.operatingHours === hp
+                              ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900'
+                              : 'bg-white dark:bg-slate-800 text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 border border-slate-200/60 dark:border-slate-700'
+                          }`}
+                        >
+                          {hp}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                   <input
                     type="text"
                     value={formData.operatingHours}
                     onChange={(e) => setFormData({ ...formData, operatingHours: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-brand-500 focus:outline-hidden"
+                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-brand-500 focus:outline-hidden text-xs"
                     placeholder="Open 24/7 or 08:30 - 17:30"
                   />
                 </div>
-              </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                    {lang === 'am' ? 'ስልክ ቁጥር' : 'Direct Phone Contact'}
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-brand-500 focus:outline-hidden"
-                    placeholder="+251581141234"
-                  />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1 text-xs">
+                      {lang === 'am' ? 'ዋና የስልክ ቁጥር' : 'Direct Phone Contact'}
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={formData.phone}
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-brand-500 focus:outline-hidden text-xs"
+                      placeholder="+251581141234"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1 text-xs">
+                      {lang === 'am' ? 'የተቋሙ ኃላፊ / ባለሙያ ስም' : 'Focal Officer in Charge'}
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.focalPerson}
+                      onChange={(e) => setFormData({ ...formData, focalPerson: e.target.value })}
+                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-brand-500 focus:outline-hidden text-xs"
+                      placeholder="e.g. Sr. Tigist Alemayehu (Lead Nurse)"
+                    />
+                  </div>
                 </div>
-                <div>
-                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                    {lang === 'am' ? 'አገልግሎቶች (በኮማ የተለዩ)' : 'Services (#Tags separated by comma)'}
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.services.join(', ')}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        services: e.target.value.split(',').map((s) => s.trim()).filter(Boolean),
-                      })
-                    }
-                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-brand-500 focus:outline-hidden"
-                    placeholder="#Youth_Friendly, #HIV_VCT, #MentalHealth"
-                  />
-                </div>
-              </div>
 
-              {/* GPS Coordinates with Default Preset Indicator */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center justify-between">
-                    <span>{lang === 'am' ? 'GPS ኬክሮስ (Latitude)' : 'GPS Latitude'}</span>
-                    <span className="text-[10px] text-slate-400 dark:text-slate-500 font-normal">Auto-preset available</span>
-                  </label>
-                  <input
-                    type="number"
-                    step="any"
-                    required
-                    value={formData.latitude}
-                    onChange={(e) => setFormData({ ...formData, latitude: parseFloat(e.target.value) || 0 })}
-                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-brand-500 focus:outline-hidden"
-                    placeholder="12.6075"
-                  />
-                </div>
-                <div>
-                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center justify-between">
-                    <span>{lang === 'am' ? 'GPS ኬንትሮስ (Longitude)' : 'GPS Longitude'}</span>
-                    <span className="text-[10px] text-slate-400 dark:text-slate-500 font-normal">Auto-preset available</span>
-                  </label>
-                  <input
-                    type="number"
-                    step="any"
-                    required
-                    value={formData.longitude}
-                    onChange={(e) => setFormData({ ...formData, longitude: parseFloat(e.target.value) || 0 })}
-                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-brand-500 focus:outline-hidden"
-                    placeholder="37.4589"
-                  />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1 text-xs">
+                      {lang === 'am' ? 'የውስጥ መስመር / ተጨማሪ ስልክ' : 'Internal Extension / Direct Line'}
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.focalPhone}
+                      onChange={(e) => setFormData({ ...formData, focalPhone: e.target.value })}
+                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-brand-500 focus:outline-hidden text-xs"
+                      placeholder="e.g. Ext: 2145 or +251911..."
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1 text-xs">
+                      {lang === 'am' ? 'ቴሌግራም ቻናል / መገናኛ' : 'Telegram Channel / Support Handle'}
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.telegramHandle}
+                      onChange={(e) => setFormData({ ...formData, telegramHandle: e.target.value })}
+                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-brand-500 focus:outline-hidden text-xs"
+                      placeholder="e.g. @uog_maraki_clinic"
+                    />
+                  </div>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                    {lang === 'am' ? 'አድራሻ (በእንግሊዝኛ)' : 'Physical Address (English)'}
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.addressEn}
-                    onChange={(e) => setFormData({ ...formData, addressEn: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-brand-500 focus:outline-hidden"
-                    placeholder="Inside Maraki Campus, Student Services Building"
-                  />
+              {/* Card 4: Services & Accessibility Features */}
+              <div className="p-4 rounded-2xl bg-slate-50/70 dark:bg-slate-800/40 border border-slate-200/70 dark:border-slate-800 space-y-3.5">
+                <div className="flex items-center gap-2 pb-1 border-b border-slate-200/50 dark:border-slate-700/50">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                  <h4 className="font-extrabold text-slate-900 dark:text-white text-xs uppercase tracking-wider">
+                    {lang === 'am' ? '4. አገልግሎቶች እና ማካተት (Inclusivity)' : '4. Services & Accessibility Features'}
+                  </h4>
                 </div>
-                <div>
-                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
-                    {lang === 'am' ? 'አድራሻ (በአማርኛ)' : 'Physical Address (Amharic)'}
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.addressAm}
-                    onChange={(e) => setFormData({ ...formData, addressAm: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-brand-500 focus:outline-hidden"
-                    placeholder="ማራኪ ካምፓስ ውስጥ፣ የተማሪዎች አገልግሎት ሕንፃ"
-                  />
-                </div>
-              </div>
 
-              <div className="flex items-center gap-2 pt-2">
-                <input
-                  type="checkbox"
-                  id="isVerified"
-                  checked={formData.isVerified}
-                  onChange={(e) => setFormData({ ...formData, isVerified: e.target.checked })}
-                  className="rounded border-slate-300 text-brand-600 focus:ring-brand-500 cursor-pointer accent-brand-600"
+                {/* Interactive Tag Manager Component */}
+                <TagInputManager
+                  tags={formData.services}
+                  onChange={(services) => setFormData({ ...formData, services })}
+                  lang={lang}
                 />
-                <label htmlFor="isVerified" className="text-xs font-bold text-slate-700 dark:text-slate-300 cursor-pointer">
-                  {lang === 'am' ? 'የተረጋገጠ ይፋዊ የጤና ተቋም ምልክት ስጠው (Verified Badge)' : 'Mark as Officially Verified Healthcare Center'}
-                </label>
+
+                {/* Accessibility & Verification Checkboxes */}
+                <div className="pt-2 space-y-2 border-t border-slate-200/50 dark:border-slate-700/50">
+                  <label className="flex items-center gap-2 text-xs font-semibold text-slate-700 dark:text-slate-300 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={formData.isWheelchairAccessible}
+                      onChange={(e) => setFormData({ ...formData, isWheelchairAccessible: e.target.checked })}
+                      className="rounded border-slate-300 text-brand-600 focus:ring-brand-500 cursor-pointer"
+                    />
+                    <span>♿ {lang === 'am' ? 'ለአካል ጉዳተኞች ምቹ የሆነ መግቢያ / መወጣጫ አለው (Wheelchair Accessible)' : 'Wheelchair & Ground Floor Accessible'}</span>
+                  </label>
+
+                  <label className="flex items-center gap-2 text-xs font-semibold text-slate-700 dark:text-slate-300 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={formData.hasPrivateRoom}
+                      onChange={(e) => setFormData({ ...formData, hasPrivateRoom: e.target.checked })}
+                      className="rounded border-slate-300 text-brand-600 focus:ring-brand-500 cursor-pointer"
+                    />
+                    <span>🔒 {lang === 'am' ? 'ሚስጥራዊ የምክር መስጫ ክፍል አለው (Private Consultation Room)' : 'Confidential / Private Consultation Room Available'}</span>
+                  </label>
+
+                  <label className="flex items-center gap-2 text-xs font-semibold text-slate-700 dark:text-slate-300 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={formData.isVerified}
+                      onChange={(e) => setFormData({ ...formData, isVerified: e.target.checked })}
+                      className="rounded border-slate-300 text-brand-600 focus:ring-brand-500 cursor-pointer"
+                    />
+                    <span>⭐ {lang === 'am' ? 'የተረጋገጠ ይፋዊ የካምፓስ ተቋም ምልክት ስጠው (Verified Badge)' : 'Mark as Officially Verified Campus Facility'}</span>
+                  </label>
+                </div>
               </div>
 
-              <div className="pt-4 flex items-center justify-end gap-3 border-t border-slate-100 dark:border-slate-800">
+              {/* Pinned Modal Action Footer */}
+              <div className="pt-2 flex items-center justify-end gap-3 shrink-0">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                  className="px-4 py-2 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer text-xs"
                 >
                   {lang === 'am' ? 'ሰርዝ' : 'Cancel'}
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl shadow-md shadow-brand-600/20 transition-all cursor-pointer"
+                  className="px-5 py-2 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl shadow-md shadow-brand-600/20 transition-all cursor-pointer text-xs"
                 >
                   {lang === 'am' ? 'ተቋሙን መዝግብ' : 'Save Facility'}
                 </button>
@@ -870,6 +1061,7 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
           </div>
         </div>
       )}
+
       {/* Delete Confirmation Modal */}
       <ConfirmModal
         isOpen={Boolean(facilityToDelete)}
@@ -879,12 +1071,12 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
             await onDelete(facilityToDelete.id);
           }
         }}
-        title={lang === 'am' ? 'የጤና ተቋሙ ይሰረዝ?' : 'Delete Healthcare Facility?'}
+        title={lang === 'am' ? 'ተቋሙ ይሰረዝ?' : 'Delete Campus Facility?'}
         itemName={facilityToDelete ? (lang === 'am' ? facilityToDelete.nameAm || facilityToDelete.nameEn : facilityToDelete.nameEn) : ''}
         message={
           lang === 'am'
             ? 'ይህ እርምጃ የተቋሙን መረጃ፣ የአገልግሎት ዝርዝርና የመገኛ ካርታ ከመዝገቡ በቋሚነት ያጠፋል።'
-            : 'This will permanently remove the clinic, its operating hours, and location from the youth healthcare network.'
+            : 'This will permanently remove the facility, its operating hours, and location from the campus directory.'
         }
         lang={lang}
       />

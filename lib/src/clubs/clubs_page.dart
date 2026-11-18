@@ -641,17 +641,48 @@ class _ClubsPageState extends State<ClubsPage> {
                                                   fontWeight: FontWeight.w800,
                                                 ),
                                               ),
-                                              onPressed: () =>
+                                              onPressed: () async {
+                                                if (!isJoined) {
+                                                  final success =
+                                                      await widget.controller
+                                                          .joinClub(
+                                                    club.id,
+                                                    widget.userId,
+                                                    userEmail: widget.userEmail,
+                                                    userName: widget.userName,
+                                                  );
+                                                  if (success && context.mounted) {
+                                                    ScaffoldMessenger.of(context)
+                                                        .showSnackBar(
+                                                      SnackBar(
+                                                        behavior:
+                                                            SnackBarBehavior
+                                                                .floating,
+                                                        content: Text(
+                                                          isAmharic
+                                                              ? 'እንኳን ወደ $title በደህና መጡ! አባል ሆነዋል።'
+                                                              : 'Welcome to $title! You are now an active member.',
+                                                        ),
+                                                        backgroundColor:
+                                                            const Color(
+                                                                0xFF10B981),
+                                                      ),
+                                                    );
+                                                  }
+                                                } else {
                                                   ClubDetailSheet.show(
-                                                context,
-                                                club: club,
-                                                controller: widget.controller,
-                                                userId: widget.userId,
-                                                userEmail: widget.userEmail,
-                                                userName: widget.userName,
-                                                notificationController: widget
-                                                    .notificationController,
-                                              ),
+                                                    context,
+                                                    club: club,
+                                                    controller:
+                                                        widget.controller,
+                                                    userId: widget.userId,
+                                                    userEmail: widget.userEmail,
+                                                    userName: widget.userName,
+                                                    notificationController: widget
+                                                        .notificationController,
+                                                  );
+                                                }
+                                              },
                                             ),
                                           ],
                                         ),

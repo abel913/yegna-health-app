@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import {
   Users,
   Hospital,
+  Building2,
   Users2,
   BookOpen,
   CheckCircle2,
@@ -10,7 +11,6 @@ import {
   Download,
   TrendingUp,
   BarChart2,
-  Compass,
   GraduationCap,
 } from 'lucide-react';
 import {
@@ -76,21 +76,37 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
   const verifiedFacilitiesCount =
     facilities.filter((f) => f.isVerified).length || metrics?.verifiedFacilities || facilities.length;
 
-  const { addisClinics, gondarClinics, otherClinics } = useMemo(() => {
-    let addis = 0;
-    let gondar = 0;
+  const { marakiFacilities, tewodrosFacilities, gcmsFacilities, fasilFacilities, tsedaFacilities, otherCampusFacilities } = useMemo(() => {
+    let maraki = 0;
+    let tewodros = 0;
+    let gcms = 0;
+    let fasil = 0;
+    let tseda = 0;
     let other = 0;
     facilities.forEach((f) => {
       const sc = (f.subCity || '').toLowerCase();
-      if (sc.includes('gondar') || sc.includes('uog') || sc.includes('maraki') || sc.includes('gcms')) {
-        gondar++;
-      } else if (['arada', 'kirkos', 'bole', 'lideta', 'addis'].some((k) => sc.includes(k))) {
-        addis++;
+      if (sc.includes('maraki')) {
+        maraki++;
+      } else if (sc.includes('tewodros')) {
+        tewodros++;
+      } else if (sc.includes('gcms') || sc.includes('hospital') || sc.includes('cmhs')) {
+        gcms++;
+      } else if (sc.includes('fasil')) {
+        fasil++;
+      } else if (sc.includes('tseda')) {
+        tseda++;
       } else {
         other++;
       }
     });
-    return { addisClinics: addis, gondarClinics: gondar, otherClinics: other };
+    return {
+      marakiFacilities: maraki,
+      tewodrosFacilities: tewodros,
+      gcmsFacilities: gcms,
+      fasilFacilities: fasil,
+      tsedaFacilities: tseda,
+      otherCampusFacilities: other,
+    };
   }, [facilities]);
 
   // Mentor Counts
@@ -265,10 +281,10 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
         details: 'Confidential end-to-end zero-knowledge student accounts',
       },
       {
-        category: 'Clinical Network',
-        item: 'Verified Healthcare Centers',
+        category: 'Campus Facilities',
+        item: 'Verified Campus Facilities',
         value: verifiedFacilitiesCount,
-        details: `${addisClinics} Addis Ababa Centers, ${gondarClinics} Gondar Campuses`,
+        details: `${marakiFacilities} Maraki, ${gcmsFacilities} GCMS Hospital, ${tewodrosFacilities} Atse Tewodros`,
       },
       {
         category: 'Counseling Network',
@@ -380,20 +396,20 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
         >
           <div className="flex items-center justify-between mb-3">
             <div className="w-10 h-10 rounded-xl bg-cyan-50 dark:bg-cyan-950/40 text-cyan-600 dark:text-cyan-400 flex items-center justify-center group-hover:scale-105 transition-transform">
-              <Hospital size={20} />
+              <Building2 size={20} />
             </div>
             <span className="text-[11px] font-semibold text-brand-600 dark:text-cyan-400 bg-brand-50 dark:bg-brand-950/40 px-2 py-0.5 rounded-full border border-brand-100 dark:border-cyan-800/60">
-              {lang === 'am' ? 'ጎንደርና አዲስ አበባ' : 'Gondar & Addis'}
+              {lang === 'am' ? 'የጎንደር ዩኒቨርሲቲ' : 'University of Gondar'}
             </span>
           </div>
           <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-            {lang === 'am' ? 'የተረጋገጡ ክሊኒኮች' : 'Verified Clinics'}
+            {lang === 'am' ? 'የተረጋገጡ ተቋማት' : 'Verified Facilities'}
           </p>
           <h3 className="text-2xl font-extrabold text-slate-900 dark:text-white mt-0.5">
             {verifiedFacilitiesCount}
           </h3>
           <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 truncate">
-            {addisClinics} Addis Ababa • {gondarClinics} Gondar Campuses
+            {lang === 'am' ? 'በሁሉም የጎንደር ዩኒቨርሲቲ ካምፓሶች' : 'Across all UoG Campuses'}
           </p>
         </div>
 
@@ -463,7 +479,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
                 <p className="text-xs text-slate-500 dark:text-slate-400">
                   {lang === 'am'
                     ? 'ትክክለኛ የተማሪዎች ምዝገባ እና የአስተዳደር ቁጥጥር እንቅስቃሴዎች'
-                    : 'Actual user signups and audit activities logged in SQLite database'}
+                    : 'Actual user signups and audit activities logged in Supabase PostgreSQL database'}
                 </p>
               </div>
 
@@ -622,7 +638,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
                   <span>{lang === 'am' ? 'የተረጋገጡ የጤና ተቋማት' : 'Verified Clinics'}</span>
                 </h3>
                 <p className="text-xs text-slate-500 dark:text-slate-400">
-                  {lang === 'am' ? 'የጎንደር ዩኒቨርሲቲና የከተማ ማዕከላት' : 'University campuses & regional centers'}
+                  {lang === 'am' ? 'የጎንደር ዩኒቨርሲቲ ካምፓሶች' : 'University of Gondar Campuses'}
                 </p>
               </div>
               <button
@@ -662,7 +678,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
           </div>
 
           <div className="pt-2.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mt-2">
-            <span>{facilities.length} {lang === 'am' ? 'ተቋማት በሲስተሙ አሉ' : 'clinics active'}</span>
+            <span>{facilities.length} {lang === 'am' ? 'ተቋማት በሲስተሙ አሉ' : 'facilities active'}</span>
             <span
               className="text-brand-600 dark:text-cyan-400 font-semibold cursor-pointer hover:underline"
               onClick={() => onNavigate('facilities')}
@@ -686,7 +702,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
                 <span>{lang === 'am' ? 'የትምህርት ሞጁሎች ዝርዝር' : 'Curriculum Modules Inventory'}</span>
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                {lang === 'am' ? 'በሲስተሙ የተመዘገቡ የጤና ትምህርቶች' : 'Actual published health modules from SQLite database'}
+                {lang === 'am' ? 'በሲስተሙ የተመዘገቡ የጤና ትምህርቶች' : 'Actual published health modules from Supabase PostgreSQL database'}
               </p>
             </div>
             <span className="text-xs font-semibold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full border border-slate-200/60 dark:border-slate-700">
@@ -726,16 +742,16 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
           </div>
         </div>
 
-        {/* Card B: Real Regional & Campus Geographic Distribution */}
+        {/* Card B: Real UoG Campus Geographic Distribution */}
         <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xs">
           <div className="flex items-center justify-between mb-3">
             <div>
               <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-                <Compass size={16} className="text-brand-600 dark:text-cyan-400" />
-                <span>{lang === 'am' ? 'የጤና ተቋማት ክልላዊ ስርጭት' : 'Clinic Geographic Distribution'}</span>
+                <Building2 size={16} className="text-brand-600 dark:text-cyan-400" />
+                <span>{lang === 'am' ? 'የጎንደር ዩኒቨርሲቲ ካምፓሶች የተቋማት ስርጭት' : 'UoG Campus Facility Distribution'}</span>
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                {lang === 'am' ? 'በከተማና ካምፓስ የተከፋፈሉ ተቋማት' : 'Actual facility distribution calculated from clinic records'}
+                {lang === 'am' ? 'በጎንደር ዩኒቨርሲቲ ካምፓሶች የተመዘገቡ ተቋማት' : 'Verified facilities categorized across University of Gondar campuses'}
               </p>
             </div>
             <span className="text-xs font-semibold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full border border-slate-200/60 dark:border-slate-700">
@@ -746,29 +762,45 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
           <div className="space-y-3">
             {[
               {
-                nameEn: 'Addis Ababa Sub-Cities (Arada, Kirkos, Bole, Lideta)',
-                nameAm: 'አዲስ አበባ ክፍለ ከተሞች (አራዳ፣ ቂርቆስ፣ ቦሌ፣ ልደታ)',
-                count: addisClinics,
-                pct: facilities.length > 0 ? Math.round((addisClinics / facilities.length) * 100) : 0,
+                nameEn: 'UoG - Maraki Campus',
+                nameAm: 'ዩኦጂ ማራኪ ካምፓስ',
+                count: marakiFacilities,
+                pct: facilities.length > 0 ? Math.round((marakiFacilities / facilities.length) * 100) : 0,
+                icon: GraduationCap,
+                color: 'bg-indigo-600',
+              },
+              {
+                nameEn: 'UoG - Atse Tewodros Campus',
+                nameAm: 'ዩኦጂ አፄ ቴዎድሮስ ካምፓስ',
+                count: tewodrosFacilities,
+                pct: facilities.length > 0 ? Math.round((tewodrosFacilities / facilities.length) * 100) : 0,
+                icon: GraduationCap,
+                color: 'bg-cyan-600',
+              },
+              {
+                nameEn: 'UoG - GCMS Referral Hospital / CMHS',
+                nameAm: 'ዩኦጂ ሪፈራል ሆስፒታል / CMHS',
+                count: gcmsFacilities,
+                pct: facilities.length > 0 ? Math.round((gcmsFacilities / facilities.length) * 100) : 0,
                 icon: Hospital,
                 color: 'bg-brand-600',
               },
               {
-                nameEn: 'University of Gondar (Maraki Campus & GCMS Hospital)',
-                nameAm: 'ጎንደር ዩኒቨርሲቲ (ማራኪና ሪፈራል ሆስፒታል)',
-                count: gondarClinics,
-                pct: facilities.length > 0 ? Math.round((gondarClinics / facilities.length) * 100) : 0,
+                nameEn: 'UoG - Fasil Campus',
+                nameAm: 'ዩኦጂ ፋሲል ካምፓስ',
+                count: fasilFacilities,
+                pct: facilities.length > 0 ? Math.round((fasilFacilities / facilities.length) * 100) : 0,
                 icon: GraduationCap,
-                color: 'bg-indigo-600',
+                color: 'bg-purple-600',
               },
-              ...(otherClinics > 0
+              ...(tsedaFacilities > 0 || otherCampusFacilities > 0
                 ? [
                     {
-                      nameEn: 'Regional Partner Centers',
-                      nameAm: 'የክልል አጋር ማዕከላት',
-                      count: otherClinics,
-                      pct: Math.round((otherClinics / facilities.length) * 100),
-                      icon: Compass,
+                      nameEn: tsedaFacilities > 0 ? 'UoG - Tseda Campus' : 'Other UoG Facilities',
+                      nameAm: tsedaFacilities > 0 ? 'ዩኦጂ ጼዳ ካምፓስ' : 'ሌሎች የዩኦጂ ተቋማት',
+                      count: tsedaFacilities + otherCampusFacilities,
+                      pct: Math.round(((tsedaFacilities + otherCampusFacilities) / facilities.length) * 100),
+                      icon: Building2,
                       color: 'bg-emerald-600',
                     },
                   ]
@@ -857,7 +889,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
                 <span>{lang === 'am' ? 'የቅርብ የአስተዳዳሪ እርምጃዎች' : 'Recent Audit Activity'}</span>
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                {lang === 'am' ? 'የተመዘገቡ የለውጥ እንቅስቃሴዎች' : 'Immutable administrative audit stream from SQLite'}
+                {lang === 'am' ? 'የተመዘገቡ የለውጥ እንቅስቃሴዎች' : 'Immutable administrative audit stream from Supabase PostgreSQL'}
               </p>
             </div>
             <button
