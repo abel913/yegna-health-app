@@ -8,6 +8,33 @@
 - Local verification passed: PostgreSQL Prisma Client generation, server build, Worker type check, admin build, and Wrangler dry run. No migration or database/schema change was made.
 - Phase 3 remains partial; Phase 4 has not started.
 
+## Advanced Glassmorphic UI for Student Clubs & Club Cards (2026-11-18)
+
+**Status: Completed & 100% Verified.**
+- **Dedicated Modular `ClubCard` Widget (`lib/src/clubs/club_card.dart`)**:
+  - Implemented with `ClipRRect(borderRadius: BorderRadius.circular(22))` and `BackdropFilter(filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20))`.
+  - Styled with multi-stop linear specular gradient and dual-depth box shadow (ambient drop + specular highlight).
+  - Features 50×50 px category avatar pods with category-tailored gradients (SRH Wellness, Mental Health, First Aid, Anti-Substance, Girls' Hygiene, Peer Leadership) with an active pulse status dot.
+  - Symmetrical action dock:
+    - Frosted `Details` / `ዝርዝር` preview button.
+    - Reactive `Join` (`ተቀላቀል`) / `Joined ✓` (`ተቀላቅለዋል`) action button.
+    - Quick Mentor contact launch icon (Phone or Telegram).
+- **Ambient Glass Mesh for `ClubsPage` (`lib/src/clubs/clubs_page.dart`)**:
+  - Integrated signature ambient radial gradient mesh with glowing chromatic orbs (Cyan, Sky, Indigo, Teal) and floating frosted sheen spheres.
+  - Interactive frosted search bar with 18px blur and clear action.
+  - Frosted segmented control (`Explore All` vs `My Clubs`).
+  - Horizontal frosted category filter bar with glowing selected states.
+  - Glowing glass empty state pod with contextual Amharic and English copy.
+- **Glassmorphic `ClubDetailSheet` (`lib/src/clubs/club_detail_sheet.dart`)**:
+  - 24px blur backdrop modal container with rounded top (`Radius.circular(32)`).
+  - Frosted cards for Meeting Schedule, Venue/Location, Assigned Faculty Mentor (with Call & Telegram launch buttons), and Community Guidelines.
+  - Capacity utilization progress indicator.
+  - Full-width Join / Leave action with confirmation and floating snackbar feedback.
+- **Verification**:
+  - `flutter analyze`: **0 issues found** (clean in 13.0s).
+  - `flutter test test/club_ui_test.dart test/club_controller_test.dart test/admin_clubs_ui_test.dart`: **16/16 passed (100%)**.
+  - Full test suite: `flutter test`: **215/215 passed (100%)**.
+
 ## GitHub Actions Android Release APK Build Pipeline (2026-11-18)
 
 **Status: Completed & 100% Passing (Run #41).**

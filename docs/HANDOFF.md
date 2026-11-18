@@ -1,5 +1,16 @@
 # Handoff notes
 
+## Advanced Glassmorphic Student Clubs UI (2026-11-18)
+
+- **Components**:
+  - `lib/src/clubs/club_card.dart` — Dedicated modular glassmorphic club card with 20px blur, category gradient avatar pod, schedule/venue badge, capacity progress bar, and action dock (`Details`, `Join`/`Joined`, quick contact).
+  - `lib/src/clubs/clubs_page.dart` — Ambient gradient canvas with floating glowing orbs, frosted glass search bar, frosted segmented switch (`Explore All` vs `My Clubs`), and horizontal category filter chips.
+  - `lib/src/clubs/club_detail_sheet.dart` — 24px blur backdrop modal sheet with frosted cards for schedule, location, mentor communication, and community guidelines.
+  - `lib/src/clubs/club_models.dart` — Added `ClubCategoryPresentation` extension for category colors, gradients, icons, and bilingual labels.
+- **Verification**:
+  - `flutter analyze` — 0 issues found.
+  - `flutter test` — 215/215 tests passed (100%).
+
 ## GitHub Actions Android Release APK Pipeline (2026-11-18)
 
 - **Workflow**: `.github/workflows/build_apk.yml`
