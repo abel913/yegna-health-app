@@ -36,9 +36,12 @@ function requiredEnvironmentVariable(name: string, minimumLength = 1): string {
 }
 
 function createPrismaClient(connectionString: string): PrismaClient {
-  return new PrismaClient({
-    adapter: new PrismaPg({ connectionString }),
-  });
+  if (connectionString.startsWith('postgres:') || connectionString.startsWith('postgresql:')) {
+    return new PrismaClient({
+      adapter: new PrismaPg({ connectionString }),
+    });
+  }
+  return new PrismaClient();
 }
 
 function getNodePrismaClient(): PrismaClient {
@@ -69,23 +72,24 @@ export function createRequestPrisma(connectionString: string): PrismaClient {
 }
 
 export function validateNodeConfiguration(): void {
-  const jwtSecret = requiredEnvironmentVariable('JWT_SECRET', 32);
-  if (jwtSecret === 'yegna_health_jwt_secret_key_2026_super_secure') {
-    throw new Error('JWT_SECRET must not use the published development fallback.');
-  }
-  if (jwtSecret.startsWith('GENERATE_')) {
-    throw new Error('Replace the JWT_SECRET placeholder with a unique random secret.');
-  }
+  const isProduction = environmentValue('NODE_ENV') === 'production';
+  if (isProduction) {
+    const jwtSecret = requiredEnvironmentVariable('JWT_SECRET', 32);
+    if (jwtSecret === 'yegna_health_jwt_secret_key_2026_super_secure') {
+      throw new Error('JWT_SECRET must not use the published development fallback.');
+    }
+    if (jwtSecret.startsWith('GENERATE_')) {
+      throw new Error('Replace the JWT_SECRET placeholder with a unique random secret.');
+    }
 
-  requiredEnvironmentVariable('DATABASE_URL');
-  requiredEnvironmentVariable('DIRECT_URL');
+    requiredEnvironmentVariable('DATABASE_URL');
+    requiredEnvironmentVariable('DIRECT_URL');
 
-  const adminWebOrigin = requiredEnvironmentVariable('ADMIN_WEB_ORIGIN');
-  if (environmentValue('NODE_ENV') === 'production' && !/^https:\/\//i.test(adminWebOrigin)) {
-    throw new Error('ADMIN_WEB_ORIGIN must be an HTTPS origin in production.');
-  }
+    const adminWebOrigin = requiredEnvironmentVariable('ADMIN_WEB_ORIGIN');
+    if (!/^https:\/\//i.test(adminWebOrigin)) {
+      throw new Error('ADMIN_WEB_ORIGIN must be an HTTPS origin in production.');
+    }
 
-  if (environmentValue('NODE_ENV') === 'production') {
     requiredEnvironmentVariable('SMTP_USER');
     requiredEnvironmentVariable('SMTP_PASS');
     if (!environmentValue('SMTP_HOST') && !environmentValue('SMTP_SERVICE')) {
@@ -93,6 +97,10 @@ export function validateNodeConfiguration(): void {
     }
     requiredEnvironmentVariable('CLIENT_APP_URL');
     requiredEnvironmentVariable('BACKEND_PUBLIC_URL');
+  } else {
+    if (!environmentValue('DATABASE_URL')) {
+      process.env.DATABASE_URL = 'file:./dev.db';
+    }
   }
 }
 
@@ -105,15 +113,16 @@ export const config = new Proxy({} as RuntimeConfig, {
   get(_target, property) {
     switch (property) {
       case 'adminWebOrigin':
-        return requiredEnvironmentVariable('ADMIN_WEB_ORIGIN');
+        return environmentValue('ADMIN_WEB_ORIGIN') || 'http://localhost:5174';
       case 'backendPublicUrl':
         return environmentValue('BACKEND_PUBLIC_URL') || 'http://localhost:5000';
       case 'clientAppUrl':
         return environmentValue('CLIENT_APP_URL') || 'http://localhost:8080';
       case 'jwtSecret': {
-        const secret = requiredEnvironmentVariable('JWT_SECRET', 32);
-        if (secret === 'yegna_health_jwt_secret_key_2026_super_secure' || secret.startsWith('GENERATE_')) {
-          throw new Error('JWT_SECRET must be a unique, randomly generated secret.');
+        const secret = environmentValue('JWT_SECRET') || 'yegna_health_jwt_secret_key_2026_super_secure';
+        const isProduction = environmentValue('NODE_ENV') === 'production';
+        if (isProduction && (secret === 'yegna_health_jwt_secret_key_2026_super_secure' || secret.startsWith('GENERATE_'))) {
+          throw new Error('JWT_SECRET must be a unique, randomly generated secret in production.');
         }
         return secret;
       }
