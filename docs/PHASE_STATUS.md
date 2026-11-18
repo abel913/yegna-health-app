@@ -1,5 +1,85 @@
 # Phase status
 
+## Codebase Modularization: Task 5 Discovery Domain (Facilities & Mentors) Completed (2026-11-19)
+
+**Status: Completed & 100% Verified (<200 LOC per file, 0 issues, 197/197 tests passing).**
+- **Refactoring Scope**:
+  - Decomposed monolithic discovery code (facilities & mentors) into high-cohesion, low-coupling modules under `lib/src/discovery/facilities/` and `lib/src/discovery/mentors/`.
+  - **Facilities Extracted (24 modular files, all < 190 LOC)**:
+    - Models: `facility.dart`, `facility_enums.dart`, `facility_extensions.dart`, `facilities_view_mode.dart`.
+    - Repositories: `facility_repository.dart`, `local_verified_facility_repository.dart`, `dynamic_facility_repository.dart`, `uog_central_facilities_data.dart`, `uog_satellite_facilities_data.dart`.
+    - Screens: `facilities_page.dart`, `facilities_page_flow_mixin.dart`, `facilities_location_helper.dart`.
+    - Widgets: `facilities_ambient_backdrop.dart`, `facilities_search_bar.dart`, `facilities_filter_bar.dart`, `facilities_category_chip.dart`, `facilities_mode_toggle_button.dart`, `facilities_empty_views.dart`, `facility_card.dart`, `facility_card_action_bar.dart`, `facility_card_header.dart`, `facility_category_icon_pod.dart`, `facility_detail_sheet.dart`, `facility_detail_hero_header.dart`, `facility_focal_person_card.dart`, `facility_location_card.dart`, `facility_glass_card.dart`, `facility_map_view.dart`, `map_controls_column.dart`, `map_facility_pin.dart`, `map_facility_preview_card.dart`, `map_user_location_marker.dart`, etc.
+  - **Mentors Extracted (24 modular files, all < 190 LOC)**:
+    - Models: `mentor.dart`, `mentor_topic.dart`, `day_availability.dart`, `next_opening_info.dart`, `uog_campus_model.dart`, `mentor_schedule_extensions.dart`, `mentor_time_utils.dart`.
+    - Repositories: `mentor_repository.dart`, `local_verified_mentor_repository.dart`, `dynamic_mentor_repository.dart`, `sync_mentor_repository.dart`, `verified_mentors_data.dart`.
+    - Screens: `mentors_page.dart`, `mentors_page_flow_mixin.dart`.
+    - Widgets: `mentor_avatar_pod.dart`, `mentor_card_header.dart`, `mentor_status_row.dart`, `mentor_card_action_dock.dart`, `mentor_dock_button.dart`, `mentor_card.dart`, `mentor_launcher_helper.dart`, `mentor_detail_header.dart`, `mentor_metrics_bar.dart`, `mentor_contact_channel_row.dart`, `mentor_voice_contact_channel_row.dart`, `mentor_direct_contacts_card.dart`, `mentor_contacts_header.dart`, `mentor_schedule_action_pill.dart`, `mentor_confidentiality_badge.dart`, `mentor_detail_cards.dart`, `mentor_languages_card.dart`, `mentor_detail_sheet.dart`, `mentor_schedule_header.dart`, `mentor_live_status_banner.dart`, `mentor_day_schedule_row.dart`, `mentor_schedule_matrix.dart`, `mentor_schedule_action_row.dart`, `mentor_schedule_sheet.dart`, `mentors_ambient_backdrop.dart`, `mentors_search_bar.dart`, `campus_dropdown_dialog.dart`, `campus_dropdown_header.dart`, `campus_dropdown_item.dart`, `mentors_filter_bar.dart`, `mentors_campus_trigger.dart`, `mentors_clear_filter_button.dart`, `mentors_no_results_view.dart`, `mentors_unconfigured_view.dart`, `mentors_empty_views.dart`.
+  - Re-export barrels created at root of `lib/src/discovery/` ensuring 100% backward compatibility for all existing imports.
+- **Verification**:
+  - LOC audit: 0 files $\ge$ 200 LOC in `lib/src/discovery/` (max file is 189 lines).
+  - Static Analysis: `flutter analyze` reported 0 issues found.
+  - Unit/Widget Tests: All 20 tests in `test/facilities_test.dart` and `test/mentors_test.dart` passed.
+  - Full Test Suite: All 197 tests passed (`flutter test`).
+  - Git: Committed locally (`a5674e1`). Zero remote pushes.
+
+
+## Admin Portal Browser URL Routing & History Navigation (2026-11-19)
+
+**Status: Completed & 100% Verified.**
+- **User Request**:
+  1. Direct reload or page refresh on any admin screen must stay on that screen instead of reverting back to the Dashboard (e.g. reloading on `/facilities` stays on Facilities).
+  2. The browser address bar must show the canonical URL matching the current screen (`/facilities`, `/mentors`, `/modules`, `/quizzes`, `/assessments`, `/assessments/questions`, `/assessments/modules`, `/clubs`, `/users`, `/audit`, `/reports`).
+  3. Browser Back and Forward buttons must navigate between previously viewed tabs smoothly without full page reloads or exiting the portal.
+- **Implementation**:
+  - `admin-web/src/utils/navigation.ts`:
+    - `parseCurrentRoute(pathname)`: Pathname parser with fallback to `dashboard`.
+    - `formatRouteUrl(tab, subTab)`: Canonical URL formatter.
+    - `getRouteTitle(tab, subTab, lang)`: Document title generator with English/Amharic support.
+  - `admin-web/src/App.tsx`:
+    - Initial state parsed from `window.location.pathname`.
+    - Unified `handleNavigate(id, sub, replace)` pushing to `window.history.pushState` / `replaceState` and updating `document.title`.
+    - Global `popstate` event listener syncing `currentTab` and `activeSubTab` seamlessly when Back/Forward is clicked.
+    - Added `replaceState` sync on mount to ensure clean canonical URLs.
+  - `admin-web/src/components/layout/AdminLayout.tsx`:
+    - Converted sidebar navigation links and mobile drawer links to semantic `<a>` tags with `href={formatRouteUrl(...)}` and click interception (`e.preventDefault()`).
+    - Preserved instant client-side switching, keyboard shortcuts (`Cmd/Ctrl+K`), and quick action buttons.
+- **Verification**:
+  - Cloudflare SPA routing verified in `admin-web/wrangler.jsonc` (`not_found_handling: "single-page-application"`).
+  - TypeScript build (`npm --prefix admin-web run build`): Completed with 0 errors.
+
+## Admin Portal Executive Monochrome (Black & White) Redesign (2026-11-18)
+
+**Status: Completed & 100% Verified.**
+- **User Request**: Complete elimination of bright blue texts and blue buttons across the admin portal in favor of a modern, professional Black & White executive aesthetic (Linear / Vercel style).
+- **Design System Overhaul**:
+  - `tailwind.config.js`: Remapped `colors.brand` to obsidian / slate scales.
+  - `index.css`: Added `.btn-primary` and `.btn-secondary` black/white component styles.
+  - Primary buttons: Pitch black (`bg-slate-950 text-white border border-slate-900 hover:bg-slate-800 shadow-xs`) in light mode; pure white (`dark:bg-white dark:text-slate-950 dark:border-white dark:hover:bg-slate-100 shadow-xs`) in dark mode.
+  - Secondary buttons & filters: Clean neutral slate borders (`border-slate-200 dark:border-slate-800`).
+  - Active tabs & pills: Solid black badge in light mode, pure white in dark mode.
+  - Input focus rings: Neutral focus outlines (`focus:border-slate-900 dark:focus:border-white`).
+  - Semantic safety colors preserved: Emerald (Verified/Active), Amber (Pending), Rose (Delete/Destructive).
+- **Pages & Components Updated**:
+  - `AdminLayout.tsx`: Quick Action button, active badges, command trigger, avatar pods.
+  - `FacilitiesPage.tsx`: Header buttons, campus filter pills, modal form inputs, checkboxes, save buttons.
+  - `ClubsPage.tsx`: Header buttons, status filter pills, roster modal, modal inputs, save buttons.
+  - `MentorsPage.tsx`: Header buttons, status filters, weekly schedule matrix, modal form inputs, save buttons.
+  - `LearningCmsPage.tsx`: Header buttons, studio tabs, markdown toolbar, simulator mode switcher, save buttons.
+  - `QuizzesPage.tsx`: Header buttons, format pills, player preview, form modal, submit button.
+  - `AssessmentsPage.tsx`: Sub-nav switcher, create question button, chart gradients, response table.
+  - `LearningAssessmentsPage.tsx`: Module selector, inputs focus, save assessment button.
+  - `DashboardPage.tsx`: Top KPI cards, SVG timeline chart, verified clinics preview, campus distribution bars.
+  - `UsersPage.tsx`: Add user button, table checkboxes, modal inputs, update password buttons.
+  - `AuditLogsPage.tsx`: KPI cards, filter search, category tabs, event inspection icon.
+  - `GovernmentReportsPage.tsx`: Export CSV button, change password button, summary card icons.
+  - `LoginPage.tsx`: Background glow, text links, form inputs, sign in button.
+  - Shared components: `EmptyState.tsx`, `CampusMapPicker.tsx` (Leaflet custom SVG marker converted to black/white), `DateRangePicker.tsx`, `SortableHeader.tsx`, `SystemHealthIndicator.tsx`, `CommandPalette.tsx`, `ToastContext.tsx`.
+- **Verification**:
+  - Global token audit: `Select-String -Path 'admin-web/src/**/*.tsx', 'admin-web/src/**/*.ts' -Pattern 'brand-|cyan-|blue-|sky-'` returned 0 matches.
+  - `npm --prefix admin-web run build`: 0 TypeScript errors, successfully built SSR Worker and Vite client bundle.
+  - `npm --prefix server run worker:check`: 0 errors.
+
 ## Cloudflare Admin Portal Edit/Delete & Hyperdrive Cache Resolution (2026-11-18)
 
 **Status: Completed & 100% Verified.**

@@ -1,5 +1,61 @@
 # Handoff notes
 
+## Codebase Modularization: Task 5 Discovery Domain (Facilities & Mentors) Completed (2026-11-19)
+
+- **Context & Request**: Modularize the Discovery Domain (`facilities` and `mentors`) into small, high-cohesion, low-coupling files under 200 lines of code (< 200 LOC) following Senior Developer Modular Architecture, with 0 analyze issues, 100% test pass rate, and zero remote pushes.
+- **Completed Changes**:
+  - Modularized Facilities into `lib/src/discovery/facilities/`:
+    - `models/`: `facility.dart`, `facility_enums.dart`, `facility_extensions.dart`, `facilities_view_mode.dart`.
+    - `repositories/`: `facility_repository.dart`, `local_verified_facility_repository.dart`, `dynamic_facility_repository.dart`, `uog_central_facilities_data.dart`, `uog_satellite_facilities_data.dart`.
+    - `screens/`: `facilities_page.dart`, `facilities_page_flow_mixin.dart`, `facilities_location_helper.dart`.
+    - `widgets/`: 18 focused widget files for cards, headers, detail sheet, map view, pins, preview cards.
+  - Modularized Mentors into `lib/src/discovery/mentors/`:
+    - `models/`: `mentor.dart`, `mentor_topic.dart`, `day_availability.dart`, `next_opening_info.dart`, `uog_campus_model.dart`, `mentor_schedule_extensions.dart`, `mentor_time_utils.dart`.
+    - `repositories/`: `mentor_repository.dart`, `local_verified_mentor_repository.dart`, `dynamic_mentor_repository.dart`, `sync_mentor_repository.dart`, `verified_mentors_data.dart`.
+    - `screens/`: `mentors_page.dart`, `mentors_page_flow_mixin.dart`.
+    - `widgets/`: 23 focused widget files for cards, avatar pods, headers, status rows, action dock, schedule sheet, matrices, day rows, dropdown dialogs, triggers, and empty views.
+  - Re-export barrels created at root of `lib/src/discovery/` for seamless backward compatibility.
+- **Verification**:
+  - `flutter analyze`: 0 issues found.
+  - `flutter test`: 197/197 passing tests (100%).
+  - LOC audit: 0 files $\ge$ 200 LOC in `lib/src/discovery/` (longest file is 189 lines).
+  - Git: Committed locally as `a5674e1`. Zero remote pushes.
+
+
+## Admin Portal Browser URL Routing & History Navigation (2026-11-19)
+
+- **Context & Request**:
+  1. The user reported that refreshing the admin page reverted to the Dashboard instead of remaining on the active screen.
+  2. The browser URL bar did not display the screen route (e.g. `/facilities`, `/mentors`, etc.).
+  3. Browser Back and Forward buttons exited the portal instead of stepping back through previously viewed tabs.
+- **Completed Changes**:
+  - Implemented lightweight native HTML5 History routing in `admin-web/src/utils/navigation.ts` with canonical URL path mapping and document title formatting.
+  - In `admin-web/src/App.tsx`, initialized tab state from `window.location.pathname`, added `handleNavigate` updating `window.history.pushState` / `replaceState`, and registered a `popstate` event listener for seamless browser Back/Forward navigation.
+  - In `admin-web/src/components/layout/AdminLayout.tsx`, transformed desktop and mobile sidebar navigation links into semantic `<a>` tags with valid `href` attributes, retaining client-side navigation.
+  - Verified Cloudflare Pages / Workers SPA routing compatibility via `admin-web/wrangler.jsonc` (`not_found_handling: "single-page-application"`).
+- **Verification**:
+  - `npm --prefix admin-web run build`: 0 TypeScript errors; builds both SSR Worker bundle and client Vite bundle cleanly.
+  - `npm --prefix server run worker:check`: 0 errors.
+  - `npm --prefix server test`: 7/7 tests passed.
+
+## Admin Portal Executive Monochrome (Black & White) Redesign (2026-11-18)
+
+- **Context & Request**: The user requested eliminating all blue text and blue buttons across the admin portal in favor of an executive, professional black-and-white look with monochrome buttons.
+- **Completed Changes**:
+  - Remapped Tailwind `brand` color palette to slate/obsidian scale.
+  - Replaced all non-essential bright cyan, brand blue, and sky blue styling across all 10+ admin pages and shared components.
+  - Primary buttons are now pitch black in light mode (`bg-slate-950 text-white border border-slate-900 hover:bg-slate-800`) and pure white in dark mode (`dark:bg-white dark:text-slate-950 dark:border-white dark:hover:bg-slate-100`).
+  - Secondary buttons and filter pills use neutral slate borders.
+  - Active navigation badges and tabs use solid monochrome badges.
+  - Form input focus outlines use neutral slate and white rings (`focus:border-slate-900 dark:focus:border-white`).
+  - Text links and headers upgraded to bold slate-900 / white with underline on hover.
+  - Leaflet custom map marker updated from bright blue to obsidian black with white border.
+  - Preserved semantic safety colors: Emerald for verified/active, Amber for pending, Rose for delete/destructive actions.
+- **Verification**:
+  - Global scan across all `.tsx` and `.ts` files in `admin-web/src` confirmed 0 remaining occurrences of `brand-`, `cyan-`, `blue-`, or `sky-`.
+  - `npm --prefix admin-web run build` completed cleanly with 0 TypeScript errors.
+  - `npm --prefix server run worker:check` completed with 0 errors.
+
 ## Cloudflare Admin Portal Edit/Delete & Hyperdrive Cache Resolution (2026-11-18)
 
 - **Context & Issue**: Edits and deletes in the deployed admin portal were reported as failing or not persisting to the database.
