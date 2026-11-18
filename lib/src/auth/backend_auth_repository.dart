@@ -4,27 +4,28 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../sync/api_client.dart';
 import 'auth_models.dart';
 import 'auth_repository.dart';
+import 'backend_auth_error_mapper.dart';
+import 'backend_auth_session_store.dart';
 
 /// Production authentication repository connecting directly to the custom
-/// Node.js + Prisma backend server with offline session persistence and
-/// instant suspension enforcement.
+/// Node.js + Prisma backend server with offline session persistence.
 class BackendAuthRepository implements AuthRepository {
   BackendAuthRepository({
     required ApiClient apiClient,
     required SharedPreferences preferences,
   })  : _apiClient = apiClient,
-        _preferences = preferences,
+        _session = BackendAuthSessionStore(preferences),
         _changes = StreamController<AuthSnapshot>.broadcast();
 
-  static const String keyToken = 'backend_auth_token';
-  static const String keyUserId = 'backend_auth_user_id';
-  static const String keyEmail = 'backend_auth_email';
-  static const String keyDisplayName = 'backend_auth_display_name';
-  static const String keyRole = 'backend_auth_role';
-  static const String keySurveyCompleted = 'backend_auth_survey_completed';
+  static const String keyToken = BackendAuthSessionStore.keyToken;
+  static const String keyUserId = BackendAuthSessionStore.keyUserId;
+  static const String keyEmail = BackendAuthSessionStore.keyEmail;
+  static const String keyDisplayName = BackendAuthSessionStore.keyDisplayName;
+  static const String keyRole = BackendAuthSessionStore.keyRole;
+  static const String keySurveyCompleted = BackendAuthSessionStore.keySurveyCompleted;
 
   final ApiClient _apiClient;
-  final SharedPreferences _preferences;
+  final BackendAuthSessionStore _session;
   final StreamController<AuthSnapshot> _changes;
 
   AuthSnapshot _snapshot = const AuthSnapshot();
@@ -38,60 +39,32 @@ class BackendAuthRepository implements AuthRepository {
   @override
   Stream<AuthSnapshot> get authChanges => _changes.stream;
 
-  /// Loads the cached session from local storage for instant offline access,
-  /// then asynchronously validates the token and suspension status with the backend.
   Future<void> init() async {
-    final token = _preferences.getString(keyToken);
-    final userId = _preferences.getString(keyUserId);
-    final email = _preferences.getString(keyEmail);
-    final displayName = _preferences.getString(keyDisplayName) ?? '';
-    final role = _preferences.getString(keyRole) ?? 'STUDENT';
-    final surveyCompleted = _preferences.getBool(keySurveyCompleted) ?? false;
-
-    if (token != null && token.isNotEmpty && userId != null && email != null) {
-      _snapshot = AuthSnapshot(
-        user: AuthUser(
-          id: userId,
-          email: email,
-          displayName: displayName,
-          role: role,
-          emailVerified: true,
-          hasCompletedSurvey: surveyCompleted,
-        ),
-      );
+    final cachedUser = _session.loadUser();
+    if (cachedUser != null) {
+      _snapshot = AuthSnapshot(user: cachedUser);
       _changes.add(_snapshot);
 
-      // Verify token and check for real-time suspension against backend
-      unawaited(_verifySession(token));
+      final token = _session.token;
+      if (token != null) unawaited(_verifySession(token));
     }
   }
 
   Future<void> _verifySession(String token) async {
     final res = await _apiClient.getCurrentUser(token);
     if (!res.success) {
-      if (res.errorCode == 'ACCOUNT_SUSPENDED' || res.statusCode == 403) {
-        // Account has been suspended by community safety! Clear session immediately.
+      if (res.errorCode == 'ACCOUNT_SUSPENDED' || res.statusCode == 403 || res.statusCode == 401) {
         await signOut();
-        return;
       }
-      if (res.statusCode == 401) {
-        // Token invalidated or expired.
-        await signOut();
-        return;
-      }
-      // Offline / network timeout: retain local offline cached session.
       return;
     }
 
-    // Refresh profile attributes if updated remotely
     final user = res.user;
     if (user != null) {
       final updatedName = user['displayName'] as String? ?? '';
       final updatedRole = user['role'] as String? ?? 'STUDENT';
       final updatedSurvey = user['hasCompletedSurvey'] as bool? ?? false;
-      await _preferences.setString(keyDisplayName, updatedName);
-      await _preferences.setString(keyRole, updatedRole);
-      await _preferences.setBool(keySurveyCompleted, updatedSurvey);
+      await _session.updateProfile(displayName: updatedName, role: updatedRole, surveyCompleted: updatedSurvey);
 
       final current = _snapshot.user;
       if (current != null) {
@@ -116,177 +89,52 @@ class BackendAuthRepository implements AuthRepository {
     required String password,
     required String displayName,
   }) async {
-    final res = await _apiClient.register(
-      email: email,
-      password: password,
-      displayName: displayName,
-    );
-
+    final res = await _apiClient.register(email: email, password: password, displayName: displayName);
     if (res.success) {
       if (res.token != null && res.user != null) {
-        final token = res.token!;
-        final user = res.user!;
-        final id = user['id'] as String;
-        final userEmail = user['email'] as String;
-        final name = (user['displayName'] as String?) ?? displayName;
-        final role = (user['role'] as String?) ?? 'STUDENT';
-        final surveyCompleted = user['hasCompletedSurvey'] as bool? ?? false;
-
-        await _preferences.setString(keyToken, token);
-        await _preferences.setString(keyUserId, id);
-        await _preferences.setString(keyEmail, userEmail);
-        await _preferences.setString(keyDisplayName, name);
-        await _preferences.setString(keyRole, role);
-        await _preferences.setBool(keySurveyCompleted, surveyCompleted);
-
-        _snapshot = AuthSnapshot(
-          user: AuthUser(
-            id: id,
-            email: userEmail,
-            displayName: name,
-            role: role,
-            emailVerified: true,
-            hasCompletedSurvey: surveyCompleted,
-          ),
-        );
+        final user = await _session.saveUserFromMap(res.token!, res.user!, fallbackName: displayName);
+        _snapshot = AuthSnapshot(user: user);
         _changes.add(_snapshot);
         return RegistrationOutcome.signedIn;
       }
-
-      // Verification email has been dispatched; student must verify before sign-in
       return RegistrationOutcome.verificationPending;
     }
-
-    if (res.errorCode == 'EMAIL_EXISTS' || res.statusCode == 409) {
-      throw const AuthFailure(AuthIssue.emailAlreadyInUse);
-    }
-    if (res.errorCode == 'NETWORK_ERROR') {
-      throw const AuthFailure(AuthIssue.networkUnavailable);
-    }
-    throw const AuthFailure(AuthIssue.registrationFailed);
+    throw mapBackendAuthError(res);
   }
 
   @override
-  Future<void> signIn({
-    required String email,
-    required String password,
-  }) async {
-    final res = await _apiClient.login(
-      email: email,
-      password: password,
-    );
-
+  Future<void> signIn({required String email, required String password}) async {
+    final res = await _apiClient.login(email: email, password: password);
     if (res.success && res.token != null && res.user != null) {
-      final token = res.token!;
-      final user = res.user!;
-      final id = user['id'] as String;
-      final userEmail = user['email'] as String;
-      final name = (user['displayName'] as String?) ?? '';
-      final role = (user['role'] as String?) ?? 'STUDENT';
-      final surveyCompleted = user['hasCompletedSurvey'] as bool? ?? false;
-
-      await _preferences.setString(keyToken, token);
-      await _preferences.setString(keyUserId, id);
-      await _preferences.setString(keyEmail, userEmail);
-      await _preferences.setString(keyDisplayName, name);
-      await _preferences.setString(keyRole, role);
-      await _preferences.setBool(keySurveyCompleted, surveyCompleted);
-
-      _snapshot = AuthSnapshot(
-        user: AuthUser(
-          id: id,
-          email: userEmail,
-          displayName: name,
-          role: role,
-          emailVerified: true,
-          hasCompletedSurvey: surveyCompleted,
-        ),
-      );
+      final user = await _session.saveUserFromMap(res.token!, res.user!);
+      _snapshot = AuthSnapshot(user: user);
       _changes.add(_snapshot);
       return;
     }
-
-    if (res.errorCode == 'ACCOUNT_SUSPENDED') {
-      throw const AuthFailure(AuthIssue.accountSuspended);
-    }
-    if (res.errorCode == 'EMAIL_NOT_CONFIRMED') {
-      throw const AuthFailure(AuthIssue.emailNotConfirmed);
-    }
-    if (res.errorCode == 'INVALID_CREDENTIALS' || res.statusCode == 401) {
-      throw const AuthFailure(AuthIssue.invalidCredentials);
-    }
-    if (res.statusCode == 403) {
-      throw const AuthFailure(AuthIssue.accountSuspended);
-    }
-    if (res.errorCode == 'NETWORK_ERROR') {
-      throw const AuthFailure(AuthIssue.networkUnavailable);
-    }
-    throw const AuthFailure(AuthIssue.unexpected);
+    throw mapBackendAuthError(res);
   }
 
   @override
-  Future<void> verifyEmailCode({
-    required String email,
-    required String code,
-  }) async {
-    final res = await _apiClient.verifyEmailCode(
-      email: email,
-      code: code,
-    );
-
+  Future<void> verifyEmailCode({required String email, required String code}) async {
+    final res = await _apiClient.verifyEmailCode(email: email, code: code);
     if (res.success && res.token != null && res.user != null) {
-      final token = res.token!;
-      final user = res.user!;
-      final id = user['id'] as String;
-      final userEmail = user['email'] as String;
-      final name = (user['displayName'] as String?) ?? '';
-      final role = (user['role'] as String?) ?? 'STUDENT';
-      final surveyCompleted = user['hasCompletedSurvey'] as bool? ?? false;
-
-      await _preferences.setString(keyToken, token);
-      await _preferences.setString(keyUserId, id);
-      await _preferences.setString(keyEmail, userEmail);
-      await _preferences.setString(keyDisplayName, name);
-      await _preferences.setString(keyRole, role);
-      await _preferences.setBool(keySurveyCompleted, surveyCompleted);
-
-      _snapshot = AuthSnapshot(
-        user: AuthUser(
-          id: id,
-          email: userEmail,
-          displayName: name,
-          role: role,
-          emailVerified: true,
-          hasCompletedSurvey: surveyCompleted,
-        ),
-      );
+      final user = await _session.saveUserFromMap(res.token!, res.user!);
+      _snapshot = AuthSnapshot(user: user);
       _changes.add(_snapshot);
       return;
     }
-
-    if (res.errorCode == 'INVALID_CODE' || res.statusCode == 400) {
-      throw const AuthFailure(AuthIssue.invalidVerificationCode);
-    }
-    if (res.errorCode == 'NETWORK_ERROR') {
-      throw const AuthFailure(AuthIssue.networkUnavailable);
-    }
-    throw const AuthFailure(AuthIssue.verificationFailed);
+    throw mapBackendAuthError(res);
   }
 
   @override
   Future<void> resendVerification(String email) async {
     final res = await _apiClient.resendVerification(email: email);
-    if (!res.success) {
-      if (res.errorCode == 'NETWORK_ERROR') {
-        throw const AuthFailure(AuthIssue.networkUnavailable);
-      }
-      throw const AuthFailure(AuthIssue.unexpected);
-    }
+    if (!res.success) throw mapBackendAuthError(res);
   }
 
   @override
   Future<void> deleteAccount() async {
-    final token = _preferences.getString(keyToken);
+    final token = _session.token;
     if (token != null && token.isNotEmpty) {
       await _apiClient.deleteAccount(token: token);
     }
@@ -294,48 +142,28 @@ class BackendAuthRepository implements AuthRepository {
   }
 
   @override
-  Future<void> sendPasswordRecovery(String email) async {
-    // In the independent self-hosted deployment, password resets are governed
-    // by authorized staff in the Desktop Web Admin Portal.
-    return;
-  }
+  Future<void> sendPasswordRecovery(String email) async {}
 
   @override
   Future<void> updatePassword(String password) async {
-    final token = _preferences.getString(keyToken);
+    final token = _session.token;
     if (token == null || token.isEmpty) {
       throw const AuthFailure(AuthIssue.sessionUnavailable);
     }
-
-    final res = await _apiClient.updatePassword(
-      token: token,
-      newPassword: password,
-    );
-
-    if (!res.success) {
-      if (res.errorCode == 'NETWORK_ERROR') {
-        throw const AuthFailure(AuthIssue.networkUnavailable);
-      }
-      throw const AuthFailure(AuthIssue.unexpected);
-    }
+    final res = await _apiClient.updatePassword(token: token, newPassword: password);
+    if (!res.success) throw mapBackendAuthError(res);
   }
 
   @override
   Future<void> updateDisplayName(String displayName) async {
-    final token = _preferences.getString(keyToken);
+    final token = _session.token;
     if (token == null || token.isEmpty) {
       throw const AuthFailure(AuthIssue.sessionUnavailable);
     }
-
-    final res = await _apiClient.updateProfile(
-      token: token,
-      displayName: displayName,
-    );
-
+    final res = await _apiClient.updateProfile(token: token, displayName: displayName);
     if (res.success && res.user != null) {
       final updatedName = (res.user!['displayName'] as String?) ?? displayName;
-      await _preferences.setString(keyDisplayName, updatedName);
-
+      await _session.updateProfile(displayName: updatedName);
       final current = _snapshot.user;
       if (current != null) {
         _snapshot = AuthSnapshot(
@@ -351,22 +179,12 @@ class BackendAuthRepository implements AuthRepository {
       }
       return;
     }
-
-    if (res.errorCode == 'NETWORK_ERROR') {
-      throw const AuthFailure(AuthIssue.networkUnavailable);
-    }
-    throw const AuthFailure(AuthIssue.unexpected);
+    throw mapBackendAuthError(res);
   }
 
   @override
   Future<void> signOut() async {
-    await _preferences.remove(keyToken);
-    await _preferences.remove(keyUserId);
-    await _preferences.remove(keyEmail);
-    await _preferences.remove(keyDisplayName);
-    await _preferences.remove(keyRole);
-    await _preferences.remove(keySurveyCompleted);
-
+    await _session.clearSession();
     _snapshot = const AuthSnapshot(user: null);
     _changes.add(_snapshot);
   }
