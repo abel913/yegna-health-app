@@ -22,13 +22,13 @@ The Worker runtime required fixes for Express response completion, Morgan loggin
 - Test a valid admin login and authorized assessment/module CRUD in a browser. These were not tested because no admin credentials were provided. Browser visual and console checks were also not performed.
 - The database password was exposed in chat; rotate it in Supabase and update the Hyperdrive credential through Cloudflare securely, then confirm the health endpoint remains connected. No password was written to project files.
 - Treat this as a development deployment. Production readiness, security audit, and end-to-end admin operation are not established.
-- The first GitHub Actions-triggered deployment is not yet verified. Phase 3 remains partial; Phase 4 has not started.
+- The first GitHub Actions run built and validated successfully but its deploy step failed because the API token secret contained line breaks. The workflow was updated to strip whitespace from the token in memory; the retry is pending. Phase 3 remains partial; Phase 4 has not started.
 
 ## GitHub Actions deployment workflow
 
 `.github/workflows/deploy_admin_portal.yml` is configured to deploy `yegna-health-admin-portal` after pushes to `main`, and can also be run manually. It installs both server and admin dependencies, generates Prisma Client, type-checks/builds the server Worker, builds the admin SPA, validates the Worker bundle with Wrangler dry run, then deploys with `--keep-vars` to preserve Cloudflare dashboard variables. Repository secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` are configured; values stay out of source control.
 
-The latest GitHub source was used for local build verification, preserving its newer CMS changes. The first GitHub Actions deployment still needs to run and pass before automatic deployment is considered verified. Vite emitted a non-blocking large-chunk warning. No migrations or database writes are part of this workflow.
+The workflow commit is on `main`. The initial run passed all build and dry-run steps, then failed in `wrangler deploy` because the API token secret contained newlines. The workflow now strips whitespace from the token in memory and will rerun on the next push. Automatic deployment is not yet verified. Vite emitted a non-blocking large-chunk warning. No migrations or database writes are part of this workflow.
 ## Health Curriculum CMS Professional Template System & Mobile Screen Preservation (2026-11-16)
 
 - **Admin Web CMS Clinical Template System**:

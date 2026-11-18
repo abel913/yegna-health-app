@@ -41,7 +41,7 @@ These checks confirm basic deployment, routing, Hyperdrive connectivity, and rej
 - `npm run build` in `admin-web` — PASS; latest GitHub source built, with a non-blocking Vite chunk warning (700.79 kB minified JS).
 - `node node_modules/wrangler/bin/wrangler.js deploy --config dist/yegna_health_admin_portal/wrangler.json --dry-run --keep-vars` in `admin-web` — PASS; Worker bundle 4.16 MB total, Hyperdrive binding and 16 static assets detected; no remote deployment performed by this dry run.
 - GitHub repository secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` — present by name; secret values were not read or exposed.
-- GitHub Actions deployment execution — pending the workflow commit reaching `main`; not yet claimed as passing.
+- GitHub Actions run `44255338865` — build, Worker type check, SPA build, and Wrangler dry-run passed; deploy failed because the API token secret had line breaks, which Wrangler rejected as an invalid HTTP header. A whitespace-normalization fix is now in the workflow; retry pending.
 # Final Phase 3 verification (2026-10-31)
 
 ## Flutter commands
