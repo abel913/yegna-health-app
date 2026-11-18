@@ -29,61 +29,46 @@ export async function loadGovernmentReportSnapshot(
   now = new Date(),
 ): Promise<GovernmentReportSnapshot> {
   const trendStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - 11, 1));
-  const [
-    registeredStudents,
-    registeredMentors,
-    mentorProfiles,
-    facilities,
-    verifiedFacilities,
-    clubs,
-    approvedClubs,
-    learningModules,
-    publishedModules,
-    quizQuestions,
-    moduleAssessments,
-    assessmentQuestions,
-    trendUsers,
-  ] = await Promise.all([
-    source.user.count({ where: { role: 'STUDENT' } }),
-    source.user.count({ where: { role: 'MENTOR' } }),
-    source.mentor.count(),
-    source.facility.count(),
-    source.facility.count({ where: { isVerified: true } }),
-    source.studentClub.count(),
-    source.studentClub.count({ where: { isApproved: true } }),
-    source.module.count(),
-    source.module.count({ where: { isPublished: true } }),
-    source.quizQuestion.count(),
-    source.learningAssessment.count(),
-    source.learningAssessmentQuestion.count(),
-    source.user.findMany({
-      where: {
-        role: { in: ['STUDENT', 'MENTOR'] },
-        createdAt: { gte: trendStart },
-      },
-      select: { role: true, createdAt: true },
-    }),
-  ]);
+  const [snapshot] = await source.$queryRaw<GovernmentReportSnapshot[]>`
+    WITH monthly_registrations AS (
+      SELECT
+        to_char(date_trunc('month', "createdAt"), 'YYYY-MM') AS month,
+        count(*) FILTER (WHERE role = 'STUDENT')::int AS students,
+        count(*) FILTER (WHERE role = 'MENTOR')::int AS mentors
+      FROM yegna."User"
+      WHERE role IN ('STUDENT', 'MENTOR') AND "createdAt" >= ${trendStart}
+      GROUP BY date_trunc('month', "createdAt")
+    )
+    SELECT
+      (SELECT count(*)::int FROM yegna."User" WHERE role = 'STUDENT') AS "registeredStudents",
+      (SELECT count(*)::int FROM yegna."User" WHERE role = 'MENTOR') AS "registeredMentors",
+      (SELECT count(*)::int FROM yegna."Mentor") AS "mentorProfiles",
+      (SELECT count(*)::int FROM yegna."Facility") AS facilities,
+      (SELECT count(*)::int FROM yegna."Facility" WHERE "isVerified" = true) AS "verifiedFacilities",
+      (SELECT count(*)::int FROM yegna."StudentClub") AS clubs,
+      (SELECT count(*)::int FROM yegna."StudentClub" WHERE "isApproved" = true) AS "approvedClubs",
+      (SELECT count(*)::int FROM yegna."Module") AS "learningModules",
+      (SELECT count(*)::int FROM yegna."Module" WHERE "isPublished" = true) AS "publishedModules",
+      (SELECT count(*)::int FROM yegna."QuizQuestion") AS "quizQuestions",
+      (SELECT count(*)::int FROM yegna."LearningAssessment") AS "moduleAssessments",
+      (SELECT count(*)::int FROM yegna."LearningAssessmentQuestion") AS "assessmentQuestions",
+      coalesce(
+        (SELECT json_agg(json_build_object('month', month, 'students', students, 'mentors', mentors) ORDER BY month)
+         FROM monthly_registrations),
+        '[]'::json
+      ) AS "registrationTrend"
+  `;
+
+  if (!snapshot) throw new Error('Government report aggregate returned no row.');
 
   return {
-    registeredStudents,
-    registeredMentors,
-    mentorProfiles,
-    facilities,
-    verifiedFacilities,
-    clubs,
-    approvedClubs,
-    learningModules,
-    publishedModules,
-    quizQuestions,
-    moduleAssessments,
-    assessmentQuestions,
-    registrationTrend: buildRegistrationTrend(trendUsers, now),
+    ...snapshot,
+    registrationTrend: buildRegistrationTrend(snapshot.registrationTrend, now),
   };
 }
 
 export function buildRegistrationTrend(
-  users: Array<{ role: string; createdAt: Date }>,
+  monthlyTotals: Array<{ month: string; students: number; mentors: number }>,
   now = new Date(),
 ): GovernmentReportPoint[] {
   const points: GovernmentReportPoint[] = [];
@@ -97,11 +82,11 @@ export function buildRegistrationTrend(
   }
 
   const pointByMonth = new Map(points.map((point) => [point.month, point]));
-  for (const user of users) {
-    const point = pointByMonth.get(user.createdAt.toISOString().slice(0, 7));
+  for (const total of monthlyTotals) {
+    const point = pointByMonth.get(total.month);
     if (!point) continue;
-    if (user.role === 'STUDENT') point.students += 1;
-    if (user.role === 'MENTOR') point.mentors += 1;
+    point.students = total.students;
+    point.mentors = total.mentors;
   }
 
   return points;
@@ -111,7 +96,15 @@ export async function getGovernmentReports(_req: AuthRequest, res: Response) {
   try {
     const report = await loadGovernmentReportSnapshot();
     return res.json({ report });
-  } catch {
+  } catch (error) {
+    const errorCode = typeof error === 'object' && error !== null && 'code' in error
+      ? (error as { code?: unknown }).code
+      : undefined;
+    console.error(JSON.stringify({
+      event: 'government_report_load_failed',
+      errorName: error instanceof Error ? error.name : 'UnknownError',
+      errorCode: typeof errorCode === 'string' ? errorCode : undefined,
+    }));
     return res.status(500).json({ error: 'Failed to load government reports.' });
   }
 }

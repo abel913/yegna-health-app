@@ -1,5 +1,16 @@
 # Testing strategy and results
 
+## Government report loading fix (2026-11-18)
+
+- `npx.cmd prisma generate --schema=prisma/schema.postgresql.prisma` (from `server`) — PASS.
+- `npm test` (from `server`) — PASS, 7/7, including the authorized report endpoint after password change and role isolation.
+- `npm run worker:check` (from `server`) — PASS.
+- `npm run build` (from `server`) — PASS.
+- `npm run build` (from `admin-web`) — PASS; existing dependency annotation and large-chunk warnings only.
+- `npx.cmd wrangler deploy --config dist\yegna_health_admin_portal\wrangler.json --dry-run` (from `admin-web`) — PASS; Hyperdrive binding present.
+- Supabase `db query --remote --read-only` — PASS; the one-statement aggregate SQL returned expected counts and grouped monthly totals. No database writes were made.
+- Live `GET /api/health` — PASS; database connected. Live authenticated government report fetch and CSV download were not replayed because credentials/session tokens were not accessed. The screenshot's original API status and exception were unavailable, so only the defensive query fan-out reduction is verified locally; confirm the authenticated report UI after deployment.
+
 ## Government viewer implementation checks (2026-11-18)
 
 | Exact command/action | Result |

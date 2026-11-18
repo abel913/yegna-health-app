@@ -6,10 +6,8 @@ import { prisma } from '../config/index.js';
 test('government registration trend exposes monthly counts without user attributes', () => {
   const now = new Date('2026-11-18T12:00:00.000Z');
   const trend = buildRegistrationTrend([
-    { role: 'STUDENT', createdAt: new Date('2026-11-04T10:00:00.000Z') },
-    { role: 'MENTOR', createdAt: new Date('2026-11-08T10:00:00.000Z') },
-    { role: 'ADMIN', createdAt: new Date('2026-11-10T10:00:00.000Z') },
-    { role: 'STUDENT', createdAt: new Date('2025-01-10T10:00:00.000Z') },
+    { month: '2026-11', students: 1, mentors: 1 },
+    { month: '2025-01', students: 1, mentors: 0 },
   ], now);
 
   assert.equal(trend.length, 12);
@@ -20,17 +18,21 @@ test('government registration trend exposes monthly counts without user attribut
 
 test('government report snapshot contains only approved aggregate metrics', async () => {
   const source = {
-    user: {
-      count: async ({ where }: { where?: { role?: string } }) => where?.role === 'STUDENT' ? 41 : 8,
-      findMany: async () => [{ role: 'STUDENT', createdAt: new Date('2026-11-07T12:00:00.000Z') }],
-    },
-    mentor: { count: async (_args?: object) => 6 },
-    facility: { count: async (args?: { where?: { isVerified?: boolean } }) => args?.where?.isVerified ? 5 : 7 },
-    studentClub: { count: async (args?: { where?: { isApproved?: boolean } }) => args?.where?.isApproved ? 3 : 4 },
-    module: { count: async (args?: { where?: { isPublished?: boolean } }) => args?.where?.isPublished ? 5 : 8 },
-    quizQuestion: { count: async (_args?: object) => 14 },
-    learningAssessment: { count: async (_args?: object) => 8 },
-    learningAssessmentQuestion: { count: async (_args?: object) => 23 },
+    $queryRaw: async () => [{
+      registeredStudents: 41,
+      registeredMentors: 8,
+      mentorProfiles: 6,
+      facilities: 7,
+      verifiedFacilities: 5,
+      clubs: 4,
+      approvedClubs: 3,
+      learningModules: 8,
+      publishedModules: 5,
+      quizQuestions: 14,
+      moduleAssessments: 8,
+      assessmentQuestions: 23,
+      registrationTrend: [{ month: '2026-11', students: 1, mentors: 0 }],
+    }],
   } as unknown as typeof prisma;
 
   const report = await loadGovernmentReportSnapshot(source, new Date('2026-11-18T12:00:00.000Z'));

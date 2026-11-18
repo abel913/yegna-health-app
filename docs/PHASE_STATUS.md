@@ -1,5 +1,13 @@
 # Phase status
 
+## Government reports runtime fix (2026-11-18)
+
+- Investigated the live report-loading failure after government sign-in. The linked Supabase database contains all eight report tables, and a read-only execution of the replacement aggregate SQL returned the expected count/trend payload. Cloudflare Hyperdrive targets the expected Supabase project host and database; `/api/health` reports connected.
+- Replaced 12 concurrent Prisma count queries plus an individual user-row trend fetch with one parameterized SQL statement returning aggregate totals and monthly buckets only. Added safe structured error logging (error name/code only), without logging request data or credentials.
+- Server checks: PostgreSQL Prisma generation, 7/7 server tests, Worker type check, and server TypeScript build passed. Admin portal build and Wrangler dry run passed; existing non-blocking Rollup annotation/chunk-size warnings remain.
+- The original live report failure did not expose its HTTP status or server exception, so its exact runtime trigger could not be proven. A valid signed-in government report request was not replayed from the browser session. See `TESTING.md` for deployment verification status.
+- Read-only database inspection found two active government-viewer account rows with similar email spellings. No credentials were read or changed. A password was visible in the supplied screenshot and should be treated as compromised and reset by an administrator.
+
 ## Student Club Management, Membership Sync & Guest Gating (2026-11-18)
 
 **Status: Completed & 100% Verified.**
@@ -34,7 +42,7 @@
 - Local checks passed: PostgreSQL Prisma generation and schema validation, server build, Worker type check, 7 server tests, and admin portal build. The admin build emitted dependency annotation and bundle-size warnings; no build errors.
 - Pushed commit `31e16ae` to `main`; Admin Portal workflow run #12 (`44355811892`) completed successfully and deployed automatically.
 - Live verification passed: portal `GET /` HTTP 200 and deployed JavaScript bundle includes Government Viewer/password-change UI; `/api/health` HTTP 200 with database connected; unauthenticated `/api/government/reports` and `/api/admin/users` both return HTTP 401.
-- **Account status:** no government account has been provisioned and no valid government login/report/CSV flow has been tested. An existing administrator must create a dedicated account for `geverment@gmail.com` with a fresh temporary password entered privately; the password previously shared in chat is not reused. The user must replace the temporary password at first sign-in.
+- **Account status:** government accounts have since been provisioned by an administrator. Read-only inspection confirmed the account records' roles and status flags; the owner reports the government user reached the reports view. The screenshot shows report loading fails. Authenticated live report and CSV completion remain unverified until rechecked after deployment.
 - Phase 3 remains partial; Phase 4 has not started.
 
 ## Complete Removal of Mobile In-App Admin Portal (Centralized to Web Admin) (2026-11-18)

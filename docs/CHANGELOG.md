@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-11-18 — Government report aggregation reliability
+
+- Replaced the government report endpoint's multi-query fan-out and per-user trend fetch with one parameterized aggregate-only SQL statement.
+- Added safe backend error-code logging for report failures; no row data or credentials are logged.
+- PostgreSQL aggregate SQL, 7 backend tests, server/Worker checks, admin build, and Wrangler dry run passed. The authenticated live report flow still needs a browser recheck after deployment.
+
 ## 2026-11-18 — Government view-only admin portal
 
 - Added an admin-provisioned `GOVERNMENT_VIEWER` role with a reports-only bilingual dashboard and aggregate CSV export.

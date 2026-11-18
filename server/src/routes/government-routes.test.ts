@@ -17,6 +17,21 @@ function token(role: string, mustChangePassword = false): string {
 
 function createFakePrisma(accounts: Map<string, Record<string, unknown>>) {
   return {
+    $queryRaw: async () => [{
+      registeredStudents: 9,
+      registeredMentors: 2,
+      mentorProfiles: 3,
+      facilities: 5,
+      verifiedFacilities: 4,
+      clubs: 7,
+      approvedClubs: 6,
+      learningModules: 10,
+      publishedModules: 8,
+      quizQuestions: 11,
+      moduleAssessments: 12,
+      assessmentQuestions: 13,
+      registrationTrend: [{ month: '2026-11', students: 1, mentors: 0 }],
+    }],
     user: {
       findUnique: async ({ where }: { where: { id?: string; email?: string } }) => {
         return [...accounts.values()].find((account) =>
@@ -30,16 +45,7 @@ function createFakePrisma(accounts: Map<string, Record<string, unknown>>) {
         Object.assign(account, data);
         return account;
       },
-      count: async ({ where }: { where?: { role?: string } }) => where?.role === 'STUDENT' ? 9 : 2,
-      findMany: async () => [{ role: 'STUDENT', createdAt: new Date('2026-11-07T12:00:00.000Z') }],
     },
-    mentor: { count: async (_args?: object) => 3 },
-    facility: { count: async (args?: { where?: { isVerified?: boolean } }) => args?.where?.isVerified ? 4 : 5 },
-    studentClub: { count: async (args?: { where?: { isApproved?: boolean } }) => args?.where?.isApproved ? 6 : 7 },
-    module: { count: async (args?: { where?: { isPublished?: boolean } }) => args?.where?.isPublished ? 8 : 10 },
-    quizQuestion: { count: async (_args?: object) => 11 },
-    learningAssessment: { count: async (_args?: object) => 12 },
-    learningAssessmentQuestion: { count: async (_args?: object) => 13 },
   };
 }
 

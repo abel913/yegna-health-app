@@ -1,5 +1,13 @@
 # Handoff notes
 
+## Government report loading fix (2026-11-18)
+
+- Replaced the report endpoint's concurrent per-table count calls and individual-row trend fetch with one parameterized PostgreSQL aggregate query. The exact statement was exercised against the linked database using Supabase CLI read-only mode and returned aggregate counts plus monthly totals.
+- Added structured failure logging limited to error name/code. No credential, report row, or password hash is logged.
+- Server tests: 7/7 passed; Prisma generation, server build, Worker type check, admin portal build, and Wrangler dry run passed. Vite retains non-blocking dependency annotation and bundle-size warnings.
+- The supplied screenshot showed the report-load error but not the authenticated request's HTTP status or server exception. Confirm the signed-in report view after the new deployment. No government credential or browser token was used for verification.
+- Read-only database inspection shows two similarly spelled government-viewer accounts. Have an administrator confirm which email is intended and reset the screenshot-exposed password through User Management, sharing a new temporary password privately.
+
 ## Student Club Management, Membership Sync & Guest Gating (2026-11-18)
 
 - **Context & Goal**: Complete end-to-end student club moderation and membership tracking:
@@ -32,8 +40,7 @@
 - Implemented the aggregate-only `GOVERNMENT_VIEWER` role, dedicated report UI/CSV, backend role checks, forced temporary-password change, admin provisioning controls, and safe login response parsing. See `PHASE_STATUS.md` for security boundaries and command results.
 - Supabase CLI is linked to `oflkhtjskpsedsuczfkj`. The additive password-change migration was applied and its column verified. This project is identified as production by Supabase; no rows were created or modified.
 - Admin Portal workflow run #12 (`44355811892`) succeeded. Live portal returned HTTP 200; deployed bundle contains the government view; `/api/health` reports the database connected; unauthenticated reports and admin-user requests both returned HTTP 401.
-- No government account exists yet. An existing admin should open User Management → Add User, choose Government Viewer, enter `geverment@gmail.com` and a fresh temporary password of at least 12 characters, and deliver the password privately. Do not reuse the password shared in chat. The government user must change it at first sign-in.
-- The Government Viewer is not allowed on management pages or APIs. Positive login, password-change, report-data, and CSV behavior remain unverified until the account is provisioned. No Phase 4 work was started.
+- The Government Viewer is not allowed on management pages or APIs. The owner later provisioned accounts and reported reaching the reporting page; report loading failed and is being rechecked after this runtime fix. No Phase 4 work was started.
 
 ## Complete Removal of Mobile In-App Admin Portal (Centralized to Web Admin) (2026-11-18)
 
