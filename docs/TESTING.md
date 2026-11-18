@@ -9,7 +9,9 @@
 - `npm run build` (from `admin-web`) — PASS; existing dependency annotation and large-chunk warnings only.
 - `npx.cmd wrangler deploy --config dist\yegna_health_admin_portal\wrangler.json --dry-run` (from `admin-web`) — PASS; Hyperdrive binding present.
 - Supabase `db query --remote --read-only` — PASS; the one-statement aggregate SQL returned expected counts and grouped monthly totals. No database writes were made.
-- Live `GET /api/health` — PASS; database connected. Live authenticated government report fetch and CSV download were not replayed because credentials/session tokens were not accessed. The screenshot's original API status and exception were unavailable, so only the defensive query fan-out reduction is verified locally; confirm the authenticated report UI after deployment.
+- GitHub Actions run `44379436803` for commit `5b88da7` — PASS; deployed to Cloudflare.
+- Live `GET /` — HTTP 200; `GET /api/health` — PASS/database connected; unauthenticated `GET /api/government/reports` — HTTP 401.
+- Live authenticated government report fetch and CSV download were not replayed because credentials/session tokens were not accessed. The screenshot's original API status and exception were unavailable, so the replacement aggregate query is verified against Supabase read-only, but the authenticated report UI still needs user confirmation.
 
 ## Government viewer implementation checks (2026-11-18)
 

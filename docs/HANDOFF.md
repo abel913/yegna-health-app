@@ -5,7 +5,7 @@
 - Replaced the report endpoint's concurrent per-table count calls and individual-row trend fetch with one parameterized PostgreSQL aggregate query. The exact statement was exercised against the linked database using Supabase CLI read-only mode and returned aggregate counts plus monthly totals.
 - Added structured failure logging limited to error name/code. No credential, report row, or password hash is logged.
 - Server tests: 7/7 passed; Prisma generation, server build, Worker type check, admin portal build, and Wrangler dry run passed. Vite retains non-blocking dependency annotation and bundle-size warnings.
-- The supplied screenshot showed the report-load error but not the authenticated request's HTTP status or server exception. Confirm the signed-in report view after the new deployment. No government credential or browser token was used for verification.
+- Commit `5b88da7` deployed successfully in Admin Portal Actions run `44379436803`. Live portal `/` returned HTTP 200, `/api/health` reported the database connected, and unauthenticated `/api/government/reports` returned HTTP 401. The supplied screenshot showed the report-load error but not the authenticated request's HTTP status or server exception. Confirm the signed-in report view after deployment. No government credential or browser token was used for verification.
 - Read-only database inspection shows two similarly spelled government-viewer accounts. Have an administrator confirm which email is intended and reset the screenshot-exposed password through User Management, sharing a new temporary password privately.
 
 ## Student Club Management, Membership Sync & Guest Gating (2026-11-18)
