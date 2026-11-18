@@ -643,7 +643,8 @@ class _ClubsPageState extends State<ClubsPage> {
                                   ),
                                 )
                               : RefreshIndicator(
-                                  onRefresh: () => widget.controller.loadClubs(widget.userId),
+                                  onRefresh: () => widget.controller
+                                      .loadClubs(widget.userId, forceRefresh: true),
                                   color: const Color(0xFF0284C7),
                                   child: ListView.builder(
                                     padding: const EdgeInsets.fromLTRB(16, 10, 16, 24),

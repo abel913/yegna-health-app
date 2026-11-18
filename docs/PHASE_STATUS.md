@@ -1,5 +1,18 @@
 # Phase status
 
+## Live Production Backend URL & Pull-to-Refresh Sync for Release APK (2026-11-18)
+
+**Status: Completed & 100% Verified.**
+- **Production Backend Endpoint**: Release builds automatically target `https://yegna-health-admin-portal.smartserve.workers.dev/api` (via `kReleaseMode` in `ApiClient` and `--dart-define=BACKEND_API_URL` in `.github/workflows/build_apk.yml`).
+- **Real-Time Data Refreshing**:
+  - `SyncMentorRepository` and `SyncClubRepository` now support explicit force refresh with cache replacement.
+  - Pull-to-refresh (`RefreshIndicator`) on Mentors and Clubs pages triggers force refresh, immediately pulling new/edited/deleted entries from Supabase PostgreSQL and updating the UI.
+  - Fixed sync managers to ensure deletions propagate down to 0 items.
+- **Verification**:
+  - `flutter analyze`: 0 issues found.
+  - `flutter test`: 215/215 tests passed (100%).
+  - Live endpoints (`/api/health`, `/api/facilities`, `/api/mentors`, `/api/modules`, `/api/quizzes`, `/api/clubs`): all verified returning HTTP 200 with live records.
+
 ## Admin portal automatic deployment setup (verified 2026-11-18)
 
 - `.github/workflows/deploy_admin_portal.yml` deploys on pushes to `main` and supports manual `workflow_dispatch`. Push-triggered run #8 (`44272774147`, commit `ca42659`) completed every build, validation, and Cloudflare deployment step successfully.

@@ -28,6 +28,10 @@ class ApiClient {
     if (envUrl.isNotEmpty) {
       return envUrl;
     }
+    // Release builds (including APKs installed on real devices) use the public Cloudflare backend
+    if (kReleaseMode) {
+      return 'https://yegna-health-admin-portal.smartserve.workers.dev/api';
+    }
     if (kIsWeb) {
       final host = Uri.base.host.isNotEmpty ? Uri.base.host : 'localhost';
       return 'http://$host:5000/api';

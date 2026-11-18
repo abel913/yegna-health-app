@@ -91,7 +91,7 @@ class SyncManager extends ChangeNotifier {
   Future<bool> _syncFacilities() async {
     try {
       final remoteList = await _apiClient.fetchFacilities();
-      if (remoteList != null && remoteList.isNotEmpty) {
+      if (remoteList != null) {
         final facilities =
             remoteList.map(OfflineSyncStore.facilityFromMap).toList();
         await _store.saveFacilities(facilities);
@@ -106,7 +106,7 @@ class SyncManager extends ChangeNotifier {
   Future<bool> _syncMentors() async {
     try {
       final remoteList = await _apiClient.fetchMentors();
-      if (remoteList != null && remoteList.isNotEmpty) {
+      if (remoteList != null) {
         final mentors = remoteList.map(OfflineSyncStore.mentorFromMap).toList();
         await _store.saveMentors(mentors);
         return true;
@@ -120,7 +120,7 @@ class SyncManager extends ChangeNotifier {
   Future<bool> _syncModules() async {
     try {
       final remoteList = await _apiClient.fetchModules();
-      if (remoteList != null && remoteList.isNotEmpty) {
+      if (remoteList != null) {
         await _store.saveModules(remoteList);
         return true;
       }
@@ -133,7 +133,7 @@ class SyncManager extends ChangeNotifier {
   Future<bool> _syncQuizzes() async {
     try {
       final remoteList = await _apiClient.fetchQuizzes();
-      if (remoteList != null && remoteList.isNotEmpty) {
+      if (remoteList != null) {
         await _store.saveQuizzes(remoteList);
         return true;
       }
@@ -146,7 +146,7 @@ class SyncManager extends ChangeNotifier {
   Future<bool> _syncClubs() async {
     try {
       final remoteList = await _apiClient.fetchClubs();
-      if (remoteList != null && remoteList.isNotEmpty) {
+      if (remoteList != null) {
         final clubs =
             remoteList.map(OfflineSyncStore.clubFromBackendMap).toList();
         await _store.saveClubs(clubs);

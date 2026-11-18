@@ -45,7 +45,61 @@ class SyncMentorRepository implements MentorRepository {
     }
 
     // 4. Apply filtering
-    var result = List<Mentor>.from(cached);
+    return _applyFilters(
+      cached,
+      query: query,
+      topic: topic,
+      language: language,
+      onlineOnly: onlineOnly,
+      campus: campus,
+    );
+  }
+
+  /// Forces an immediate network fetch from the backend and updates the cache.
+  Future<List<Mentor>> refreshMentors({
+    String? query,
+    MentorTopic? topic,
+    String? language,
+    bool? onlineOnly,
+    String? campus,
+  }) async {
+    if (_apiClient != null) {
+      try {
+        final remoteList = await _apiClient.fetchMentors();
+        if (remoteList != null) {
+          final mentors = remoteList.map(OfflineSyncStore.mentorFromMap).toList();
+          await _store.saveMentors(mentors);
+          return _applyFilters(
+            mentors,
+            query: query,
+            topic: topic,
+            language: language,
+            onlineOnly: onlineOnly,
+            campus: campus,
+          );
+        }
+      } catch (_) {
+        // Fall back to cache on network error
+      }
+    }
+    return getMentors(
+      query: query,
+      topic: topic,
+      language: language,
+      onlineOnly: onlineOnly,
+      campus: campus,
+    );
+  }
+
+  List<Mentor> _applyFilters(
+    List<Mentor> input, {
+    String? query,
+    MentorTopic? topic,
+    String? language,
+    bool? onlineOnly,
+    String? campus,
+  }) {
+    var result = List<Mentor>.from(input);
 
     if (onlineOnly == true) {
       result = result.where((m) => m.isCurrentlyAvailableNow).toList();

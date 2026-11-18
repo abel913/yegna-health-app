@@ -56,7 +56,7 @@ class SyncFacilityRepository extends ChangeNotifier
     if (_apiClient != null) {
       try {
         final remoteList = await _apiClient.fetchFacilities();
-        if (remoteList != null && remoteList.isNotEmpty) {
+        if (remoteList != null) {
           final facilities =
               remoteList.map(OfflineSyncStore.facilityFromMap).toList();
           await _store.saveFacilities(facilities);

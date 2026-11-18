@@ -1,5 +1,19 @@
 # Handoff notes
 
+## Live Production Backend URL & Pull-to-Refresh Sync for Release APK (2026-11-18)
+
+- **Issue**: Downloaded Android APK was defaulting to `http://10.0.2.2:5000/api` (Android emulator loopback IP), making physical devices unable to connect to the live Cloudflare Worker database, and causing additions/edits/deletions in the Admin Portal to not reflect on mobile devices.
+- **Resolution**:
+  - `lib/src/sync/api_client.dart`: Added `kReleaseMode` fallback to `https://yegna-health-admin-portal.smartserve.workers.dev/api`.
+  - `.github/workflows/build_apk.yml`: Added `--dart-define=BACKEND_API_URL=https://yegna-health-admin-portal.smartserve.workers.dev/api` to `flutter build apk --release`.
+  - `lib/src/discovery/sync_mentor_repository.dart` & `lib/src/discovery/mentors_page.dart`: Implemented `refreshMentors()` and wired it to `RefreshIndicator(onRefresh: () => _loadMentors(forceRefresh: true))` to immediately pull and render updated mentors.
+  - `lib/src/clubs/sync_club_repository.dart`, `lib/src/clubs/club_controller.dart` & `lib/src/clubs/clubs_page.dart`: Implemented `refreshClubs()` and wired it to `RefreshIndicator(onRefresh: () => widget.controller.loadClubs(widget.userId, forceRefresh: true))`.
+  - `lib/src/sync/sync_manager.dart`: Fixed sync handlers so deleted items correctly overwrite local cache even when empty.
+- **Verification**:
+  - `flutter analyze`: 0 issues found.
+  - `flutter test`: 215/215 tests passed (100%).
+  - Live API verified on Cloudflare Worker: `/api/health`, `/api/facilities`, `/api/mentors`, `/api/modules`, `/api/quizzes`, `/api/clubs` all returning HTTP 200.
+
 ## Advanced Glassmorphic Student Clubs UI (2026-11-18)
 
 - **Components**:

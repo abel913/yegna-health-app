@@ -42,7 +42,40 @@ class SyncClubRepository implements ClubRepository {
     }
 
     // 4. Apply filtering
-    var result = List<StudentClub>.from(cached);
+    return _filterClubs(cached, category: category, query: query);
+  }
+
+  /// Forces an immediate network fetch from the backend and updates the cache.
+  Future<List<StudentClub>> refreshClubs({
+    ClubCategory? category,
+    String? query,
+  }) async {
+    final client = _apiClient;
+    if (client != null) {
+      try {
+        final remoteList = await client.fetchClubs();
+        if (remoteList != null) {
+          final clubs =
+              remoteList.map(OfflineSyncStore.clubFromBackendMap).toList();
+          await _store.saveClubs(clubs);
+          for (final club in clubs) {
+            await _local.saveClub(club);
+          }
+          return _filterClubs(clubs, category: category, query: query);
+        }
+      } catch (_) {
+        // Fall back to cache on network error
+      }
+    }
+    return getClubs(category: category, query: query);
+  }
+
+  List<StudentClub> _filterClubs(
+    List<StudentClub> input, {
+    ClubCategory? category,
+    String? query,
+  }) {
+    var result = List<StudentClub>.from(input);
 
     if (category != null && category != ClubCategory.all) {
       result = result.where((c) => c.category == category).toList();

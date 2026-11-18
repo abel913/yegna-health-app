@@ -6,6 +6,7 @@ import '../theme/app_glass_theme.dart';
 import 'mentor_card.dart';
 import 'mentor_model.dart';
 import 'mentor_repository.dart';
+import 'sync_mentor_repository.dart';
 import 'uog_campus_model.dart';
 
 class MentorsPage extends StatefulWidget {
@@ -58,12 +59,22 @@ class _MentorsPageState extends State<MentorsPage> {
     _loadMentors();
   }
 
-  Future<void> _loadMentors() async {
+  Future<void> _loadMentors({bool forceRefresh = false}) async {
     final query = _searchController.text;
-    final results = await _repository.getMentors(
-      query: query,
-      campus: _selectedCampus == 'all' ? null : _selectedCampus,
-    );
+    final campus = _selectedCampus == 'all' ? null : _selectedCampus;
+    List<Mentor> results;
+    final repo = _repository;
+    if (forceRefresh && repo is SyncMentorRepository) {
+      results = await repo.refreshMentors(
+        query: query,
+        campus: campus,
+      );
+    } else {
+      results = await _repository.getMentors(
+        query: query,
+        campus: campus,
+      );
+    }
     if (mounted) {
       setState(() {
         _mentors = results;
@@ -346,7 +357,7 @@ class _MentorsPageState extends State<MentorsPage> {
                           : _mentors.isEmpty
                               ? _buildNoResultsEmptyState(l10n, glass)
                               : RefreshIndicator(
-                                  onRefresh: _loadMentors,
+                                  onRefresh: () => _loadMentors(forceRefresh: true),
                                   color: glass.accentColor,
                                   child: ListView.builder(
                                     padding:

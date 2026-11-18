@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 
 import 'club_models.dart';
 import 'club_repository.dart';
+import 'sync_club_repository.dart';
 
 class ClubController extends ChangeNotifier {
   ClubController({
@@ -40,17 +41,25 @@ class ClubController extends ChangeNotifier {
   List<StudentClub> get myClubs =>
       _clubs.where((c) => _joinedClubIds.contains(c.id)).toList();
 
-  Future<void> loadClubs(String? userId) async {
+  Future<void> loadClubs(String? userId, {bool forceRefresh = false}) async {
     _currentUserId = userId;
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
 
     try {
-      _clubs = List<StudentClub>.from(await _repository.getClubs(
-        category: _selectedCategory,
-        query: _searchQuery,
-      ));
+      final repo = _repository;
+      if (forceRefresh && repo is SyncClubRepository) {
+        _clubs = List<StudentClub>.from(await repo.refreshClubs(
+          category: _selectedCategory,
+          query: _searchQuery,
+        ));
+      } else {
+        _clubs = List<StudentClub>.from(await _repository.getClubs(
+          category: _selectedCategory,
+          query: _searchQuery,
+        ));
+      }
 
       if (userId != null && userId.isNotEmpty) {
         final joined = await _repository.getJoinedClubIds(userId);
