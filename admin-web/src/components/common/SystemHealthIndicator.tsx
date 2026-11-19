@@ -162,7 +162,7 @@ export const SystemHealthIndicator: React.FC<SystemHealthIndicatorProps> = ({ la
           {/* Header */}
           <div className="flex items-center justify-between pb-3.5 border-b border-slate-100 dark:border-slate-800">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-brand-50 dark:bg-cyan-950/60 text-brand-600 dark:text-cyan-400 flex items-center justify-center border border-brand-100 dark:border-cyan-800/50">
+              <div className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white flex items-center justify-center border border-slate-200 dark:border-slate-700">
                 <Activity size={17} />
               </div>
               <div>
@@ -181,7 +181,7 @@ export const SystemHealthIndicator: React.FC<SystemHealthIndicatorProps> = ({ la
                 onClick={fetchHealth}
                 disabled={loading}
                 title={lang === 'am' ? 'አሁን አድስ' : 'Refresh Telemetry'}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-brand-600 dark:hover:text-cyan-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer disabled:opacity-50"
+                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer disabled:opacity-50"
               >
                 <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
               </button>
@@ -208,7 +208,7 @@ export const SystemHealthIndicator: React.FC<SystemHealthIndicatorProps> = ({ la
             {/* Metric 1: Backend API Gateway */}
             <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-800 flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <Server size={16} className="text-brand-600 dark:text-cyan-400" />
+                <Server size={16} className="text-slate-900 dark:text-white" />
                 <div>
                   <p className="font-bold text-slate-800 dark:text-slate-100">
                     {lang === 'am' ? 'የኤፒአይ መግቢያ (Gateway)' : 'API Service Gateway'}

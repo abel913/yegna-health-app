@@ -11,7 +11,6 @@ import {
   LogOut,
   ShieldCheck,
   Search,
-  Plus,
   Globe,
   Menu,
   X,
@@ -23,11 +22,13 @@ import {
   Sliders,
   Command,
   BarChart2,
+  RotateCcw,
 } from 'lucide-react';
 import { AdminUser } from '../../types/index.js';
 import { useTheme } from '../../context/ThemeContext.js';
 import { SystemHealthIndicator } from '../common/SystemHealthIndicator.js';
 import { BrandLogo } from '../common/BrandLogo.js';
+import { formatRouteUrl } from '../../utils/navigation.js';
 
 interface AdminLayoutProps {
   currentTab: string;
@@ -37,8 +38,10 @@ interface AdminLayoutProps {
   onLogout: () => void;
   lang: 'en' | 'am';
   onToggleLang: () => void;
-  onQuickAction?: () => void;
   onOpenCommandPalette?: () => void;
+  onRefresh?: () => Promise<void> | void;
+  isRefreshing?: boolean;
+  isLoading?: boolean;
   userCount?: number;
   children: React.ReactNode;
 }
@@ -51,8 +54,10 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
   onLogout,
   lang,
   onToggleLang,
-  onQuickAction,
   onOpenCommandPalette,
+  onRefresh,
+  isRefreshing = false,
+  isLoading = false,
   userCount,
   children,
 }) => {
@@ -167,7 +172,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
                   <h1 className="font-bold text-slate-900 dark:text-white text-base leading-tight tracking-tight">
                     Yegna Health
                   </h1>
-                  <span className="text-[11px] font-semibold text-brand-600 dark:text-cyan-400 uppercase tracking-wider">
+                  <span className="text-[11px] font-semibold text-slate-900 dark:text-white uppercase tracking-wider">
                     Admin Portal
                   </span>
                 </div>
@@ -252,18 +257,22 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
                                 const ChildIcon = child.icon;
                                 const isChildActive = currentTab === child.id || (currentTab === 'assessments' && activeSubTab === child.subTab);
                                 return (
-                                  <button
+                                  <a
                                     key={child.id}
-                                    onClick={() => handleSelectTab(child.id)}
+                                    href={formatRouteUrl('assessments', child.subTab)}
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      handleSelectTab(child.id);
+                                    }}
                                     className={`w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer ${
                                       isChildActive
                                         ? 'bg-slate-200/80 dark:bg-slate-750 text-slate-900 dark:text-white font-bold'
                                         : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-800 dark:hover:text-slate-200'
                                     }`}
                                   >
-                                    <ChildIcon size={14} className={isChildActive ? 'text-brand-600 dark:text-cyan-400' : 'text-slate-400'} />
+                                    <ChildIcon size={14} className={isChildActive ? 'text-slate-900 dark:text-white' : 'text-slate-400'} />
                                     <span className="truncate">{child.label}</span>
-                                  </button>
+                                  </a>
                                 );
                               })}
                             </div>
@@ -274,9 +283,13 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
 
                     const isActive = currentTab === item.id;
                     return (
-                      <button
+                      <a
                         key={item.id}
-                        onClick={() => handleSelectTab(item.id)}
+                        href={formatRouteUrl(item.id)}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleSelectTab(item.id);
+                        }}
                         className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-medium transition-all cursor-pointer ${
                           isActive
                             ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold shadow-2xs'
@@ -295,7 +308,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
                             {item.badge}
                           </span>
                         )}
-                      </button>
+                      </a>
                     );
                   })}
                 </div>
@@ -338,7 +351,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
             {/* User Profile & Sign Out Card */}
             <div className="flex items-center justify-between p-2 rounded-xl bg-white dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60">
               <div className="flex items-center gap-2.5 min-w-0">
-                <div className="w-8 h-8 rounded-full bg-slate-900 dark:bg-brand-600 text-white font-bold flex items-center justify-center text-xs flex-shrink-0 shadow-sm">
+                <div className="w-8 h-8 rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold flex items-center justify-center text-xs flex-shrink-0 shadow-sm">
                   {user.displayName.slice(0, 2).toUpperCase()}
                 </div>
                 <div className="min-w-0">
@@ -370,9 +383,13 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
         <div className="flex-1 overflow-y-auto">
           {/* Logo & Brand Header */}
           <div className="h-16 flex items-center justify-between px-4 border-b border-slate-100 dark:border-slate-800">
-            <div
+            <a
+              href="/dashboard"
               className="flex items-center gap-3 overflow-hidden cursor-pointer"
-              onClick={() => onTabChange('dashboard')}
+              onClick={(e) => {
+                e.preventDefault();
+                onTabChange('dashboard');
+              }}
             >
               <BrandLogo size="md" />
               {!collapsed && (
@@ -386,7 +403,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
                   </span>
                 </div>
               )}
-            </div>
+            </a>
             <button
               onClick={() => setCollapsed(!collapsed)}
               title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
@@ -405,7 +422,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
                 className="w-full flex items-center justify-between px-3 py-2 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800/60 dark:hover:bg-slate-800 border border-slate-200/90 dark:border-slate-700/80 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-200 transition-all cursor-pointer shadow-2xs group"
               >
                 <span className="flex items-center gap-2">
-                  <Command size={14} className="text-slate-400 group-hover:text-brand-600 dark:group-hover:text-cyan-400" />
+                  <Command size={14} className="text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white" />
                   <span className="text-xs">{lang === 'am' ? 'ፈጣን እርምጃዎች' : 'Quick actions'}</span>
                 </span>
                 <div className="flex items-center gap-1 text-[10px] text-slate-400 dark:text-slate-400 font-mono">
@@ -483,18 +500,22 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
                               const ChildIcon = child.icon;
                               const isChildActive = currentTab === child.id || (currentTab === 'assessments' && activeSubTab === child.subTab);
                               return (
-                                <button
+                                <a
                                   key={child.id}
-                                  onClick={() => onTabChange(child.id)}
+                                  href={formatRouteUrl('assessments', child.subTab)}
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    onTabChange(child.id);
+                                  }}
                                   className={`w-full flex items-center gap-2.5 px-2 py-1.5 rounded-lg text-[11px] font-medium transition-all cursor-pointer ${
                                     isChildActive
                                       ? 'bg-slate-200/80 dark:bg-slate-750 text-slate-900 dark:text-white font-bold'
                                       : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-800 dark:hover:text-slate-200'
                                   }`}
                                 >
-                                  <ChildIcon size={14} className={isChildActive ? 'text-brand-600 dark:text-cyan-400' : 'text-slate-400'} />
+                                  <ChildIcon size={14} className={isChildActive ? 'text-slate-900 dark:text-white' : 'text-slate-400'} />
                                   <span className="truncate">{child.label}</span>
-                                </button>
+                                </a>
                               );
                             })}
                           </div>
@@ -505,9 +526,13 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
 
                   const isActive = currentTab === item.id;
                   return (
-                    <button
+                    <a
                       key={item.id}
-                      onClick={() => onTabChange(item.id)}
+                      href={formatRouteUrl(item.id)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        onTabChange(item.id);
+                      }}
                       title={collapsed ? item.label : undefined}
                       className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer ${
                         isActive
@@ -527,7 +552,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
                           {item.badge}
                         </span>
                       )}
-                    </button>
+                    </a>
                   );
                 })}
               </div>
@@ -543,14 +568,14 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
                 <HelpCircle size={13} />
                 <span>Help & Docs</span>
               </span>
-              <span className="inline-flex items-center gap-1 font-semibold text-brand-600 dark:text-cyan-400">
+              <span className="inline-flex items-center gap-1 font-semibold text-slate-900 dark:text-white">
                 <span>↑</span> Free Plan
               </span>
             </div>
           )}
 
           <div className="flex items-center gap-2.5 p-1.5 rounded-xl bg-white dark:bg-slate-800/70 border border-slate-200/60 dark:border-slate-700/60">
-            <div className="w-8 h-8 rounded-full bg-slate-900 dark:bg-brand-600 text-white font-bold flex items-center justify-center text-xs flex-shrink-0 shadow-2xs">
+            <div className="w-8 h-8 rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold flex items-center justify-center text-xs flex-shrink-0 shadow-2xs">
               {user.displayName.slice(0, 2).toUpperCase()}
             </div>
             {!collapsed && (
@@ -602,7 +627,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
               <div className="flex items-center gap-2 truncate">
                 <Search
                   size={14}
-                  className="text-slate-400 dark:text-slate-500 group-hover:text-brand-600 dark:group-hover:text-cyan-400 transition-colors flex-shrink-0"
+                  className="text-slate-400 dark:text-slate-500 group-hover:text-slate-900 dark:group-hover:text-white transition-colors flex-shrink-0"
                 />
                 <span className="text-slate-500 dark:text-slate-400 group-hover:text-slate-800 dark:group-hover:text-slate-200 transition-colors truncate">
                   {lang === 'am' ? 'ፈልግ...' : 'Search (⌘K)...'}
@@ -624,6 +649,22 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
               <ShieldCheck size={16} className="text-emerald-600 dark:text-emerald-400" />
               <span>{lang === 'am' ? 'የተማሪዎች ሚስጥራዊነት የተጠበቀ ነው' : 'Zero-Knowledge Student Privacy Active'}</span>
             </div>
+
+            {/* Manual Sync / Refresh Button */}
+            {onRefresh && (
+              <button
+                type="button"
+                onClick={() => void onRefresh()}
+                disabled={isRefreshing || isLoading}
+                title={lang === 'am' ? 'መረጃዎችን አድስ (Sync Data)' : 'Sync / Refresh Live Data'}
+                className="flex items-center justify-center w-8 h-8 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition-colors cursor-pointer shadow-2xs disabled:opacity-50"
+              >
+                <RotateCcw
+                  size={14}
+                  className={`transition-transform duration-300 ${isRefreshing ? 'animate-spin text-slate-900 dark:text-white' : ''}`}
+                />
+              </button>
+            )}
 
             {/* Dark / Light Mode Switcher */}
             <button
@@ -656,19 +697,15 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
               <span className="hidden sm:inline">{lang === 'am' ? 'አማርኛ (AM)' : 'English (EN)'}</span>
               <span className="sm:hidden">{lang === 'am' ? 'AM' : 'EN'}</span>
             </button>
-
-            {/* Quick Action Button */}
-            {onQuickAction && (
-              <button
-                onClick={onQuickAction}
-                className="flex items-center gap-1.5 px-2.5 sm:px-3.5 py-1.5 bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold rounded-xl shadow-sm shadow-brand-600/20 transition-colors cursor-pointer"
-              >
-                <Plus size={16} />
-                <span className="hidden sm:inline">{lang === 'am' ? 'አዲስ ተቋም' : 'Add Facility'}</span>
-              </button>
-            )}
           </div>
         </header>
+
+        {/* Global Loading / Sync Progress Bar */}
+        {(isLoading || isRefreshing) && (
+          <div className="h-0.5 w-full bg-slate-200 dark:bg-slate-800 overflow-hidden shrink-0">
+            <div className="h-full bg-slate-900 dark:bg-white animate-pulse" />
+          </div>
+        )}
 
         {/* Scrollable Page Body with Responsive Padding */}
         <main className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 bg-slate-50/60 dark:bg-slate-950 transition-colors duration-200">
