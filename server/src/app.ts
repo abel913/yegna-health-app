@@ -14,12 +14,20 @@ export function createApp(requestScope?: express.RequestHandler, enableHttpLoggi
   app.use(helmet());
   app.use(cors({
     origin(origin, callback) {
-      if (!origin || origin === config.adminWebOrigin) {
+      if (!origin) {
         callback(null, true);
         return;
       }
-      callback(new Error('Origin is not allowed by CORS.'));
+      const isAllowedConfig = origin === config.adminWebOrigin || origin === config.clientAppUrl;
+      const isLocalDev = origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:');
+      if (isAllowedConfig || isLocalDev) {
+        callback(null, true);
+        return;
+      }
+      callback(null, false);
     },
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'X-Requested-With'],
     credentials: false,
   }));
   if (enableHttpLogging) app.use(morgan('dev'));
