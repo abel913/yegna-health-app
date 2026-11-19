@@ -370,7 +370,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
           className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xs hover:shadow-md transition-all cursor-pointer group"
         >
           <div className="flex items-center justify-between mb-3">
-            <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-cyan-400 flex items-center justify-center group-hover:scale-105 transition-transform">
+            <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white flex items-center justify-center group-hover:scale-105 transition-transform">
               <Users size={20} />
             </div>
             <span className="flex items-center gap-1 text-[11px] font-semibold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded-full border border-emerald-200/70 dark:border-emerald-800/60">
@@ -395,10 +395,10 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
           className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xs hover:shadow-md transition-all cursor-pointer group"
         >
           <div className="flex items-center justify-between mb-3">
-            <div className="w-10 h-10 rounded-xl bg-cyan-50 dark:bg-cyan-950/40 text-cyan-600 dark:text-cyan-400 flex items-center justify-center group-hover:scale-105 transition-transform">
+            <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white flex items-center justify-center group-hover:scale-105 transition-transform">
               <Building2 size={20} />
             </div>
-            <span className="text-[11px] font-semibold text-brand-600 dark:text-cyan-400 bg-brand-50 dark:bg-brand-950/40 px-2 py-0.5 rounded-full border border-brand-100 dark:border-cyan-800/60">
+            <span className="text-[11px] font-semibold text-slate-800 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full border border-slate-200 dark:border-slate-700">
               {lang === 'am' ? 'የጎንደር ዩኒቨርሲቲ' : 'University of Gondar'}
             </span>
           </div>
@@ -473,7 +473,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
               <div>
                 <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                  <TrendingUp size={16} className="text-brand-600 dark:text-cyan-400" />
+                  <TrendingUp size={16} className="text-slate-900 dark:text-white" />
                   <span>{lang === 'am' ? 'የፕላትፎርም እንቅስቃሴ ሂደት' : 'Platform Activity & Signup Timeline'}</span>
                 </h3>
                 <p className="text-xs text-slate-500 dark:text-slate-400">
@@ -494,7 +494,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
                     }}
                     className={`px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
                       timeframe === tf
-                        ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-2xs font-bold'
+                        ? 'bg-slate-950 dark:bg-white text-white dark:text-slate-950 shadow-xs font-bold border border-slate-900 dark:border-white'
                         : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
                     }`}
                   >
@@ -513,12 +513,12 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
               <svg viewBox={`0 0 ${svgWidth} ${svgHeight}`} className="w-full h-full overflow-visible">
                 <defs>
                   <linearGradient id="gradientCyan" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stopColor="#0ea5e9" stopOpacity="0.3" />
-                    <stop offset="100%" stopColor="#0ea5e9" stopOpacity="0.0" />
+                    <stop offset="0%" stopColor="#0f172a" stopOpacity="0.25" />
+                    <stop offset="100%" stopColor="#0f172a" stopOpacity="0.0" />
                   </linearGradient>
                   <linearGradient id="gradientPurple" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stopColor="#a855f7" stopOpacity="0.2" />
-                    <stop offset="100%" stopColor="#a855f7" stopOpacity="0.0" />
+                    <stop offset="0%" stopColor="#64748b" stopOpacity="0.2" />
+                    <stop offset="100%" stopColor="#64748b" stopOpacity="0.0" />
                   </linearGradient>
                 </defs>
 
@@ -529,14 +529,14 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
 
                 {/* Area 1: Signups */}
                 <path d={signupsAreaD} fill="url(#gradientCyan)" />
-                <path d={signupsPathD} fill="none" stroke="#0284c7" strokeWidth="2.5" strokeLinecap="round" />
+                <path d={signupsPathD} fill="none" stroke="#0f172a" strokeWidth="2.5" strokeLinecap="round" className="dark:stroke-white" />
 
                 {/* Area 2: Actions */}
                 <path d={actionsAreaD} fill="url(#gradientPurple)" />
                 <path
                   d={actionsPathD}
                   fill="none"
-                  stroke="#9333ea"
+                  stroke="#94a3b8"
                   strokeWidth="2"
                   strokeDasharray="4 4"
                   strokeLinecap="round"
@@ -550,10 +550,10 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
                       cx={p.x}
                       cy={p.y}
                       r={hoveredPointIndex === idx ? 5.5 : 3.5}
-                      fill="#0284c7"
+                      fill="#0f172a"
                       stroke="#ffffff"
                       strokeWidth={2}
-                      className="transition-all"
+                      className="transition-all dark:fill-white dark:stroke-slate-900"
                     />
                     <text
                       x={p.x}
@@ -579,7 +579,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
                     transform: 'translateX(-50%)',
                   }}
                 >
-                  <div className="font-bold text-cyan-300 pb-1 border-b border-slate-700/60 mb-1 flex items-center justify-between text-[11px]">
+                  <div className="font-bold text-slate-200 pb-1 border-b border-slate-700/60 mb-1 flex items-center justify-between text-[11px]">
                     <span>{signupsPoints[hoveredPointIndex].label}</span>
                     <span className="text-[10px] text-slate-400 font-mono">
                       {signupsPoints[hoveredPointIndex].date}
@@ -588,7 +588,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
                   <div className="space-y-0.5 text-[11px]">
                     <div className="flex items-center justify-between gap-2">
                       <span className="text-slate-300 flex items-center gap-1">
-                        <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-white" />
                         {lang === 'am' ? 'አዲስ ምዝገባ:' : 'New Signups:'}
                       </span>
                       <span className="font-bold text-white">
@@ -597,7 +597,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
                     </div>
                     <div className="flex items-center justify-between gap-2">
                       <span className="text-slate-300 flex items-center gap-1">
-                        <span className="w-1.5 h-1.5 rounded-full bg-purple-400" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
                         {lang === 'am' ? 'የሲስተም እርምጃ:' : 'System Actions:'}
                       </span>
                       <span className="font-bold text-white">
@@ -614,11 +614,11 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
           <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 pt-2.5 border-t border-slate-100 dark:border-slate-800 mt-2">
             <div className="flex items-center gap-4">
               <span className="flex items-center gap-1.5 font-medium text-slate-700 dark:text-slate-300">
-                <span className="w-2.5 h-1 rounded-full bg-cyan-600" />
+                <span className="w-2.5 h-1 rounded-full bg-slate-900 dark:bg-white" />
                 {lang === 'am' ? 'የተማሪዎች ምዝገባ' : 'Student Signups'}
               </span>
               <span className="flex items-center gap-1.5 font-medium text-slate-700 dark:text-slate-300">
-                <span className="w-2.5 h-1 rounded-full bg-purple-600" />
+                <span className="w-2.5 h-1 rounded-full bg-slate-400" />
                 {lang === 'am' ? 'የቁጥጥር እርምጃዎች' : 'Audit Operations'}
               </span>
             </div>
@@ -634,7 +634,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
             <div className="flex items-center justify-between mb-3">
               <div>
                 <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-                  <Hospital size={15} className="text-brand-600 dark:text-cyan-400" />
+                  <Hospital size={15} className="text-slate-900 dark:text-white" />
                   <span>{lang === 'am' ? 'የተረጋገጡ የጤና ተቋማት' : 'Verified Clinics'}</span>
                 </h3>
                 <p className="text-xs text-slate-500 dark:text-slate-400">
@@ -643,7 +643,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
               </div>
               <button
                 onClick={() => onNavigate('facilities')}
-                className="text-xs font-semibold text-brand-600 dark:text-cyan-400 hover:text-brand-700 cursor-pointer"
+                className="text-xs font-bold text-slate-900 dark:text-white hover:underline cursor-pointer"
               >
                 {lang === 'am' ? 'ሁሉንም እይ →' : 'View all →'}
               </button>
@@ -660,7 +660,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
                       <h4 className="text-xs font-semibold text-slate-900 dark:text-white truncate">
                         {lang === 'am' ? f.nameAm : f.nameEn}
                       </h4>
-                      {f.isVerified && <CheckCircle2 size={12} className="text-brand-600 dark:text-cyan-400 flex-shrink-0" />}
+                      {f.isVerified && <CheckCircle2 size={12} className="text-emerald-600 dark:text-emerald-400 flex-shrink-0" />}
                     </div>
                     <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate mt-0.5">
                       {f.subCity} • {f.operatingHours}
@@ -668,7 +668,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
                   </div>
                   <a
                     href={`tel:${f.phone}`}
-                    className="p-1 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-cyan-400 hover:border-brand-200 flex-shrink-0 transition-colors"
+                    className="p-1 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:border-slate-400 flex-shrink-0 transition-colors"
                   >
                     <Phone size={12} />
                   </a>
@@ -680,7 +680,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
           <div className="pt-2.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mt-2">
             <span>{facilities.length} {lang === 'am' ? 'ተቋማት በሲስተሙ አሉ' : 'facilities active'}</span>
             <span
-              className="text-brand-600 dark:text-cyan-400 font-semibold cursor-pointer hover:underline"
+              className="text-slate-900 dark:text-white font-bold cursor-pointer hover:underline"
               onClick={() => onNavigate('facilities')}
             >
               {lang === 'am' ? '+ አዲስ ጨምር' : '+ Add Facility'}
@@ -698,7 +698,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
           <div className="flex items-center justify-between mb-3">
             <div>
               <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-                <BarChart2 size={16} className="text-brand-600 dark:text-cyan-400" />
+                <BarChart2 size={16} className="text-slate-900 dark:text-white" />
                 <span>{lang === 'am' ? 'የትምህርት ሞጁሎች ዝርዝር' : 'Curriculum Modules Inventory'}</span>
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400">
@@ -713,7 +713,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
           <div className="space-y-3">
             {modules.map((m, idx) => {
               const quizCount = questions.filter((q) => q.moduleId === m.id).length || 1;
-              const colorClasses = ['bg-cyan-500', 'bg-purple-500', 'bg-emerald-500', 'bg-amber-500'];
+              const colorClasses = ['bg-slate-900 dark:bg-white', 'bg-slate-700 dark:bg-slate-300', 'bg-slate-500 dark:bg-slate-400', 'bg-slate-400 dark:bg-slate-500'];
               const color = colorClasses[idx % colorClasses.length];
 
               return (
@@ -747,7 +747,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
           <div className="flex items-center justify-between mb-3">
             <div>
               <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-                <Building2 size={16} className="text-brand-600 dark:text-cyan-400" />
+                <Building2 size={16} className="text-slate-900 dark:text-white" />
                 <span>{lang === 'am' ? 'የጎንደር ዩኒቨርሲቲ ካምፓሶች የተቋማት ስርጭት' : 'UoG Campus Facility Distribution'}</span>
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400">
@@ -767,7 +767,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
                 count: marakiFacilities,
                 pct: facilities.length > 0 ? Math.round((marakiFacilities / facilities.length) * 100) : 0,
                 icon: GraduationCap,
-                color: 'bg-indigo-600',
+                color: 'bg-slate-950 dark:bg-white',
               },
               {
                 nameEn: 'UoG - Atse Tewodros Campus',
@@ -775,7 +775,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
                 count: tewodrosFacilities,
                 pct: facilities.length > 0 ? Math.round((tewodrosFacilities / facilities.length) * 100) : 0,
                 icon: GraduationCap,
-                color: 'bg-cyan-600',
+                color: 'bg-slate-700 dark:bg-slate-300',
               },
               {
                 nameEn: 'UoG - GCMS Referral Hospital / CMHS',
@@ -783,7 +783,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
                 count: gcmsFacilities,
                 pct: facilities.length > 0 ? Math.round((gcmsFacilities / facilities.length) * 100) : 0,
                 icon: Hospital,
-                color: 'bg-brand-600',
+                color: 'bg-slate-600 dark:bg-slate-400',
               },
               {
                 nameEn: 'UoG - Fasil Campus',
@@ -791,7 +791,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
                 count: fasilFacilities,
                 pct: facilities.length > 0 ? Math.round((fasilFacilities / facilities.length) * 100) : 0,
                 icon: GraduationCap,
-                color: 'bg-purple-600',
+                color: 'bg-slate-500 dark:bg-slate-500',
               },
               ...(tsedaFacilities > 0 || otherCampusFacilities > 0
                 ? [
@@ -846,7 +846,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
             </div>
             <button
               onClick={() => onNavigate('mentors')}
-              className="text-xs font-semibold text-brand-600 dark:text-cyan-400 hover:text-brand-700 cursor-pointer"
+              className="text-xs font-bold text-slate-900 dark:text-white hover:underline cursor-pointer"
             >
               {lang === 'am' ? 'አማካሪዎች →' : 'Mentors →'}
             </button>
@@ -870,7 +870,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
                 <div className="flex items-center gap-2">
                   <a
                     href={`tel:${m.phone}`}
-                    className="p-1.5 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-cyan-400 hover:border-brand-200 flex-shrink-0 transition-colors"
+                    className="p-1.5 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:border-slate-400 flex-shrink-0 transition-colors"
                   >
                     <Phone size={12} />
                   </a>
@@ -885,7 +885,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
           <div className="flex items-center justify-between mb-3">
             <div>
               <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-                <Clock size={15} className="text-brand-600 dark:text-cyan-400" />
+                <Clock size={15} className="text-slate-900 dark:text-white" />
                 <span>{lang === 'am' ? 'የቅርብ የአስተዳዳሪ እርምጃዎች' : 'Recent Audit Activity'}</span>
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400">
@@ -894,7 +894,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
             </div>
             <button
               onClick={() => onNavigate('audit')}
-              className="text-xs font-semibold text-brand-600 dark:text-cyan-400 hover:text-brand-700 cursor-pointer"
+              className="text-xs font-bold text-slate-900 dark:text-white hover:underline cursor-pointer"
             >
               {lang === 'am' ? 'ሙሉ ኦዲት →' : 'Audit logs →'}
             </button>

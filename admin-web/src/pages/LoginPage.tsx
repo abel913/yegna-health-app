@@ -83,8 +83,8 @@ export const LoginPage: React.FC<LoginPageProps> = ({
   return (
     <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4 relative overflow-hidden font-['Plus_Jakarta_Sans',sans-serif]">
       {/* Background Decorative Glow */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-slate-700/20 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-slate-800/20 rounded-full blur-3xl pointer-events-none" />
 
       {/* Top Floating Controls: Language & Theme Toggle */}
       <div className="absolute top-5 right-5 z-20 flex items-center gap-2">
@@ -95,7 +95,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-800 text-slate-200 text-xs font-bold border border-slate-700/80 backdrop-blur-md transition-all cursor-pointer shadow-md"
             title={lang === 'am' ? 'Switch to English' : 'ወደ አማርኛ ቀይር'}
           >
-            <Globe size={14} className="text-cyan-400" />
+            <Globe size={14} className="text-slate-200" />
             <span>{lang === 'am' ? 'English' : 'አማርኛ'}</span>
           </button>
         )}
@@ -109,7 +109,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
           {theme === 'dark' ? (
             <Sun size={15} className="text-amber-400" />
           ) : (
-            <Moon size={15} className="text-cyan-400" />
+            <Moon size={15} className="text-slate-200" />
           )}
         </button>
       </div>
@@ -121,7 +121,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
           <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">
             {lang === 'am' ? 'የኛ ጤና' : 'Yegna Health'}
           </h1>
-          <p className="text-xs font-bold text-brand-600 dark:text-cyan-400 uppercase tracking-widest mt-0.5">
+          <p className="text-xs font-bold text-slate-900 dark:text-slate-300 uppercase tracking-widest mt-0.5">
             {lang === 'am' ? 'የድር አስተዳደር ፖርታል' : 'Desktop Web Admin Portal'}
           </p>
           <div className="mt-3 inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 dark:bg-emerald-950/40 rounded-full text-emerald-800 dark:text-emerald-300 text-[11px] font-bold border border-emerald-200 dark:border-emerald-800">
@@ -158,7 +158,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:bg-white dark:focus:bg-slate-800/80 focus:border-brand-500 dark:focus:border-cyan-400 focus:outline-hidden transition-all font-medium text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500"
+                className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:bg-white dark:focus:bg-slate-800/80 focus:border-slate-900 dark:focus:border-white focus:outline-hidden transition-all font-medium text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500"
                 placeholder="admin@yegnahealth.org"
               />
             </div>
@@ -172,7 +172,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
               <button
                 type="button"
                 onClick={() => setShowPassword((prev) => !prev)}
-                className="text-[11px] font-bold text-brand-600 dark:text-cyan-400 hover:underline flex items-center gap-1 cursor-pointer"
+                className="text-[11px] font-bold text-slate-900 dark:text-white hover:underline flex items-center gap-1 cursor-pointer"
               >
                 {showPassword ? (
                   <>
@@ -197,7 +197,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-10 pr-10 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:bg-white dark:focus:bg-slate-800/80 focus:border-brand-500 dark:focus:border-cyan-400 focus:outline-hidden transition-all font-medium text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500"
+                className="w-full pl-10 pr-10 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:bg-white dark:focus:bg-slate-800/80 focus:border-slate-900 dark:focus:border-white focus:outline-hidden transition-all font-medium text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500"
                 placeholder="••••••••"
               />
               <button
@@ -214,7 +214,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-3 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl shadow-lg shadow-brand-600/25 flex items-center justify-center gap-2 transition-all disabled:opacity-60 cursor-pointer text-xs md:text-sm"
+            className="w-full py-3 bg-slate-950 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 font-bold rounded-xl border border-slate-900 dark:border-white shadow-md flex items-center justify-center gap-2 transition-all disabled:opacity-60 cursor-pointer text-xs md:text-sm"
           >
             {isLoading ? (
               <>
