@@ -14,6 +14,7 @@ import 'discovery/mentor_repository.dart';
 import 'learning/assessment_repository.dart';
 import 'learning/education_repository.dart';
 import 'learning/learning_progress_controller.dart';
+import 'learning/screens/learning_progress_page.dart';
 import 'locale_controller.dart';
 import 'navigation/app_route_navigator.dart';
 import 'navigation/app_shell_tab_builder.dart';
@@ -148,6 +149,15 @@ class _AppShellState extends State<AppShell> {
         notificationController: _notificationController,
       );
 
+  void _openLearningProgress() {
+    Navigator.of(context).push<void>(MaterialPageRoute<void>(
+      builder: (_) => LearningProgressScreen(
+        controller: widget.progressController,
+        assessmentRepository: widget.assessmentRepository,
+      ),
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     final pages = AppShellTabBuilder.buildPages(
@@ -163,6 +173,8 @@ class _AppShellState extends State<AppShell> {
       appBar: AppTopBar(
         notificationController: _notificationController,
         localeController: widget.localeController,
+        selectedIndex: _selectedIndex,
+        isAuthenticated: widget.authController.isAuthenticated,
         onOpenNotificationSettings: () => showAccountNotificationsModal(
           context,
           AppLocalizations.of(context),
@@ -171,12 +183,16 @@ class _AppShellState extends State<AppShell> {
         onNotificationNavigate: (route) {
           if (route == 'learn') setState(() => _selectedIndex = 3);
         },
+        onOpenLearningProgress: _openLearningProgress,
+        onSignOut: () => widget.authController.signOut(),
       ),
       body: IndexedStack(index: _selectedIndex, children: pages),
-      floatingActionButton: YegnaChatbotFab(
-        chatbotRepository: widget.chatbotRepository,
-        userName: widget.authController.user?.displayName,
-      ),
+      floatingActionButton: (_selectedIndex == 0 || _selectedIndex == 3)
+          ? YegnaChatbotFab(
+              chatbotRepository: widget.chatbotRepository,
+              userName: widget.authController.user?.displayName,
+            )
+          : null,
       bottomNavigationBar: ScoopedBottomBar(
         selectedIndex: _selectedIndex,
         onDestinationSelected: _onDestinationSelected,
