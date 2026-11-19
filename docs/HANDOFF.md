@@ -1,5 +1,24 @@
 # Handoff notes
 
+## Baseline Survey One-Time Enforcement, Admin Exemption & Module Image Schema Sync (2026-11-19)
+
+- **Completed Deliverables**:
+  1. `lib/src/home/widgets/home_survey_banner.dart` (163 LOC): Exempts non-student accounts (`role != 'STUDENT'` and display name containing "admin") from the baseline survey banner.
+  2. `lib/src/home/widgets/home_survey_launcher.dart` (68 LOC) & `lib/src/home/home_page.dart` (193 LOC): Exempts admins from auto-prompt modals on app launch.
+  3. `lib/src/onboarding/onboarding_survey_storage.dart` (88 LOC): Returns `true` for survey completion if user is already completed, if user is an admin/non-student, if user completed on device, or if device-wide completed.
+  4. `lib/src/onboarding/onboarding_survey_repository.dart` (117 LOC) & `lib/src/onboarding/onboarding_survey_dialog.dart` (164 LOC): Added `getBaselineSurveyQuestions()` strictly capping questions to the 4 demographic baseline questions in onboarding modal.
+  5. `server/src/controllers/survey.controller.ts` & `server/src/routes/index.ts`: Added `POST /api/survey/complete` to persist completion status in PostgreSQL.
+  6. `server/prisma/schema.prisma` & Database Sync: Executed `prisma db push` to add `Module.imageUrl` to PostgreSQL and populated initial illustration asset paths for modules.
+  7. `lib/core/network/api_data_methods.dart` (164 LOC): Added `markUserSurveyCompleted()` and preserved `leaveClub()`.
+  8. `lib/src/auth/backend_auth_repository.dart` (197 LOC): Syncs survey completion flag on login and session verification.
+- **Verification Results**:
+  - `flutter analyze`: 0 issues found.
+  - `flutter test`: 200/200 passed.
+  - `npm --prefix server test`: 7/7 passed.
+  - `npm --prefix server run worker:check`: 0 errors.
+  - `npm --prefix admin-web run build`: 0 errors.
+  - Git: Committed and pushed to `origin/main` (`bfcb02b`).
+
 ## Account & Profile UI Perfection & Visual Polish (2026-11-19)
 
 - **Completed Scope**: Comprehensive UI, aesthetic, and theming perfection of Account and Profile screens without introducing any new backend features or third-party packages.

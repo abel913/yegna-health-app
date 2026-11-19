@@ -1,5 +1,23 @@
 # Phase status
 
+## Baseline Survey One-Time Enforcement, Admin Exemption & Module Image Schema Sync (2026-11-19)
+
+**Status: Completed, 100% Verified & Pushed to Origin.**
+- **Scope**:
+  - Enforced strictly one-time completion of the 4-question student baseline survey (demographic and general info) across device and authenticated user states.
+  - Automatically exempted Admins (e.g. `Executive Admin`, `role != 'STUDENT'`, or display name containing "admin") from the baseline survey banner and auto-prompt modals.
+  - Restricted the onboarding survey dialog to strictly the first 4 demographic questions (`getBaselineSurveyQuestions()`), ensuring the full 50 clinical assessment questions remain organized inside the Self-Assessment suite.
+  - Synchronized Prisma database schema (`prisma db push`), adding the missing `Module.imageUrl` column to PostgreSQL and populating image paths for curriculum modules.
+  - Implemented backend endpoint `POST /api/survey/complete` and mobile sync to mark users as survey-completed in PostgreSQL.
+- **Verification & Compliance**:
+  - **Code Standard**: 100% of modified `.dart` files are strictly $\le 199$ LOC (`api_data_methods.dart`: 164, `backend_auth_repository.dart`: 197, `home_page.dart`: 193, `home_survey_banner.dart`: 163, `home_survey_launcher.dart`: 68, `onboarding_survey_dialog.dart`: 164, `onboarding_survey_repository.dart`: 117, `onboarding_survey_storage.dart`: 88).
+  - **`flutter analyze`**: 0 issues found (clean pass).
+  - **`flutter test`**: 200/200 tests passed (100% pass rate).
+  - **Backend Tests**: 7/7 tests passed (`npm --prefix server test`).
+  - **Worker Check**: 0 errors (`npm --prefix server run worker:check`).
+  - **Admin Web Build**: Clean production build (`npm --prefix admin-web run build`).
+  - **Git Remote**: Local branch synchronized and pushed cleanly to `origin/main`.
+
 ## Account & Profile UI Perfection & Visual Polish (2026-11-19)
 
 **Status: Completed & 100% Verified.**
