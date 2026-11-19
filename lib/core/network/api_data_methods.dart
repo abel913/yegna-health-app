@@ -1,25 +1,28 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-/// Mixin providing data fetching and interaction endpoints (facilities, mentors, clubs, modules, quizzes).
+/// Mixin providing data fetching and interaction endpoints.
 mixin ApiDataMethods {
   String get baseUrl;
   Duration get timeout;
   http.Client get client;
 
-  /// Fetches published baseline or modular survey questions from `GET /api/survey/questions`.
+  List<Map<String, dynamic>>? _parseList(http.Response res, String key) {
+    if (res.statusCode != 200) return null;
+    final data = jsonDecode(res.body) as Map<String, dynamic>;
+    final list = data[key] as List<dynamic>?;
+    return list?.map((e) => Map<String, dynamic>.from(e as Map)).toList();
+  }
+
+  /// Fetches published baseline or modular survey questions.
   Future<List<Map<String, dynamic>>?> fetchSurveyQuestions({
     int? sectionNumber,
     String? moduleKey,
   }) async {
     try {
       final queryParams = <String, String>{};
-      if (sectionNumber != null) {
-        queryParams['section'] = sectionNumber.toString();
-      }
-      if (moduleKey != null && moduleKey.isNotEmpty) {
-        queryParams['moduleKey'] = moduleKey;
-      }
+      if (sectionNumber != null) queryParams['section'] = sectionNumber.toString();
+      if (moduleKey != null && moduleKey.isNotEmpty) queryParams['moduleKey'] = moduleKey;
 
       final baseUri = Uri.parse('$baseUrl/survey/questions');
       final uri = queryParams.isNotEmpty
@@ -27,14 +30,7 @@ mixin ApiDataMethods {
           : baseUri;
 
       final res = await client.get(uri).timeout(timeout);
-      if (res.statusCode == 200) {
-        final data = jsonDecode(res.body) as Map<String, dynamic>;
-        final list = data['questions'] as List<dynamic>?;
-        if (list != null) {
-          return list.map((e) => Map<String, dynamic>.from(e as Map)).toList();
-        }
-      }
-      return null;
+      return _parseList(res, 'questions');
     } catch (_) {
       return null;
     }
@@ -43,52 +39,28 @@ mixin ApiDataMethods {
   /// Fetches published health facilities from `GET /api/facilities`.
   Future<List<Map<String, dynamic>>?> fetchFacilities() async {
     try {
-      final uri = Uri.parse('$baseUrl/facilities');
-      final res = await client.get(uri).timeout(timeout);
-      if (res.statusCode == 200) {
-        final data = jsonDecode(res.body) as Map<String, dynamic>;
-        final list = data['facilities'] as List<dynamic>?;
-        if (list != null) {
-          return list.map((e) => Map<String, dynamic>.from(e as Map)).toList();
-        }
-      }
-      return null;
+      final res = await client.get(Uri.parse('$baseUrl/facilities')).timeout(timeout);
+      return _parseList(res, 'facilities');
     } catch (_) {
       return null;
     }
   }
 
-  /// Fetches peer mentors and counselors from `GET /api/mentors`.
+  /// Fetches verified mentors from `GET /api/mentors`.
   Future<List<Map<String, dynamic>>?> fetchMentors() async {
     try {
-      final uri = Uri.parse('$baseUrl/mentors');
-      final res = await client.get(uri).timeout(timeout);
-      if (res.statusCode == 200) {
-        final data = jsonDecode(res.body) as Map<String, dynamic>;
-        final list = data['mentors'] as List<dynamic>?;
-        if (list != null) {
-          return list.map((e) => Map<String, dynamic>.from(e as Map)).toList();
-        }
-      }
-      return null;
+      final res = await client.get(Uri.parse('$baseUrl/mentors')).timeout(timeout);
+      return _parseList(res, 'mentors');
     } catch (_) {
       return null;
     }
   }
 
-  /// Fetches curriculum learning modules from `GET /api/modules`.
+  /// Fetches learning curriculum modules from `GET /api/modules`.
   Future<List<Map<String, dynamic>>?> fetchModules() async {
     try {
-      final uri = Uri.parse('$baseUrl/modules');
-      final res = await client.get(uri).timeout(timeout);
-      if (res.statusCode == 200) {
-        final data = jsonDecode(res.body) as Map<String, dynamic>;
-        final list = data['modules'] as List<dynamic>?;
-        if (list != null) {
-          return list.map((e) => Map<String, dynamic>.from(e as Map)).toList();
-        }
-      }
-      return null;
+      final res = await client.get(Uri.parse('$baseUrl/modules')).timeout(timeout);
+      return _parseList(res, 'modules');
     } catch (_) {
       return null;
     }
@@ -97,16 +69,8 @@ mixin ApiDataMethods {
   /// Fetches assessment questions from `GET /api/quizzes`.
   Future<List<Map<String, dynamic>>?> fetchQuizzes() async {
     try {
-      final uri = Uri.parse('$baseUrl/quizzes');
-      final res = await client.get(uri).timeout(timeout);
-      if (res.statusCode == 200) {
-        final data = jsonDecode(res.body) as Map<String, dynamic>;
-        final list = data['questions'] as List<dynamic>?;
-        if (list != null) {
-          return list.map((e) => Map<String, dynamic>.from(e as Map)).toList();
-        }
-      }
-      return null;
+      final res = await client.get(Uri.parse('$baseUrl/quizzes')).timeout(timeout);
+      return _parseList(res, 'questions');
     } catch (_) {
       return null;
     }
@@ -115,16 +79,8 @@ mixin ApiDataMethods {
   /// Fetches student clubs from `GET /api/clubs`.
   Future<List<Map<String, dynamic>>?> fetchClubs() async {
     try {
-      final uri = Uri.parse('$baseUrl/clubs');
-      final res = await client.get(uri).timeout(timeout);
-      if (res.statusCode == 200) {
-        final data = jsonDecode(res.body) as Map<String, dynamic>;
-        final list = data['clubs'] as List<dynamic>?;
-        if (list != null) {
-          return list.map((e) => Map<String, dynamic>.from(e as Map)).toList();
-        }
-      }
-      return null;
+      final res = await client.get(Uri.parse('$baseUrl/clubs')).timeout(timeout);
+      return _parseList(res, 'clubs');
     } catch (_) {
       return null;
     }
@@ -171,27 +127,36 @@ mixin ApiDataMethods {
   }) async {
     try {
       final uri = Uri.parse('$baseUrl/survey/baseline');
-      final headers = <String, String>{'Content-Type': 'application/json'};
-      if (authToken != null && authToken.isNotEmpty) {
-        headers['Authorization'] = 'Bearer $authToken';
-      }
+      final headers = <String, String>{
+        'Content-Type': 'application/json',
+        if (authToken != null && authToken.isNotEmpty)
+          'Authorization': 'Bearer $authToken',
+      };
       final payload = <String, dynamic>{
         'ageGroup': ageGroup,
         'yearOfStudy': yearOfStudy,
         'disabilityNeed': disabilityNeed,
         'knowsGondarSrh': knowsGondarSrh,
+        if (answers != null && answers.isNotEmpty) 'answers': answers,
       };
-      if (answers != null && answers.isNotEmpty) {
-        payload['answers'] = answers;
-      }
       final res = await client
-          .post(
-            uri,
-            headers: headers,
-            body: jsonEncode(payload),
-          )
+          .post(uri, headers: headers, body: jsonEncode(payload))
           .timeout(timeout);
-      return res.statusCode == 201;
+      return res.statusCode == 201 || res.statusCode == 200;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  /// Marks the student baseline survey completed for the authenticated account.
+  Future<bool> markUserSurveyCompleted(String authToken) async {
+    try {
+      final uri = Uri.parse('$baseUrl/survey/complete');
+      final res = await client.post(uri, headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $authToken',
+      }).timeout(timeout);
+      return res.statusCode == 200;
     } catch (_) {
       return false;
     }

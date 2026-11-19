@@ -177,24 +177,19 @@ void main() {
     });
 
     test(
-        'multi-account user scoping isolates survey completion per student email',
+        'baseline survey enforces one-time completion and exempts admins',
         () async {
       final repo = OnboardingSurveyRepository();
 
       const userA = AuthUser(
         id: 'user_a_123',
         email: 'student_a@gondar.edu.et',
-        emailVerified: true,
-      );
-      const userB = AuthUser(
-        id: 'user_b_456',
-        email: 'student_b@gondar.edu.et',
+        role: 'STUDENT',
         emailVerified: true,
       );
 
-      // Initially neither has completed
+      // Initially student A has not completed
       expect(await repo.isCompleted(user: userA), isFalse);
-      expect(await repo.isCompleted(user: userB), isFalse);
 
       // Student A fills and submits survey
       final answersA = OnboardingSurveyAnswers(
@@ -209,17 +204,31 @@ void main() {
       // Student A is completed
       expect(await repo.isCompleted(user: userA), isTrue);
 
-      // Student B on the SAME phone is NOT completed!
-      expect(await repo.isCompleted(user: userB), isFalse);
+      // Admin account is always exempt even without prior survey
+      const adminUser = AuthUser(
+        id: 'admin_1',
+        email: 'admin@yegnahealth.org',
+        displayName: 'Natnael Zemene (Executive Admin)',
+        role: 'ADMIN',
+        emailVerified: true,
+      );
+      expect(await repo.isCompleted(user: adminUser), isTrue);
 
       // If Student C has cloud account flag hasCompletedSurvey: true
       const userC = AuthUser(
         id: 'user_c_789',
         email: 'student_c@gondar.edu.et',
+        role: 'STUDENT',
         emailVerified: true,
         hasCompletedSurvey: true,
       );
       expect(await repo.isCompleted(user: userC), isTrue);
+    });
+
+    test('baseline survey repository returns strictly 4 demographic questions', () async {
+      final repo = OnboardingSurveyRepository();
+      final questions = await repo.getBaselineSurveyQuestions();
+      expect(questions.length, equals(4));
     });
   });
 }

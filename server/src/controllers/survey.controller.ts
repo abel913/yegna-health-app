@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import { prisma, config } from '../config/index.js';
 import { z } from 'zod';
+import { AuthRequest } from '../middleware/auth.middleware.js';
 
 const optionSchema = z.object({
   id: z.string().optional(),
@@ -409,6 +410,26 @@ export async function submitSurvey(req: Request, res: Response): Promise<void> {
       error: 'Failed to record anonymous survey response',
       message: err.message,
     });
+  }
+}
+
+/**
+ * Marks baseline survey as completed for the authenticated student account.
+ */
+export async function markUserSurveyComplete(req: AuthRequest, res: Response): Promise<void> {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      res.status(401).json({ error: 'Authentication required' });
+      return;
+    }
+    await prisma.user.update({
+      where: { id: userId },
+      data: { hasCompletedSurvey: true },
+    });
+    res.json({ success: true, hasCompletedSurvey: true });
+  } catch (err: any) {
+    res.status(500).json({ error: 'Failed to mark survey completed', message: err.message });
   }
 }
 

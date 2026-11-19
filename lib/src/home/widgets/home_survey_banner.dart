@@ -23,6 +23,13 @@ class HomeSurveyBanner extends StatelessWidget {
     final isDark = glass.isDark;
     final user = authController?.user;
 
+    if (user != null && user.role != null && user.role!.toUpperCase() != 'STUDENT') {
+      return const SizedBox.shrink();
+    }
+    if (user != null && user.displayName.toLowerCase().contains('admin')) {
+      return const SizedBox.shrink();
+    }
+
     return FutureBuilder<bool>(
       future: OnboardingSurveyRepository().isCompleted(user: user),
       builder: (context, snapshot) {

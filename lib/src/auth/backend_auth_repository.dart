@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../onboarding/onboarding_survey_storage.dart';
 import '../sync/api_client.dart';
 import 'auth_models.dart';
 import 'auth_repository.dart';
@@ -53,9 +54,7 @@ class BackendAuthRepository implements AuthRepository {
   Future<void> _verifySession(String token) async {
     final res = await _apiClient.getCurrentUser(token);
     if (!res.success) {
-      if (res.errorCode == 'ACCOUNT_SUSPENDED' || res.statusCode == 403 || res.statusCode == 401) {
-        await signOut();
-      }
+      if (res.errorCode == 'ACCOUNT_SUSPENDED' || res.statusCode == 403 || res.statusCode == 401) await signOut();
       return;
     }
 
@@ -63,7 +62,11 @@ class BackendAuthRepository implements AuthRepository {
     if (user != null) {
       final updatedName = user['displayName'] as String? ?? '';
       final updatedRole = user['role'] as String? ?? 'STUDENT';
-      final updatedSurvey = user['hasCompletedSurvey'] as bool? ?? false;
+      var updatedSurvey = user['hasCompletedSurvey'] as bool? ?? false;
+      if (!updatedSurvey && await OnboardingSurveyStorage.isCompleted()) {
+        updatedSurvey = true;
+        unawaited(_apiClient.markUserSurveyCompleted(token));
+      }
       await _session.updateProfile(displayName: updatedName, role: updatedRole, surveyCompleted: updatedSurvey);
 
       final current = _snapshot.user;
@@ -109,6 +112,9 @@ class BackendAuthRepository implements AuthRepository {
       final user = await _session.saveUserFromMap(res.token!, res.user!);
       _snapshot = AuthSnapshot(user: user);
       _changes.add(_snapshot);
+      if (!user.hasCompletedSurvey && await OnboardingSurveyStorage.isCompleted()) {
+        unawaited(_apiClient.markUserSurveyCompleted(res.token!));
+      }
       return;
     }
     throw mapBackendAuthError(res);
@@ -147,9 +153,7 @@ class BackendAuthRepository implements AuthRepository {
   @override
   Future<void> updatePassword(String password) async {
     final token = _session.token;
-    if (token == null || token.isEmpty) {
-      throw const AuthFailure(AuthIssue.sessionUnavailable);
-    }
+    if (token == null || token.isEmpty) throw const AuthFailure(AuthIssue.sessionUnavailable);
     final res = await _apiClient.updatePassword(token: token, newPassword: password);
     if (!res.success) throw mapBackendAuthError(res);
   }
@@ -157,9 +161,7 @@ class BackendAuthRepository implements AuthRepository {
   @override
   Future<void> updateDisplayName(String displayName) async {
     final token = _session.token;
-    if (token == null || token.isEmpty) {
-      throw const AuthFailure(AuthIssue.sessionUnavailable);
-    }
+    if (token == null || token.isEmpty) throw const AuthFailure(AuthIssue.sessionUnavailable);
     final res = await _apiClient.updateProfile(token: token, displayName: displayName);
     if (res.success && res.user != null) {
       final updatedName = (res.user!['displayName'] as String?) ?? displayName;
@@ -185,8 +187,7 @@ class BackendAuthRepository implements AuthRepository {
   @override
   Future<void> signOut() async {
     await _session.clearSession();
-    _snapshot = const AuthSnapshot(user: null);
-    _changes.add(_snapshot);
+    _changes.add(_snapshot = const AuthSnapshot(user: null));
   }
 
   @override

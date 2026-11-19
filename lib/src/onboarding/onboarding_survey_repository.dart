@@ -19,6 +19,15 @@ class OnboardingSurveyRepository {
   static List<DynamicSurveyQuestion> get defaultQuestions =>
       DefaultSurveyQuestions.list;
 
+  /// Baseline 4 demographic questions for onboarding modal only.
+  Future<List<DynamicSurveyQuestion>> getBaselineSurveyQuestions({
+    bool forceRefresh = false,
+  }) async {
+    final list = await getSurveyQuestions(sectionNumber: 1, forceRefresh: forceRefresh);
+    if (list.isNotEmpty) return list.take(4).toList();
+    return defaultQuestions.take(4).toList();
+  }
+
   /// Fetches published survey questions from the backend API with local cache and fallback.
   Future<List<DynamicSurveyQuestion>> getSurveyQuestions({
     int? sectionNumber,
@@ -94,6 +103,9 @@ class OnboardingSurveyRepository {
         answers: answers.dynamicAnswers,
         authToken: authToken,
       );
+      if (authToken != null && authToken.isNotEmpty) {
+        await _apiClient.markUserSurveyCompleted(authToken);
+      }
     } catch (_) {}
   }
 

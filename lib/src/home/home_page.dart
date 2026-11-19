@@ -57,9 +57,11 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   bool get _shouldAutoPrompt {
     if (widget.autoPromptSurvey != null) return widget.autoPromptSurvey!;
-    return !WidgetsBinding.instance.runtimeType
-        .toString()
-        .contains('TestWidgets');
+    final u = widget.authController?.user;
+    if (u != null && (u.role?.toUpperCase() != 'STUDENT' || u.displayName.toLowerCase().contains('admin'))) {
+      return false;
+    }
+    return !WidgetsBinding.instance.runtimeType.toString().contains('TestWidgets');
   }
 
   @override
@@ -71,9 +73,7 @@ class _HomePageState extends State<HomePage> {
           context: context,
           authController: widget.authController,
           onOpenFacilities: widget.onOpenFacilities,
-          onUpdate: () {
-            if (mounted) setState(() {});
-          },
+          onUpdate: () => mounted ? setState(() {}) : null,
         );
       });
     }
@@ -127,9 +127,7 @@ class _HomePageState extends State<HomePage> {
                         context: context,
                         authController: widget.authController,
                         onOpenFacilities: widget.onOpenFacilities,
-                        onUpdate: () {
-                          if (mounted) setState(() {});
-                        },
+                        onUpdate: () => mounted ? setState(() {}) : null,
                       ),
                     ),
                     HomeSectionHeader(

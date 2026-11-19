@@ -15,6 +15,12 @@ class HomeSurveyLauncher {
     required VoidCallback onUpdate,
   }) async {
     final user = authController?.user;
+    if (user != null && user.role != null && user.role!.toUpperCase() != 'STUDENT') {
+      return;
+    }
+    if (user != null && user.displayName.toLowerCase().contains('admin')) {
+      return;
+    }
     final repo = OnboardingSurveyRepository();
     final isDone = await repo.hasCompletedOrDismissed(user: user);
     if (!isDone && context.mounted) {

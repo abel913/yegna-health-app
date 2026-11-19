@@ -31,7 +31,8 @@ class OnboardingSurveyDialog extends StatefulWidget {
 
 class _OnboardingSurveyDialogState extends State<OnboardingSurveyDialog> {
   late final OnboardingSurveyRepository _repo;
-  List<DynamicSurveyQuestion> _questions = OnboardingSurveyRepository.defaultQuestions;
+  List<DynamicSurveyQuestion> _questions =
+      OnboardingSurveyRepository.defaultQuestions.take(4).toList();
   int _currentIndex = 0;
   final Map<String, String> _selectedAnswers = {};
   bool _isSubmitted = false;
@@ -45,9 +46,9 @@ class _OnboardingSurveyDialogState extends State<OnboardingSurveyDialog> {
   }
 
   Future<void> _loadQuestions() async {
-    final questions = await _repo.getSurveyQuestions();
+    final questions = await _repo.getBaselineSurveyQuestions();
     if (mounted && questions.isNotEmpty) {
-      setState(() => _questions = questions);
+      setState(() => _questions = questions.take(4).toList());
     }
   }
 

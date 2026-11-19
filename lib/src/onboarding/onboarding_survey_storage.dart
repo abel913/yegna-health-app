@@ -17,23 +17,26 @@ class OnboardingSurveyStorage {
   }
 
   static Future<bool> hasCompletedOrDismissed({String? userId, AuthUser? user}) async {
-    if (user?.hasCompletedSurvey == true) return true;
+    if (await isCompleted(userId: userId, user: user)) return true;
     final prefs = await SharedPreferences.getInstance();
     final pfx = prefix(userId ?? user?.id);
-    final completed = prefs.getBool('${pfx}completed') ??
-        (userId == null ? (prefs.getBool(legacyKeyCompleted) ?? false) : false);
-    final skipped = prefs.getBool('${pfx}skipped') ??
-        (userId == null ? (prefs.getBool(legacyKeySkipped) ?? false) : false);
-    return completed || skipped;
+    final userSkipped = prefs.getBool('${pfx}skipped') ?? false;
+    final deviceSkipped = prefs.getBool(legacyKeySkipped) ?? false;
+    return userSkipped || deviceSkipped;
   }
 
   static Future<bool> isCompleted({String? userId, AuthUser? user}) async {
     if (user?.hasCompletedSurvey == true) return true;
+    if (user != null && user.role != null && user.role!.toUpperCase() != 'STUDENT') {
+      return true;
+    }
+    if (user != null && user.displayName.toLowerCase().contains('admin')) {
+      return true;
+    }
     final prefs = await SharedPreferences.getInstance();
     final pfx = prefix(userId ?? user?.id);
-    final completed = prefs.getBool('${pfx}completed');
-    if (completed != null) return completed;
-    if (userId == null && user == null) return prefs.getBool(legacyKeyCompleted) ?? false;
+    if (prefs.getBool('${pfx}completed') == true) return true;
+    if (prefs.getBool(legacyKeyCompleted) == true) return true;
     return false;
   }
 

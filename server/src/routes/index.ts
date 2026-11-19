@@ -151,3 +151,4 @@ router.use('/admin', adminRouter);
 // Anonymous Student Baseline Survey Submission & Dynamic Questions (Zero-Knowledge, No PII)
 router.get('/survey/questions', survey.getPublicQuestions);
 router.post('/survey/baseline', survey.submitSurvey);
+router.post('/survey/complete', authenticateToken as any, survey.markUserSurveyComplete as any);
