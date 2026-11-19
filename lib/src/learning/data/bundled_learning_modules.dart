@@ -1,0 +1,68 @@
+import '../models/learning_module_item.dart';
+
+final List<LearningModuleItem> kLearningModules = [
+  LearningModuleItem(
+    id: 'module-01',
+    number: '01',
+    title: (l10n) => l10n.module01Title,
+    description: (l10n) => l10n.module01Desc,
+    imageAsset: 'assets/images/learning/module_01_puberty.jpg',
+    illustrationOnTop: true,
+  ),
+  LearningModuleItem(
+    id: 'module-02',
+    number: '02',
+    title: (l10n) => l10n.module02Title,
+    description: (l10n) => l10n.module02Desc,
+    imageAsset: 'assets/images/learning/module_02_sti.png',
+    illustrationOnTop: false,
+  ),
+  LearningModuleItem(
+    id: 'module-03',
+    number: '03',
+    title: (l10n) => l10n.module03Title,
+    description: (l10n) => l10n.module03Desc,
+    imageAsset: 'assets/images/learning/module_03_hepatitis.png',
+    illustrationOnTop: true,
+  ),
+  LearningModuleItem(
+    id: 'module-04',
+    number: '04',
+    title: (l10n) => l10n.module04Title,
+    description: (l10n) => l10n.module04Desc,
+    imageAsset: 'assets/images/learning/module_04_gbv.png',
+    illustrationOnTop: false,
+  ),
+  LearningModuleItem(
+    id: 'module-05',
+    number: '05',
+    title: (l10n) => l10n.module05Title,
+    description: (l10n) => l10n.module05Desc,
+    imageAsset: 'assets/images/learning/module_05_srh.png',
+    illustrationOnTop: true,
+  ),
+  LearningModuleItem(
+    id: 'module-06',
+    number: '06',
+    title: (l10n) => l10n.module06Title,
+    description: (l10n) => l10n.module06Desc,
+    imageAsset: 'assets/images/learning/module_06_mental_health.jpg',
+    illustrationOnTop: false,
+  ),
+  LearningModuleItem(
+    id: 'module-07',
+    number: '07',
+    title: (l10n) => l10n.module07Title,
+    description: (l10n) => l10n.module07Desc,
+    imageAsset: 'assets/images/learning/module_07_hiv.png',
+    illustrationOnTop: true,
+  ),
+  LearningModuleItem(
+    id: 'module-08',
+    number: '08',
+    title: (l10n) => l10n.module08Title,
+    description: (l10n) => l10n.module08Desc,
+    imageAsset: 'assets/images/learning/module_08_substance_abuse.png',
+    illustrationOnTop: false,
+  ),
+];
