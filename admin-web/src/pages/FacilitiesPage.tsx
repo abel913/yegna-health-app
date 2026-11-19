@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import {
   Plus,
   Search,
@@ -19,6 +19,9 @@ import {
   Clock,
   Lock,
   UserCheck,
+  ChevronDown,
+  Check,
+  RotateCcw,
 } from 'lucide-react';
 import { Facility, FacilityCategory } from '../types/index.js';
 import { exportToCsv } from '../utils/csvExport.js';
@@ -27,10 +30,12 @@ import { EmptyState } from '../components/common/EmptyState.js';
 import { ConfirmModal } from '../components/common/ConfirmModal.js';
 import { CampusMapPicker } from '../components/common/CampusMapPicker.js';
 import { TagInputManager } from '../components/common/TagInputManager.js';
+import { TableSkeleton } from '../components/common/TableSkeleton.js';
 
 interface FacilitiesPageProps {
   facilities: Facility[];
   lang: 'en' | 'am';
+  isLoading?: boolean;
   onSave: (data: Partial<Facility>, id?: string) => Promise<void>;
   onDelete: (id: string) => Promise<void>;
 }
@@ -70,15 +75,56 @@ const HOURS_PRESETS = ['Open 24/7', '08:00 - 18:00', '08:30 - 17:30', '08:00 - 2
 export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
   facilities,
   lang,
+  isLoading = false,
   onSave,
   onDelete,
 }) => {
   const [search, setSearch] = useState('');
   const [selectedCampus, setSelectedCampus] = useState('All');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
+  const [activeDropdown, setActiveDropdown] = useState<'campus' | 'category' | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingFacility, setEditingFacility] = useState<Facility | null>(null);
   const [facilityToDelete, setFacilityToDelete] = useState<Facility | null>(null);
+
+  const campusDropdownRef = useRef<HTMLDivElement>(null);
+  const categoryDropdownRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  // Close dropdowns on click outside & support Escape and / keyboard shortcuts
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+      if (
+        campusDropdownRef.current &&
+        !campusDropdownRef.current.contains(target) &&
+        categoryDropdownRef.current &&
+        !categoryDropdownRef.current.contains(target)
+      ) {
+        setActiveDropdown(null);
+      }
+    };
+
+    const handleGlobalKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setActiveDropdown(null);
+      } else if (
+        event.key === '/' &&
+        document.activeElement?.tagName !== 'INPUT' &&
+        document.activeElement?.tagName !== 'TEXTAREA'
+      ) {
+        event.preventDefault();
+        searchInputRef.current?.focus();
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    window.addEventListener('keydown', handleGlobalKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      window.removeEventListener('keydown', handleGlobalKeyDown);
+    };
+  }, []);
 
   // Lock body scroll when modal is open and handle Escape key
   useEffect(() => {
@@ -128,6 +174,64 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
 
   const [isCustomLocation, setIsCustomLocation] = useState(false);
 
+  const matchesCampusPredicate = (f: Facility, campusId: string) => {
+    if (campusId === 'All') return true;
+    const sc = f.subCity.toLowerCase();
+    const target = campusId.toLowerCase();
+    return (
+      sc === target ||
+      (target.includes('maraki') && sc.includes('maraki')) ||
+      (target.includes('tewodros') && sc.includes('tewodros')) ||
+      (target.includes('gcms') && (sc.includes('gcms') || sc.includes('hospital') || sc.includes('cmhs'))) ||
+      (target.includes('fasil') && sc.includes('fasil')) ||
+      (target.includes('tseda') && sc.includes('tseda'))
+    );
+  };
+
+  const campusCounts = useMemo(() => {
+    const counts: Record<string, number> = { All: facilities.length };
+    for (const preset of LOCATION_PRESETS) {
+      counts[preset.id] = facilities.filter((f) => matchesCampusPredicate(f, preset.id)).length;
+    }
+    return counts;
+  }, [facilities]);
+
+  const categoryCounts = useMemo(() => {
+    const counts: Record<string, number> = { All: facilities.length };
+    for (const cat of FACILITY_CATEGORIES) {
+      counts[cat.id] = facilities.filter((f) => (f.category || 'clinical') === cat.id).length;
+    }
+    return counts;
+  }, [facilities]);
+
+  const activeCampusPreset = LOCATION_PRESETS.find((p) => p.id === selectedCampus);
+  const activeCampusLabel =
+    selectedCampus === 'All'
+      ? lang === 'am'
+        ? 'ሁሉም ካምፓሶች'
+        : 'All Campuses'
+      : lang === 'am'
+      ? activeCampusPreset?.nameAm || selectedCampus
+      : activeCampusPreset?.nameEn || selectedCampus;
+
+  const activeCategoryPreset = FACILITY_CATEGORIES.find((c) => c.id === selectedCategory);
+  const ActiveCategoryIcon = activeCategoryPreset ? activeCategoryPreset.icon : Building2;
+  const activeCategoryLabel =
+    selectedCategory === 'All'
+      ? lang === 'am'
+        ? 'ሁሉም ዘርፎች'
+        : 'All Categories'
+      : lang === 'am'
+      ? activeCategoryPreset?.nameAm || selectedCategory
+      : activeCategoryPreset?.nameEn || selectedCategory;
+
+  const hasActiveFilters = search.trim().length > 0 || selectedCampus !== 'All' || selectedCategory !== 'All';
+  const handleResetFilters = () => {
+    setSearch('');
+    setSelectedCampus('All');
+    setSelectedCategory('All');
+  };
+
   const filtered = facilities.filter((f) => {
     const matchesSearch =
       f.nameEn.toLowerCase().includes(search.toLowerCase()) ||
@@ -140,18 +244,7 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
       (f.focalPerson && f.focalPerson.toLowerCase().includes(search.toLowerCase())) ||
       (f.services && f.services.some((s) => s.toLowerCase().includes(search.toLowerCase())));
 
-    let matchesCampus = true;
-    if (selectedCampus !== 'All') {
-      const sc = f.subCity.toLowerCase();
-      const target = selectedCampus.toLowerCase();
-      matchesCampus =
-        sc === target ||
-        (target.includes('maraki') && sc.includes('maraki')) ||
-        (target.includes('tewodros') && sc.includes('tewodros')) ||
-        (target.includes('gcms') && (sc.includes('gcms') || sc.includes('hospital') || sc.includes('cmhs'))) ||
-        (target.includes('fasil') && sc.includes('fasil')) ||
-        (target.includes('tseda') && sc.includes('tseda'));
-    }
+    const matchesCampus = matchesCampusPredicate(f, selectedCampus);
 
     let matchesCategory = true;
     if (selectedCategory !== 'All') {
@@ -379,7 +472,7 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
             </span>
           </div>
           <h2 className="text-xl md:text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2 mt-1">
-            <Building2 className="text-brand-600 dark:text-cyan-400" size={24} />
+            <Building2 className="text-slate-900 dark:text-white" size={24} />
             <span>{lang === 'am' ? 'የጎንደር ዩኒቨርሲቲ ተቋማት ማዕከል' : 'Campus Facilities Directory CMS'}</span>
           </h2>
           <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
@@ -399,7 +492,7 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
           </button>
           <button
             onClick={openCreateModal}
-            className="flex items-center gap-2 px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-xs md:text-sm font-bold rounded-xl shadow-md shadow-brand-600/20 transition-all cursor-pointer"
+            className="flex items-center gap-2 px-4 py-2.5 bg-slate-950 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 text-xs md:text-sm font-bold rounded-xl border border-slate-900 dark:border-white shadow-xs transition-all active:scale-[0.99] cursor-pointer"
           >
             <Plus size={16} />
             <span>{lang === 'am' ? '+ አዲስ ተቋም ጨምር' : '+ Add Facility'}</span>
@@ -407,90 +500,297 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
         </div>
       </div>
 
-      {/* Search & Refined Multi-Axis Filters */}
-      <div className="bg-white dark:bg-slate-900 p-4 md:p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-3.5">
-        <div className="flex flex-col md:flex-row gap-3">
-          <div className="relative flex-1">
-            <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder={
-                lang === 'am'
-                  ? 'በተቋም ስም፣ በካምፓስ፣ በህንፃ ወይም በባለሙያ ፈልግ...'
-                  : 'Search by facility name, campus, building, room, focal officer...'
-              }
-              className="w-full pl-9 pr-4 py-2 text-xs md:text-sm bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl focus:bg-white dark:focus:bg-slate-800 focus:border-brand-500 focus:outline-none text-slate-900 dark:text-white transition-all"
-            />
+      {/* Search & Advanced Multi-Axis Filters Toolbar */}
+      <div className="bg-white dark:bg-slate-900 p-4 md:p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-4">
+        {/* Search Bar with Keyboard Shortcut Hint & Quick Clear */}
+        <div className="relative">
+          <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none flex items-center">
+            <Search size={18} />
+          </div>
+          <input
+            ref={searchInputRef}
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder={
+              lang === 'am'
+                ? 'በተቋም ስም፣ በካምፓስ፣ በህንፃ ወይም በባለሙያ ፈልግ...'
+                : 'Search facilities by name, campus, building, room, focal officer or service...'
+            }
+            className="w-full pl-10 pr-24 py-2.5 text-xs md:text-sm bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl focus:bg-white dark:focus:bg-slate-900 focus:border-slate-900 dark:focus:border-white focus:outline-none text-slate-900 dark:text-white transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500 shadow-2xs"
+          />
+          <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
+            {search && (
+              <button
+                type="button"
+                onClick={() => setSearch('')}
+                title={lang === 'am' ? 'አጽዳ' : 'Clear search'}
+                className="p-1 rounded-md text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200/70 dark:hover:bg-slate-700 transition-colors cursor-pointer"
+              >
+                <X size={14} />
+              </button>
+            )}
+            <kbd className="hidden sm:inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-mono font-medium text-slate-400 dark:text-slate-500 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded shadow-2xs select-none">
+              /
+            </kbd>
           </div>
         </div>
 
-        {/* Axis 1: UoG Campus Filter Pills */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs pt-1 border-t border-slate-100 dark:border-slate-800">
-          <span className="text-xs font-bold text-slate-400 dark:text-slate-500 mr-1 shrink-0 flex items-center gap-1">
-            <GraduationCap size={13} />
-            <span>{lang === 'am' ? 'ካምፓስ:' : 'Campus:'}</span>
-          </span>
-          <button
-            onClick={() => setSelectedCampus('All')}
-            className={`px-3 py-1 rounded-lg font-bold transition-all whitespace-nowrap cursor-pointer text-xs ${
-              selectedCampus === 'All'
-                ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-2xs'
-                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200/80 dark:hover:bg-slate-700'
-            }`}
-          >
-            {lang === 'am' ? 'ሁሉም ካምፓሶች' : 'All Campuses'} ({facilities.length})
-          </button>
-          {LOCATION_PRESETS.map((preset) => (
+        {/* Side-by-Side Advanced Custom Dropdowns */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
+          {/* Dropdown 1: Campus Filter */}
+          <div ref={campusDropdownRef} className="relative">
             <button
-              key={preset.id}
-              onClick={() => setSelectedCampus(preset.id)}
-              className={`px-3 py-1 rounded-lg font-bold transition-all whitespace-nowrap cursor-pointer text-xs ${
-                selectedCampus === preset.id
-                  ? 'bg-brand-600 text-white shadow-2xs'
-                  : 'bg-slate-100/70 dark:bg-slate-800/70 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
+              type="button"
+              onClick={() => setActiveDropdown(activeDropdown === 'campus' ? null : 'campus')}
+              className={`w-full flex items-center justify-between gap-3 px-3.5 py-2.5 rounded-xl border text-left transition-all cursor-pointer ${
+                activeDropdown === 'campus'
+                  ? 'border-slate-900 dark:border-white bg-slate-50/50 dark:bg-slate-800/60 ring-2 ring-slate-900/10 dark:ring-white/10'
+                  : selectedCampus !== 'All'
+                  ? 'border-slate-900/40 dark:border-slate-600 bg-slate-50/60 dark:bg-slate-800/40'
+                  : 'border-slate-200 dark:border-slate-700 bg-slate-50/40 dark:bg-slate-800/20 hover:border-slate-300 dark:hover:border-slate-600'
               }`}
             >
-              {lang === 'am' ? preset.nameAm : preset.nameEn}
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-700 dark:text-slate-200 shrink-0">
+                  <GraduationCap size={15} />
+                </div>
+                <div className="min-w-0">
+                  <span className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                    {lang === 'am' ? 'ካምፓስ' : 'Campus'}
+                  </span>
+                  <span className="block text-xs md:text-sm font-semibold text-slate-900 dark:text-white truncate">
+                    {activeCampusLabel}
+                  </span>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                <span className="px-1.5 py-0.5 text-[11px] font-bold rounded-md bg-slate-200/80 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+                  {campusCounts[selectedCampus] ?? filtered.length}
+                </span>
+                <ChevronDown
+                  size={16}
+                  className={`text-slate-400 transition-transform duration-200 ${
+                    activeDropdown === 'campus' ? 'rotate-180 text-slate-900 dark:text-white' : ''
+                  }`}
+                />
+              </div>
             </button>
-          ))}
+
+            {/* Floating Campus Popover Menu */}
+            {activeDropdown === 'campus' && (
+              <div className="absolute z-30 left-0 right-0 mt-2 p-1.5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xl space-y-0.5 max-h-72 overflow-y-auto animate-in fade-in zoom-in-95 duration-100">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedCampus('All');
+                    setActiveDropdown(null);
+                  }}
+                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-colors cursor-pointer ${
+                    selectedCampus === 'All'
+                      ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900'
+                      : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <GraduationCap
+                      size={14}
+                      className={selectedCampus === 'All' ? 'text-white dark:text-slate-900' : 'text-slate-400'}
+                    />
+                    <span>{lang === 'am' ? 'ሁሉም ካምፓሶች' : 'All Campuses'}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
+                        selectedCampus === 'All'
+                          ? 'bg-slate-800 dark:bg-slate-200 text-slate-200 dark:text-slate-800'
+                          : 'bg-slate-100 dark:bg-slate-800 text-slate-500'
+                      }`}
+                    >
+                      {facilities.length}
+                    </span>
+                    {selectedCampus === 'All' && <Check size={14} />}
+                  </div>
+                </button>
+
+                <div className="h-px bg-slate-100 dark:bg-slate-800 my-1" />
+
+                {LOCATION_PRESETS.map((preset) => {
+                  const isSelected = selectedCampus === preset.id;
+                  const count = campusCounts[preset.id] ?? 0;
+                  return (
+                    <button
+                      key={preset.id}
+                      type="button"
+                      onClick={() => {
+                        setSelectedCampus(preset.id);
+                        setActiveDropdown(null);
+                      }}
+                      className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-colors cursor-pointer ${
+                        isSelected
+                          ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900'
+                          : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
+                      }`}
+                    >
+                      <span className="truncate pr-2">{lang === 'am' ? preset.nameAm : preset.nameEn}</span>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span
+                          className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
+                            isSelected
+                              ? 'bg-slate-800 dark:bg-slate-200 text-slate-200 dark:text-slate-800'
+                              : 'bg-slate-100 dark:bg-slate-800 text-slate-500'
+                          }`}
+                        >
+                          {count}
+                        </span>
+                        {isSelected && <Check size={14} />}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* Dropdown 2: Category Filter */}
+          <div ref={categoryDropdownRef} className="relative">
+            <button
+              type="button"
+              onClick={() => setActiveDropdown(activeDropdown === 'category' ? null : 'category')}
+              className={`w-full flex items-center justify-between gap-3 px-3.5 py-2.5 rounded-xl border text-left transition-all cursor-pointer ${
+                activeDropdown === 'category'
+                  ? 'border-slate-900 dark:border-white bg-slate-50/50 dark:bg-slate-800/60 ring-2 ring-slate-900/10 dark:ring-white/10'
+                  : selectedCategory !== 'All'
+                  ? 'border-slate-900/40 dark:border-slate-600 bg-slate-50/60 dark:bg-slate-800/40'
+                  : 'border-slate-200 dark:border-slate-700 bg-slate-50/40 dark:bg-slate-800/20 hover:border-slate-300 dark:hover:border-slate-600'
+              }`}
+            >
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-700 dark:text-slate-200 shrink-0">
+                  <ActiveCategoryIcon size={15} />
+                </div>
+                <div className="min-w-0">
+                  <span className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                    {lang === 'am' ? 'ዘርፍ' : 'Category'}
+                  </span>
+                  <span className="block text-xs md:text-sm font-semibold text-slate-900 dark:text-white truncate">
+                    {activeCategoryLabel}
+                  </span>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                <span className="px-1.5 py-0.5 text-[11px] font-bold rounded-md bg-slate-200/80 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+                  {categoryCounts[selectedCategory] ?? filtered.length}
+                </span>
+                <ChevronDown
+                  size={16}
+                  className={`text-slate-400 transition-transform duration-200 ${
+                    activeDropdown === 'category' ? 'rotate-180 text-slate-900 dark:text-white' : ''
+                  }`}
+                />
+              </div>
+            </button>
+
+            {/* Floating Category Popover Menu */}
+            {activeDropdown === 'category' && (
+              <div className="absolute z-30 left-0 right-0 mt-2 p-1.5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xl space-y-0.5 max-h-72 overflow-y-auto animate-in fade-in zoom-in-95 duration-100">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedCategory('All');
+                    setActiveDropdown(null);
+                  }}
+                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-colors cursor-pointer ${
+                    selectedCategory === 'All'
+                      ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900'
+                      : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <Building2
+                      size={14}
+                      className={selectedCategory === 'All' ? 'text-white dark:text-slate-900' : 'text-slate-400'}
+                    />
+                    <span>{lang === 'am' ? 'ሁሉም ዘርፎች' : 'All Categories'}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
+                        selectedCategory === 'All'
+                          ? 'bg-slate-800 dark:bg-slate-200 text-slate-200 dark:text-slate-800'
+                          : 'bg-slate-100 dark:bg-slate-800 text-slate-500'
+                      }`}
+                    >
+                      {facilities.length}
+                    </span>
+                    {selectedCategory === 'All' && <Check size={14} />}
+                  </div>
+                </button>
+
+                <div className="h-px bg-slate-100 dark:bg-slate-800 my-1" />
+
+                {FACILITY_CATEGORIES.map((cat) => {
+                  const Icon = cat.icon;
+                  const isSelected = selectedCategory === cat.id;
+                  const count = categoryCounts[cat.id] ?? 0;
+                  return (
+                    <button
+                      key={cat.id}
+                      type="button"
+                      onClick={() => {
+                        setSelectedCategory(cat.id);
+                        setActiveDropdown(null);
+                      }}
+                      className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-colors cursor-pointer ${
+                        isSelected
+                          ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900'
+                          : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 truncate pr-2">
+                        <Icon
+                          size={14}
+                          className={isSelected ? 'text-white dark:text-slate-900' : 'text-slate-400'}
+                        />
+                        <span className="truncate">{lang === 'am' ? cat.nameAm : cat.nameEn}</span>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span
+                          className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
+                            isSelected
+                              ? 'bg-slate-800 dark:bg-slate-200 text-slate-200 dark:text-slate-800'
+                              : 'bg-slate-100 dark:bg-slate-800 text-slate-500'
+                          }`}
+                        >
+                          {count}
+                        </span>
+                        {isSelected && <Check size={14} />}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         </div>
 
-        {/* Axis 2: Facility Category Filter Pills */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
-          <span className="text-xs font-bold text-slate-400 dark:text-slate-500 mr-1 shrink-0 flex items-center gap-1">
-            <Building2 size={13} />
-            <span>{lang === 'am' ? 'ዘርፍ:' : 'Category:'}</span>
-          </span>
-          <button
-            onClick={() => setSelectedCategory('All')}
-            className={`px-2.5 py-1 rounded-lg font-bold transition-all whitespace-nowrap cursor-pointer text-[11px] ${
-              selectedCategory === 'All'
-                ? 'bg-slate-800 dark:bg-slate-200 text-white dark:text-slate-900 shadow-2xs'
-                : 'bg-slate-100/80 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200/80'
-            }`}
-          >
-            {lang === 'am' ? 'ሁሉም ዘርፎች' : 'All Categories'}
-          </button>
-          {FACILITY_CATEGORIES.map((cat) => {
-            const Icon = cat.icon;
-            const isSel = selectedCategory === cat.id;
-            return (
-              <button
-                key={cat.id}
-                onClick={() => setSelectedCategory(cat.id)}
-                className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg font-bold transition-all whitespace-nowrap cursor-pointer text-[11px] ${
-                  isSel
-                    ? 'bg-brand-600 text-white shadow-2xs'
-                    : 'bg-slate-100/80 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200/80'
-                }`}
-              >
-                <Icon size={12} />
-                <span>{lang === 'am' ? cat.nameAm : cat.nameEn}</span>
-              </button>
-            );
-          })}
+        {/* Filter Status & Quick Reset Row */}
+        <div className="flex items-center justify-between pt-1 border-t border-slate-100 dark:border-slate-800 text-xs text-slate-500 dark:text-slate-400">
+          <div>
+            {lang === 'am'
+              ? `የተገኙ ተቋማት፦ ${filtered.length} ከ ${facilities.length}`
+              : `Showing ${filtered.length} of ${facilities.length} facilities`}
+          </div>
+          {hasActiveFilters && (
+            <button
+              type="button"
+              onClick={handleResetFilters}
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
+            >
+              <RotateCcw size={12} />
+              <span>{lang === 'am' ? 'ሁሉንም ማጣሪያዎች አጽዳ' : 'Reset all filters'}</span>
+            </button>
+          )}
         </div>
       </div>
 
@@ -533,7 +833,11 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-medium">
-              {sortedFacilities.map((f) => (
+              {isLoading && facilities.length === 0 ? (
+                <TableSkeleton colSpan={6} rows={6} />
+              ) : (
+                <>
+                  {sortedFacilities.map((f) => (
                 <tr key={f.id} className="hover:bg-slate-50/70 dark:hover:bg-slate-800/50 transition-colors">
                   {/* Facility Name & Category */}
                   <td className="py-3.5 px-4">
@@ -573,7 +877,7 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
                     <div className="space-y-1">
                       <a
                         href={`tel:${f.phone}`}
-                        className="inline-flex items-center gap-1.5 text-xs font-bold text-brand-600 dark:text-cyan-400 hover:underline"
+                        className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-900 dark:text-white hover:underline"
                       >
                         <Phone size={12} />
                         {f.phone}
@@ -613,7 +917,7 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
                           </span>
                         )}
                         {f.hasPrivateRoom && (
-                          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400 font-bold border border-blue-200 dark:border-blue-800/60">
+                          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold border border-slate-200 dark:border-slate-700">
                             <Lock size={10} />
                             {lang === 'am' ? 'ሚስጥራዊ' : 'Private'}
                           </span>
@@ -641,7 +945,7 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
                     <div className="inline-flex items-center gap-1">
                       <button
                         onClick={() => openEditModal(f)}
-                        className="p-1.5 text-slate-500 hover:text-brand-600 dark:hover:text-cyan-400 hover:bg-brand-50 dark:hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
+                        className="p-1.5 text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
                         title={lang === 'am' ? 'አርትዕ' : 'Edit Facility'}
                       >
                         <Edit2 size={15} />
@@ -687,6 +991,8 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
                   onAction={openCreateModal}
                 />
               )}
+                </>
+              )}
             </tbody>
           </table>
         </div>
@@ -723,7 +1029,7 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
               {/* Card 1: Identification & Classification */}
               <div className="p-4 rounded-2xl bg-slate-50/70 dark:bg-slate-800/40 border border-slate-200/70 dark:border-slate-800 space-y-3.5">
                 <div className="flex items-center gap-2 pb-1 border-b border-slate-200/50 dark:border-slate-700/50">
-                  <span className="w-1.5 h-1.5 rounded-full bg-brand-600" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-slate-900 dark:bg-white" />
                   <h4 className="font-extrabold text-slate-900 dark:text-white text-xs uppercase tracking-wider">
                     {lang === 'am' ? '1. የተቋሙ መለያ እና ዘርፍ' : '1. Facility Identity & Classification'}
                   </h4>
@@ -739,7 +1045,7 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
                       required
                       value={formData.nameEn}
                       onChange={(e) => setFormData({ ...formData, nameEn: e.target.value })}
-                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-brand-500 focus:outline-hidden text-xs"
+                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-slate-900 dark:focus:border-white focus:outline-hidden text-xs"
                       placeholder="e.g. UoG Maraki Student Health Center"
                     />
                   </div>
@@ -752,7 +1058,7 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
                       required
                       value={formData.nameAm}
                       onChange={(e) => setFormData({ ...formData, nameAm: e.target.value })}
-                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-brand-500 focus:outline-hidden text-xs"
+                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-slate-900 dark:focus:border-white focus:outline-hidden text-xs"
                       placeholder="ምሳሌ፡ የጎንደር ዩኒቨርሲቲ ማራኪ የተማሪዎች ጤና ጣቢያ"
                     />
                   </div>
@@ -766,7 +1072,7 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
                     <select
                       value={formData.category}
                       onChange={(e) => setFormData({ ...formData, category: e.target.value as FacilityCategory })}
-                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl focus:border-brand-500 focus:outline-hidden bg-white dark:bg-slate-800 font-semibold text-slate-800 dark:text-slate-200 text-xs"
+                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl focus:border-slate-900 dark:focus:border-white focus:outline-hidden bg-white dark:bg-slate-800 font-semibold text-slate-800 dark:text-slate-200 text-xs"
                     >
                       {FACILITY_CATEGORIES.map((c) => (
                         <option key={c.id} value={c.id}>
@@ -782,7 +1088,7 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
                     <select
                       value={isCustomLocation ? '__custom__' : formData.subCity}
                       onChange={(e) => handleLocationPresetChange(e.target.value)}
-                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl focus:border-brand-500 focus:outline-hidden bg-white dark:bg-slate-800 font-semibold text-slate-800 dark:text-slate-200 text-xs"
+                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl focus:border-slate-900 dark:focus:border-white focus:outline-hidden bg-white dark:bg-slate-800 font-semibold text-slate-800 dark:text-slate-200 text-xs"
                     >
                       <optgroup label="University of Gondar Campuses" className="dark:bg-slate-800 dark:text-white">
                         {LOCATION_PRESETS.map((p) => (
@@ -810,7 +1116,7 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
                       required
                       value={formData.customSubCity}
                       onChange={(e) => setFormData({ ...formData, customSubCity: e.target.value })}
-                      className="w-full px-3 py-2 border border-brand-300 dark:border-brand-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:border-brand-500 focus:outline-hidden text-xs"
+                      className="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:border-slate-900 dark:focus:border-white focus:outline-hidden text-xs"
                       placeholder="e.g. Tseda Agriculture Block or Maraki ICT Building"
                     />
                   </div>
@@ -820,7 +1126,7 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
               {/* Card 2: Campus Building, Landmark & Interactive Map */}
               <div className="p-4 rounded-2xl bg-slate-50/70 dark:bg-slate-800/40 border border-slate-200/70 dark:border-slate-800 space-y-3.5">
                 <div className="flex items-center gap-2 pb-1 border-b border-slate-200/50 dark:border-slate-700/50">
-                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-500" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-slate-900 dark:bg-white" />
                   <h4 className="font-extrabold text-slate-900 dark:text-white text-xs uppercase tracking-wider">
                     {lang === 'am' ? '2. በካምፓስ ውስጥ ትክክለኛ መገኛ እና ካርታ' : '2. Campus Building & Precise Location'}
                   </h4>
@@ -835,7 +1141,7 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
                       type="text"
                       value={formData.buildingEn}
                       onChange={(e) => setFormData({ ...formData, buildingEn: e.target.value, woreda: e.target.value })}
-                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-brand-500 focus:outline-hidden text-xs"
+                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-slate-900 dark:focus:border-white focus:outline-hidden text-xs"
                       placeholder="e.g. Block 14, 2nd Floor, Room 204"
                     />
                   </div>
@@ -847,7 +1153,7 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
                       type="text"
                       value={formData.landmarkEn}
                       onChange={(e) => setFormData({ ...formData, landmarkEn: e.target.value })}
-                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-brand-500 focus:outline-hidden text-xs"
+                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-slate-900 dark:focus:border-white focus:outline-hidden text-xs"
                       placeholder="e.g. Opposite Maraki Main Library & Dining Hall"
                     />
                   </div>
@@ -863,7 +1169,7 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
                       required
                       value={formData.addressEn}
                       onChange={(e) => setFormData({ ...formData, addressEn: e.target.value })}
-                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-brand-500 focus:outline-hidden text-xs"
+                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-slate-900 dark:focus:border-white focus:outline-hidden text-xs"
                       placeholder="Inside Maraki Campus, Student Services Wing"
                     />
                   </div>
@@ -876,7 +1182,7 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
                       required
                       value={formData.addressAm}
                       onChange={(e) => setFormData({ ...formData, addressAm: e.target.value })}
-                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-brand-500 focus:outline-hidden text-xs"
+                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-slate-900 dark:focus:border-white focus:outline-hidden text-xs"
                       placeholder="ማራኪ ካምፓስ ውስጥ፣ የተማሪዎች አገልግሎት ዘርፍ"
                     />
                   </div>
@@ -930,7 +1236,7 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
                     type="text"
                     value={formData.operatingHours}
                     onChange={(e) => setFormData({ ...formData, operatingHours: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-brand-500 focus:outline-hidden text-xs"
+                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-slate-900 dark:focus:border-white focus:outline-hidden text-xs"
                     placeholder="Open 24/7 or 08:30 - 17:30"
                   />
                 </div>
@@ -945,7 +1251,7 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
                       required
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-brand-500 focus:outline-hidden text-xs"
+                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-slate-900 dark:focus:border-white focus:outline-hidden text-xs"
                       placeholder="+251581141234"
                     />
                   </div>
@@ -957,7 +1263,7 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
                       type="text"
                       value={formData.focalPerson}
                       onChange={(e) => setFormData({ ...formData, focalPerson: e.target.value })}
-                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-brand-500 focus:outline-hidden text-xs"
+                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-slate-900 dark:focus:border-white focus:outline-hidden text-xs"
                       placeholder="e.g. Sr. Tigist Alemayehu (Lead Nurse)"
                     />
                   </div>
@@ -972,7 +1278,7 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
                       type="text"
                       value={formData.focalPhone}
                       onChange={(e) => setFormData({ ...formData, focalPhone: e.target.value })}
-                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-brand-500 focus:outline-hidden text-xs"
+                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-slate-900 dark:focus:border-white focus:outline-hidden text-xs"
                       placeholder="e.g. Ext: 2145 or +251911..."
                     />
                   </div>
@@ -984,7 +1290,7 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
                       type="text"
                       value={formData.telegramHandle}
                       onChange={(e) => setFormData({ ...formData, telegramHandle: e.target.value })}
-                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-brand-500 focus:outline-hidden text-xs"
+                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-slate-900 dark:focus:border-white focus:outline-hidden text-xs"
                       placeholder="e.g. @uog_maraki_clinic"
                     />
                   </div>
@@ -1014,7 +1320,7 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
                       type="checkbox"
                       checked={formData.isWheelchairAccessible}
                       onChange={(e) => setFormData({ ...formData, isWheelchairAccessible: e.target.checked })}
-                      className="rounded border-slate-300 text-brand-600 focus:ring-brand-500 cursor-pointer"
+                      className="rounded border-slate-300 text-slate-900 focus:ring-slate-900 dark:text-white dark:focus:ring-white cursor-pointer"
                     />
                     <span>♿ {lang === 'am' ? 'ለአካል ጉዳተኞች ምቹ የሆነ መግቢያ / መወጣጫ አለው (Wheelchair Accessible)' : 'Wheelchair & Ground Floor Accessible'}</span>
                   </label>
@@ -1024,7 +1330,7 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
                       type="checkbox"
                       checked={formData.hasPrivateRoom}
                       onChange={(e) => setFormData({ ...formData, hasPrivateRoom: e.target.checked })}
-                      className="rounded border-slate-300 text-brand-600 focus:ring-brand-500 cursor-pointer"
+                      className="rounded border-slate-300 text-slate-900 focus:ring-slate-900 dark:text-white dark:focus:ring-white cursor-pointer"
                     />
                     <span>🔒 {lang === 'am' ? 'ሚስጥራዊ የምክር መስጫ ክፍል አለው (Private Consultation Room)' : 'Confidential / Private Consultation Room Available'}</span>
                   </label>
@@ -1034,7 +1340,7 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
                       type="checkbox"
                       checked={formData.isVerified}
                       onChange={(e) => setFormData({ ...formData, isVerified: e.target.checked })}
-                      className="rounded border-slate-300 text-brand-600 focus:ring-brand-500 cursor-pointer"
+                      className="rounded border-slate-300 text-slate-900 focus:ring-slate-900 dark:text-white dark:focus:ring-white cursor-pointer"
                     />
                     <span>⭐ {lang === 'am' ? 'የተረጋገጠ ይፋዊ የካምፓስ ተቋም ምልክት ስጠው (Verified Badge)' : 'Mark as Officially Verified Campus Facility'}</span>
                   </label>
@@ -1052,7 +1358,7 @@ export const FacilitiesPage: React.FC<FacilitiesPageProps> = ({
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl shadow-md shadow-brand-600/20 transition-all cursor-pointer text-xs"
+                  className="px-5 py-2 bg-slate-950 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 font-bold rounded-xl border border-slate-900 dark:border-white shadow-xs transition-all active:scale-[0.99] cursor-pointer text-xs"
                 >
                   {lang === 'am' ? 'ተቋሙን መዝግብ' : 'Save Facility'}
                 </button>
