@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../onboarding/onboarding_survey_dialog.dart';
 import '../../onboarding/onboarding_survey_repository.dart';
+import '../../theme/app_glass_theme.dart';
 import '../auth_models.dart';
 
 class ProfileSurveyCard extends StatelessWidget {
@@ -19,6 +20,8 @@ class ProfileSurveyCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final glass = context.glassTheme;
+
     return FutureBuilder<bool>(
       future: OnboardingSurveyRepository().isCompleted(user: user),
       builder: (context, snapshot) {
@@ -50,19 +53,25 @@ class ProfileSurveyCard extends StatelessWidget {
                     },
                     transitionBuilder: (dialogCtx, anim, _, child) {
                       return ScaleTransition(
-                        scale: CurvedAnimation(parent: anim, curve: Curves.easeOutBack),
+                        scale: CurvedAnimation(
+                            parent: anim, curve: Curves.easeOutBack),
                         child: FadeTransition(opacity: anim, child: child),
                       );
                     },
                   );
                 },
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF0284C7).withValues(alpha: 0.08),
+                    color: glass.isDark
+                        ? const Color(0xFF0284C7).withValues(alpha: 0.14)
+                        : const Color(0xFF0284C7).withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: const Color(0xFF0284C7).withValues(alpha: 0.20),
+                      color: const Color(0xFF0284C7).withValues(
+                        alpha: glass.isDark ? 0.35 : 0.20,
+                      ),
                       width: 1.2,
                     ),
                   ),
@@ -72,7 +81,9 @@ class ProfileSurveyCard extends StatelessWidget {
                         width: 38,
                         height: 38,
                         decoration: BoxDecoration(
-                          color: const Color(0xFF0284C7).withValues(alpha: 0.15),
+                          color: const Color(0xFF0284C7).withValues(
+                            alpha: glass.isDark ? 0.25 : 0.15,
+                          ),
                           shape: BoxShape.circle,
                         ),
                         child: const Icon(
@@ -88,17 +99,17 @@ class ProfileSurveyCard extends StatelessWidget {
                           children: [
                             Text(
                               l10n.onboardingSurveySubtitle,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w700,
-                                color: Color(0xFF08264A),
+                                color: glass.titleText,
                               ),
                             ),
                             Text(
                               l10n.onboardingSurveyTitle,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 11,
-                                color: Color(0xFF475569),
+                                color: glass.subtitleText,
                               ),
                             ),
                           ],

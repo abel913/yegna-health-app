@@ -37,6 +37,10 @@ class AccountProfileCard extends StatelessWidget {
             icon: Icons.person_outline_rounded,
             title: l10n.viewProfile,
             subtitle: l10n.viewProfileSubtitle,
+            iconColor: const Color(0xFF0284C7),
+            iconBgColor: const Color(0xFF0284C7).withValues(
+              alpha: glass.isDark ? 0.20 : 0.10,
+            ),
             onTap: onOpenAccount,
           ),
           Divider(height: 1, indent: 72, endIndent: 16, color: glass.divider),
@@ -44,13 +48,22 @@ class AccountProfileCard extends StatelessWidget {
             icon: Icons.notifications_none_rounded,
             title: l10n.notifications,
             subtitle: l10n.notificationsSubtitle,
-            onTap: () => showAccountNotificationsModal(context, l10n, settingsController),
+            iconColor: const Color(0xFFF59E0B),
+            iconBgColor: const Color(0xFFF59E0B).withValues(
+              alpha: glass.isDark ? 0.20 : 0.10,
+            ),
+            onTap: () =>
+                showAccountNotificationsModal(context, l10n, settingsController),
           ),
           Divider(height: 1, indent: 72, endIndent: 16, color: glass.divider),
           AccountTile(
             icon: Icons.groups_rounded,
             title: l10n.studentClubsTitle,
             subtitle: l10n.studentClubsSubtitle,
+            iconColor: const Color(0xFF8B5CF6),
+            iconBgColor: const Color(0xFF8B5CF6).withValues(
+              alpha: glass.isDark ? 0.20 : 0.10,
+            ),
             onTap: onOpenClubs ?? () {},
           ),
         ],

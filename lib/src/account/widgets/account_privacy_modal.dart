@@ -79,24 +79,35 @@ void showAccountPrivacyModal(
               ),
             ),
             const SizedBox(height: 20),
-            if (auth.isAuthenticated)
-              OutlinedButton.icon(
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: const Color(0xFFEF4444),
-                  side: const BorderSide(color: Color(0xFFEF4444)),
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+            if (auth.isAuthenticated) ...[
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: const Color(0xFFEF4444),
+                    side: BorderSide(
+                      color: glass.isDark
+                          ? const Color(0xFF991B1B).withValues(alpha: 0.6)
+                          : const Color(0xFFFECACA),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
                   ),
+                  icon: const Icon(Icons.logout_rounded, size: 18),
+                  label: Text(
+                    l10n.signOut,
+                    style: const TextStyle(fontWeight: FontWeight.w700),
+                  ),
+                  onPressed: () {
+                    Navigator.of(ctx).pop();
+                    auth.signOut();
+                  },
                 ),
-                icon: const Icon(Icons.logout_rounded),
-                label: Text(l10n.signOut),
-                onPressed: () {
-                  Navigator.of(ctx).pop();
-                  auth.signOut();
-                },
               ),
-            const SizedBox(height: 10),
+              const SizedBox(height: 10),
+            ],
             SizedBox(
               width: double.infinity,
               child: FilledButton(

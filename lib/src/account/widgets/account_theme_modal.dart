@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../theme/app_glass_theme.dart';
@@ -83,6 +84,7 @@ void showAccountThemeModal(
                       ? Icon(Icons.check, color: glass.accentColor)
                       : null,
                   onTap: () {
+                    HapticFeedback.selectionClick();
                     settings.setThemeMode(ThemeMode.light);
                     Navigator.of(ctx).pop();
                   },
@@ -114,6 +116,7 @@ void showAccountThemeModal(
                       ? Icon(Icons.check, color: glass.accentColor)
                       : null,
                   onTap: () {
+                    HapticFeedback.selectionClick();
                     settings.setThemeMode(ThemeMode.dark);
                     Navigator.of(ctx).pop();
                   },

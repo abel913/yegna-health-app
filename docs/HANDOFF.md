@@ -1,5 +1,22 @@
 # Handoff notes
 
+## Account & Profile UI Perfection & Visual Polish (2026-11-19)
+
+- **Completed Scope**: Comprehensive UI, aesthetic, and theming perfection of Account and Profile screens without introducing any new backend features or third-party packages.
+- **Architectural & Design Deliverables**:
+  1. `lib/src/account/widgets/account_avatar_header.dart` (166 LOC): Ambient glowing ring, two-tone gradient avatar border, dynamic initials monogram fallback, and emerald active status badge.
+  2. `lib/src/account/widgets/account_guest_promo.dart` (120 LOC): Modular guest promo card with gradient icon and callout button.
+  3. `lib/src/account/widgets/account_tile.dart` (120 LOC): Translucent category tints, custom icon backgrounds, and Material 3 `ListTile` accessibility with chevron.
+  4. `lib/src/account/widgets/account_profile_card.dart` (73 LOC) & `account_settings_card.dart` (115 LOC): Category-specific pastel tint system (Sky, Amber, Purple, Emerald, Cyan, Rose, Indigo, Blue).
+  5. `lib/src/auth/screens/profile_page.dart` (177 LOC): Fully adaptive `AppGlassTheme` architecture with frosted glass app bar, dark/light contrast parity, and modular card layout.
+  6. `lib/src/auth/widgets/profile_session_ended_card.dart` (55 LOC): Extracted component preserving `<200 LOC` constraint.
+  7. `lib/src/auth/widgets/` (`profile_header.dart`, `profile_form.dart`, `profile_survey_card.dart`, `profile_account_actions.dart`): Replaced hardcoded `#08264A` and `#EAF5FD` colors with dynamic theme tokens.
+  8. Modals (`account_theme_modal.dart`, `account_language_modal.dart`, `account_text_size_modal.dart`): Integrated `HapticFeedback.selectionClick()`.
+- **Verification**:
+  - `flutter analyze`: **0 issues found**.
+  - `flutter test`: **197/197 tests passed (100%)**.
+  - File Length Audit: 100% of files strictly $< 200$ LOC.
+
 ## Cloudflare Hyperdrive Supabase Session Pooler Configuration & Connection Recovery (2026-11-19)
 
 - **Issue**: Actions performed in the Cloudflare-deployed Admin Web portal were not persisting to the database or reflecting in the mobile application. Requests to `/api/facilities`, `/api/mentors`, and `/api/health` returned database connection failures (`status: degraded`, Postgres `58000 Connection Refused`, and authentication failure for user `postgres`).

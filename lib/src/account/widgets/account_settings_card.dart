@@ -35,7 +35,8 @@ class AccountSettingsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final glass = context.glassTheme;
     final l10n = AppLocalizations.of(context);
-    final langBadge = selectedLanguage == 'am' ? l10n.amharicLanguage : l10n.englishLanguage;
+    final langBadge =
+        selectedLanguage == 'am' ? l10n.amharicLanguage : l10n.englishLanguage;
 
     return Container(
       decoration: BoxDecoration(
@@ -50,37 +51,61 @@ class AccountSettingsCard extends StatelessWidget {
             icon: Icons.shield_outlined,
             title: l10n.privacyAndSecurity,
             subtitle: l10n.privacySubtitle,
-            onTap: () => showAccountPrivacyModal(context, l10n, authController),
+            iconColor: const Color(0xFF10B981),
+            iconBgColor: const Color(0xFF10B981).withValues(
+              alpha: glass.isDark ? 0.20 : 0.10,
+            ),
+            onTap: () =>
+                showAccountPrivacyModal(context, l10n, authController),
           ),
           Divider(height: 1, indent: 72, endIndent: 16, color: glass.divider),
           AccountTile(
             icon: Icons.language_rounded,
             title: l10n.appLanguage,
             subtitle: l10n.appLanguageSubtitle,
+            iconColor: const Color(0xFF0EA5E9),
+            iconBgColor: const Color(0xFF0EA5E9).withValues(
+              alpha: glass.isDark ? 0.20 : 0.10,
+            ),
             badgeText: langBadge,
-            onTap: () => showAccountLanguageModal(context, l10n, localeController),
+            onTap: () =>
+                showAccountLanguageModal(context, l10n, localeController),
           ),
           Divider(height: 1, indent: 72, endIndent: 16, color: glass.divider),
           AccountTile(
             icon: Icons.palette_outlined,
             title: l10n.appTheme,
             subtitle: l10n.appThemeSubtitle,
+            iconColor: const Color(0xFFF43F5E),
+            iconBgColor: const Color(0xFFF43F5E).withValues(
+              alpha: glass.isDark ? 0.20 : 0.10,
+            ),
             badgeText: themeBadge,
-            onTap: () => showAccountThemeModal(context, l10n, settingsController),
+            onTap: () =>
+                showAccountThemeModal(context, l10n, settingsController),
           ),
           Divider(height: 1, indent: 72, endIndent: 16, color: glass.divider),
           AccountTile(
             icon: Icons.text_fields_rounded,
             title: l10n.textSize,
             subtitle: l10n.textSizeSubtitle,
+            iconColor: const Color(0xFF6366F1),
+            iconBgColor: const Color(0xFF6366F1).withValues(
+              alpha: glass.isDark ? 0.20 : 0.10,
+            ),
             badgeText: textSizeBadge,
-            onTap: () => showAccountTextSizeModal(context, l10n, settingsController),
+            onTap: () =>
+                showAccountTextSizeModal(context, l10n, settingsController),
           ),
           Divider(height: 1, indent: 72, endIndent: 16, color: glass.divider),
           AccountTile(
             icon: Icons.help_outline_rounded,
             title: l10n.supportCenter,
             subtitle: l10n.supportCenterSubtitle,
+            iconColor: const Color(0xFF3B82F6),
+            iconBgColor: const Color(0xFF3B82F6).withValues(
+              alpha: glass.isDark ? 0.20 : 0.10,
+            ),
             onTap: () => showAccountSupportModal(context, l10n),
           ),
         ],

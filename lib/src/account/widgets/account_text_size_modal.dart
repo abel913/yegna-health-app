@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../theme/app_glass_theme.dart';
@@ -80,6 +81,7 @@ void showAccountTextSizeModal(
                       ? Icon(Icons.check, color: glass.accentColor)
                       : null,
                   onTap: () {
+                    HapticFeedback.selectionClick();
                     settings.setTextScale(AppTextScale.small);
                     Navigator.of(ctx).pop();
                   },
@@ -112,6 +114,7 @@ void showAccountTextSizeModal(
                       ? Icon(Icons.check, color: glass.accentColor)
                       : null,
                   onTap: () {
+                    HapticFeedback.selectionClick();
                     settings.setTextScale(AppTextScale.normal);
                     Navigator.of(ctx).pop();
                   },
@@ -144,6 +147,7 @@ void showAccountTextSizeModal(
                       ? Icon(Icons.check, color: glass.accentColor)
                       : null,
                   onTap: () {
+                    HapticFeedback.selectionClick();
                     settings.setTextScale(AppTextScale.large);
                     Navigator.of(ctx).pop();
                   },

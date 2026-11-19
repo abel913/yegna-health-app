@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../locale_controller.dart';
@@ -79,6 +80,7 @@ void showAccountLanguageModal(
                   ),
                 ),
                 onTap: () {
+                  HapticFeedback.selectionClick();
                   localeCtrl.setLanguage('en');
                   Navigator.of(ctx).pop();
                 },
@@ -112,6 +114,7 @@ void showAccountLanguageModal(
                   ),
                 ),
                 onTap: () {
+                  HapticFeedback.selectionClick();
                   localeCtrl.setLanguage('am');
                   Navigator.of(ctx).pop();
                 },

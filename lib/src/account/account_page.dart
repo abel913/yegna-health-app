@@ -61,7 +61,7 @@ class AccountPage extends StatelessWidget {
             ? rawName.trim()
             : (user != null && user.email.isNotEmpty
                 ? user.email.split('@').first
-                : (authController.isAuthenticated ? 'abebebe' : l10n.accountGuest));
+                : l10n.accountGuest);
 
         return SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
@@ -72,6 +72,7 @@ class AccountPage extends StatelessWidget {
               AccountAvatarHeader(
                 displayName: displayName,
                 isAuthenticated: authController.isAuthenticated,
+                email: user?.email,
                 onSignIn: onOpenAccount,
               ),
               AccountProfileCard(

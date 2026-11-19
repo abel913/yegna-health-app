@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../notifications/notification_controller.dart';
+import '../../theme/app_glass_theme.dart';
 import '../auth_controller.dart';
 import '../widgets/auth_ambient_backdrop.dart';
 import '../widgets/auth_glass_container.dart';
@@ -12,8 +13,8 @@ import '../widgets/profile_account_actions.dart';
 import '../widgets/profile_delete_dialog.dart';
 import '../widgets/profile_form.dart';
 import '../widgets/profile_header.dart';
+import '../widgets/profile_session_ended_card.dart';
 import '../widgets/profile_survey_card.dart';
-import 'auth_page.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({
@@ -83,14 +84,18 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final glass = context.glassTheme;
     final user = widget.controller.user;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFEAF5FD),
+      backgroundColor:
+          glass.isDark ? const Color(0xFF0B1329) : const Color(0xFFEAF5FD),
       appBar: AppBar(
         title: Text(
           l10n.profile,
-          style: const TextStyle(fontWeight: FontWeight.w800, color: Color(0xFF08264A)),
+          style: TextStyle(fontWeight: FontWeight.w800, color: glass.titleText),
         ),
+        iconTheme: IconThemeData(color: glass.titleText),
         backgroundColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
@@ -99,8 +104,17 @@ class _ProfilePageState extends State<ProfilePage> {
             filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.55),
-                border: Border(bottom: BorderSide(color: Colors.white.withValues(alpha: 0.85), width: 1.2)),
+                color: glass.isDark
+                    ? const Color(0xFF0F172A).withValues(alpha: 0.75)
+                    : Colors.white.withValues(alpha: 0.55),
+                border: Border(
+                  bottom: BorderSide(
+                    color: glass.isDark
+                        ? glass.cardBorder
+                        : Colors.white.withValues(alpha: 0.85),
+                    width: 1.2,
+                  ),
+                ),
               ),
             ),
           ),
@@ -114,36 +128,12 @@ class _ProfilePageState extends State<ProfilePage> {
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(20, 16, 20, 36),
                 children: [
-                  if (!widget.controller.isAuthenticated || user == null) ...[
-                    AuthGlassContainer(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          AuthNotice(icon: Icons.lock_outline, text: l10n.sessionEnded),
-                          const SizedBox(height: 16),
-                          FilledButton(
-                            style: FilledButton.styleFrom(
-                              backgroundColor: const Color(0xFF0284C7),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                              padding: const EdgeInsets.symmetric(vertical: 13),
-                            ),
-                            onPressed: () => Navigator.of(context).pushReplacement(
-                              MaterialPageRoute<void>(
-                                builder: (_) => AuthPage(
-                                  controller: widget.controller,
-                                  notificationController: widget.notificationController,
-                                ),
-                              ),
-                            ),
-                            child: Text(
-                              l10n.signIn,
-                              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ] else ...[
+                  if (!widget.controller.isAuthenticated || user == null)
+                    ProfileSessionEndedCard(
+                      controller: widget.controller,
+                      notificationController: widget.notificationController,
+                    )
+                  else
                     AuthGlassContainer(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -161,11 +151,13 @@ class _ProfilePageState extends State<ProfilePage> {
                             const SizedBox(height: 12),
                             AuthNotice(
                               icon: Icons.error_outline,
-                              text: authIssueMessage(l10n, widget.controller.issue!),
+                              text: authIssueMessage(
+                                  l10n, widget.controller.issue!),
                               isError: true,
                             ),
                           ],
-                          ProfileSurveyCard(user: user, onSurveyCompleted: _refresh),
+                          ProfileSurveyCard(
+                              user: user, onSurveyCompleted: _refresh),
                           ProfileAccountActions(
                             isBusy: widget.controller.isBusy,
                             onSignOut: _signOut,
@@ -174,7 +166,6 @@ class _ProfilePageState extends State<ProfilePage> {
                         ],
                       ),
                     ),
-                  ],
                 ],
               ),
             ),
