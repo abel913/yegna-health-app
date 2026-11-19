@@ -115,7 +115,7 @@ export const GovernmentReportsPage: React.FC<GovernmentReportsPageProps> = ({
             <input autoComplete="new-password" type="password" minLength={12} required value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="mt-1 w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2.5" />
           </label>
           <div className="flex gap-3">
-            <button disabled={isSavingPassword} className="flex-1 rounded-xl bg-cyan-700 px-4 py-3 font-semibold text-white disabled:opacity-60">{isSavingPassword ? (am ? 'በመቀየር ላይ…' : 'Updating…') : (am ? 'የይለፍ ቃሉን ቀይር' : 'Change password')}</button>
+            <button disabled={isSavingPassword} className="flex-1 rounded-xl bg-slate-950 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 font-bold border border-slate-900 dark:border-white px-4 py-3 disabled:opacity-60 cursor-pointer">{isSavingPassword ? (am ? 'በመቀየር ላይ…' : 'Updating…') : (am ? 'የይለፍ ቃሉን ቀይር' : 'Change password')}</button>
             <button type="button" onClick={onLogout} className="rounded-xl border border-slate-300 dark:border-slate-700 px-4 py-3 text-slate-700 dark:text-slate-200">{am ? 'ውጣ' : 'Sign out'}</button>
           </div>
         </form>
@@ -139,14 +139,14 @@ export const GovernmentReportsPage: React.FC<GovernmentReportsPageProps> = ({
       <div className="mx-auto max-w-6xl space-y-6">
         <header className="flex flex-wrap items-center justify-between gap-4 rounded-3xl bg-slate-900 p-6 text-white">
           <div>
-            <div className="mb-2 flex items-center gap-2 text-cyan-300"><ShieldCheck size={19} /><span className="text-xs font-bold uppercase tracking-wider">{am ? 'የመንግስት ተመልካች' : 'Government viewer'}</span></div>
+            <div className="mb-2 flex items-center gap-2 text-white"><ShieldCheck size={19} /><span className="text-xs font-bold uppercase tracking-wider">{am ? 'የመንግስት ተመልካች' : 'Government viewer'}</span></div>
             <h1 className="text-2xl font-bold">{am ? 'የመድረክ ሪፖርቶች' : 'Platform reports'}</h1>
             <p className="mt-1 text-sm text-slate-300">{am ? 'ለእቅድ እና ክትትል የተዘጋጁ ጠቅላላ ቁጥሮች' : 'Aggregate counts for planning and oversight'}</p>
           </div>
           <div className="flex items-center gap-2">
             <span className="hidden text-sm text-slate-300 sm:block">{user.email}</span>
             <button type="button" onClick={onToggleLang} className="rounded-xl border border-slate-600 px-3 py-2.5 text-sm font-semibold text-slate-200">{am ? 'English' : 'አማርኛ'}</button>
-            <button type="button" onClick={exportReport} disabled={!report} className="inline-flex items-center gap-2 rounded-xl bg-cyan-600 px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-50"><Download size={17} />{am ? 'የCSV ሪፖርት' : 'Export CSV'}</button>
+            <button type="button" onClick={exportReport} disabled={!report} className="inline-flex items-center gap-2 rounded-xl bg-white text-slate-950 font-bold px-4 py-2.5 text-sm hover:bg-slate-100 disabled:opacity-50 cursor-pointer"><Download size={17} />{am ? 'የCSV ሪፖርት' : 'Export CSV'}</button>
             <button type="button" onClick={onLogout} aria-label={am ? 'ውጣ' : 'Sign out'} className="rounded-xl border border-slate-600 p-2.5 text-slate-200"><LogOut size={17} /></button>
           </div>
         </header>
@@ -155,7 +155,7 @@ export const GovernmentReportsPage: React.FC<GovernmentReportsPageProps> = ({
         {!isLoading && error && <div role="alert" className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-rose-200 bg-rose-50 p-5 text-rose-800 dark:border-rose-900 dark:bg-rose-950/40 dark:text-rose-200"><span>{am ? 'ሪፖርቶችን መጫን አልተቻለም። የኢንተርኔት ግንኙነትዎን ያረጋግጡ።' : 'Reports could not be loaded. Check your connection.'}</span><button type="button" onClick={onRetry} className="rounded-lg border border-rose-300 px-3 py-1.5 text-sm font-semibold dark:border-rose-800">{am ? 'እንደገና ሞክር' : 'Try again'}</button></div>}
         {!isLoading && !error && report && <>
           <section aria-label={am ? 'የመድረክ ማጠቃለያ' : 'Platform summary'} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {cards.map((card) => <article key={card.title} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900"><div className="flex items-center gap-2 text-sm font-medium text-slate-500 dark:text-slate-400"><FileText size={16} className="text-cyan-600" />{card.title}</div><p className="mt-4 text-3xl font-bold text-slate-900 dark:text-white">{card.value.toLocaleString()}</p>{card.detail && <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{card.detail}</p>}</article>)}
+            {cards.map((card) => <article key={card.title} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900"><div className="flex items-center gap-2 text-sm font-medium text-slate-500 dark:text-slate-400"><FileText size={16} className="text-slate-900 dark:text-white" />{card.title}</div><p className="mt-4 text-3xl font-bold text-slate-900 dark:text-white">{card.value.toLocaleString()}</p>{card.detail && <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{card.detail}</p>}</article>)}
           </section>
           <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
             <h2 className="text-lg font-bold text-slate-900 dark:text-white">{am ? 'የ12 ወር የተማሪ እና አማካሪ ምዝገባ' : '12-month student and mentor registrations'}</h2>

@@ -303,7 +303,7 @@ export const AuditLogsPage: React.FC<AuditLogsPageProps> = ({ logs, lang }) => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-xl md:text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
-            <History className="text-brand-600 dark:text-cyan-400" size={24} />
+            <History className="text-slate-900 dark:text-white" size={24} />
             <span>{lang === 'am' ? 'የአስተዳዳሪ ቁጥጥርና ኦዲት መዝገብ' : 'Immutable Platform Audit Trail'}</span>
           </h2>
           <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 mt-1">
@@ -330,7 +330,7 @@ export const AuditLogsPage: React.FC<AuditLogsPageProps> = ({ logs, lang }) => {
             <span className="text-[11px] font-bold uppercase tracking-wider">
               {lang === 'am' ? 'የተመዘገቡ ድርጊቶች' : 'Filtered Events'}
             </span>
-            <Activity size={15} className="text-brand-600 dark:text-cyan-400" />
+            <Activity size={15} className="text-slate-900 dark:text-white" />
           </div>
           <p className="text-xl font-extrabold text-slate-900 dark:text-white">{stats.total}</p>
         </div>
@@ -382,7 +382,7 @@ export const AuditLogsPage: React.FC<AuditLogsPageProps> = ({ logs, lang }) => {
                   ? 'በእርምጃ አይነት፣ በአስተዳዳሪ ኢሜይል ወይም በዝርዝር ፈልግ...'
                   : 'Search by action, admin email actor, or operation details...'
               }
-              className="w-full pl-9 pr-8 py-2 text-xs md:text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:bg-white dark:focus:bg-slate-800/90 focus:border-brand-500 focus:outline-none transition-all text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500"
+              className="w-full pl-9 pr-8 py-2 text-xs md:text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:bg-white dark:focus:bg-slate-800/90 focus:border-slate-900 dark:focus:border-white focus:outline-none transition-all text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500"
             />
             {search && (
               <button
@@ -399,7 +399,7 @@ export const AuditLogsPage: React.FC<AuditLogsPageProps> = ({ logs, lang }) => {
             <select
               value={opFilter}
               onChange={(e) => setOpFilter(e.target.value)}
-              className="w-full px-3 py-2 text-xs md:text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-700 dark:text-slate-200 focus:outline-none focus:border-brand-500 cursor-pointer"
+              className="w-full px-3 py-2 text-xs md:text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-700 dark:text-slate-200 focus:outline-none focus:border-slate-900 dark:focus:border-white cursor-pointer"
             >
               {opOptions.map((op) => (
                 <option key={op.id} value={op.id}>
@@ -414,7 +414,7 @@ export const AuditLogsPage: React.FC<AuditLogsPageProps> = ({ logs, lang }) => {
             <select
               value={actorFilter}
               onChange={(e) => setActorFilter(e.target.value)}
-              className="w-full px-3 py-2 text-xs md:text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-700 dark:text-slate-200 focus:outline-none focus:border-brand-500 cursor-pointer"
+              className="w-full px-3 py-2 text-xs md:text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-700 dark:text-slate-200 focus:outline-none focus:border-slate-900 dark:focus:border-white cursor-pointer"
             >
               <option value="ALL">
                 {lang === 'am' ? 'ሁሉም አስተዳዳሪዎች (All Actors)' : 'All Admin Actors'}
@@ -436,7 +436,7 @@ export const AuditLogsPage: React.FC<AuditLogsPageProps> = ({ logs, lang }) => {
               onClick={() => setCategoryFilter(c.id)}
               className={`px-3 py-1.5 rounded-xl transition-all whitespace-nowrap cursor-pointer ${
                 categoryFilter === c.id
-                  ? 'bg-brand-600 text-white shadow-2xs font-extrabold'
+                  ? 'bg-slate-950 dark:bg-white text-white dark:text-slate-950 shadow-xs font-bold border border-slate-900 dark:border-white'
                   : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200/70 dark:hover:bg-slate-700'
               }`}
             >
@@ -525,7 +525,7 @@ export const AuditLogsPage: React.FC<AuditLogsPageProps> = ({ logs, lang }) => {
                       </span>
                     </td>
                     <td className="py-3.5 px-4 text-slate-700 dark:text-slate-200 font-semibold">
-                      <span className="group-hover:text-brand-600 dark:group-hover:text-cyan-400 transition-colors">
+                      <span className="group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
                         {log.adminEmail}
                       </span>
                     </td>
@@ -545,7 +545,7 @@ export const AuditLogsPage: React.FC<AuditLogsPageProps> = ({ logs, lang }) => {
                           e.stopPropagation();
                           setSelectedLog(log);
                         }}
-                        className="p-1.5 text-slate-400 group-hover:text-brand-600 dark:group-hover:text-cyan-400 group-hover:bg-brand-50 dark:group-hover:bg-slate-800 rounded-lg transition-colors"
+                        className="p-1.5 text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white group-hover:bg-slate-100 dark:group-hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
                         title={lang === 'am' ? 'ዝርዝር እይ' : 'Inspect event'}
                       >
                         <Eye size={15} />

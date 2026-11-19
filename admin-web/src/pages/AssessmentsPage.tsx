@@ -50,11 +50,11 @@ interface AssessmentsPageProps {
 
 const OPTION_COLOR_GRADIENTS = [
   'from-emerald-500 to-teal-400',
-  'from-sky-500 to-blue-500',
+  'from-slate-700 to-slate-900',
   'from-indigo-500 to-purple-500',
   'from-amber-500 to-orange-400',
   'from-rose-500 to-pink-500',
-  'from-cyan-500 to-emerald-400',
+  'from-slate-600 to-slate-800',
   'from-violet-500 to-fuchsia-500',
 ];
 
@@ -416,7 +416,7 @@ export const AssessmentsPage: React.FC<AssessmentsPageProps> = ({
       label: isAm ? 'የትምህርት ሞጁል ምዘናዎች' : 'Module Tests',
       icon: BookOpen,
       desc: isAm ? 'የሞጁል ፈተናዎችና የትምህርት ጥያቄዎች' : 'Curriculum chapter tests and learning mastery',
-      color: 'text-sky-500',
+      color: 'text-slate-900 dark:text-white',
     },
   ];
 
@@ -431,7 +431,7 @@ export const AssessmentsPage: React.FC<AssessmentsPageProps> = ({
           <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
             <span>{isAm ? 'አስተዳደር' : 'Yegna Admin'}</span>
             <span>/</span>
-            <span className="text-sky-600 dark:text-sky-400">{isAm ? 'ምዘናዎች እና ቅኝቶች' : 'Assessments & Surveys'}</span>
+            <span className="text-slate-900 dark:text-white">{isAm ? 'ምዘናዎች እና ቅኝቶች' : 'Assessments & Surveys'}</span>
           </div>
           <h1 className="mt-1 text-2xl font-black text-slate-900 dark:text-white">
             {isAm ? 'የተማሪዎች ምዘናና መጠይቅ ማዕከል' : 'Assessments & Student Surveys Hub'}
@@ -488,7 +488,7 @@ export const AssessmentsPage: React.FC<AssessmentsPageProps> = ({
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between">
                           <p className="text-xs font-bold truncate">{opt.label}</p>
-                          {isSelected && <Check size={14} className="text-sky-500 shrink-0" />}
+                          {isSelected && <Check size={14} className="text-slate-900 dark:text-white shrink-0" />}
                         </div>
                         <p className="text-[10px] text-slate-400 dark:text-slate-500 leading-tight mt-0.5 line-clamp-1">{opt.desc}</p>
                       </div>
@@ -508,12 +508,12 @@ export const AssessmentsPage: React.FC<AssessmentsPageProps> = ({
                 className="inline-flex items-center gap-1.5 rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-xs transition hover:bg-slate-50 disabled:opacity-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700 cursor-pointer"
                 title="Refresh Live Data"
               >
-                <RefreshCw size={13} className={refreshing ? 'animate-spin text-sky-500' : ''} />
+                <RefreshCw size={13} className={refreshing ? 'animate-spin text-slate-700 dark:text-slate-300' : ''} />
                 <span className="hidden sm:inline">{isAm ? 'አድስ' : 'Refresh'}</span>
               </button>
               <button
                 onClick={handleExportCsv}
-                className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-3.5 py-2 text-xs font-semibold text-white shadow-xs transition hover:bg-slate-800 dark:bg-emerald-600 dark:hover:bg-emerald-700 cursor-pointer"
+                className="inline-flex items-center gap-1.5 rounded-xl bg-slate-950 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 border border-slate-900 dark:border-white px-3.5 py-2 text-xs font-bold shadow-xs transition cursor-pointer"
               >
                 <Download size={13} />
                 <span>{isAm ? 'CSV አውርድ' : 'Export CSV'}</span>
@@ -535,7 +535,7 @@ export const AssessmentsPage: React.FC<AssessmentsPageProps> = ({
           {currentSubTab === 'questions' && (
             <button
               onClick={openCreateQuestionModal}
-              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-600 px-4 py-2 text-xs font-bold text-white shadow-sm transition hover:from-sky-600 hover:to-indigo-700 cursor-pointer"
+              className="inline-flex items-center gap-2 rounded-xl bg-slate-950 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 border border-slate-900 dark:border-white px-4 py-2 text-xs font-bold shadow-xs transition cursor-pointer"
             >
               <Plus size={15} />
               <span>{isAm ? 'አዲስ ጥያቄ ጨምር' : 'Add New Question'}</span>
@@ -654,7 +654,7 @@ export const AssessmentsPage: React.FC<AssessmentsPageProps> = ({
                           >
                             {q.isActive ? (isAm ? 'ንቁ' : 'Active') : (isAm ? 'የተደበቀ' : 'Hidden')}
                           </span>
-                          <span className="rounded-md bg-sky-50 px-2 py-0.5 text-[10px] font-bold text-sky-700 dark:bg-sky-950/40 dark:text-sky-300">
+                          <span className="rounded-md bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-700 dark:bg-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
                             {q.type === 'SINGLE_CHOICE' ? 'Single Choice' : 'Multi Choice'}
                           </span>
                         </div>
@@ -697,7 +697,7 @@ export const AssessmentsPage: React.FC<AssessmentsPageProps> = ({
                       </button>
                       <button
                         onClick={() => openEditQuestionModal(q)}
-                        className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-sky-600 dark:hover:bg-slate-800 dark:hover:text-sky-400 cursor-pointer"
+                        className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-900 dark:hover:bg-slate-800 dark:hover:text-white cursor-pointer"
                         title="Edit question"
                       >
                         <Edit3 size={15} />
@@ -726,7 +726,7 @@ export const AssessmentsPage: React.FC<AssessmentsPageProps> = ({
                 <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                   {isAm ? 'ጠቅላላ ተሳታፊዎች' : 'Total Survey Respondents'}
                 </span>
-                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-50 text-sky-600 dark:bg-sky-950/60 dark:text-sky-400">
+                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-100 text-slate-900 dark:bg-slate-800 dark:text-white">
                   <Users size={18} />
                 </span>
               </div>
@@ -796,7 +796,7 @@ export const AssessmentsPage: React.FC<AssessmentsPageProps> = ({
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                  <Layers className="text-sky-500" size={18} />
+                  <Layers className="text-slate-900 dark:text-white" size={18} />
                   <span>{isAm ? 'የጥያቄዎች ምላሽ ስርጭት' : 'Question Response Distributions'}</span>
                 </h3>
                 <span className="text-xs text-slate-400">
@@ -878,7 +878,7 @@ export const AssessmentsPage: React.FC<AssessmentsPageProps> = ({
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder={isAm ? 'ፈልግ...' : 'Search responses...'}
-                    className="w-48 rounded-xl border border-slate-200 bg-slate-50 pl-8 pr-3 py-1.5 text-xs text-slate-800 outline-hidden transition focus:border-sky-500 focus:bg-white dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
+                    className="w-48 rounded-xl border border-slate-200 bg-slate-50 pl-8 pr-3 py-1.5 text-xs text-slate-800 outline-hidden transition focus:border-slate-900 focus:bg-white dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:focus:border-white"
                   />
                 </div>
 
@@ -897,7 +897,7 @@ export const AssessmentsPage: React.FC<AssessmentsPageProps> = ({
 
             {loading ? (
               <div className="flex h-36 items-center justify-center">
-                <RefreshCw className="h-6 w-6 animate-spin text-sky-500" />
+                <RefreshCw className="h-6 w-6 animate-spin text-slate-700 dark:text-slate-300" />
               </div>
             ) : filteredSubmissions.length === 0 ? (
               <div className="py-12 text-center text-xs text-slate-400">
@@ -1132,7 +1132,7 @@ export const AssessmentsPage: React.FC<AssessmentsPageProps> = ({
                 <button
                   type="submit"
                   disabled={savingQuestion}
-                  className="inline-flex items-center gap-1.5 rounded-xl bg-purple-600 px-5 py-2 text-xs font-bold text-white shadow-md transition hover:bg-purple-700 disabled:opacity-50 cursor-pointer"
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-slate-950 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 border border-slate-900 dark:border-white px-5 py-2 text-xs font-bold shadow-xs transition disabled:opacity-50 cursor-pointer"
                 >
                   {savingQuestion && <RefreshCw size={12} className="animate-spin" />}
                   <span>

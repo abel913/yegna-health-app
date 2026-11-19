@@ -34,10 +34,12 @@ import {
 import { ManagedUser } from '../types/index.js';
 import { exportToCsv } from '../utils/csvExport.js';
 import { EmptyState } from '../components/common/EmptyState.js';
+import { TableSkeleton } from '../components/common/TableSkeleton.js';
 
 interface UsersPageProps {
   users: ManagedUser[];
   lang: 'en' | 'am';
+  isLoading?: boolean;
   onCreateUser?: (data: {
     email: string;
     displayName: string;
@@ -58,9 +60,9 @@ const AVATAR_COLORS = [
   'bg-indigo-100 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300',
   'bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300',
   'bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300',
-  'bg-cyan-100 text-cyan-700 dark:bg-cyan-950/60 dark:text-cyan-300',
+  'bg-slate-200 text-slate-800 dark:bg-slate-800 dark:text-slate-200',
   'bg-purple-100 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300',
-  'bg-blue-100 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300',
+  'bg-zinc-200 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200',
 ];
 
 function getAvatarColor(str: string): string {
@@ -92,6 +94,7 @@ function formatDate(isoString?: string): string {
 export const UsersPage: React.FC<UsersPageProps> = ({
   users,
   lang,
+  isLoading = false,
   onCreateUser,
   onUpdateRole,
   onToggleSuspension,
@@ -145,6 +148,23 @@ export const UsersPage: React.FC<UsersPageProps> = ({
 
   const [deletingUser, setDeletingUser] = useState<ManagedUser | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  // Keyboard Escape listener to dismiss any active user modals or dropdowns
+  useEffect(() => {
+    if (isAddUserModalOpen || resettingUser || deletingUser || editingUser || activeDropdown) {
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          if (isAddUserModalOpen) setIsAddUserModalOpen(false);
+          if (resettingUser) setResettingUser(null);
+          if (deletingUser) setDeletingUser(null);
+          if (editingUser) setEditingUser(null);
+          if (activeDropdown) setActiveDropdown(null);
+        }
+      };
+      window.addEventListener('keydown', handleKeyDown);
+      return () => window.removeEventListener('keydown', handleKeyDown);
+    }
+  }, [isAddUserModalOpen, resettingUser, deletingUser, editingUser, activeDropdown]);
 
   // Quick keyboard shortcut '/' to focus search
   useEffect(() => {
@@ -477,7 +497,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({
           <button
             type="button"
             onClick={() => setIsAddUserModalOpen(true)}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 dark:bg-brand-600 dark:hover:bg-brand-700 text-white rounded-xl text-xs font-semibold transition-all cursor-pointer shadow-2xs"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 bg-slate-950 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 border border-slate-900 dark:border-white rounded-xl text-xs font-bold transition-all cursor-pointer shadow-xs"
           >
             <Plus size={14} />
             <span>{lang === 'am' ? 'አዲስ ተጠቃሚ' : 'Add User'}</span>
@@ -651,7 +671,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({
                       className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
                     >
                       {isAllSelected ? (
-                        <CheckSquare size={16} className="text-brand-600" />
+                        <CheckSquare size={16} className="text-slate-900 dark:text-white" />
                       ) : (
                         <Square size={16} />
                       )}
@@ -692,7 +712,11 @@ export const UsersPage: React.FC<UsersPageProps> = ({
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800/80 text-xs">
-                {paginatedUsers.map((u) => {
+                {isLoading && users.length === 0 ? (
+                  <TableSkeleton colSpan={8} rows={6} />
+                ) : (
+                  <>
+                    {paginatedUsers.map((u) => {
                   const isSelected = selectedIds.has(u.id);
                   const isSuper = u.role === 'SUPER_ADMIN' || u.email === 'admin@yegnahealth.org';
                   const initials = u.displayName
@@ -704,7 +728,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({
                     <tr
                       key={u.id}
                       className={`hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors ${
-                        isSelected ? 'bg-sky-50/40 dark:bg-sky-950/20' : ''
+                        isSelected ? 'bg-slate-100/70 dark:bg-slate-800/60' : ''
                       } ${u.isSuspended ? 'bg-rose-50/10 dark:bg-rose-950/10' : ''}`}
                     >
                       {/* Checkbox */}
@@ -715,7 +739,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({
                           className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
                         >
                           {isSelected ? (
-                            <CheckSquare size={16} className="text-brand-600" />
+                            <CheckSquare size={16} className="text-slate-900 dark:text-white" />
                           ) : (
                             <Square size={16} />
                           )}
@@ -850,6 +874,8 @@ export const UsersPage: React.FC<UsersPageProps> = ({
                     onClear={hasActiveFilters ? handleResetAllFilters : undefined}
                   />
                 )}
+                  </>
+                )}
               </tbody>
             </table>
           </div>
@@ -966,7 +992,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({
       {viewMode === 'board' && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {[
-            { key: 'STUDENT', title: 'Students', icon: GraduationCap, color: 'border-sky-300 dark:border-sky-800' },
+            { key: 'STUDENT', title: 'Students', icon: GraduationCap, color: 'border-slate-300 dark:border-slate-700' },
             { key: 'MENTOR', title: 'Peer Mentors', icon: HeartHandshake, color: 'border-indigo-300 dark:border-indigo-800' },
             { key: 'CONTENT_AUTHOR', title: 'Content Authors', icon: Edit3, color: 'border-amber-300 dark:border-amber-800' },
             { key: 'ADMIN', title: 'Admins & Governance', icon: ShieldAlert, color: 'border-purple-300 dark:border-purple-800' },
@@ -1202,7 +1228,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({
                     onClick={() =>
                       setNewUserData({ ...newUserData, password: generateRandomPassword() })
                     }
-                    className="text-[11px] font-semibold text-brand-600 dark:text-cyan-400 hover:underline flex items-center gap-1 cursor-pointer"
+                    className="text-[11px] font-bold text-slate-900 dark:text-white hover:underline flex items-center gap-1 cursor-pointer"
                   >
                     <Sparkles size={11} />
                     Auto-generate
@@ -1220,7 +1246,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({
               </div>
 
               {newUserData.role === 'GOVERNMENT_VIEWER' && (
-                <p className="rounded-xl border border-cyan-200 bg-cyan-50 p-3 text-xs text-cyan-900 dark:border-cyan-900 dark:bg-cyan-950/40 dark:text-cyan-100">
+                <p className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs text-slate-800 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">
                   {lang === 'am'
                     ? 'በመጀመሪያ መግቢያ ጊዜ የመንግስት ተመልካቹ ጊዜያዊ የይለፍ ቃሉን መቀየር አለበት። የይለፍ ቃሉን በግል የደህንነት መንገድ ያጋሩ።'
                     : 'The government viewer must change this temporary password at first sign-in. Share it through a private channel.'}
@@ -1235,7 +1261,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({
                   onChange={(e) =>
                     setNewUserData({ ...newUserData, isEmailVerified: e.target.checked })
                   }
-                  className="rounded border-slate-300 text-brand-600 focus:ring-brand-500 cursor-pointer"
+                  className="rounded border-slate-300 text-slate-900 focus:ring-slate-900 dark:focus:ring-white dark:text-white cursor-pointer"
                 />
                 <label
                   htmlFor="modal-verified-checkbox"
@@ -1256,7 +1282,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({
                 <button
                   type="submit"
                   disabled={isSubmittingNewUser}
-                  className="px-4 py-2 text-xs font-semibold text-white bg-slate-900 hover:bg-slate-800 dark:bg-brand-600 dark:hover:bg-brand-700 rounded-xl transition-colors cursor-pointer flex items-center gap-1.5 shadow-2xs"
+                  className="px-4 py-2 text-xs font-bold text-white dark:text-slate-950 bg-slate-950 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 border border-slate-900 dark:border-white rounded-xl transition-colors cursor-pointer flex items-center gap-1.5 shadow-xs"
                 >
                   {isSubmittingNewUser ? 'Creating...' : 'Create Account'}
                 </button>
@@ -1469,7 +1495,7 @@ export const UsersPage: React.FC<UsersPageProps> = ({
                 <button
                   type="submit"
                   disabled={newPassword.length < minimumPasswordLength || isSubmittingPassword}
-                  className="px-4 py-2 text-xs font-semibold text-white bg-slate-900 hover:bg-slate-800 dark:bg-brand-600 rounded-xl transition-colors cursor-pointer flex items-center gap-1.5 shadow-2xs"
+                  className="px-4 py-2 text-xs font-bold text-white dark:text-slate-950 bg-slate-950 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 border border-slate-900 dark:border-white rounded-xl transition-colors cursor-pointer flex items-center gap-1.5 shadow-xs"
                 >
                   <Check size={13} />
                   <span>{isSubmittingPassword ? 'Updating...' : 'Update Password'}</span>
