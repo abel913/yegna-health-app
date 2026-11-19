@@ -27,6 +27,7 @@ interface QuizzesPageProps {
   questions: QuizQuestion[];
   modules: Module[];
   lang: 'en' | 'am';
+  isLoading?: boolean;
   onSaveQuestion: (data: Partial<QuizQuestion>, id?: string) => Promise<void>;
   onDeleteQuestion: (id: string) => Promise<void>;
 }
@@ -35,6 +36,7 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
   questions,
   modules,
   lang,
+  isLoading = false,
   onSaveQuestion,
   onDeleteQuestion,
 }) => {
@@ -82,16 +84,24 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
     setPreviewLang(lang);
   }, [lang]);
 
-  // Lock body scroll when create/edit or preview modals are open
+  // Lock body scroll and capture Escape key when create/edit or preview modals are open
   useEffect(() => {
     if (isModalOpen || previewQuestion) {
       document.body.style.overflow = 'hidden';
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          if (previewQuestion) setPreviewQuestion(null);
+          if (isModalOpen) setIsModalOpen(false);
+        }
+      };
+      window.addEventListener('keydown', handleKeyDown);
+      return () => {
+        document.body.style.overflow = '';
+        window.removeEventListener('keydown', handleKeyDown);
+      };
     } else {
       document.body.style.overflow = '';
     }
-    return () => {
-      document.body.style.overflow = '';
-    };
   }, [isModalOpen, previewQuestion]);
 
   // Helper to resolve parent module metadata
@@ -306,7 +316,7 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-xl md:text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
-            <HelpCircle className="text-brand-600 dark:text-cyan-400" size={24} />
+            <HelpCircle className="text-slate-900 dark:text-white" size={24} />
             <span>{lang === 'am' ? 'የግንዛቤ መፈተሻ ጥያቄዎች እና ፈተናዎች ስቱዲዮ' : 'Interactive Quizzes & Assessments Studio'}</span>
           </h2>
           <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 mt-1">
@@ -326,7 +336,7 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
           </button>
           <button
             onClick={openCreateModal}
-            className="flex items-center gap-2 px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-xs md:text-sm font-bold rounded-xl shadow-md shadow-brand-600/20 transition-all self-start sm:self-auto cursor-pointer"
+            className="flex items-center gap-2 px-4 py-2.5 bg-slate-950 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 text-xs md:text-sm font-bold rounded-xl border border-slate-900 dark:border-white shadow-xs transition-all self-start sm:self-auto cursor-pointer"
           >
             <Plus size={16} />
             <span>{lang === 'am' ? '+ አዲስ ጥያቄ ጨምር' : '+ Add Quiz Question'}</span>
@@ -349,7 +359,7 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
                   ? 'ጥያቄዎችን፣ መልሶችን ወይም ማብራሪያዎችን ፈልግ...'
                   : 'Search questions, answers, explanations...'
               }
-              className="w-full pl-9 pr-8 py-2 text-xs md:text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-hidden focus:border-brand-500 dark:focus:border-brand-400 transition-colors"
+              className="w-full pl-9 pr-8 py-2 text-xs md:text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-hidden focus:border-slate-900 dark:focus:border-white transition-colors"
             />
             {search && (
               <button
@@ -370,7 +380,7 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
             <select
               value={selectedModuleId}
               onChange={(e) => setSelectedModuleId(e.target.value)}
-              className="w-full pl-8 pr-8 py-2 text-xs md:text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 text-slate-900 dark:text-white font-medium focus:outline-hidden focus:border-brand-500 transition-colors cursor-pointer appearance-none"
+              className="w-full pl-8 pr-8 py-2 text-xs md:text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 text-slate-900 dark:text-white font-medium focus:outline-hidden focus:border-slate-900 dark:focus:border-white transition-colors cursor-pointer appearance-none"
             >
               <option value="all">
                 {lang === 'am' ? `ሁሉም ሞጁሎች (${questions.length})` : `All Modules (${questions.length})`}
@@ -397,7 +407,7 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
             <select
               value={selectedType}
               onChange={(e) => setSelectedType(e.target.value as any)}
-              className="w-full pl-8 pr-8 py-2 text-xs md:text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 text-slate-900 dark:text-white font-medium focus:outline-hidden focus:border-brand-500 transition-colors cursor-pointer appearance-none"
+              className="w-full pl-8 pr-8 py-2 text-xs md:text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 text-slate-900 dark:text-white font-medium focus:outline-hidden focus:border-slate-900 dark:focus:border-white transition-colors cursor-pointer appearance-none"
             >
               <option value="all">
                 {lang === 'am' ? `ሁሉም አይነቶች (${questions.length})` : `All Formats (${questions.length})`}
@@ -430,7 +440,7 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
                 setSelectedModuleId('all');
                 setSelectedType('all');
               }}
-              className="text-xs font-bold text-brand-600 dark:text-cyan-400 hover:underline cursor-pointer"
+              className="text-xs font-bold text-slate-900 dark:text-white hover:underline cursor-pointer"
             >
               {lang === 'am' ? 'ማጣሪያውን አጽዳ' : 'Reset Filters'}
             </button>
@@ -438,8 +448,28 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
         </div>
       </div>
 
-      {/* Questions Grid or Empty State */}
-      {filteredQuestions.length === 0 ? (
+      {/* Questions Grid, Skeleton, or Empty State */}
+      {isLoading && questions.length === 0 ? (
+        <div className="space-y-4">
+          {Array.from({ length: 4 }).map((_, idx) => (
+            <div
+              key={idx}
+              className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-5 shadow-xs animate-pulse space-y-3"
+            >
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-800" />
+                <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded w-24" />
+                <div className="h-4 bg-slate-100 dark:bg-slate-800/60 rounded w-32" />
+              </div>
+              <div className="h-5 bg-slate-200 dark:bg-slate-800 rounded w-3/4" />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2">
+                <div className="h-10 bg-slate-100 dark:bg-slate-800/60 rounded-xl" />
+                <div className="h-10 bg-slate-100 dark:bg-slate-800/60 rounded-xl" />
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : filteredQuestions.length === 0 ? (
         <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs">
           <EmptyState
             icon={HelpCircle}
@@ -506,7 +536,7 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
                         <span>{lang === 'am' ? 'እውነት / ሐሰት' : 'True / False'}</span>
                       </span>
                     ) : (
-                      <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-cyan-50 dark:bg-cyan-950/60 text-cyan-700 dark:text-cyan-400 border border-cyan-200 dark:border-cyan-900/40 flex items-center gap-1">
+                      <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 flex items-center gap-1">
                         <span>●</span>
                         <span>{lang === 'am' ? 'ባለ 4 ምርጫ' : 'Multiple Choice'}</span>
                       </span>
@@ -527,7 +557,7 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
                     {/* Interactive Test / Preview Button */}
                     <button
                       onClick={() => openPreview(q)}
-                      className="flex items-center gap-1 px-2.5 py-1 bg-brand-50 dark:bg-brand-950/50 hover:bg-brand-100 dark:hover:bg-brand-900/50 text-brand-700 dark:text-cyan-300 rounded-lg text-xs font-bold transition-colors cursor-pointer border border-brand-200 dark:border-brand-900/40"
+                      className="flex items-center gap-1 px-2.5 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-lg text-xs font-bold transition-colors cursor-pointer border border-slate-200 dark:border-slate-700"
                       title={lang === 'am' ? 'ጥያቄውን እንደ ተማሪ ፈትን' : 'Test question as a student player'}
                     >
                       <PlayCircle size={14} />
@@ -537,7 +567,7 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
                     {/* Edit Button */}
                     <button
                       onClick={() => openEditModal(q)}
-                      className="p-1.5 text-slate-400 hover:text-brand-600 dark:hover:text-cyan-400 hover:bg-brand-50 dark:hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
+                      className="p-1.5 text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
                       title={lang === 'am' ? 'አርትዕ' : 'Edit question'}
                     >
                       <Edit2 size={15} />
@@ -630,7 +660,7 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
             {/* Modal Header */}
             <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
               <div className="flex items-center gap-2.5">
-                <div className="w-10 h-10 rounded-2xl bg-brand-50 dark:bg-brand-950/60 text-brand-600 dark:text-cyan-400 flex items-center justify-center shadow-2xs border border-brand-100 dark:border-brand-900/40">
+                <div className="w-10 h-10 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white flex items-center justify-center shadow-2xs border border-slate-200 dark:border-slate-700">
                   <PlayCircle size={22} />
                 </div>
                 <div>
@@ -664,7 +694,7 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
             {/* Question Details in Player */}
             <div className="mt-5 space-y-4">
               <div className="flex items-center gap-2">
-                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-brand-50 dark:bg-brand-950/60 text-brand-700 dark:text-cyan-400 border border-brand-100 dark:border-brand-900/40">
+                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700">
                   {getModuleForQuestion(previewQuestion)?.category || 'Curriculum'}
                 </span>
                 <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-900/40">
@@ -688,7 +718,7 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
                     const letter = isTf ? (optIdx === 0 ? 'T' : 'F') : ['A', 'B', 'C', 'D'][optIdx];
 
                     let btnStyle =
-                      'bg-slate-50 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700/80 text-slate-800 dark:text-slate-200 hover:border-brand-500 hover:bg-brand-50/40 dark:hover:bg-brand-950/30';
+                      'bg-slate-50 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700/80 text-slate-800 dark:text-slate-200 hover:border-slate-900 dark:hover:border-white hover:bg-slate-100/70 dark:hover:bg-slate-800/80';
                     let badgeStyle = 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300';
 
                     if (previewRevealed) {
@@ -744,8 +774,8 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
 
               {/* Instant Clinical Explanation Reveal */}
               {previewRevealed && (
-                <div className="p-4 rounded-2xl bg-brand-50/60 dark:bg-brand-950/40 border border-brand-200 dark:border-brand-900/60 text-xs md:text-sm text-slate-800 dark:text-slate-200 space-y-1 animate-in fade-in">
-                  <div className="flex items-center gap-1.5 font-bold text-brand-900 dark:text-cyan-300">
+                <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-xs md:text-sm text-slate-800 dark:text-slate-200 space-y-1 animate-in fade-in">
+                  <div className="flex items-center gap-1.5 font-bold text-slate-900 dark:text-white">
                     <Sparkles size={16} className="text-amber-500" />
                     <span>{previewLang === 'am' ? 'ክሊኒካዊ ማብራሪያ፡' : 'Medical Insight & Clinical Rationale:'}</span>
                   </div>
@@ -773,7 +803,7 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
               <button
                 type="button"
                 onClick={() => setPreviewQuestion(null)}
-                className="px-5 py-2 bg-slate-900 hover:bg-slate-800 dark:bg-brand-600 dark:hover:bg-brand-700 text-white text-xs font-bold rounded-xl shadow-xs transition-all cursor-pointer"
+                className="px-5 py-2 bg-slate-950 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 text-xs font-bold rounded-xl border border-slate-900 dark:border-white shadow-xs transition-all cursor-pointer"
               >
                 {previewLang === 'am' ? 'ዝጋ' : 'Close Preview'}
               </button>
@@ -813,7 +843,7 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
                 <select
                   value={formData.moduleId}
                   onChange={(e) => setFormData({ ...formData, moduleId: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:outline-hidden focus:border-brand-500 cursor-pointer"
+                  className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:outline-hidden focus:border-slate-900 dark:focus:border-white cursor-pointer"
                 >
                   {modules.map((m) => (
                     <option key={m.id} value={m.id}>
@@ -834,7 +864,7 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
                     onClick={() => handleTypeChange('MULTIPLE_CHOICE')}
                     className={`py-2 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
                       formData.type === 'MULTIPLE_CHOICE'
-                        ? 'bg-white dark:bg-slate-900 text-brand-600 dark:text-cyan-400 shadow-xs border border-slate-200/60 dark:border-slate-700'
+                        ? 'bg-slate-950 dark:bg-white text-white dark:text-slate-950 shadow-xs border border-slate-900 dark:border-white'
                         : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                     }`}
                   >
@@ -846,7 +876,7 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
                     onClick={() => handleTypeChange('TRUE_FALSE')}
                     className={`py-2 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
                       formData.type === 'TRUE_FALSE'
-                        ? 'bg-white dark:bg-slate-900 text-purple-600 dark:text-purple-400 shadow-xs border border-slate-200/60 dark:border-slate-700'
+                        ? 'bg-slate-950 dark:bg-white text-white dark:text-slate-950 shadow-xs border border-slate-900 dark:border-white'
                         : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                     }`}
                   >
@@ -866,7 +896,7 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
                   required
                   value={formData.questionEn}
                   onChange={(e) => setFormData({ ...formData, questionEn: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-hidden focus:border-brand-500"
+                  className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-hidden focus:border-slate-900 dark:focus:border-white"
                   placeholder="e.g. Which method protects against both pregnancy and STIs?"
                 />
               </div>
@@ -880,7 +910,7 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
                   required
                   value={formData.questionAm}
                   onChange={(e) => setFormData({ ...formData, questionAm: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-hidden focus:border-brand-500"
+                  className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-hidden focus:border-slate-900 dark:focus:border-white"
                   placeholder="ምሳሌ፡ ከአባላዘር በሽታዎችና ያልተፈለገ እርግዝና የሚከላከል የትኛው ነው?"
                 />
               </div>
@@ -973,7 +1003,7 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
                           checked={formData.correctIndex === i}
                           onChange={() => setFormData({ ...formData, correctIndex: i })}
                           title="Mark as correct answer"
-                          className="accent-brand-600 cursor-pointer"
+                          className="accent-slate-900 dark:accent-white cursor-pointer"
                         />
                         <input
                           type="text"
@@ -985,7 +1015,7 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
                             next[i] = e.target.value;
                             setFormData({ ...formData, optionsEn: next });
                           }}
-                          className="flex-1 px-3 py-1.5 border border-slate-200 dark:border-slate-700 rounded-lg text-xs bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-hidden focus:border-brand-500"
+                          className="flex-1 px-3 py-1.5 border border-slate-200 dark:border-slate-700 rounded-lg text-xs bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-hidden focus:border-slate-900 dark:focus:border-white"
                         />
                       </div>
                     ))}
@@ -1008,7 +1038,7 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
                             next[i] = e.target.value;
                             setFormData({ ...formData, optionsAm: next });
                           }}
-                          className="flex-1 px-3 py-1.5 border border-slate-200 dark:border-slate-700 rounded-lg text-xs bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-hidden focus:border-brand-500"
+                          className="flex-1 px-3 py-1.5 border border-slate-200 dark:border-slate-700 rounded-lg text-xs bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-hidden focus:border-slate-900 dark:focus:border-white"
                         />
                       </div>
                     ))}
@@ -1026,7 +1056,7 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
                   required
                   value={formData.explanationEn}
                   onChange={(e) => setFormData({ ...formData, explanationEn: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl text-xs bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-hidden focus:border-brand-500"
+                  className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl text-xs bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-hidden focus:border-slate-900 dark:focus:border-white"
                   placeholder="Explain why the correct answer is valid based on clinical health guidance..."
                 />
               </div>
@@ -1040,7 +1070,7 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
                   required
                   value={formData.explanationAm}
                   onChange={(e) => setFormData({ ...formData, explanationAm: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl text-xs bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-hidden focus:border-brand-500"
+                  className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl text-xs bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-hidden focus:border-slate-900 dark:focus:border-white"
                   placeholder="ትክክለኛውን መልስ ክሊኒካዊ ምክንያት በግልጽ ያብራሩ..."
                 />
               </div>
@@ -1057,7 +1087,7 @@ export const QuizzesPage: React.FC<QuizzesPageProps> = ({
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-5 py-2 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl shadow-md shadow-brand-600/20 cursor-pointer disabled:opacity-50"
+                  className="px-5 py-2 bg-slate-950 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 font-bold rounded-xl border border-slate-900 dark:border-white shadow-xs cursor-pointer disabled:opacity-50"
                 >
                   {isSubmitting
                     ? lang === 'am' ? 'በመመዝገብ ላይ...' : 'Saving...'

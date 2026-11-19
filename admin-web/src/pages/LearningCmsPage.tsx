@@ -47,6 +47,7 @@ import { ModuleMobilePreview } from '../components/learning/ModuleMobilePreview.
 interface LearningCmsPageProps {
   modules: Module[];
   lang: 'en' | 'am';
+  isLoading?: boolean;
   onSave: (
     data: Partial<Module>,
     id?: string,
@@ -61,6 +62,7 @@ interface LearningCmsPageProps {
 export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
   modules,
   lang,
+  isLoading = false,
   onSave,
   onDelete,
   questions = [],
@@ -683,7 +685,7 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xs">
         <div>
           <h2 className="text-xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
-            <BookOpen className="text-brand-600 dark:text-cyan-400" size={22} />
+            <BookOpen className="text-slate-900 dark:text-white" size={22} />
             <span>{lang === 'am' ? 'የትምህርት ሞጁሎች ማኔጅመንት' : 'Health Curriculum CMS'}</span>
           </h2>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
@@ -719,7 +721,7 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
 
           <button
             onClick={openCreateModal}
-            className="px-4 py-2 bg-gradient-to-r from-brand-600 to-cyan-600 hover:from-brand-700 hover:to-cyan-700 text-white rounded-xl text-xs font-extrabold transition-all shadow-sm flex items-center gap-1.5 cursor-pointer"
+            className="px-4 py-2 bg-slate-950 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 rounded-xl text-xs font-extrabold transition-all border border-slate-900 dark:border-white shadow-xs flex items-center gap-1.5 active:scale-[0.99] cursor-pointer"
           >
             <Plus size={15} />
             <span>{lang === 'am' ? 'አዲስ ሞጁል አዘጋጅ' : 'Create Health Module'}</span>
@@ -742,7 +744,7 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
                 onClick={() => setSelectedCategory(cat)}
                 className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
                   isSel
-                    ? 'bg-brand-600 text-white shadow-xs'
+                    ? 'bg-slate-950 dark:bg-white text-white dark:text-slate-950 shadow-xs'
                     : 'bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:border-slate-300'
                 }`}
               >
@@ -766,13 +768,30 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
             }
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-3 py-1.5 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-xl text-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-hidden focus:border-brand-500 transition-all"
+            className="w-full pl-9 pr-3 py-1.5 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-xl text-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-hidden focus:border-slate-900 dark:focus:border-white transition-all"
           />
         </div>
       </div>
 
-      {/* Modules Catalog Grid */}
-      {filtered.length === 0 ? (
+      {/* Modules Catalog Grid, Skeleton, or Empty State */}
+      {isLoading && modules.length === 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {Array.from({ length: 6 }).map((_, idx) => (
+            <div
+              key={idx}
+              className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-5 shadow-2xs animate-pulse space-y-3"
+            >
+              <div className="flex items-center justify-between">
+                <div className="h-5 bg-slate-200 dark:bg-slate-800 rounded w-20" />
+                <div className="h-4 bg-slate-100 dark:bg-slate-800/60 rounded w-16" />
+              </div>
+              <div className="h-32 bg-slate-100 dark:bg-slate-800/60 rounded-xl w-full" />
+              <div className="h-5 bg-slate-200 dark:bg-slate-800 rounded w-3/4" />
+              <div className="h-3 bg-slate-100 dark:bg-slate-800/60 rounded w-1/2" />
+            </div>
+          ))}
+        </div>
+      ) : filtered.length === 0 ? (
         <EmptyState
           title={lang === 'am' ? 'ምንም የትምህርት ሞጁል አልተገኘም' : 'No curriculum modules found'}
           description={
@@ -804,14 +823,14 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
               >
                 <div>
                   <div className="flex items-center justify-between mb-3">
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-cyan-50 dark:bg-cyan-950/60 text-cyan-700 dark:text-cyan-300 border border-cyan-200/60 dark:border-cyan-800/60">
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700">
                       {m.category}
                     </span>
 
                     <div className="flex items-center gap-1 opacity-80 group-hover:opacity-100 transition-opacity">
                       <button
                         onClick={() => openEditModal(m)}
-                        className="p-1.5 text-slate-400 hover:text-brand-600 dark:hover:text-cyan-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg cursor-pointer"
+                        className="p-1.5 text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg cursor-pointer"
                         title={lang === 'am' ? 'አርትዕ' : 'Edit Module'}
                       >
                         <Edit2 size={14} />
@@ -858,7 +877,7 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
                     <Clock size={13} className="text-slate-400 dark:text-slate-500" />
                     {m.readTimeMin} min read
                   </span>
-                  <span className="text-[11px] font-semibold text-brand-600 dark:text-cyan-400 bg-brand-50/70 dark:bg-cyan-950/40 px-2 py-0.5 rounded-full border border-brand-200/50 dark:border-cyan-900/50">
+                  <span className="text-[11px] font-semibold text-slate-800 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full border border-slate-200 dark:border-slate-700">
                     {linkedQuizCount} {lang === 'am' ? 'ፈተናዎች' : 'Quizzes'}
                   </span>
                 </div>
@@ -890,7 +909,7 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
                   <h3 className="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white truncate max-w-sm">
                     {formData.titleEn || (lang === 'am' ? 'አዲስ የትምህርት ሞጁል' : 'Untitled Health Curriculum')}
                   </h3>
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-brand-50 dark:bg-cyan-950/50 text-brand-700 dark:text-cyan-400 border border-brand-200/60 dark:border-cyan-800/50 shrink-0">
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 shrink-0">
                     {formData.category}
                   </span>
                 </div>
@@ -918,7 +937,7 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
                     onClick={() => setModalTab(tab.id as any)}
                     className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                       isActive
-                        ? 'bg-white dark:bg-slate-700 text-brand-700 dark:text-cyan-300 shadow-xs'
+                        ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs'
                         : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
                     }`}
                   >
@@ -949,7 +968,7 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
                   onClick={() => setViewMode('en')}
                   className={`px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
                     viewMode === 'en'
-                      ? 'bg-white dark:bg-slate-700 text-brand-600 dark:text-cyan-400 shadow-xs'
+                      ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs'
                       : 'text-slate-500 hover:text-slate-800 dark:hover:text-white'
                   }`}
                   title="English only view"
@@ -961,7 +980,7 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
                   onClick={() => setViewMode('am')}
                   className={`px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
                     viewMode === 'am'
-                      ? 'bg-white dark:bg-slate-700 text-brand-600 dark:text-cyan-400 shadow-xs'
+                      ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs'
                       : 'text-slate-500 hover:text-slate-800 dark:hover:text-white'
                   }`}
                   title="Amharic only view"
@@ -974,7 +993,7 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
                 type="button"
                 onClick={() => handleSubmit()}
                 disabled={isSubmitting || !formData.titleEn.trim()}
-                className="px-4 py-2 bg-gradient-to-r from-brand-600 to-cyan-600 hover:from-brand-700 hover:to-cyan-700 text-white rounded-xl text-xs font-extrabold transition-all shadow-sm flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                className="px-4 py-2 bg-slate-950 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 rounded-xl text-xs font-extrabold transition-all border border-slate-900 dark:border-white shadow-xs flex items-center gap-1.5 cursor-pointer disabled:opacity-50 active:scale-[0.99]"
               >
                 {isSubmitting ? (
                   <>
@@ -1009,7 +1028,7 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
                   onClick={() => setModalTab(tab.id as any)}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap cursor-pointer ${
                     isActive
-                      ? 'bg-white dark:bg-slate-700 text-brand-700 dark:text-cyan-300 shadow-xs'
+                      ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs'
                       : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
@@ -1030,9 +1049,9 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
               {modalTab === 'overview' && (
                 <div className="space-y-6">
                   {/* Template Picker Banner */}
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-gradient-to-r from-brand-50 to-cyan-50 dark:from-brand-950/40 dark:to-cyan-950/30 p-4 rounded-2xl border border-brand-200/70 dark:border-cyan-900/40">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-100 dark:bg-slate-800/80 p-4 rounded-2xl border border-slate-200 dark:border-slate-700">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-brand-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+                      <div className="w-10 h-10 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 flex items-center justify-center shrink-0 shadow-xs">
                         <Sparkles size={20} />
                       </div>
                       <div>
@@ -1050,7 +1069,7 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
                     <button
                       type="button"
                       onClick={() => setShowTemplatePicker(!showTemplatePicker)}
-                      className="px-3.5 py-2 bg-white dark:bg-slate-800 border border-brand-300 dark:border-brand-700 rounded-xl text-xs font-extrabold text-brand-700 dark:text-cyan-300 hover:bg-brand-50/80 cursor-pointer transition-all shrink-0 flex items-center gap-1.5 shadow-2xs"
+                      className="px-3.5 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-extrabold text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer transition-all shrink-0 flex items-center gap-1.5 shadow-2xs"
                     >
                       <LayoutTemplate size={14} />
                       <span>{showTemplatePicker ? (lang === 'am' ? 'አብነቶችን ዝጋ' : 'Close Templates') : (lang === 'am' ? 'አብነቶችን ተመልከት' : 'Browse Templates')}</span>
@@ -1069,25 +1088,25 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
                             key={tmpl.id}
                             type="button"
                             onClick={() => applyTemplate(tmpl)}
-                            className="text-left p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40 hover:border-brand-500 hover:bg-brand-50/30 dark:hover:bg-slate-800 transition-all cursor-pointer group flex flex-col justify-between"
+                            className="text-left p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40 hover:border-slate-900 dark:hover:border-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer group flex flex-col justify-between"
                           >
                             <div>
                               <div className="flex items-center justify-between gap-1 mb-1">
-                                <span className="text-[10px] font-extrabold uppercase text-brand-600 dark:text-cyan-400">
+                                <span className="text-[10px] font-extrabold uppercase text-slate-900 dark:text-white">
                                   {tmpl.category}
                                 </span>
                                 <span className="text-[10px] text-slate-400 font-semibold">
                                   {tmpl.readTimeMin} min read
                                 </span>
                               </div>
-                              <h5 className="font-extrabold text-slate-900 dark:text-white text-xs mb-1 group-hover:text-brand-600 dark:group-hover:text-cyan-400">
+                              <h5 className="font-extrabold text-slate-900 dark:text-white text-xs mb-1 group-hover:text-slate-950 dark:group-hover:text-white">
                                 {lang === 'am' ? tmpl.nameAm : tmpl.nameEn}
                               </h5>
                               <p className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2">
                                 {lang === 'am' ? tmpl.summaryAm : tmpl.summaryEn}
                               </p>
                             </div>
-                            <span className="mt-2 text-[11px] font-extrabold text-brand-600 dark:text-cyan-400 flex items-center gap-1">
+                            <span className="mt-2 text-[11px] font-extrabold text-slate-900 dark:text-white flex items-center gap-1">
                               <span>{lang === 'am' ? 'ተግብር' : 'Apply Template'}</span>
                               <ChevronRight size={13} />
                             </span>
@@ -1115,7 +1134,7 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
                               imageUrl: matchingImg || formData.imageUrl,
                             });
                           }}
-                          className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50/70 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold text-xs focus:border-brand-500 focus:outline-hidden"
+                          className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50/70 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold text-xs focus:border-slate-900 dark:focus:border-white focus:outline-hidden"
                         >
                           <option value="puberty">Puberty & Growth (ጉርምስና)</option>
                           <option value="srh">Sexual & Reproductive Health (ሥነ-ተዋልዶ)</option>
@@ -1144,7 +1163,7 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
                                 readTimeMin: parseInt(e.target.value, 10) || 4,
                               })
                             }
-                            className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50/70 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold text-xs focus:border-brand-500 focus:outline-hidden"
+                            className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50/70 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold text-xs focus:border-slate-900 dark:focus:border-white focus:outline-hidden"
                           />
                           <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400 font-bold">
                             min
@@ -1196,7 +1215,7 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
                               setFormData({ ...formData, titleEn: e.target.value })
                             }
                             placeholder="e.g. Adolescent health & puberty"
-                            className="w-full px-3.5 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-850 text-slate-900 dark:text-white font-extrabold text-sm focus:border-brand-500 focus:outline-hidden"
+                            className="w-full px-3.5 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-850 text-slate-900 dark:text-white font-extrabold text-sm focus:border-slate-900 dark:focus:border-white focus:outline-hidden"
                           />
                         </div>
                       )}
@@ -1214,7 +1233,7 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
                               setFormData({ ...formData, titleAm: e.target.value })
                             }
                             placeholder="ምሳሌ፡ የጉርምስና ወቅትና አካላዊ ለውጦች"
-                            className="w-full px-3.5 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-850 text-slate-900 dark:text-white font-extrabold text-sm focus:border-brand-500 focus:outline-hidden"
+                            className="w-full px-3.5 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-850 text-slate-900 dark:text-white font-extrabold text-sm focus:border-slate-900 dark:focus:border-white focus:outline-hidden"
                           />
                         </div>
                       )}
@@ -1232,7 +1251,7 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
                           setFormData({ ...formData, authorName: e.target.value })
                         }
                         placeholder="e.g. Dr. Hanna Bekele, Adolescent Specialist"
-                        className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-850 text-slate-900 dark:text-white text-xs font-semibold focus:border-brand-500 focus:outline-hidden"
+                        className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-850 text-slate-900 dark:text-white text-xs font-semibold focus:border-slate-900 dark:focus:border-white focus:outline-hidden"
                       />
                     </div>
 
@@ -1251,7 +1270,7 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
                               setFormData({ ...formData, summaryEn: e.target.value })
                             }
                             placeholder="Clear, engaging 1-2 sentence overview of this health curriculum topic..."
-                            className="w-full px-3.5 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-850 text-slate-900 dark:text-white text-xs focus:border-brand-500 focus:outline-hidden leading-relaxed"
+                            className="w-full px-3.5 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-850 text-slate-900 dark:text-white text-xs focus:border-slate-900 dark:focus:border-white focus:outline-hidden leading-relaxed"
                           />
                         </div>
                       )}
@@ -1269,7 +1288,7 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
                               setFormData({ ...formData, summaryAm: e.target.value })
                             }
                             placeholder="ስለዚህ የጤና ትምህርት የተዘጋጀ አጭር ባለ 1-2 ዓረፍተ ነገር ማጠቃለያ..."
-                            className="w-full px-3.5 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-850 text-slate-900 dark:text-white text-xs focus:border-brand-500 focus:outline-hidden leading-relaxed"
+                            className="w-full px-3.5 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-850 text-slate-900 dark:text-white text-xs focus:border-slate-900 dark:focus:border-white focus:outline-hidden leading-relaxed"
                           />
                         </div>
                       )}
@@ -1281,7 +1300,7 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
                     <button
                       type="button"
                       onClick={() => setModalTab('note')}
-                      className="px-5 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-extrabold cursor-pointer transition-all flex items-center gap-1.5 shadow-sm"
+                      className="px-5 py-2.5 bg-slate-950 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 rounded-xl text-xs font-extrabold cursor-pointer transition-all flex items-center gap-1.5 border border-slate-900 dark:border-white shadow-xs active:scale-[0.99]"
                     >
                       <span>{lang === 'am' ? 'ቀጣይ፡ የዶክተር ማስታወሻ' : 'Next: Doctor Takeaway Note'}</span>
                       <ChevronRight size={14} />
@@ -1296,8 +1315,8 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
               {modalTab === 'note' && (
                 <div className="space-y-6">
                   {/* Doctor's Note Instruction Card */}
-                  <div className="flex items-center gap-3 bg-[#EFF7FD] dark:bg-slate-800/80 border border-[#BAE6FD] dark:border-cyan-800/60 p-4 rounded-2xl">
-                    <div className="w-10 h-10 rounded-xl bg-[#0284C7] text-white flex items-center justify-center shrink-0 shadow-xs">
+                  <div className="flex items-center gap-3 bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 p-4 rounded-2xl">
+                    <div className="w-10 h-10 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 flex items-center justify-center shrink-0 shadow-xs">
                       <Lightbulb size={20} />
                     </div>
                     <div>
@@ -1307,7 +1326,7 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
                       <p className="text-xs text-slate-600 dark:text-slate-400">
                         {lang === 'am'
                           ? 'ይህ ማስታወሻ በሞባይል አፑ ላይ ከዋናው ካርድ ስር ባለው ሰማያዊ ሳጥን ውስጥ ጎልቶ ይታያል'
-                          : 'This advice appears prominently in the mobile app inside the blue lightbulb card right below the cover illustration'}
+                          : 'This advice appears prominently in the mobile app inside the highlighted lightbulb card right below the cover illustration'}
                       </p>
                     </div>
                   </div>
@@ -1390,7 +1409,7 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
                     <button
                       type="button"
                       onClick={() => setModalTab('sections')}
-                      className="px-5 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-extrabold cursor-pointer transition-all flex items-center gap-1.5 shadow-sm"
+                      className="px-5 py-2.5 bg-slate-950 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 rounded-xl text-xs font-extrabold cursor-pointer transition-all flex items-center gap-1.5 border border-slate-900 dark:border-white shadow-xs active:scale-[0.99]"
                     >
                       <span>{lang === 'am' ? 'ቀጣይ፡ የትምህርት ክፍሎች' : 'Next: Learning Sections'}</span>
                       <ChevronRight size={14} />
@@ -1407,7 +1426,7 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
                   {/* Mode & Action Toolbar */}
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs">
                     <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-xl bg-brand-50 dark:bg-brand-950/60 text-brand-600 dark:text-cyan-400 flex items-center justify-center font-extrabold text-sm">
+                      <div className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white flex items-center justify-center font-extrabold text-sm border border-slate-200 dark:border-slate-700">
                         <Layers size={16} />
                       </div>
                       <div>
@@ -1437,7 +1456,7 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
                           onClick={() => handleToggleSectionMode('form')}
                           className={`px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
                             sectionEditMode === 'form'
-                              ? 'bg-brand-600 text-white shadow-xs'
+                              ? 'bg-slate-950 dark:bg-white text-white dark:text-slate-950 shadow-xs'
                               : 'text-slate-500 hover:text-slate-800 dark:hover:text-white'
                           }`}
                         >
@@ -1448,7 +1467,7 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
                           onClick={() => handleToggleSectionMode('markdown')}
                           className={`px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
                             sectionEditMode === 'markdown'
-                              ? 'bg-brand-600 text-white shadow-xs'
+                              ? 'bg-slate-950 dark:bg-white text-white dark:text-slate-950 shadow-xs'
                               : 'text-slate-500 hover:text-slate-800 dark:hover:text-white'
                           }`}
                         >
@@ -1460,7 +1479,7 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
                         <button
                           type="button"
                           onClick={handleAddSection}
-                          className="px-3.5 py-1.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-extrabold flex items-center gap-1.5 shadow-sm cursor-pointer transition-all"
+                          className="px-3.5 py-1.5 bg-slate-950 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 rounded-xl text-xs font-extrabold flex items-center gap-1.5 border border-slate-900 dark:border-white shadow-xs cursor-pointer transition-all active:scale-[0.99]"
                         >
                           <Plus size={14} />
                           <span>{lang === 'am' ? 'አዲስ ክፍል' : 'Add Section'}</span>
@@ -1632,7 +1651,7 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
                                     <button
                                       type="button"
                                       onClick={() => handleAddBullet(secIdx)}
-                                      className="px-2.5 py-1 bg-brand-50 hover:bg-brand-100 dark:bg-brand-950/60 dark:hover:bg-brand-900 text-brand-700 dark:text-cyan-300 rounded-lg text-[11px] font-extrabold flex items-center gap-1 cursor-pointer transition-colors"
+                                      className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-lg text-[11px] font-extrabold flex items-center gap-1 cursor-pointer transition-colors border border-slate-200 dark:border-slate-700"
                                     >
                                       <Plus size={12} />
                                       <span>{lang === 'am' ? '+ ነጥብ ጨምር' : '+ Add Takeaway Point'}</span>
@@ -1739,7 +1758,7 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
                             onClick={() => setActiveLangTab('en')}
                             className={`px-3 py-1 rounded-lg text-xs font-bold cursor-pointer ${
                               activeLangTab === 'en'
-                                ? 'bg-brand-600 text-white'
+                                ? 'bg-slate-950 dark:bg-white text-white dark:text-slate-950 shadow-xs'
                                 : 'text-slate-600 dark:text-slate-300'
                             }`}
                           >
@@ -1750,7 +1769,7 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
                             onClick={() => setActiveLangTab('am')}
                             className={`px-3 py-1 rounded-lg text-xs font-bold cursor-pointer ${
                               activeLangTab === 'am'
-                                ? 'bg-brand-600 text-white'
+                                ? 'bg-slate-950 dark:bg-white text-white dark:text-slate-950 shadow-xs'
                                 : 'text-slate-600 dark:text-slate-300'
                             }`}
                           >
@@ -1805,7 +1824,7 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
                           }
                         }}
                         placeholder="Write structured markdown with ## Headings, - Bullets, and > Clinical Tips..."
-                        className="w-full px-3.5 py-3 border border-slate-200 dark:border-slate-700 rounded-2xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-mono text-xs focus:border-brand-500 focus:outline-hidden leading-relaxed"
+                        className="w-full px-3.5 py-3 border border-slate-200 dark:border-slate-700 rounded-2xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-mono text-xs focus:border-slate-900 dark:focus:border-white focus:outline-hidden leading-relaxed"
                       />
                     </div>
                   )}
@@ -1822,7 +1841,7 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
                     <button
                       type="button"
                       onClick={() => setModalTab('quizzes')}
-                      className="px-5 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-extrabold cursor-pointer transition-all flex items-center gap-1.5 shadow-sm"
+                      className="px-5 py-2.5 bg-slate-950 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 rounded-xl text-xs font-extrabold cursor-pointer transition-all flex items-center gap-1.5 border border-slate-900 dark:border-white shadow-xs active:scale-[0.99]"
                     >
                       <span>{lang === 'am' ? 'ቀጣይ፡ ፈተና ጥያቄዎች' : 'Next: Quiz Questions'}</span>
                       <ChevronRight size={14} />
@@ -2155,7 +2174,7 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
                               <button
                                 type="button"
                                 onClick={() => handleDuplicateQuizQuestion(qIdx)}
-                                className="p-1.5 text-slate-400 hover:text-brand-600 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg cursor-pointer"
+                                className="p-1.5 text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg cursor-pointer"
                                 title="Duplicate Question"
                               >
                                 <Copy size={14} />
@@ -2223,10 +2242,10 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
 
                           {/* Explanation Card */}
                           {q.explanationEn && (
-                            <div className="p-3 rounded-xl bg-sky-50/60 dark:bg-sky-950/20 border border-sky-100 dark:border-sky-900/40 text-xs text-slate-600 dark:text-slate-300 flex items-start gap-2">
-                              <Info size={14} className="text-sky-600 shrink-0 mt-0.5" />
+                            <div className="p-3 rounded-xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-xs text-slate-700 dark:text-slate-300 flex items-start gap-2">
+                              <Info size={14} className="text-slate-900 dark:text-white shrink-0 mt-0.5" />
                               <div>
-                                <span className="font-bold text-sky-900 dark:text-sky-300">Explanation: </span>
+                                <span className="font-bold text-slate-900 dark:text-white">Explanation: </span>
                                 <span>{q.explanationEn}</span>
                               </div>
                             </div>
@@ -2248,7 +2267,7 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
                     <button
                       type="button"
                       onClick={() => setModalTab('preview')}
-                      className="px-5 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-extrabold cursor-pointer transition-all flex items-center gap-1.5 shadow-sm"
+                      className="px-5 py-2.5 bg-slate-950 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 rounded-xl text-xs font-extrabold cursor-pointer transition-all flex items-center gap-1.5 border border-slate-900 dark:border-white shadow-xs active:scale-[0.99]"
                     >
                       <span>{lang === 'am' ? 'ቀጣይ፡ የሞባይል እይታ' : 'Next: Live Phone Simulator'}</span>
                       <Smartphone size={14} />
@@ -2280,7 +2299,7 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
                         onClick={() => setActiveLangTab('en')}
                         className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${
                           activeLangTab === 'en'
-                            ? 'bg-brand-600 text-white shadow-xs'
+                            ? 'bg-slate-950 dark:bg-white text-white dark:text-slate-950 shadow-xs'
                             : 'text-slate-600 dark:text-slate-400'
                         }`}
                       >
@@ -2291,7 +2310,7 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
                         onClick={() => setActiveLangTab('am')}
                         className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${
                           activeLangTab === 'am'
-                            ? 'bg-brand-600 text-white shadow-xs'
+                            ? 'bg-slate-950 dark:bg-white text-white dark:text-slate-950 shadow-xs'
                             : 'text-slate-600 dark:text-slate-400'
                         }`}
                       >
@@ -2346,7 +2365,7 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
                 type="button"
                 onClick={() => handleSubmit()}
                 disabled={isSubmitting || !formData.titleEn.trim()}
-                className="px-5 py-2 bg-gradient-to-r from-brand-600 to-cyan-600 hover:from-brand-700 hover:to-cyan-700 text-white rounded-xl text-xs font-extrabold transition-all shadow-sm flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                className="px-5 py-2 bg-slate-950 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 rounded-xl text-xs font-extrabold transition-all border border-slate-900 dark:border-white shadow-xs flex items-center gap-1.5 cursor-pointer disabled:opacity-50 active:scale-[0.99]"
               >
                 {isSubmitting ? (
                   <>
@@ -2377,7 +2396,7 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
               <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl max-w-2xl w-full p-6 space-y-4">
                 <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
                   <h4 className="font-extrabold text-sm text-slate-900 dark:text-white flex items-center gap-2">
-                    <ImageIcon size={18} className="text-brand-600" />
+                    <ImageIcon size={18} className="text-slate-900 dark:text-white" />
                     <span>{lang === 'am' ? 'የሞጁሉን ስዕል ምረጥ' : 'Select Official Cover Illustration'}</span>
                   </h4>
                   <button
@@ -2401,7 +2420,7 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
                         }}
                         className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center justify-between ${
                           isSelected
-                            ? 'border-brand-600 bg-brand-50/50 dark:bg-cyan-950/30 ring-2 ring-brand-500'
+                            ? 'border-slate-900 dark:border-white bg-slate-100 dark:bg-slate-800 ring-2 ring-slate-900/10 dark:ring-white/20'
                             : 'border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-850 hover:border-slate-300'
                         }`}
                       >
