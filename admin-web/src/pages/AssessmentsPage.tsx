@@ -18,6 +18,8 @@ import {
   Check,
   Sliders,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 import { api } from '../services/api.js';
 import {
@@ -85,11 +87,70 @@ export const AssessmentsPage: React.FC<AssessmentsPageProps> = ({
   const [surveyStats, setSurveyStats] = useState<BaselineSurveyStats | null>(null);
   const [questions, setQuestions] = useState<SurveyQuestion[]>([]);
   const [sectionFilter, setSectionFilter] = useState<'ALL' | number>('ALL');
+  const [surveySection, setSurveySection] = useState<'ALL' | number>('ALL');
   const [loading, setLoading] = useState<boolean>(true);
   const [loadingQuestions, setLoadingQuestions] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [srhFilter, setSrhFilter] = useState<'ALL' | 'YES' | 'NO' | 'NOT_SURE'>('ALL');
+
+  const getQuestionSection = (q: DynamicSurveyStatQuestion, index: number): number => {
+    if (typeof q.sectionNumber === 'number' && q.sectionNumber >= 1 && q.sectionNumber <= 8) {
+      return q.sectionNumber;
+    }
+    if (index < 4) return 1;
+    if (index < 12) return 2;
+    if (index < 20) return 3;
+    if (index < 26) return 4;
+    if (index < 34) return 5;
+    if (index < 40) return 6;
+    if (index < 44) return 7;
+    return 8;
+  };
+
+  const sectionQuestionCounts = useMemo(() => {
+    const counts: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0 };
+    surveyStats?.questions?.forEach((q, idx) => {
+      const sec = getQuestionSection(q, idx);
+      counts[sec] = (counts[sec] || 0) + 1;
+    });
+    return counts;
+  }, [surveyStats?.questions]);
+
+  const displayedQuestions = useMemo(() => {
+    if (!surveyStats?.questions) return [];
+    if (surveySection === 'ALL') {
+      return surveyStats.questions.map((q, originalIdx) => ({ question: q, originalIdx }));
+    }
+    const filtered: Array<{ question: DynamicSurveyStatQuestion; originalIdx: number }> = [];
+    surveyStats.questions.forEach((q, originalIdx) => {
+      if (getQuestionSection(q, originalIdx) === surveySection) {
+        filtered.push({ question: q, originalIdx });
+      }
+    });
+    return filtered;
+  }, [surveyStats?.questions, surveySection]);
+
+  const activeSectionInfo = useMemo(() => {
+    if (surveySection === 'ALL') return null;
+    return UOG_SECTIONS_LIST.find((s) => s.num === surveySection) || null;
+  }, [surveySection]);
+
+  const handlePrevSection = () => {
+    if (surveySection === 'ALL' || surveySection <= 1) {
+      setSurveySection(8);
+    } else {
+      setSurveySection((surveySection - 1) as number);
+    }
+  };
+
+  const handleNextSection = () => {
+    if (surveySection === 'ALL' || surveySection >= 8) {
+      setSurveySection(1);
+    } else {
+      setSurveySection((surveySection + 1) as number);
+    }
+  };
 
   // Question Modal State
   const [isQuestionModalOpen, setIsQuestionModalOpen] = useState<boolean>(false);
@@ -794,27 +855,153 @@ export const AssessmentsPage: React.FC<AssessmentsPageProps> = ({
           {/* Dynamic Question Breakdown Charts */}
           {surveyStats?.questions && surveyStats.questions.length > 0 && (
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                  <Layers className="text-slate-900 dark:text-white" size={18} />
-                  <span>{isAm ? 'የጥያቄዎች ምላሽ ስርጭት' : 'Question Response Distributions'}</span>
-                </h3>
-                <span className="text-xs text-slate-400">
-                  {surveyStats.questions.length} {isAm ? 'ንቁ ጥያቄዎች' : 'active survey metrics'}
-                </span>
+              {/* Header and Stepper */}
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-slate-100 pb-3 dark:border-slate-800">
+                <div>
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                    <Layers className="text-purple-600 dark:text-purple-400" size={20} />
+                    <span>{isAm ? 'የጥያቄዎች ምላሽ ስርጭት (በሞጁል)' : 'Question Response Distributions by Module'}</span>
+                  </h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                    {surveySection === 'ALL'
+                      ? isAm
+                        ? `ሁሉም ${surveyStats.questions.length} ጥያቄዎች እየታዩ ነው`
+                        : `Displaying all ${surveyStats.questions.length} survey questions across 8 modules`
+                      : isAm
+                      ? `${activeSectionInfo?.labelAm || `ክፍል ${surveySection}`} (${displayedQuestions.length} ጥያቄዎች)`
+                      : `${activeSectionInfo?.labelEn || `Section ${surveySection}`} (${displayedQuestions.length} questions)`}
+                  </p>
+                </div>
+
+                {/* Stepper Buttons */}
+                <div className="flex items-center gap-2 self-start sm:self-auto">
+                  <button
+                    onClick={handlePrevSection}
+                    className="inline-flex items-center gap-1 rounded-xl border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-bold text-slate-700 shadow-xs transition hover:bg-slate-50 hover:border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700 cursor-pointer"
+                    title={isAm ? 'ቀዳሚ ክፍል' : 'Previous Module'}
+                  >
+                    <ChevronLeft size={15} />
+                    <span>{isAm ? 'ቀዳሚ' : 'Prev'}</span>
+                  </button>
+
+                  <span className="text-xs font-bold px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                    {surveySection === 'ALL' ? (isAm ? 'ሁሉም' : 'All') : `${surveySection} / 8`}
+                  </span>
+
+                  <button
+                    onClick={handleNextSection}
+                    className="inline-flex items-center gap-1 rounded-xl border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-bold text-slate-700 shadow-xs transition hover:bg-slate-50 hover:border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700 cursor-pointer"
+                    title={isAm ? 'ቀጣይ ክፍል' : 'Next Module'}
+                  >
+                    <span>{isAm ? 'ቀጣይ' : 'Next'}</span>
+                    <ChevronRight size={15} />
+                  </button>
+                </div>
               </div>
 
+              {/* Thematic Module Navigation Pill Bar (Scrollable on desktop, responsive dropdown on mobile) */}
+              <div className="space-y-2">
+                {/* Mobile Dropdown */}
+                <div className="block sm:hidden">
+                  <select
+                    value={surveySection}
+                    onChange={(e) => setSurveySection(e.target.value === 'ALL' ? 'ALL' : Number(e.target.value))}
+                    className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-800 shadow-xs dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+                  >
+                    <option value="ALL">{isAm ? `ሁሉም ሞጁሎች (${surveyStats.questions.length})` : `All Modules (${surveyStats.questions.length})`}</option>
+                    {UOG_SECTIONS_LIST.map((sec) => (
+                      <option key={sec.num} value={sec.num}>
+                        Sec {sec.num}: {isAm ? sec.labelAm : sec.labelEn} ({sectionQuestionCounts[sec.num] || 0})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Desktop Horizontal Pill Bar */}
+                <div className="hidden sm:flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar">
+                  <button
+                    onClick={() => setSurveySection('ALL')}
+                    className={`inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-all shrink-0 cursor-pointer ${
+                      surveySection === 'ALL'
+                        ? 'bg-purple-600 text-white shadow-xs'
+                        : 'bg-white text-slate-700 hover:bg-slate-100 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700'
+                    }`}
+                  >
+                    <span>{isAm ? 'ሁሉም ሞጁሎች' : 'All Modules'}</span>
+                    <span className={`rounded-full px-1.5 py-0.2 text-[10px] font-extrabold ${surveySection === 'ALL' ? 'bg-purple-700 text-purple-100' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300'}`}>
+                      {surveyStats.questions.length}
+                    </span>
+                  </button>
+
+                  {UOG_SECTIONS_LIST.map((sec) => {
+                    const isSelected = surveySection === sec.num;
+                    const count = sectionQuestionCounts[sec.num] || 0;
+                    return (
+                      <button
+                        key={sec.num}
+                        onClick={() => setSurveySection(sec.num)}
+                        className={`inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-all shrink-0 cursor-pointer ${
+                          isSelected
+                            ? 'bg-purple-600 text-white shadow-xs'
+                            : 'bg-white text-slate-700 hover:bg-slate-100 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700'
+                        }`}
+                      >
+                        <span>Sec {sec.num}</span>
+                        <span className={`rounded-full px-1.5 py-0.2 text-[10px] font-extrabold ${isSelected ? 'bg-purple-700 text-purple-100' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300'}`}>
+                          {count}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Active Section Context Banner (when a single section is chosen) */}
+              {activeSectionInfo && (
+                <div className="flex items-center justify-between rounded-xl bg-purple-50/70 dark:bg-purple-950/30 border border-purple-200/70 dark:border-purple-800/50 px-4 py-2.5">
+                  <div className="flex items-center gap-2.5">
+                    <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-purple-600 text-white text-xs font-black">
+                      {activeSectionInfo.num}
+                    </span>
+                    <div>
+                      <p className="text-xs font-bold text-purple-900 dark:text-purple-200">
+                        {isAm ? activeSectionInfo.labelAm : activeSectionInfo.labelEn}
+                      </p>
+                      <p className="text-[11px] text-purple-700/80 dark:text-purple-300/80">
+                        {isAm
+                          ? `በዚህ ክፍል ${displayedQuestions.length} ጥያቄዎች ይገኛሉ`
+                          : `Module contains ${displayedQuestions.length} assessment questions`}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setSurveySection('ALL')}
+                    className="text-xs font-bold text-purple-600 hover:text-purple-800 dark:text-purple-400 dark:hover:text-purple-200 underline cursor-pointer"
+                  >
+                    {isAm ? 'ሁሉንም አሳይ' : 'Show All'}
+                  </button>
+                </div>
+              )}
+
+              {/* Question Cards Grid */}
               <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
-                {surveyStats.questions.map((item: DynamicSurveyStatQuestion, idx: number) => (
+                {displayedQuestions.map(({ question: item, originalIdx }) => (
                   <div
                     key={item.id}
                     className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-xs dark:border-slate-800 dark:bg-slate-900"
                   >
                     <div className="flex items-start justify-between gap-2 border-b border-slate-100 pb-3 dark:border-slate-800">
                       <div>
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-purple-600 dark:text-purple-400">
-                          Question #{idx + 1}
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-purple-600 dark:text-purple-400">
+                            Question #{originalIdx + 1}
+                          </span>
+                          {item.sectionNumber && (
+                            <span className="rounded-md bg-slate-100 px-1.5 py-0.2 text-[9px] font-extrabold text-slate-500 dark:bg-slate-800 dark:text-slate-400">
+                              Sec {item.sectionNumber}
+                            </span>
+                          )}
+                        </div>
                         <h4 className="text-sm font-bold text-slate-900 dark:text-white mt-0.5">
                           {isAm ? item.titleAm : item.titleEn}
                         </h4>

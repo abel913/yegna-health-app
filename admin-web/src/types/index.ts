@@ -271,6 +271,12 @@ export interface DynamicSurveyStatOption {
 export interface DynamicSurveyStatQuestion {
   id: string;
   key: string;
+  sectionNumber?: number;
+  sectionKey?: string;
+  sectionTitleEn?: string | null;
+  sectionTitleAm?: string | null;
+  moduleKey?: string | null;
+  position?: number;
   titleEn: string;
   titleAm: string;
   type: string;
