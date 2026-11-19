@@ -47,6 +47,9 @@ function toPrismaClub(data: Record<string, any>): Record<string, any> {
     'category',
     'venue',
     'meetingTime',
+    'mentorName',
+    'mentorContact',
+    'rules',
     'isApproved',
   ] as const;
 

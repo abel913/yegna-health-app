@@ -37,8 +37,15 @@ function requiredEnvironmentVariable(name: string, minimumLength = 1): string {
 
 function createPrismaClient(connectionString: string): PrismaClient {
   if (connectionString.startsWith('postgres:') || connectionString.startsWith('postgresql:')) {
+    let schema: string | undefined;
+    try {
+      const parsedUrl = new URL(connectionString);
+      schema = parsedUrl.searchParams.get('schema') || 'yegna';
+    } catch (_) {
+      schema = 'yegna';
+    }
     return new PrismaClient({
-      adapter: new PrismaPg({ connectionString }),
+      adapter: new PrismaPg({ connectionString }, { schema }),
     });
   }
   return new PrismaClient();
