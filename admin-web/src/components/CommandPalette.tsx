@@ -170,8 +170,8 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
         subtitle: p.subtitle,
         badge: lang === 'am' ? 'ገጽ' : 'Page',
         icon: p.icon,
-        iconBgColor: 'bg-brand-50 text-brand-600',
-        iconColor: 'text-brand-600',
+        iconBgColor: 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white',
+        iconColor: 'text-slate-900 dark:text-white',
         onSelect: () => {
           onNavigate(p.tab);
           onClose();
@@ -229,8 +229,8 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
         subtitle: lang === 'am' ? 'የጎንደር ዩኒቨርሲቲ ተቋም ያክሉ' : 'Register University of Gondar campus facility',
         badge: 'Create',
         icon: PlusCircle,
-        iconBgColor: 'bg-cyan-50 text-cyan-600',
-        iconColor: 'text-cyan-600',
+        iconBgColor: 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white',
+        iconColor: 'text-slate-900 dark:text-white',
         onSelect: () => {
           onNavigate('facilities');
           onOpenAddFacility();
@@ -283,8 +283,8 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
         subtitle: `${f.subCity} • ${f.phone || 'No phone'}`,
         badge: f.subCity,
         icon: Building2,
-        iconBgColor: 'bg-blue-50 text-blue-600',
-        iconColor: 'text-blue-600',
+        iconBgColor: 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white',
+        iconColor: 'text-slate-900 dark:text-white',
         onSelect: () => {
           onNavigate('facilities');
           onClose();
@@ -527,7 +527,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                             </span>
                           )}
                           {isSelected && (
-                            <div className="hidden sm:flex items-center gap-1 text-[11px] font-bold text-brand-600 dark:text-cyan-400">
+                            <div className="hidden sm:flex items-center gap-1 text-[11px] font-bold text-slate-900 dark:text-white">
                               <span>Select</span>
                               <CornerDownLeft size={12} />
                             </div>
