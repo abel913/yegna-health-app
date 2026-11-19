@@ -28,14 +28,18 @@ import {
 } from './types/index.js';
 import { useToast } from './context/ToastContext.js';
 import { exportToCsv } from './utils/csvExport.js';
+import { parseCurrentRoute, formatRouteUrl, getRouteTitle } from './utils/navigation.js';
 
 export function App() {
   const { toast } = useToast();
   const [user, setUser] = useState<AdminUser | null>(() => api.getCurrentUser());
-  const [currentTab, setCurrentTab] = useState('dashboard');
-  const [activeSubTab, setActiveSubTab] = useState('baseline');
+  const initialRoute = parseCurrentRoute(typeof window !== 'undefined' ? window.location.pathname : '/');
+  const [currentTab, setCurrentTab] = useState(initialRoute.tab);
+  const [activeSubTab, setActiveSubTab] = useState(initialRoute.subTab || 'baseline');
   const [lang, setLang] = useState<'en' | 'am'>('en');
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(Boolean(user));
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   // App Data State
   const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
@@ -64,8 +68,13 @@ export function App() {
     }
   };
 
-  const loadAllData = async () => {
+  const loadAllData = async (isManualRefresh = false) => {
     if (!user) return;
+    if (isManualRefresh) {
+      setIsRefreshing(true);
+    } else {
+      setIsLoading(true);
+    }
     try {
       const [dashData, facData, menData, modData, qData, clubData, userData, logData, assessmentData] =
         await Promise.all([
@@ -92,8 +101,103 @@ export function App() {
       setClubs(clubData.clubs || []);
       setUsers(userData.users || []);
       setLogs(logData.logs || []);
+
+      if (isManualRefresh) {
+        toast.success(
+          lang === 'am' ? 'መረጃዎች በተሳካ ሁኔታ ተዘምነዋል' : 'Portal data refreshed successfully',
+          'Live Sync'
+        );
+      }
     } catch (err) {
       console.error('Failed to load portal data:', err);
+    } finally {
+      setIsLoading(false);
+      setIsRefreshing(false);
+    }
+  };
+
+  // Targeted Refetchers for Fast Mutations
+  const refreshFacilities = async () => {
+    try {
+      const [facData, dashData] = await Promise.all([
+        api.getFacilities().catch(() => ({ facilities: [] })),
+        api.getDashboard().catch(() => ({ metrics: null, recentActivity: [] })),
+      ]);
+      setFacilities(facData.facilities || []);
+      if (dashData.metrics) {
+        setMetrics(dashData.metrics);
+        setActivity(dashData.recentActivity);
+      }
+    } catch (err) {
+      console.error('Failed to refresh facilities:', err);
+    }
+  };
+
+  const refreshMentors = async () => {
+    try {
+      const [menData, dashData] = await Promise.all([
+        api.getMentors().catch(() => ({ mentors: [] })),
+        api.getDashboard().catch(() => ({ metrics: null, recentActivity: [] })),
+      ]);
+      setMentors(menData.mentors || []);
+      if (dashData.metrics) {
+        setMetrics(dashData.metrics);
+        setActivity(dashData.recentActivity);
+      }
+    } catch (err) {
+      console.error('Failed to refresh mentors:', err);
+    }
+  };
+
+  const refreshClubs = async () => {
+    try {
+      const [clubData, dashData] = await Promise.all([
+        api.getClubs().catch(() => ({ clubs: [] })),
+        api.getDashboard().catch(() => ({ metrics: null, recentActivity: [] })),
+      ]);
+      setClubs(clubData.clubs || []);
+      if (dashData.metrics) {
+        setMetrics(dashData.metrics);
+        setActivity(dashData.recentActivity);
+      }
+    } catch (err) {
+      console.error('Failed to refresh clubs:', err);
+    }
+  };
+
+  const refreshModulesAndQuizzes = async () => {
+    try {
+      const [modData, qData, assessmentData, dashData] = await Promise.all([
+        api.getModules().catch(() => ({ modules: [] })),
+        api.getQuestions().catch(() => ({ questions: [] })),
+        api.getLearningAssessments().catch(() => ({ assessments: [] })),
+        api.getDashboard().catch(() => ({ metrics: null, recentActivity: [] })),
+      ]);
+      setModules(modData.modules || []);
+      setQuestions(qData.questions || []);
+      setLearningAssessments(assessmentData.assessments || []);
+      if (dashData.metrics) {
+        setMetrics(dashData.metrics);
+        setActivity(dashData.recentActivity);
+      }
+    } catch (err) {
+      console.error('Failed to refresh modules & quizzes:', err);
+    }
+  };
+
+  const refreshUsers = async () => {
+    try {
+      const [userData, dashData] = await Promise.all([
+        api.getUsers().catch(() => ({ users: [] })),
+        api.getDashboard().catch(() => ({ metrics: null, recentActivity: [] })),
+      ]);
+      setUsers(userData.users || []);
+      if (dashData.metrics) {
+        setMetrics(dashData.metrics);
+        setActivity(dashData.recentActivity);
+      }
+    } catch (err) {
+      console.error('Failed to refresh users:', err);
     }
   };
 
@@ -112,10 +216,90 @@ export function App() {
     }
   }, [user]);
 
+  // Global 401 Session Expiration Listener
+  useEffect(() => {
+    const handleSessionExpired = () => {
+      setUser(null);
+      toast.error(
+        lang === 'am'
+          ? 'የአገልግሎት ጊዜዎ አልቋል። እባክዎ እንደገና ይግቡ።'
+          : 'Your session has expired. Please sign in again.',
+        'Session Expired'
+      );
+      if (typeof window !== 'undefined') {
+        window.history.replaceState({}, '', '/');
+      }
+    };
+
+    window.addEventListener('yegna:session-expired', handleSessionExpired);
+    return () => window.removeEventListener('yegna:session-expired', handleSessionExpired);
+  }, [lang]);
+
   const handleLogout = () => {
     api.logout();
     setUser(null);
+    if (typeof window !== 'undefined') {
+      window.history.replaceState({}, '', '/');
+    }
   };
+
+  // Unified navigation with browser URL & history stack sync
+  const handleNavigate = (id: string, sub?: string, replace = false) => {
+    let targetTab = id;
+    let targetSub = sub;
+
+    if (id.startsWith('assessments-')) {
+      targetTab = 'assessments';
+      targetSub = id.split('-')[1];
+    } else if (id === 'learning-assessments') {
+      targetTab = 'assessments';
+      targetSub = 'modules';
+    }
+
+    setCurrentTab(targetTab);
+    if (targetSub) {
+      setActiveSubTab(targetSub);
+    }
+
+    if (typeof window !== 'undefined') {
+      const targetUrl = formatRouteUrl(targetTab, targetSub);
+      if (window.location.pathname !== targetUrl) {
+        if (replace) {
+          window.history.replaceState({ tab: targetTab, subTab: targetSub }, '', targetUrl);
+        } else {
+          window.history.pushState({ tab: targetTab, subTab: targetSub }, '', targetUrl);
+        }
+      }
+      document.title = getRouteTitle(targetTab, targetSub, lang);
+    }
+  };
+
+  // Browser Back / Forward button navigation (popstate)
+  useEffect(() => {
+    const handlePopState = () => {
+      const route = parseCurrentRoute(window.location.pathname);
+      setCurrentTab(route.tab);
+      if (route.subTab) {
+        setActiveSubTab(route.subTab);
+      }
+      document.title = getRouteTitle(route.tab, route.subTab, lang);
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [lang]);
+
+  // Sync route and canonical URL on initial mount or lang change
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const route = parseCurrentRoute(window.location.pathname);
+      const canonical = formatRouteUrl(route.tab, route.subTab);
+      if (window.location.pathname !== canonical) {
+        window.history.replaceState({ tab: route.tab, subTab: route.subTab }, '', canonical);
+      }
+      document.title = getRouteTitle(route.tab, route.subTab, lang);
+    }
+  }, [lang]);
 
   // Global Command Palette (Ctrl+K / Cmd+K) Listener
   useEffect(() => {
@@ -165,7 +349,7 @@ export function App() {
         await api.createFacility(data);
         toast.success(lang === 'am' ? 'አዲስ ተቋም ተመዝግቧል' : 'New facility added', 'Facilities CMS');
       }
-      await loadAllData();
+      await refreshFacilities();
     } catch (err: any) {
       toast.error(err.message || 'Failed to save facility', 'Error');
     }
@@ -175,7 +359,7 @@ export function App() {
     try {
       await api.deleteFacility(id);
       toast.info(lang === 'am' ? 'ተቋሙ ተሰርዟል' : 'Facility removed from directory', 'Removed');
-      await loadAllData();
+      await refreshFacilities();
     } catch (err: any) {
       toast.error(err.message || 'Failed to delete facility', 'Error');
     }
@@ -191,7 +375,7 @@ export function App() {
         await api.createMentor(data);
         toast.success(lang === 'am' ? 'አዲስ አማካሪ ተመዝግቧል' : 'New peer mentor registered', 'Peer Mentors');
       }
-      await loadAllData();
+      await refreshMentors();
     } catch (err: any) {
       toast.error(err.message || 'Failed to save mentor', 'Error');
     }
@@ -201,7 +385,7 @@ export function App() {
     try {
       await api.deleteMentor(id);
       toast.info(lang === 'am' ? 'አማካሪው ተሰርዟል' : 'Mentor removed from network', 'Removed');
-      await loadAllData();
+      await refreshMentors();
     } catch (err: any) {
       toast.error(err.message || 'Failed to delete mentor', 'Error');
     }
@@ -240,7 +424,7 @@ export function App() {
         }
       }
 
-      await loadAllData();
+      await refreshModulesAndQuizzes();
     } catch (err: any) {
       toast.error(err.message || 'Failed to save module', 'Error');
     }
@@ -250,7 +434,7 @@ export function App() {
     try {
       await api.deleteModule(id);
       toast.info(lang === 'am' ? 'ሞጁሉ ተሰርዟል' : 'Curriculum module deleted', 'Removed');
-      await loadAllData();
+      await refreshModulesAndQuizzes();
     } catch (err: any) {
       toast.error(err.message || 'Failed to delete module', 'Error');
     }
@@ -266,7 +450,7 @@ export function App() {
         await api.createQuestion(data);
         toast.success(lang === 'am' ? 'አዲስ ጥያቄ ተፈጥሯል' : 'New quiz question created', 'Assessment Bank');
       }
-      await loadAllData();
+      await refreshModulesAndQuizzes();
     } catch (err: any) {
       toast.error(err.message || 'Failed to save question', 'Error');
     }
@@ -276,18 +460,18 @@ export function App() {
     try {
       await api.deleteQuestion(id);
       toast.info(lang === 'am' ? 'ጥያቄው ተሰርዟል' : 'Quiz question deleted', 'Removed');
-      await loadAllData();
+      await refreshModulesAndQuizzes();
     } catch (err: any) {
       toast.error(err.message || 'Failed to delete question', 'Error');
     }
   };
 
   const saveLearningAssessment = async (data: { moduleId: string; questions: { promptEn: string; promptAm: string; choices: { labelEn: string; labelAm: string; score: number }[] }[] }) => {
-    try { await api.saveLearningAssessment(data); toast.success(lang === 'am' ? 'ምዘናው ተቀምጧል' : 'Learning assessment saved', 'Learning Assessments'); await loadAllData(); }
+    try { await api.saveLearningAssessment(data); toast.success(lang === 'am' ? 'ምዘናው ተቀምጧል' : 'Learning assessment saved', 'Learning Assessments'); await refreshModulesAndQuizzes(); }
     catch (err: any) { toast.error(err.message || 'Failed to save assessment', 'Error'); }
   };
   const deleteLearningAssessment = async (id: string) => {
-    try { await api.deleteLearningAssessment(id); toast.info(lang === 'am' ? 'ምዘናው ተሰርዟል' : 'Learning assessment deleted', 'Removed'); await loadAllData(); }
+    try { await api.deleteLearningAssessment(id); toast.info(lang === 'am' ? 'ምዘናው ተሰርዟል' : 'Learning assessment deleted', 'Removed'); await refreshModulesAndQuizzes(); }
     catch (err: any) { toast.error(err.message || 'Failed to delete assessment', 'Error'); }
   };
 
@@ -301,7 +485,7 @@ export function App() {
         await api.createClub(data);
         toast.success(lang === 'am' ? 'አዲስ ክለብ ተመዝግቧል' : 'New student club chapter created', 'Student Chapters');
       }
-      await loadAllData();
+      await refreshClubs();
     } catch (err: any) {
       toast.error(err.message || 'Failed to save club', 'Error');
     }
@@ -316,7 +500,7 @@ export function App() {
           : (lang === 'am' ? 'ክለቡ በይፋ ጸድቋል' : 'Club officially Approved & Activated!'),
         'Club Moderation'
       );
-      await loadAllData();
+      await refreshClubs();
     } catch (err: any) {
       toast.error(err.message || 'Failed to update approval status', 'Error');
     }
@@ -326,7 +510,7 @@ export function App() {
     try {
       await api.deleteClub(id);
       toast.info(lang === 'am' ? 'ክለቡ ተሰርዟል' : 'Student club deleted', 'Removed');
-      await loadAllData();
+      await refreshClubs();
     } catch (err: any) {
       toast.error(err.message || 'Failed to delete club', 'Error');
     }
@@ -340,7 +524,7 @@ export function App() {
         lang === 'am' ? `የተጠቃሚው ሚና ወደ ${role} ተቀይሯል` : `User role changed to ${role}`,
         'Role Governance'
       );
-      await loadAllData();
+      await refreshUsers();
     } catch (err: any) {
       toast.error(err.message || 'Failed to update user role', 'Error');
     }
@@ -353,7 +537,7 @@ export function App() {
         lang === 'am' ? 'የተጠቃሚው እገዳ ሁኔታ ተቀይሯል' : 'User account suspension toggled',
         'Safety Moderation'
       );
-      await loadAllData();
+      await refreshUsers();
     } catch (err: any) {
       toast.error(err.message || 'Failed to toggle suspension', 'Error');
     }
@@ -378,7 +562,7 @@ export function App() {
         lang === 'am' ? 'የተጠቃሚ አካውንት ተሰርዟል' : 'User account deleted',
         'User Management'
       );
-      await loadAllData();
+      await refreshUsers();
     } catch (err: any) {
       toast.error(err.message || 'Failed to delete user', 'Error');
     }
@@ -414,7 +598,7 @@ export function App() {
           : `User "${data.displayName || data.email}" created successfully`,
         'User Management'
       );
-      await loadAllData();
+      await refreshUsers();
     } catch (err: any) {
       toast.error(err.message || 'Failed to create user', 'Error');
       throw err;
@@ -447,16 +631,6 @@ export function App() {
     );
   }
 
-  const handleNavigate = (id: string) => {
-    if (id.startsWith('assessments-')) {
-      const sub = id.split('-')[1];
-      setCurrentTab('assessments');
-      setActiveSubTab(sub);
-    } else {
-      setCurrentTab(id);
-    }
-  };
-
   return (
     <>
       <AdminLayout
@@ -467,8 +641,10 @@ export function App() {
         onLogout={handleLogout}
         lang={lang}
         onToggleLang={() => setLang(lang === 'en' ? 'am' : 'en')}
-        onQuickAction={() => setCurrentTab('facilities')}
         onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
+        onRefresh={() => loadAllData(true)}
+        isRefreshing={isRefreshing}
+        isLoading={isLoading}
         userCount={users.length}
       >
         {currentTab === 'dashboard' && (
@@ -482,13 +658,14 @@ export function App() {
             users={users}
             activity={activity}
             lang={lang}
-            onNavigate={setCurrentTab}
+            onNavigate={(tab) => handleNavigate(tab)}
           />
         )}
         {currentTab === 'facilities' && (
           <FacilitiesPage
             facilities={facilities}
             lang={lang}
+            isLoading={isLoading}
             onSave={handleSaveFacility}
             onDelete={handleDeleteFacility}
           />
@@ -497,6 +674,7 @@ export function App() {
           <MentorsPage
             mentors={mentors}
             lang={lang}
+            isLoading={isLoading}
             onSave={handleSaveMentor}
             onDelete={handleDeleteMentor}
           />
@@ -506,6 +684,7 @@ export function App() {
             modules={modules}
             questions={questions}
             lang={lang}
+            isLoading={isLoading}
             onSave={handleSaveModule}
             onDelete={handleDeleteModule}
             onSaveQuestion={handleSaveQuestion}
@@ -517,6 +696,7 @@ export function App() {
             questions={questions}
             modules={modules}
             lang={lang}
+            isLoading={isLoading}
             onSaveQuestion={handleSaveQuestion}
             onDeleteQuestion={handleDeleteQuestion}
           />
@@ -527,7 +707,7 @@ export function App() {
             assessments={learningAssessments}
             lang={lang}
             activeSubTab={activeSubTab as any}
-            onSubTabChange={setActiveSubTab}
+            onSubTabChange={(sub) => handleNavigate('assessments', sub)}
             onSaveAssessment={saveLearningAssessment}
             onDeleteAssessment={deleteLearningAssessment}
           />
@@ -536,6 +716,7 @@ export function App() {
           <ClubsPage
             clubs={clubs}
             lang={lang}
+            isLoading={isLoading}
             onSaveClub={handleSaveClub}
             onDeleteClub={handleDeleteClub}
             onToggleApproval={handleToggleClubApproval}
@@ -545,6 +726,7 @@ export function App() {
           <UsersPage
             users={users}
             lang={lang}
+            isLoading={isLoading}
             onCreateUser={handleCreateUser}
             onUpdateRole={handleUpdateRole}
             onToggleSuspension={handleToggleSuspension}
@@ -561,7 +743,7 @@ export function App() {
         isOpen={isCommandPaletteOpen}
         onClose={() => setIsCommandPaletteOpen(false)}
         currentTab={currentTab}
-        onNavigate={setCurrentTab}
+        onNavigate={(tab) => handleNavigate(tab)}
         lang={lang}
         onToggleLang={() => setLang((l) => (l === 'en' ? 'am' : 'en'))}
         onLogout={handleLogout}
@@ -569,7 +751,7 @@ export function App() {
         mentors={mentors}
         modules={modules}
         clubs={clubs}
-        onOpenAddFacility={() => setCurrentTab('facilities')}
+        onOpenAddFacility={() => handleNavigate('facilities')}
         onExportCsv={handleExportKpiCsv}
       />
     </>
