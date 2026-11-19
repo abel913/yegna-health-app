@@ -37,7 +37,7 @@ export const SortableHeader: React.FC<SortableHeaderProps> = ({
         <span
           className={`transition-colors ${
             isActive
-              ? 'text-brand-600 dark:text-cyan-400 font-extrabold'
+              ? 'text-slate-900 dark:text-white font-extrabold'
               : 'text-slate-500 dark:text-slate-400 group-hover:text-slate-800 dark:group-hover:text-slate-200'
           }`}
         >
@@ -46,7 +46,7 @@ export const SortableHeader: React.FC<SortableHeaderProps> = ({
         <span
           className={`p-0.5 rounded transition-colors ${
             isActive
-              ? 'bg-brand-50 dark:bg-cyan-950/60 text-brand-600 dark:text-cyan-400'
+              ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white'
               : 'text-slate-300 dark:text-slate-600 group-hover:text-slate-500 dark:group-hover:text-slate-400'
           }`}
         >

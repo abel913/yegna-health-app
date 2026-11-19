@@ -38,10 +38,10 @@ export const CampusMapPicker: React.FC<CampusMapPickerProps> = ({
         display: flex;
         align-items: center;
         justify-content: center;
-        background: #0284c7;
+        background: #09090b;
         color: white;
         border-radius: 9999px;
-        box-shadow: 0 4px 14px rgba(2, 132, 199, 0.45), 0 0 0 3px white;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45), 0 0 0 3px white;
         transform: translate(-50%, -50%);
         cursor: grab;
       ">
@@ -157,7 +157,7 @@ export const CampusMapPicker: React.FC<CampusMapPickerProps> = ({
     <div className="space-y-2">
       <div className="flex items-center justify-between text-xs">
         <label className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
-          <MapPin size={14} className="text-brand-600 dark:text-cyan-400" />
+          <MapPin size={14} className="text-slate-900 dark:text-white" />
           <span>{lang === 'am' ? 'ካርታ ላይ ጠቁም (Pin on Campus Map)' : 'Pin on Campus Map'}</span>
         </label>
         <div className="flex items-center gap-2">
@@ -165,7 +165,7 @@ export const CampusMapPicker: React.FC<CampusMapPickerProps> = ({
             <button
               type="button"
               onClick={handleCenterOnCampus}
-              className="inline-flex items-center gap-1 text-[11px] font-bold text-brand-600 dark:text-cyan-400 hover:underline cursor-pointer"
+              className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-900 dark:text-white hover:underline cursor-pointer"
             >
               <Navigation size={11} />
               <span>{lang === 'am' ? `ወደ ${campusName || 'ካምፓስ'} መልስ` : `Re-center ${campusName || 'Campus'}`}</span>
@@ -192,7 +192,7 @@ export const CampusMapPicker: React.FC<CampusMapPickerProps> = ({
             onClick={() => setMapType('street')}
             className={`px-2 py-1 rounded-lg text-[10px] font-extrabold transition-all cursor-pointer ${
               mapType === 'street'
-                ? 'bg-brand-600 text-white shadow-xs'
+                ? 'bg-slate-950 dark:bg-white text-white dark:text-slate-950 shadow-xs'
                 : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
             }`}
           >
@@ -203,7 +203,7 @@ export const CampusMapPicker: React.FC<CampusMapPickerProps> = ({
             onClick={() => setMapType('satellite')}
             className={`px-2 py-1 rounded-lg text-[10px] font-extrabold transition-all cursor-pointer ${
               mapType === 'satellite'
-                ? 'bg-brand-600 text-white shadow-xs'
+                ? 'bg-slate-950 dark:bg-white text-white dark:text-slate-950 shadow-xs'
                 : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
             }`}
           >

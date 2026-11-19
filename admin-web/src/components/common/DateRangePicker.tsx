@@ -46,7 +46,7 @@ export const DateRangePicker: React.FC<DateRangePickerProps> = ({
               onClick={() => onSelectPreset(p.id)}
               className={`px-2.5 py-1 rounded-lg transition-all whitespace-nowrap cursor-pointer ${
                 isActive
-                  ? 'bg-white dark:bg-slate-900 text-brand-600 dark:text-cyan-400 shadow-2xs font-extrabold'
+                  ? 'bg-slate-950 dark:bg-white text-white dark:text-slate-950 shadow-xs font-bold'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-700/50'
               }`}
             >
@@ -101,7 +101,7 @@ export const DateRangePicker: React.FC<DateRangePickerProps> = ({
       {/* Active Range Feedback pill when preset is not ALL */}
       {preset !== 'ALL' && preset !== 'CUSTOM' && (
         <span className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-500 dark:text-slate-400 bg-slate-100/70 dark:bg-slate-800/50 px-2 py-0.5 rounded-md border border-slate-200/50 dark:border-slate-700/50">
-          <CalendarDays size={12} className="text-brand-600 dark:text-cyan-400" />
+          <CalendarDays size={12} className="text-slate-900 dark:text-white" />
           <span>
             {preset === 'TODAY' && (lang === 'am' ? 'ዛሬ የተመዘገቡ ብቻ' : 'Active: Today only')}
             {preset === '7D' && (lang === 'am' ? 'ባለፉት 7 ቀናት' : 'Active: Past 7 days')}
