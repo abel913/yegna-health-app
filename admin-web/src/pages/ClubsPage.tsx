@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   GraduationCap,
   Plus,
@@ -29,6 +29,7 @@ import { ConfirmModal } from '../components/common/ConfirmModal.js';
 interface ClubsPageProps {
   clubs: StudentClub[];
   lang: 'en' | 'am';
+  isLoading?: boolean;
   onSaveClub: (data: Partial<StudentClub>, id?: string) => Promise<void>;
   onDeleteClub: (id: string) => Promise<void>;
   onToggleApproval: (club: StudentClub) => Promise<void>;
@@ -37,6 +38,7 @@ interface ClubsPageProps {
 export const ClubsPage: React.FC<ClubsPageProps> = ({
   clubs,
   lang,
+  isLoading = false,
   onSaveClub,
   onDeleteClub,
   onToggleApproval,
@@ -53,6 +55,20 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
     clubName: '',
     members: [],
   });
+
+  // Handle Escape key to dismiss modals
+  useEffect(() => {
+    if (isModalOpen || rosterModal.open) {
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          if (rosterModal.open) setRosterModal((prev) => ({ ...prev, open: false }));
+          if (isModalOpen) setIsModalOpen(false);
+        }
+      };
+      window.addEventListener('keydown', handleKeyDown);
+      return () => window.removeEventListener('keydown', handleKeyDown);
+    }
+  }, [isModalOpen, rosterModal.open]);
   const [rosterSearch, setRosterSearch] = useState('');
   const [memberToRemove, setMemberToRemove] = useState<{ userId: string; displayName: string } | null>(null);
 
@@ -240,7 +256,7 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-xl md:text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
-            <GraduationCap className="text-brand-600 dark:text-cyan-400" size={24} />
+            <GraduationCap className="text-slate-900 dark:text-white" size={24} />
             <span>{lang === 'am' ? 'የተማሪዎች ጤና ክለቦች' : 'Student Health Clubs & Chapters'}</span>
           </h2>
           <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 mt-1">
@@ -260,7 +276,7 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
           </button>
           <button
             onClick={openCreateModal}
-            className="flex items-center gap-2 px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-xs md:text-sm font-bold rounded-xl shadow-md shadow-brand-600/20 transition-all cursor-pointer"
+            className="flex items-center gap-2 px-4 py-2.5 bg-slate-950 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 text-xs md:text-sm font-bold rounded-xl border border-slate-900 dark:border-white shadow-xs transition-all active:scale-[0.99] cursor-pointer"
           >
             <Plus size={16} />
             <span>{lang === 'am' ? '+ አዲስ ክለብ ፍጠር' : '+ Create Student Club'}</span>
@@ -283,7 +299,7 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
                     ? 'በክለብ ስም፣ በምድብ፣ በመሰብሰቢያ ቦታ ወይም በመርሃ-ግብር ፈልግ...'
                     : 'Search clubs by name, category, venue, schedule, or description...'
                 }
-                className="w-full pl-9 pr-9 py-2 text-xs md:text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl focus:bg-white dark:focus:bg-slate-850 focus:border-brand-500 focus:outline-none transition-all placeholder:text-slate-400"
+                className="w-full pl-9 pr-9 py-2 text-xs md:text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl focus:bg-white dark:focus:bg-slate-850 focus:border-slate-900 dark:focus:border-white focus:outline-none transition-all placeholder:text-slate-400"
               />
               {search && (
                 <button
@@ -306,7 +322,7 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
               onClick={() => setApprovalFilter('all')}
               className={`px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                 approvalFilter === 'all'
-                  ? 'bg-slate-900 dark:bg-brand-600 text-white shadow-xs'
+                  ? 'bg-slate-950 dark:bg-white text-white dark:text-slate-950 shadow-xs'
                   : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200/80 dark:hover:bg-slate-700'
               }`}
             >
@@ -338,8 +354,25 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
         </div>
       )}
 
-      {/* Clubs Grid or Empty State */}
-      {clubs.length === 0 ? (
+      {/* Clubs Grid, Skeleton, or Empty State */}
+      {isLoading && clubs.length === 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {Array.from({ length: 6 }).map((_, idx) => (
+            <div
+              key={idx}
+              className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-5 shadow-xs animate-pulse space-y-4"
+            >
+              <div className="flex items-center justify-between">
+                <div className="h-5 bg-slate-200 dark:bg-slate-800 rounded w-20" />
+                <div className="h-5 bg-slate-100 dark:bg-slate-800/60 rounded w-16" />
+              </div>
+              <div className="h-5 bg-slate-200 dark:bg-slate-800 rounded w-2/3" />
+              <div className="h-10 bg-slate-100 dark:bg-slate-800/60 rounded w-full" />
+              <div className="h-8 bg-slate-100 dark:bg-slate-800/60 rounded-xl" />
+            </div>
+          ))}
+        </div>
+      ) : clubs.length === 0 ? (
         <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs">
           <EmptyState
             icon={GraduationCap}
@@ -385,7 +418,7 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
             >
               <div>
                 <div className="flex items-center justify-between gap-2 mb-2.5">
-                  <span className="text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-md bg-brand-50 dark:bg-brand-950/50 text-brand-700 dark:text-cyan-400 border border-brand-100 dark:border-brand-900/40">
+                  <span className="text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700">
                     {c.category}
                   </span>
 
@@ -416,7 +449,7 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
                     {/* Edit Button */}
                     <button
                       onClick={() => openEditModal(c)}
-                      className="p-1.5 text-slate-400 hover:text-brand-600 dark:hover:text-cyan-400 hover:bg-brand-50 dark:hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
+                      className="p-1.5 text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
                       title={lang === 'am' ? 'አርትዕ' : 'Edit club'}
                     >
                       <Edit2 size={14} />
@@ -450,7 +483,7 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
                     </div>
                   )}
                   {c.mentorContact && (
-                    <div className="flex items-center gap-1.5 text-brand-600 dark:text-cyan-400 font-semibold">
+                    <div className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300 font-semibold">
                       <Phone size={13} />
                       <span className="truncate">{c.mentorName ? `${c.mentorName}: ` : ''}{c.mentorContact}</span>
                     </div>
@@ -466,12 +499,12 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
 
               <div className="pt-4 mt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">
                 <span className="flex items-center gap-1 font-bold text-slate-700 dark:text-slate-300">
-                  <Users size={14} className="text-brand-600 dark:text-cyan-400" />
+                  <Users size={14} className="text-slate-900 dark:text-white" />
                   {c.memberCount || 0} {lang === 'am' ? 'አባላት' : 'members'}
                 </span>
                 <button
                   onClick={() => openRoster(c)}
-                  className="flex items-center gap-1 font-bold text-brand-600 dark:text-cyan-400 hover:underline cursor-pointer"
+                  className="flex items-center gap-1 font-bold text-slate-900 dark:text-white hover:underline cursor-pointer"
                 >
                   <Eye size={13} />
                   {lang === 'am' ? 'አባላትን እይ' : 'View Roster'}
@@ -489,7 +522,7 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
             {/* Modal Header */}
             <div className="flex-shrink-0 flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xs">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-brand-50 dark:bg-brand-950/60 border border-brand-200/50 dark:border-brand-800/50 flex items-center justify-center text-brand-600 dark:text-cyan-400">
+                <div className="w-10 h-10 rounded-2xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-900 dark:text-white">
                   <Users size={20} />
                 </div>
                 <div>
@@ -497,7 +530,7 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
                     <h3 className="text-base md:text-lg font-extrabold text-slate-900 dark:text-white">
                       {lang === 'am' ? 'የክለቡ አባላት መዝገብ' : 'Student Member Roster'}
                     </h3>
-                    <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-brand-100 dark:bg-brand-900/50 text-brand-700 dark:text-cyan-300">
+                    <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200">
                       {rosterModal.members.length} {lang === 'am' ? 'አባላት' : 'members'}
                     </span>
                   </div>
@@ -540,7 +573,7 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
                         ? 'በተማሪው ስም ወይም ኢሜይል ፈልግ...'
                         : 'Search members by student name or email...'
                     }
-                    className="w-full pl-8 pr-8 py-1.5 text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl focus:outline-none focus:border-brand-500 transition-all placeholder:text-slate-400"
+                    className="w-full pl-8 pr-8 py-1.5 text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl focus:outline-none focus:border-slate-900 dark:focus:border-white transition-all placeholder:text-slate-400"
                   />
                   {rosterSearch && (
                     <button
@@ -584,10 +617,10 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
                 return (
                   <div
                     key={userId || idx}
-                    className="p-3.5 rounded-2xl bg-slate-50/80 dark:bg-slate-800/50 border border-slate-200/80 dark:border-slate-700/60 hover:border-brand-300 dark:hover:border-brand-700/60 transition-all flex items-center justify-between gap-3 group"
+                    className="p-3.5 rounded-2xl bg-slate-50/80 dark:bg-slate-800/50 border border-slate-200/80 dark:border-slate-700/60 hover:border-slate-400 dark:hover:border-slate-600 transition-all flex items-center justify-between gap-3 group"
                   >
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-brand-600 to-indigo-600 text-white font-black text-xs flex items-center justify-center shadow-xs flex-shrink-0">
+                      <div className="w-10 h-10 rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black text-xs flex items-center justify-center shadow-xs flex-shrink-0">
                         {initials}
                       </div>
                       <div className="min-w-0">
@@ -648,7 +681,7 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
                   <p className="font-semibold">{lang === 'am' ? 'ምንም የሚመሳሰል አባል አልተገኘም' : 'No members found matching your search.'}</p>
                   <button
                     onClick={() => setRosterSearch('')}
-                    className="mt-2 text-brand-600 dark:text-cyan-400 font-bold hover:underline cursor-pointer"
+                    className="mt-2 text-slate-900 dark:text-white font-bold hover:underline cursor-pointer"
                   >
                     {lang === 'am' ? 'ፍለጋውን አጽዳ' : 'Clear search'}
                   </button>
@@ -706,7 +739,7 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
                   required
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:border-brand-500 focus:outline-none"
+                  className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:border-slate-900 dark:focus:border-white focus:outline-none"
                   placeholder="e.g. Arada Youth Wellness Club"
                 />
               </div>
@@ -718,12 +751,15 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
                 <select
                   value={formData.category}
                   onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:border-brand-500 focus:outline-none cursor-pointer"
+                  className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-medium focus:border-slate-900 dark:focus:border-white focus:outline-none cursor-pointer"
                 >
-                  <option value="wellness">Wellness & Lifestyle</option>
-                  <option value="mental_health">Mental Health & Stress</option>
                   <option value="srh">SRH & Peer Education</option>
+                  <option value="mental_health">Mental Health & Stress</option>
+                  <option value="first_aid">First Aid & Emergency Response</option>
+                  <option value="anti_substance">Anti-Substance & Tobacco Free</option>
+                  <option value="girls_hygiene">Girls' Menstrual Hygiene & Dignity</option>
                   <option value="leadership">Youth Leadership & Advocacy</option>
+                  <option value="wellness">Wellness & Healthy Lifestyle</option>
                 </select>
               </div>
 
@@ -736,7 +772,7 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
                   required
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl text-xs focus:border-brand-500 focus:outline-none"
+                  className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl text-xs focus:border-slate-900 dark:focus:border-white focus:outline-none"
                   placeholder="Purpose, activities, and goals..."
                 />
               </div>
@@ -750,7 +786,7 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
                     type="text"
                     value={formData.venue}
                     onChange={(e) => setFormData({ ...formData, venue: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:border-brand-500 focus:outline-none"
+                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:border-slate-900 dark:focus:border-white focus:outline-none"
                     placeholder="e.g. School Hall / Library"
                   />
                 </div>
@@ -762,7 +798,7 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
                     type="text"
                     value={formData.meetingTime}
                     onChange={(e) => setFormData({ ...formData, meetingTime: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:border-brand-500 focus:outline-none"
+                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:border-slate-900 dark:focus:border-white focus:outline-none"
                     placeholder="e.g. Every Wed at 4:30 PM"
                   />
                 </div>
@@ -778,7 +814,7 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
                     type="text"
                     value={formData.mentorName}
                     onChange={(e) => setFormData({ ...formData, mentorName: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-850 text-slate-900 dark:text-white rounded-xl focus:border-brand-500 focus:outline-none"
+                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-850 text-slate-900 dark:text-white rounded-xl focus:border-slate-900 dark:focus:border-white focus:outline-none"
                     placeholder="e.g. Sister Hanna / Dr. Almaz"
                   />
                 </div>
@@ -790,7 +826,7 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
                     type="tel"
                     value={formData.mentorContact}
                     onChange={(e) => setFormData({ ...formData, mentorContact: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-850 text-slate-900 dark:text-white rounded-xl focus:border-brand-500 focus:outline-none"
+                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-850 text-slate-900 dark:text-white rounded-xl focus:border-slate-900 dark:focus:border-white focus:outline-none"
                     placeholder="+251 91 123 4567"
                   />
                   <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1">Direct phone line for youth counseling</p>
@@ -809,7 +845,7 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
                   <button
                     type="button"
                     onClick={() => setFormData({ ...formData, rules: [...formData.rules, ''] })}
-                    className="text-xs text-brand-600 dark:text-cyan-400 hover:underline font-bold cursor-pointer"
+                    className="text-xs text-slate-900 dark:text-white hover:underline font-bold cursor-pointer"
                   >
                     + Add Rule
                   </button>
@@ -826,7 +862,7 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
                           updated[idx] = e.target.value;
                           setFormData({ ...formData, rules: updated });
                         }}
-                        className="flex-1 px-2.5 py-1.5 text-xs border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-850 text-slate-900 dark:text-white rounded-lg focus:border-brand-500 focus:outline-none"
+                        className="flex-1 px-2.5 py-1.5 text-xs border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-850 text-slate-900 dark:text-white rounded-lg focus:border-slate-900 dark:focus:border-white focus:outline-none"
                         placeholder="Guideline / safe-space pledge..."
                       />
                       {formData.rules.length > 1 && (
@@ -852,7 +888,7 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
                   id="clubApproved"
                   checked={formData.isApproved}
                   onChange={(e) => setFormData({ ...formData, isApproved: e.target.checked })}
-                  className="w-4 h-4 text-brand-600 rounded border-slate-300 focus:ring-brand-500"
+                  className="w-4 h-4 text-slate-900 focus:ring-slate-900 dark:text-white dark:focus:ring-white rounded border-slate-300"
                 />
                 <label htmlFor="clubApproved" className="text-xs font-bold text-slate-700 dark:text-slate-300 cursor-pointer">
                   {lang === 'am' ? 'ይህ ክለብ በይፋ እንዲታይ የተፈቀደ ነው (Approved)' : 'Club is officially approved and active'}
@@ -872,7 +908,7 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
               <button
                 type="submit"
                 form="clubForm"
-                className="px-5 py-2 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl shadow-md shadow-brand-600/20 cursor-pointer transition-all"
+                className="px-5 py-2 bg-slate-950 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 font-bold rounded-xl border border-slate-900 dark:border-white shadow-xs transition-all active:scale-[0.99] cursor-pointer"
               >
                 {editingClub
                   ? (lang === 'am' ? 'ለውጦችን መዝግብ' : 'Save Changes')

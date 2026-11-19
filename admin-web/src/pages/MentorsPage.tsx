@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   Users2,
   Plus,
@@ -161,6 +161,7 @@ function generateWorkingHoursSummaries(schedule: WeeklySchedule): { en: string; 
 interface MentorsPageProps {
   mentors: Mentor[];
   lang: 'en' | 'am';
+  isLoading?: boolean;
   onSave: (data: Partial<Mentor>, id?: string) => Promise<void>;
   onDelete: (id: string) => Promise<void>;
 }
@@ -168,6 +169,7 @@ interface MentorsPageProps {
 export const MentorsPage: React.FC<MentorsPageProps> = ({
   mentors,
   lang,
+  isLoading = false,
   onSave,
   onDelete,
 }) => {
@@ -176,6 +178,19 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
   const [statusFilter, setStatusFilter] = useState<'all' | 'available' | 'offline' | 'verified'>('all');
   const [campusFilter, setCampusFilter] = useState<string>('all');
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Keyboard Escape listener to dismiss modal
+  useEffect(() => {
+    if (isModalOpen) {
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          setIsModalOpen(false);
+        }
+      };
+      window.addEventListener('keydown', handleKeyDown);
+      return () => window.removeEventListener('keydown', handleKeyDown);
+    }
+  }, [isModalOpen]);
   const [editingMentor, setEditingMentor] = useState<Mentor | null>(null);
   const [mentorToDelete, setMentorToDelete] = useState<Mentor | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -503,7 +518,7 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-xl md:text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
-            <Users2 className="text-brand-600 dark:text-cyan-400" size={24} />
+            <Users2 className="text-slate-900 dark:text-white" size={24} />
             <span>{lang === 'am' ? 'የተመሰከረላቸው የዩኦጂ እና አቻ አማካሪዎች' : 'UoG Campuses Certified Peer Mentors & Counselors'}</span>
           </h2>
           <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 mt-1">
@@ -523,7 +538,7 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
           </button>
           <button
             onClick={openCreateModal}
-            className="flex items-center gap-2 px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-xs md:text-sm font-bold rounded-xl shadow-md shadow-brand-600/20 transition-all cursor-pointer"
+            className="flex items-center gap-2 px-4 py-2.5 bg-slate-950 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 text-xs md:text-sm font-bold rounded-xl border border-slate-900 dark:border-white shadow-xs transition-all active:scale-[0.99] cursor-pointer"
           >
             <Plus size={16} />
             <span>{lang === 'am' ? '+ አዲስ አማካሪ መዝግብ' : '+ Add New Mentor'}</span>
@@ -546,7 +561,7 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
                     ? 'በአማካሪ ስም፣ በግቢ፣ በስልክ ቁጥር፣ በዋትስአፕ ወይም በልዩ ሙያ ፈልግ...'
                     : 'Search counselors by name, campus, phone, WhatsApp, @telegram, or specialty...'
                 }
-                className="w-full pl-9 pr-9 py-2 text-xs md:text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl focus:bg-white dark:focus:bg-slate-850 focus:border-brand-500 focus:outline-none transition-all placeholder:text-slate-400"
+                className="w-full pl-9 pr-9 py-2 text-xs md:text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl focus:bg-white dark:focus:bg-slate-850 focus:border-slate-900 dark:focus:border-white focus:outline-none transition-all placeholder:text-slate-400"
               />
               {search && (
                 <button
@@ -564,7 +579,7 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
               <select
                 value={campusFilter}
                 onChange={(e) => setCampusFilter(e.target.value)}
-                className="w-full px-3 py-2 text-xs md:text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl focus:border-brand-500 focus:outline-none"
+                className="w-full px-3 py-2 text-xs md:text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl focus:border-slate-900 dark:focus:border-white focus:outline-none"
               >
                 <option value="all">
                   {lang === 'am' ? '🏢 ሁሉም የዩኦጂ ግቢዎች (All Campuses)' : '🏢 All UoG Campuses'}
@@ -587,7 +602,7 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
               onClick={() => setStatusFilter('all')}
               className={`px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                 statusFilter === 'all'
-                  ? 'bg-slate-900 dark:bg-brand-600 text-white shadow-xs'
+                  ? 'bg-slate-950 dark:bg-white text-white dark:text-slate-950 shadow-xs'
                   : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200/80 dark:hover:bg-slate-700'
               }`}
             >
@@ -618,8 +633,8 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
               onClick={() => setStatusFilter('verified')}
               className={`px-3 py-1 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                 statusFilter === 'verified'
-                  ? 'bg-brand-600 text-white shadow-xs'
-                  : 'bg-brand-50 dark:bg-brand-950/40 text-brand-700 dark:text-cyan-400 hover:bg-brand-100 dark:hover:bg-brand-900/60 border border-brand-200/60 dark:border-brand-800'
+                  ? 'bg-slate-950 dark:bg-white text-white dark:text-slate-950 shadow-xs'
+                  : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700'
               }`}
             >
               <CheckCircle2 size={13} />
@@ -629,8 +644,27 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
         </div>
       )}
 
-      {/* Counselor Grid or Empty State */}
-      {mentors.length === 0 ? (
+      {/* Counselor Grid, Skeleton, or Empty State */}
+      {isLoading && mentors.length === 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {Array.from({ length: 6 }).map((_, idx) => (
+            <div
+              key={idx}
+              className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-5 shadow-xs animate-pulse space-y-4"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-full bg-slate-200 dark:bg-slate-800 shrink-0" />
+                <div className="flex-1 space-y-2">
+                  <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded w-1/2" />
+                  <div className="h-3 bg-slate-100 dark:bg-slate-800/60 rounded w-3/4" />
+                </div>
+              </div>
+              <div className="h-3 bg-slate-100 dark:bg-slate-800/60 rounded w-full" />
+              <div className="h-8 bg-slate-100 dark:bg-slate-800/60 rounded-xl" />
+            </div>
+          ))}
+        </div>
+      ) : mentors.length === 0 ? (
         <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs">
           <EmptyState
             icon={Users2}
@@ -679,15 +713,15 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
                 {/* Header Info */}
                 <div className="flex items-start justify-between gap-3 mb-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 text-white font-extrabold text-sm flex items-center justify-center shadow-sm flex-shrink-0">
+                    <div className="w-12 h-12 rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-extrabold text-sm flex items-center justify-center shadow-sm flex-shrink-0">
                       {m.name.slice(0, 2).toUpperCase()}
                     </div>
                     <div>
                       <div className="flex items-center gap-1.5 flex-wrap">
                         <h3 className="font-bold text-slate-900 dark:text-white text-sm leading-tight">{m.name}</h3>
-                        {m.isVerified && <CheckCircle2 size={14} className="text-brand-600 dark:text-cyan-400 flex-shrink-0" />}
+                        {m.isVerified && <CheckCircle2 size={14} className="text-emerald-600 dark:text-emerald-400 flex-shrink-0" />}
                       </div>
-                      <p className="text-xs font-semibold text-brand-600 dark:text-cyan-400 mt-0.5">
+                      <p className="text-xs font-semibold text-slate-700 dark:text-slate-300 mt-0.5">
                         {lang === 'am' ? (m.roleTitleAm || m.roleTitleEn || 'የተረጋገጠ አማካሪ') : (m.roleTitleEn || 'Certified Youth Peer Counselor')}
                       </p>
                       <p className="text-[11px] text-slate-500 dark:text-slate-400">{m.organization}</p>
@@ -697,7 +731,7 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
                   <div className="flex items-center gap-1">
                     <button
                       onClick={() => openEditModal(m)}
-                      className="p-1.5 text-slate-400 hover:text-brand-600 dark:hover:text-cyan-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"
+                      className="p-1.5 text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg cursor-pointer transition-colors"
                       title={lang === 'am' ? 'አማካሪን አርትዕ' : 'Edit Counselor'}
                     >
                       <Edit2 size={14} />
@@ -766,7 +800,7 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
                           title={`${w.labelEn}: ${isEnabled ? 'Active' : 'Off'}`}
                           className={`text-[9px] font-bold px-1.5 py-0.5 rounded transition-all ${
                             isEnabled
-                              ? 'bg-brand-50 dark:bg-slate-800 text-brand-700 dark:text-cyan-400 border border-brand-200/60 dark:border-brand-800/60'
+                              ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 border border-slate-900 dark:border-white'
                               : 'bg-slate-100 dark:bg-slate-850 text-slate-400 dark:text-slate-600 opacity-60'
                           }`}
                         >
@@ -791,7 +825,7 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
               <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs gap-2 flex-wrap">
                 <a
                   href={`tel:${m.phone}`}
-                  className="inline-flex items-center gap-1 font-bold text-slate-700 dark:text-slate-300 hover:text-brand-600 dark:hover:text-cyan-400"
+                  className="inline-flex items-center gap-1 font-bold text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
                   title="Direct Phone Call"
                 >
                   <Phone size={13} className="text-slate-400" />
@@ -816,7 +850,7 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
                       href={getCleanTelegramUrl(m.telegramHandle) || '#'}
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex items-center gap-1 font-bold text-sky-600 dark:text-sky-400 hover:underline"
+                      className="inline-flex items-center gap-1 font-bold text-slate-700 dark:text-slate-300 hover:underline"
                       title={`Telegram: @${m.telegramHandle.replace(/^@+/, '')}`}
                     >
                       <Send size={12} />
@@ -837,7 +871,7 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
             <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800 sticky top-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xs z-10">
               <div>
                 <h3 className="text-lg font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
-                  <UserCheck className="text-brand-600 dark:text-cyan-400" size={20} />
+                  <UserCheck className="text-slate-900 dark:text-white" size={20} />
                   <span>{editingMentor ? 'Edit Counselor Profile & Campus Sync' : 'Register New Certified Mentor'}</span>
                 </h3>
                 <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
@@ -852,7 +886,7 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
             <form onSubmit={handleSubmit} className="mt-5 space-y-6 text-xs md:text-sm">
               {/* SECTION 1: Personal & Campus Affiliation */}
               <div className="bg-slate-50 dark:bg-slate-850 p-4 rounded-2xl border border-slate-200/70 dark:border-slate-800 space-y-3.5">
-                <div className="flex items-center gap-2 text-xs font-bold text-brand-600 dark:text-cyan-400 uppercase tracking-wider">
+                <div className="flex items-center gap-2 text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">
                   <Building2 size={14} />
                   <span>1. Counselor Identity & Campus Affiliation</span>
                 </div>
@@ -867,7 +901,7 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
                       required
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:border-brand-500 focus:outline-none"
+                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:border-slate-900 dark:focus:border-white focus:outline-none"
                       placeholder="e.g. Dr. Hanna Bekele"
                     />
                   </div>
@@ -879,7 +913,7 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
                     <select
                       value={formData.campus}
                       onChange={(e) => setFormData({ ...formData, campus: e.target.value })}
-                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:border-brand-500 focus:outline-none font-semibold text-xs md:text-sm"
+                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:border-slate-900 dark:focus:border-white focus:outline-none font-semibold text-xs md:text-sm"
                     >
                       {UOG_CAMPUSES.map((c) => (
                         <option key={c.value} value={c.value}>
@@ -899,7 +933,7 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
                       type="text"
                       value={formData.roleTitleEn}
                       onChange={(e) => setFormData({ ...formData, roleTitleEn: e.target.value })}
-                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:border-brand-500 focus:outline-none"
+                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:border-slate-900 dark:focus:border-white focus:outline-none"
                       placeholder="Certified Youth Peer Counselor"
                     />
                   </div>
@@ -911,7 +945,7 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
                       type="text"
                       value={formData.roleTitleAm}
                       onChange={(e) => setFormData({ ...formData, roleTitleAm: e.target.value })}
-                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:border-brand-500 focus:outline-none"
+                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:border-slate-900 dark:focus:border-white focus:outline-none"
                       placeholder="የተረጋገጠ የወጣቶች አቻ አማካሪ"
                     />
                   </div>
@@ -926,7 +960,7 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
                     required
                     value={formData.organization}
                     onChange={(e) => setFormData({ ...formData, organization: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:border-brand-500 focus:outline-none"
+                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:border-slate-900 dark:focus:border-white focus:outline-none"
                     placeholder="e.g. University of Gondar & Marie Stopes Ethiopia"
                   />
                 </div>
@@ -934,7 +968,7 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
 
               {/* SECTION 2: Direct Contact Channels */}
               <div className="bg-slate-50 dark:bg-slate-850 p-4 rounded-2xl border border-slate-200/70 dark:border-slate-800 space-y-3.5">
-                <div className="flex items-center gap-2 text-xs font-bold text-brand-600 dark:text-cyan-400 uppercase tracking-wider">
+                <div className="flex items-center gap-2 text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">
                   <Phone size={14} />
                   <span>2. Direct Contact Channels (Hotline, WhatsApp & Telegram)</span>
                 </div>
@@ -949,7 +983,7 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
                       required
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:border-brand-500 focus:outline-none"
+                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:border-slate-900 dark:focus:border-white focus:outline-none"
                       placeholder="+251913456789"
                     />
                   </div>
@@ -963,7 +997,7 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
                       type="text"
                       value={formData.whatsapp}
                       onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
-                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:border-brand-500 focus:outline-none"
+                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:border-slate-900 dark:focus:border-white focus:outline-none"
                       placeholder="+251913456789 or username"
                     />
                     <p className="text-[10px] text-slate-400 mt-0.5">Students can click to chat directly via WhatsApp.</p>
@@ -973,7 +1007,7 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
                   <div>
                     <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-1.5">
-                      <Send size={13} className="text-sky-500" />
+                      <Send size={13} className="text-slate-700 dark:text-slate-300" />
                       <span>Telegram Handle</span>
                     </label>
                     <div className="relative">
@@ -982,7 +1016,7 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
                         type="text"
                         value={formData.telegramHandle}
                         onChange={(e) => setFormData({ ...formData, telegramHandle: e.target.value.replace(/^@+/, '') })}
-                        className="w-full pl-8 pr-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:border-brand-500 focus:outline-none font-mono text-xs md:text-sm"
+                        className="w-full pl-8 pr-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:border-slate-900 dark:focus:border-white focus:outline-none font-mono text-xs md:text-sm"
                         placeholder="dr_hanna_ms"
                       />
                     </div>
@@ -997,7 +1031,7 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
                       type="email"
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:border-brand-500 focus:outline-none"
+                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:border-slate-900 dark:focus:border-white focus:outline-none"
                       placeholder="hanna@mariestopes.org.et"
                     />
                   </div>
@@ -1007,12 +1041,12 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
               {/* SECTION 3: Experience, Sessions & Weekly Working Hours Schedule */}
               <div className="bg-slate-50 dark:bg-slate-850 p-4 rounded-2xl border border-slate-200/70 dark:border-slate-800 space-y-4">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-xs font-bold text-brand-600 dark:text-cyan-400 uppercase tracking-wider">
+                  <div className="flex items-center gap-2 text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">
                     <Clock size={14} />
                     <span>3. Experience Credentials & Weekly Availability Schedule</span>
                   </div>
                   <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 flex items-center gap-1">
-                    <Calendar size={13} className="text-brand-500" />
+                    <Calendar size={13} className="text-slate-900 dark:text-white" />
                     Interactive Day & Time Slot Manager
                   </span>
                 </div>
@@ -1027,7 +1061,7 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
                       min={0}
                       value={formData.experienceYears}
                       onChange={(e) => setFormData({ ...formData, experienceYears: Number(e.target.value) })}
-                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:border-brand-500 focus:outline-none"
+                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:border-slate-900 dark:focus:border-white focus:outline-none"
                       placeholder="2"
                     />
                   </div>
@@ -1041,7 +1075,7 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
                       min={0}
                       value={formData.sessionsCount}
                       onChange={(e) => setFormData({ ...formData, sessionsCount: Number(e.target.value) })}
-                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:border-brand-500 focus:outline-none"
+                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:border-slate-900 dark:focus:border-white focus:outline-none"
                       placeholder="120"
                     />
                   </div>
@@ -1114,7 +1148,7 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
                                 className={`w-1.5 h-1.5 rounded-full mt-1.5 transition-all ${
                                   isDayEnabled
                                     ? isSelected
-                                      ? 'bg-cyan-400 dark:bg-brand-600'
+                                      ? 'bg-slate-400 dark:bg-slate-500'
                                       : 'bg-emerald-500'
                                     : 'bg-transparent'
                                 }`}
@@ -1144,7 +1178,7 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
                           type="checkbox"
                           checked={weeklySchedule[activeDayKey].enabled}
                           onChange={(e) => updateActiveDaySchedule({ enabled: e.target.checked })}
-                          className="w-4 h-4 text-brand-600 rounded focus:ring-brand-500 cursor-pointer"
+                          className="w-4 h-4 text-slate-900 focus:ring-slate-900 dark:text-white dark:focus:ring-white rounded cursor-pointer"
                         />
                       </div>
                     </div>
@@ -1156,7 +1190,7 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
                           {WEEKDAYS.find((w) => w.key === activeDayKey)?.labelEn} Time Slots
                         </span>
                         {weeklySchedule[activeDayKey].enabled && (
-                          <span className="text-[11px] font-semibold text-brand-600 dark:text-cyan-400">
+                          <span className="text-[11px] font-semibold text-slate-900 dark:text-white">
                             {formatTimeLabel(weeklySchedule[activeDayKey].start)} – {formatTimeLabel(weeklySchedule[activeDayKey].end)}
                           </span>
                         )}
@@ -1171,7 +1205,7 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
                             <select
                               value={weeklySchedule[activeDayKey].start}
                               onChange={(e) => updateActiveDaySchedule({ start: e.target.value })}
-                              className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:border-brand-500 focus:outline-none font-bold text-xs"
+                              className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:border-slate-900 dark:focus:border-white focus:outline-none font-bold text-xs"
                             >
                               {TIME_SLOTS.map((t) => (
                                 <option key={`start_${t.value}`} value={t.value}>
@@ -1188,7 +1222,7 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
                             <select
                               value={weeklySchedule[activeDayKey].end}
                               onChange={(e) => updateActiveDaySchedule({ end: e.target.value })}
-                              className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:border-brand-500 focus:outline-none font-bold text-xs"
+                              className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:border-slate-900 dark:focus:border-white focus:outline-none font-bold text-xs"
                             >
                               {TIME_SLOTS.map((t) => (
                                 <option key={`end_${t.value}`} value={t.value}>
@@ -1206,7 +1240,7 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
                           <button
                             type="button"
                             onClick={() => updateActiveDaySchedule({ enabled: true })}
-                            className="mt-2 text-xs font-bold text-brand-600 dark:text-cyan-400 hover:underline cursor-pointer"
+                            className="mt-2 text-xs font-bold text-slate-900 dark:text-white hover:underline cursor-pointer"
                           >
                             + Enable working hours for {WEEKDAYS.find((w) => w.key === activeDayKey)?.labelEn}
                           </button>
@@ -1218,7 +1252,7 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
                   {/* Bottom Action Bar matching Mockup Footer (Badge & Action Button) */}
                   <div className="flex items-center justify-between flex-wrap gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
                     <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
-                      <Clock size={13} className="text-brand-500" />
+                      <Clock size={13} className="text-slate-900 dark:text-white" />
                       <span className="text-xs font-extrabold text-slate-800 dark:text-slate-200">
                         {weeklySchedule[activeDayKey].enabled
                           ? `${WEEKDAYS.find((w) => w.key === activeDayKey)?.labelEn}: ${formatTimeLabel(weeklySchedule[activeDayKey].start)} – ${formatTimeLabel(weeklySchedule[activeDayKey].end)}`
@@ -1229,7 +1263,7 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
                     <button
                       type="button"
                       onClick={copyActiveDayToWeekdays}
-                      className="px-3 py-1.5 text-xs font-bold text-brand-600 dark:text-cyan-400 hover:bg-brand-50 dark:hover:bg-slate-800 rounded-xl transition-all cursor-pointer border border-brand-200 dark:border-brand-800"
+                      className="px-3 py-1.5 text-xs font-bold text-slate-900 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all cursor-pointer border border-slate-300 dark:border-slate-700"
                     >
                       Apply this time to Mon – Fri
                     </button>
@@ -1246,7 +1280,7 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
                       type="text"
                       value={formData.workingHoursEn}
                       onChange={(e) => setFormData({ ...formData, workingHoursEn: e.target.value })}
-                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:border-brand-500 focus:outline-none"
+                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:border-slate-900 dark:focus:border-white focus:outline-none"
                       placeholder="Mon – Fri: 8:30 AM – 5:30 PM"
                     />
                   </div>
@@ -1259,7 +1293,7 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
                       type="text"
                       value={formData.workingHoursAm}
                       onChange={(e) => setFormData({ ...formData, workingHoursAm: e.target.value })}
-                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:border-brand-500 focus:outline-none"
+                      className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:border-slate-900 dark:focus:border-white focus:outline-none"
                       placeholder="ከሰኞ – ዓርብ፡ 2:30 – 11:30"
                     />
                   </div>
@@ -1268,7 +1302,7 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
 
               {/* SECTION 4: About Counselor Bio & Verification */}
               <div className="bg-slate-50 dark:bg-slate-850 p-4 rounded-2xl border border-slate-200/70 dark:border-slate-800 space-y-3.5">
-                <div className="flex items-center gap-2 text-xs font-bold text-brand-600 dark:text-cyan-400 uppercase tracking-wider">
+                <div className="flex items-center gap-2 text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">
                   <ShieldCheck size={14} />
                   <span>4. Biography & Platform Status</span>
                 </div>
@@ -1281,7 +1315,7 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
                     rows={2}
                     value={formData.bioEn}
                     onChange={(e) => setFormData({ ...formData, bioEn: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:border-brand-500 focus:outline-none resize-none"
+                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:border-slate-900 dark:focus:border-white focus:outline-none resize-none"
                     placeholder="Certified youth mentor offering confidential, stigma-free guidance on emotional wellness and health."
                   />
                 </div>
@@ -1294,7 +1328,7 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
                     rows={2}
                     value={formData.bioAm}
                     onChange={(e) => setFormData({ ...formData, bioAm: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:border-brand-500 focus:outline-none resize-none"
+                    className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:border-slate-900 dark:focus:border-white focus:outline-none resize-none"
                     placeholder="ሚስጥራዊ፣ ነፃ እና ፍረጃ የሌለበት የስነ-ልቦና እና የስነ-ተዋልዶ ጤና የምክር አገልግሎት የሚሰጥ የተረጋገጠ አቻ አማካሪ።"
                   />
                 </div>
@@ -1305,7 +1339,7 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
                       type="checkbox"
                       checked={formData.isAvailable}
                       onChange={(e) => setFormData({ ...formData, isAvailable: e.target.checked })}
-                      className="rounded text-brand-600 focus:ring-brand-500 w-4 h-4 cursor-pointer"
+                      className="rounded text-slate-900 focus:ring-slate-900 dark:text-white dark:focus:ring-white w-4 h-4 cursor-pointer"
                     />
                     <span>Available Now (Online)</span>
                   </label>
@@ -1314,7 +1348,7 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
                       type="checkbox"
                       checked={formData.isVerified}
                       onChange={(e) => setFormData({ ...formData, isVerified: e.target.checked })}
-                      className="rounded text-brand-600 focus:ring-brand-500 w-4 h-4 cursor-pointer"
+                      className="rounded text-slate-900 focus:ring-slate-900 dark:text-white dark:focus:ring-white w-4 h-4 cursor-pointer"
                     />
                     <span>Verified Badge</span>
                   </label>
@@ -1323,7 +1357,7 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
 
               {/* SECTION 5: Languages Spoken & Focus Areas / Specialties */}
               <div className="bg-slate-50 dark:bg-slate-850 p-4 rounded-2xl border border-slate-200/70 dark:border-slate-800 space-y-4">
-                <div className="flex items-center gap-2 text-xs font-bold text-brand-600 dark:text-cyan-400 uppercase tracking-wider">
+                <div className="flex items-center gap-2 text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">
                   <Languages size={14} />
                   <span>5. Languages Spoken & Focus Areas</span>
                 </div>
@@ -1332,7 +1366,7 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
                 <div>
                   <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center justify-between">
                     <span className="flex items-center gap-1.5">
-                      <Globe size={13} className="text-brand-500" />
+                      <Globe size={13} className="text-slate-900 dark:text-white" />
                       <span>Languages Spoken</span>
                     </span>
                     <span className="text-[11px] font-normal text-slate-400">
@@ -1351,8 +1385,8 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
                           onClick={() => handleToggleLanguage(langName)}
                           className={`px-2.5 py-1 text-xs rounded-lg font-semibold transition-all cursor-pointer flex items-center gap-1 ${
                             isSelected
-                              ? 'bg-brand-600 text-white shadow-sm'
-                              : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-brand-300'
+                              ? 'bg-slate-950 text-white dark:bg-white dark:text-slate-950 shadow-xs'
+                              : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-slate-400'
                           }`}
                         >
                           {isSelected && <CheckCircle2 size={12} />}
@@ -1375,12 +1409,12 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
                         }
                       }}
                       placeholder="Add other language (e.g. Sidama, Gurage, French)..."
-                      className="flex-1 px-3 py-1.5 text-xs border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:border-brand-500 focus:outline-none"
+                      className="flex-1 px-3 py-1.5 text-xs border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:border-slate-900 dark:focus:border-white focus:outline-none"
                     />
                     <button
                       type="button"
                       onClick={handleAddCustomLanguage}
-                      className="px-3 py-1.5 text-xs bg-slate-200 dark:bg-slate-700 hover:bg-brand-600 hover:text-white text-slate-700 dark:text-slate-200 font-bold rounded-xl transition-all cursor-pointer flex items-center gap-1"
+                      className="px-3 py-1.5 text-xs bg-slate-200 dark:bg-slate-700 hover:bg-slate-950 hover:text-white dark:hover:bg-white dark:hover:text-slate-950 text-slate-700 dark:text-slate-200 font-bold rounded-xl transition-all cursor-pointer flex items-center gap-1"
                     >
                       <Plus size={13} />
                       <span>Add</span>
@@ -1392,7 +1426,7 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
                     {(formData.languages || []).map((l) => (
                       <span
                         key={l}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 text-xs bg-brand-50 dark:bg-brand-950/40 text-brand-700 dark:text-cyan-300 border border-brand-200 dark:border-brand-800 rounded-lg font-medium"
+                        className="inline-flex items-center gap-1 px-2.5 py-1 text-xs bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg font-medium"
                       >
                         {l}
                         <button
@@ -1412,7 +1446,7 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
                 <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800">
                   <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center justify-between">
                     <span className="flex items-center gap-1.5">
-                      <Tag size={13} className="text-indigo-500" />
+                      <Tag size={13} className="text-slate-900 dark:text-white" />
                       <span>Focus Areas & Counseling Topics</span>
                     </span>
                     <span className="text-[11px] font-normal text-slate-400">
@@ -1431,8 +1465,8 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
                           onClick={() => handleToggleSpecialty(spec.tag)}
                           className={`px-2.5 py-1 text-xs rounded-lg font-semibold transition-all cursor-pointer flex items-center gap-1 ${
                             isSelected
-                              ? 'bg-indigo-600 text-white shadow-sm'
-                              : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-indigo-300'
+                              ? 'bg-slate-950 text-white dark:bg-white dark:text-slate-950 shadow-xs'
+                              : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-slate-400'
                           }`}
                         >
                           {isSelected && <CheckCircle2 size={12} />}
@@ -1456,12 +1490,12 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
                         }
                       }}
                       placeholder="Add custom topic (e.g. #AcademicStress, #Nutrition)..."
-                      className="flex-1 px-3 py-1.5 text-xs border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:border-indigo-500 focus:outline-none"
+                      className="flex-1 px-3 py-1.5 text-xs border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:border-slate-900 dark:focus:border-white focus:outline-none"
                     />
                     <button
                       type="button"
                       onClick={handleAddCustomSpecialty}
-                      className="px-3 py-1.5 text-xs bg-slate-200 dark:bg-slate-700 hover:bg-indigo-600 hover:text-white text-slate-700 dark:text-slate-200 font-bold rounded-xl transition-all cursor-pointer flex items-center gap-1"
+                      className="px-3 py-1.5 text-xs bg-slate-200 dark:bg-slate-700 hover:bg-slate-950 hover:text-white dark:hover:bg-white dark:hover:text-slate-950 text-slate-700 dark:text-slate-200 font-bold rounded-xl transition-all cursor-pointer flex items-center gap-1"
                     >
                       <Plus size={13} />
                       <span>Add Tag</span>
@@ -1473,7 +1507,7 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
                     {(formData.specialties || []).map((s) => (
                       <span
                         key={s}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 text-xs bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 rounded-lg font-bold font-mono"
+                        className="inline-flex items-center gap-1 px-2.5 py-1 text-xs bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg font-bold font-mono"
                       >
                         {s}
                         <button
@@ -1502,7 +1536,7 @@ export const MentorsPage: React.FC<MentorsPageProps> = ({
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-6 py-2 bg-brand-600 hover:bg-brand-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-xl shadow-md cursor-pointer transition-all flex items-center gap-2"
+                  className="px-6 py-2 bg-slate-950 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 font-bold rounded-xl border border-slate-900 dark:border-white shadow-xs transition-all active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center gap-2"
                 >
                   {isSubmitting && <Loader2 size={16} className="animate-spin" />}
                   <span>{isSubmitting ? (lang === 'am' ? 'በማስቀመጥ ላይ...' : 'Saving...') : (lang === 'am' ? 'አማካሪን አስቀምጥ' : 'Save Counselor Profile')}</span>
