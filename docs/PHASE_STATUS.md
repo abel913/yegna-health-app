@@ -1,5 +1,19 @@
 # Phase status
 
+## Cloudflare Hyperdrive Supabase Session Pooler Configuration & Connection Recovery (2026-11-19)
+
+**Status: Completed & 100% Verified.**
+- **Problem**: Admin portal actions failed to persist to PostgreSQL, causing the mobile Flutter app to fall back to stale/local static data. Cloudflare API health checks reported `status: degraded` with connection refusal and authentication errors against Supabase.
+- **Resolution**:
+  - Located Hyperdrive configuration `01923c5876ce4a4e81bc5a760217703c` (`yegna-health-amharic`) in Cloudflare Dashboard.
+  - Corrected connection credentials to target Supabase session pooler on port `5432` with username `postgres.oflkhtjskpsedsuczfkj` and host `aws-0-eu-north-1.pooler.supabase.com`.
+  - Triggered Hyperdrive connection pool restart to drop stale/hanging connections.
+- **Verification Results**:
+  - `GET /api/health` returned HTTP 200 with `database.status: connected` (53ms latency).
+  - `GET /api/facilities` returned HTTP 200 with full live facilities list.
+  - `GET /api/mentors` returned HTTP 200 with full live mentors list.
+  - `GET /api/modules` returned HTTP 200 with full live modules and quizzes list.
+
 ## Flutter Senior Modular Architecture Refactor - Task 7: Home, Navigation Shell, Account, Assessment, Onboarding & Bootstrap (<200 LOC) (2026-11-19)
 
 **Status: Completed & 100% Verified.**

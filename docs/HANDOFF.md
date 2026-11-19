@@ -1,5 +1,25 @@
 # Handoff notes
 
+## Cloudflare Hyperdrive Supabase Session Pooler Configuration & Connection Recovery (2026-11-19)
+
+- **Issue**: Actions performed in the Cloudflare-deployed Admin Web portal were not persisting to the database or reflecting in the mobile application. Requests to `/api/facilities`, `/api/mentors`, and `/api/health` returned database connection failures (`status: degraded`, Postgres `58000 Connection Refused`, and authentication failure for user `postgres`).
+- **Root Cause**:
+  1. Hyperdrive configuration `01923c5876ce4a4e81bc5a760217703c` (`yegna-health-amharic`) was targeting `db.oflkhtjskpsedsuczfkj.supabase.co` with username `postgres`, which fails against Supabase pooled endpoints.
+  2. Transaction pooler port `6543` does not support Prisma prepared statements through Hyperdrive; Supabase session pooler on port `5432` with user `postgres.oflkhtjskpsedsuczfkj` is required.
+  3. Stale pooled connections in Hyperdrive needed a restart to flush broken client connections.
+- **Actions Taken**:
+  - Connected to the Cloudflare dashboard and updated Hyperdrive `yegna-health-amharic` settings:
+    - Host: `aws-0-eu-north-1.pooler.supabase.com`
+    - Port: `5432`
+    - Database: `postgres`
+    - User: `postgres.oflkhtjskpsedsuczfkj`
+  - Rebuilt and restarted the connection pool in Hyperdrive.
+- **Verification**:
+  - `GET /api/health`: HTTP 200, `status: ok`, database `status: connected` (53ms latency).
+  - `GET /api/facilities`: HTTP 200, successfully returns live facilities including recent items.
+  - `GET /api/mentors`: HTTP 200, successfully returns live mentors.
+  - `GET /api/modules`: HTTP 200, successfully returns modules and quizzes.
+
 ## Flutter Senior Modular Architecture Refactor - Task 7: Home, Navigation Shell, Account, Assessment, Onboarding & Bootstrap (<200 LOC) (2026-11-19)
 
 - **Completed Domain**: Task 7: Home & App Navigation Shell Modularization (<200 LOC).
