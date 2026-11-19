@@ -306,6 +306,49 @@ void main() {
     harness.authController.dispose();
     harness.localeController.dispose();
   });
+
+  testWidgets(
+      'Learn page renders glassmorphic progress capsule, filter bar, and toggles grid view',
+      (tester) async {
+    final harness = await createHarness();
+    await pumpHarness(tester, harness);
+    final l10n =
+        AppLocalizations.of(tester.element(find.byType(NavigationBar)));
+
+    await tester.tap(find.text(l10n.learnTab).last);
+    await tester.pumpAndSettle();
+
+    // Verify progress capsule
+    expect(find.textContaining('Modules Completed'), findsOneWidget);
+
+    // Verify category chips in filter bar
+    expect(find.text('All'), findsOneWidget);
+    expect(find.text('Puberty'), findsOneWidget);
+    expect(find.text('SRH'), findsOneWidget);
+
+    // Toggle search bar
+    expect(find.byIcon(Icons.search_rounded), findsOneWidget);
+    await tester.tap(find.byIcon(Icons.search_rounded));
+    await tester.pumpAndSettle();
+    expect(find.byType(TextField), findsOneWidget);
+
+    // Filter by search query
+    await tester.enterText(find.byType(TextField), 'puberty');
+    await tester.pumpAndSettle();
+    expect(find.text(l10n.module01Title), findsOneWidget);
+
+    // Toggle view mode to Grid
+    expect(find.byIcon(Icons.grid_view_rounded), findsOneWidget);
+    await tester.tap(find.byIcon(Icons.grid_view_rounded));
+    await tester.pumpAndSettle();
+
+    // Verify toggle switched to Carousel icon and grid card is visible
+    expect(find.byIcon(Icons.view_carousel_rounded), findsOneWidget);
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    harness.authController.dispose();
+    harness.localeController.dispose();
+  });
 }
 
 class _Harness {

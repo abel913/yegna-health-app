@@ -36,7 +36,6 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     final glass = context.glassTheme;
-    final isDark = context.isDark;
     final l10n = AppLocalizations.of(context);
     final isAccountTab = selectedIndex == 4;
 
@@ -58,24 +57,17 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
         ),
       ),
       centerTitle: true,
-      title: Text(
-        isAccountTab ? l10n.profile : l10n.appTitle,
-        style: TextStyle(
-          fontSize: isAccountTab ? 20 : 19,
-          fontWeight: isAccountTab ? FontWeight.w800 : FontWeight.w900,
-          color: isAccountTab ? glass.appBarTitle : glass.titleText,
-          letterSpacing: isAccountTab ? -0.3 : -0.4,
-          shadows: isDark && !isAccountTab
-              ? [
-                  const Shadow(
-                    color: Color(0x60000000),
-                    blurRadius: 8,
-                    offset: Offset(0, 2),
-                  ),
-                ]
-              : null,
-        ),
-      ),
+      title: isAccountTab
+          ? Text(
+              l10n.profile,
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w800,
+                color: glass.appBarTitle,
+                letterSpacing: -0.3,
+              ),
+            )
+          : null,
       actions: isAccountTab
           ? [
               PopupMenuButton<String>(

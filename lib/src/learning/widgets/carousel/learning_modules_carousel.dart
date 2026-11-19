@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../../../../l10n/app_localizations.dart';
+import '../../../theme/app_glass_theme.dart';
 import '../../data/bundled_learning_modules.dart';
 import '../../models/learning_module_item.dart';
+import '../common/module_category_theme.dart';
 import 'module_card.dart';
 
 class LearningModulesCarousel extends StatefulWidget {
@@ -46,15 +48,24 @@ class _LearningModulesCarouselState extends State<LearningModulesCarousel> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final glass = context.glassTheme;
+    final isDark = glass.isDark;
     final screenHeight = MediaQuery.sizeOf(context).height;
     final carouselHeight = (screenHeight * 0.65).clamp(540.0, 600.0);
-    final items = (widget.modules != null && widget.modules!.isNotEmpty)
+    final items = (widget.modules != null)
         ? widget.modules!
         : kLearningModules;
+
+    if (items.isEmpty) {
+      return _buildEmptyState(glass, isDark);
+    }
 
     if (_currentPage >= items.length && items.isNotEmpty) {
       _currentPage = items.length - 1;
     }
+
+    final activeModule = items[_currentPage];
+    final activeTheme = ModuleCategoryTheme.forCategory(activeModule.category);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -92,30 +103,91 @@ class _LearningModulesCarouselState extends State<LearningModulesCarousel> {
                 AnimatedContainer(
                   duration: const Duration(milliseconds: 240),
                   curve: Curves.easeOutCubic,
-                  width: i == _currentPage ? 24 : 7,
+                  width: i == _currentPage ? 26 : 7,
                   height: 7,
                   decoration: BoxDecoration(
+                    gradient: i == _currentPage
+                        ? LinearGradient(colors: activeTheme.gradientColors)
+                        : null,
                     color: i == _currentPage
-                        ? const Color(0xFF0284C7)
-                        : const Color(0xFFBAE6FD),
+                        ? null
+                        : (isDark
+                            ? const Color(0xFF1E293B)
+                            : const Color(0xFFBAE6FD).withValues(alpha: 0.6)),
                     borderRadius: BorderRadius.circular(4),
+                    boxShadow: i == _currentPage
+                        ? [
+                            BoxShadow(
+                              color: activeTheme.accentColor.withValues(alpha: 0.4),
+                              blurRadius: 6,
+                              offset: const Offset(0, 1.5),
+                            ),
+                          ]
+                        : null,
                   ),
                 ),
                 if (i < items.length - 1) const SizedBox(width: 5),
               ],
               const SizedBox(width: 14),
-              Text(
-                '${_currentPage + 1} / ${items.length}',
-                style: const TextStyle(
-                  fontSize: 13.5,
-                  fontWeight: FontWeight.w800,
-                  color: Color(0xFF005A71),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? const Color(0xFF131D36).withValues(alpha: 0.7)
+                      : Colors.white.withValues(alpha: 0.6),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: glass.cardBorder.withValues(alpha: isDark ? 0.2 : 0.4),
+                    width: 1,
+                  ),
+                ),
+                child: Text(
+                  '${_currentPage + 1} / ${items.length}',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w800,
+                    color: activeTheme.accentColor,
+                  ),
                 ),
               ),
             ],
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildEmptyState(AppGlassTheme glass, bool isDark) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 40, horizontal: 16),
+      padding: const EdgeInsets.all(28),
+      decoration: BoxDecoration(
+        color: isDark
+            ? const Color(0xFF131D36).withValues(alpha: 0.7)
+            : Colors.white.withValues(alpha: 0.65),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: glass.cardBorder, width: 1.2),
+      ),
+      child: Column(
+        children: [
+          Icon(Icons.search_off_rounded, size: 48, color: glass.accentColor),
+          const SizedBox(height: 14),
+          Text(
+            'No matching modules found',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+              color: glass.titleText,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            'Try selecting another category or clear your search term.',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 13, color: glass.subtitleText),
+          ),
+        ],
+      ),
     );
   }
 }
