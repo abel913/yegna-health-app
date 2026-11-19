@@ -1,5 +1,68 @@
 # Handoff notes
 
+## Flutter Senior Modular Architecture Refactor - Task 6: Learning & Quizzes Domain (<200 LOC) (2026-11-19)
+
+- **Completed Domain**: Task 6: Learning & Quizzes Domain Modularization (<200 LOC).
+- **Key Architectures Implemented**:
+  1. `lib/src/learning/quiz/`: Shared quiz runner engine (`QuizRunnerScaffold`, `QuizQuestionCard`, `QuizOptionCard`, `QuizResultsCard`, `QuizHeaderBar`, `QuizBottomBar`) reducing all 8 quiz pages to sub-35 LOC wrappers.
+  2. `lib/src/learning/modules/`: Decomposed 8 disease detail pages into sub-80 LOC entrypoints and individual section widgets.
+  3. `lib/src/learning/screens/`: Broken down `learn_pages.dart` into 13 single-responsibility screen components.
+  4. `lib/src/learning/repositories/`: Split progress, Supabase, and sync education/assessment repositories into modular caches, codecs, and sync helpers.
+- **Verification**:
+  - `flutter analyze`: 0 issues found.
+  - `flutter test`: 197/197 tests passed (100%).
+  - Local commit: `c9c37a9`.
+- **Next Step**: Task 7: Home & App Navigation Shell Modularization (<200 LOC).
+
+
+## Facilities Directory Advanced Search & Side-by-Side Floating Dropdowns (2026-11-19)
+
+- **Context & Request**: Upgrade the Facilities page toolbar by placing custom, advanced Campus and Category dropdowns side-by-side directly below an advanced search bar with high-end UX.
+- **Completed Changes**:
+  - `admin-web/src/pages/FacilitiesPage.tsx`:
+    - Replaced the horizontal pill rows with side-by-side floating popovers (`grid grid-cols-1 md:grid-cols-2 gap-3`).
+    - Engineered executive dropdowns featuring icon containers, micro-labels (`CAMPUS`, `CATEGORY`), active value typography, live count badges, and smooth rotating chevron arrows.
+    - Added floating popover menu with checkmark indicators and live counts per campus/category.
+    - Integrated backdrop click-outside dismissal (`useRef` + `mousedown`) and `Escape` key listeners.
+    - Upgraded search bar with keyboard shortcut hint (`/`), auto-focus on `/` keypress, and quick-clear `X` button.
+    - Added status bar displaying filtered counts and a one-click `Reset all filters` button (`RotateCcw`).
+- **Verification**:
+  - `npm --prefix admin-web run build`: 0 TypeScript errors.
+  - `npm --prefix server run worker:check`: 0 errors.
+  - `npm --prefix server test`: 7/7 test suites passed.
+
+## Admin Portal Top Header "Add Facility" Button Removal (2026-11-19)
+
+- **Context & Request**: Remove the static global "+ Add Facility" button in the right corner of the admin portal header.
+- **Completed Changes**:
+  - `admin-web/src/components/layout/AdminLayout.tsx`: Removed `onQuickAction?: () => void;`, removed component argument destructuring, removed the unused `Plus` icon import, and deleted the static quick-action button markup.
+  - `admin-web/src/App.tsx`: Removed `onQuickAction={() => handleNavigate('facilities')}` passed to `<AdminLayout>`.
+  - Verified 0 remaining occurrences of `onQuickAction` across the entire codebase.
+  - Page-level primary action buttons (including `+ Add Facility` on `/facilities`) and Command Palette quick action triggers remain functional.
+- **Verification**:
+  - `npm --prefix admin-web run build`: 0 TypeScript errors.
+  - `npm --prefix server run worker:check`: 0 errors.
+  - `npm --prefix server test`: 7/7 passed.
+
+## Admin Portal Reliability & UX Enhancements (2026-11-19)
+
+- **Context & Request**: Address reliability, UX, and performance opportunities in the Admin Portal: handle 401 session expiration, add a manual sync/refresh button, add loading skeletons to eliminate empty state flashing, optimize mutation refetches, and add universal keyboard `Escape` modal closing.
+- **Completed Changes**:
+  - `admin-web/src/services/api.ts`: Created `authFetch` wrapper attaching auth headers and detecting HTTP 401 session expiration, dispatching `yegna:session-expired` and clearing stored credentials.
+  - `admin-web/src/components/common/TableSkeleton.tsx`: Created reusable monochrome animated skeleton component.
+  - `admin-web/src/components/layout/AdminLayout.tsx`: Added top-bar **Sync / Refresh** button (`RotateCcw`) and indeterminate progress bar.
+  - `admin-web/src/App.tsx`: Added global 401 listener with toast & redirect to login, integrated manual refresh with toast notification, and implemented targeted single-resource refetchers on mutations.
+  - `admin-web/src/pages/FacilitiesPage.tsx`: Integrated `TableSkeleton` for initial load.
+  - `admin-web/src/pages/MentorsPage.tsx`: Integrated card skeletons for initial load and added `Escape` key modal dismiss listener.
+  - `admin-web/src/pages/LearningCmsPage.tsx`: Integrated module card skeletons for initial load.
+  - `admin-web/src/pages/QuizzesPage.tsx`: Integrated quiz card skeletons for initial load and added `Escape` key listener for quiz form and preview player.
+  - `admin-web/src/pages/ClubsPage.tsx`: Integrated club card skeletons for initial load and added `Escape` key listener for club and roster modals.
+  - `admin-web/src/pages/UsersPage.tsx`: Integrated `TableSkeleton` and added `Escape` key listener for user modals and dropdowns.
+- **Verification**:
+  - `npm --prefix admin-web run build`: 0 TypeScript errors; builds both SSR Worker and Vite client bundles cleanly.
+  - `npm --prefix server run worker:check`: 0 errors.
+  - `npm --prefix server test`: 7/7 test suites passed.
+
 ## Codebase Modularization: Task 5 Discovery Domain (Facilities & Mentors) Completed (2026-11-19)
 
 - **Context & Request**: Modularize the Discovery Domain (`facilities` and `mentors`) into small, high-cohesion, low-coupling files under 200 lines of code (< 200 LOC) following Senior Developer Modular Architecture, with 0 analyze issues, 100% test pass rate, and zero remote pushes.

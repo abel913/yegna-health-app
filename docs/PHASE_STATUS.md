@@ -1,5 +1,89 @@
 # Phase status
 
+## Flutter Senior Modular Architecture Refactor - Task 6: Learning & Quizzes Domain (<200 LOC) (2026-11-19)
+
+**Status: Completed & 100% Verified.**
+- **Scope**: Re-architected the entire Learning Curriculum, 8 Disease Detail Modules, Shared Quiz Engine, 8 Quizzes, Assessment Sessions, Repositories, and Progress Tracking subsystems to comply strictly with the senior developer modular code architecture standard (<200 LOC per non-generated Dart file).
+- **Completed Modularization**:
+  - **Shared Quiz Engine (`lib/src/learning/quiz/`)**:
+    - Created `quiz_engine.dart`, `quiz_runner_scaffold.dart`, `quiz_question_card.dart`, `quiz_option_card.dart`, `quiz_results_card.dart`, `quiz_header_bar.dart`, and `quiz_bottom_bar.dart`.
+    - Extracted 8 question datasets into `lib/src/learning/data/quiz_questions/`.
+    - Rewrote all 8 quiz pages (`puberty_quiz_page.dart`, `hiv_quiz_page.dart`, `gbv_quiz_page.dart`, `sti_quiz_page.dart`, `hepatitis_quiz_page.dart`, `mental_health_quiz_page.dart`, `srh_quiz_page.dart`, `substance_abuse_quiz_page.dart`) as clean sub-35 LOC scaffolds.
+  - **Curriculum & Disease Detail Modules (`lib/src/learning/modules/` & `widgets/curriculum/`)**:
+    - Extracted reusable curriculum components: `curriculum_accordion_card.dart`, `curriculum_bullet_item.dart`, `curriculum_hero_card.dart`, `curriculum_note_card.dart`, `curriculum_section_header.dart`, `curriculum_action_buttons.dart`, `curriculum_detail_scaffold.dart`.
+    - Decomposed all 8 disease detail pages into sub-80 LOC entrypoints and dedicated section components.
+    - Extracted dynamic module parsing and rendering into `lib/src/learning/modules/dynamic/`.
+  - **Learning Page & Assessment Screens (`lib/src/learning/screens/`)**:
+    - Modularized `learn_pages.dart` into `article_page.dart`, `assessment_session_page.dart`, `assessment_question_form.dart`, `assessment_result_view.dart`, `learn_assessment_list.dart`, `learn_components.dart`, `learn_header_pill.dart`, `learn_quiz_bottom_sheet.dart`, `learn_page.dart`, `learning_module_navigator.dart`, `learning_progress_page.dart`, `pending_submission_list.dart`, and `structured_markdown.dart`.
+  - **Repositories & Offline Sync Engine (`lib/src/learning/repositories/`)**:
+    - Split `progress_repository.dart` into `progress_local_storage.dart`, `progress_sync_helper.dart`, and `stored_progress_entity.dart`.
+    - Split `supabase_assessment_repository.dart` into `supabase_assessment_codec.dart` and `assessment_submission_storage.dart`.
+    - Split `sync_assessment_repository.dart` into `sync_assessment_parser.dart`.
+    - Split `sync_education_repository.dart` into `sync_education_defaults.dart` and `education_codecs.dart`.
+- **Metrics & Constraints**:
+  - **Strict Line Constraint**: 0 files $\ge$ 200 lines across `lib/src/learning/` (100% compliant).
+  - **Zero Regressions**: 197 of 197 tests passing (`flutter test` passed 100%).
+  - **Zero Push Guarantee**: All commits strictly local (`c9c37a9`).
+
+
+## Facilities Directory Advanced Search & Side-by-Side Floating Dropdowns (2026-11-19)
+
+**Status: Completed & 100% Verified.**
+- **User Request**: Upgrade the Facilities page toolbar by replacing the horizontal pill filter rows with custom, advanced side-by-side dropdown menus for Campus and Category placed directly below the search bar, and upgrading the search bar with advanced UX capabilities.
+- **Completed Changes**:
+  - `FacilitiesPage.tsx`:
+    - **Advanced Search Bar**:
+      - Upgraded search bar with keyboard shortcut pill `<kbd>/</kbd>` that listens for `/` keypress to auto-focus the search field.
+      - Integrated quick-clear `X` button that dynamically appears when search query text is present.
+      - Styled in high-contrast Obsidian Monochrome design with focus transitions and subtle shadows.
+    - **Dual Side-by-Side Custom Dropdowns (`grid grid-cols-1 md:grid-cols-2`)**:
+      - Placed Campus and Category filters directly below the search bar.
+      - Replaced raw pill rows with custom floating popover dropdowns (Linear/Vercel style, not generic `<select>`).
+      - Left Dropdown: **Campus Filter** with `GraduationCap` icon, uppercase micro-label `CAMPUS`, active campus name, live count badge, rotating `ChevronDown` arrow, and option items for all 5 UoG campuses with checkmarks and facility counts.
+      - Right Dropdown: **Category Filter** with dynamic active category icon, uppercase micro-label `CATEGORY`, active category name, live count badge, rotating `ChevronDown` arrow, and option items for all 6 categories with checkmarks and facility counts.
+      - Implemented backdrop click-outside dismissal (`useRef` + `mousedown`) and `Escape` key listeners to seamlessly close open dropdowns.
+    - **Filter Status & Reset Bar**:
+      - Added metadata display showing matching facility count (`Showing X of Y facilities` / `የተገኙ ተቋማት፦ X ከ Y`).
+      - Added inline one-click `Reset all filters` action (`RotateCcw`) visible whenever search text or a non-default filter is active.
+- **Verification**:
+  - `npm --prefix admin-web run build`: 0 TypeScript errors; SSR and Vite client bundles built cleanly.
+  - `npm --prefix server run worker:check`: 0 errors.
+  - `npm --prefix server test`: 7/7 test suites passed.
+
+## Admin Portal Top Header "Add Facility" Button Removal (2026-11-19)
+
+**Status: Completed & 100% Verified.**
+- **User Request**: Remove the static global "Add Facility" button in the right corner of the admin header because it was persistently shown across all pages (Mentors, Clubs, Users, etc.).
+- **Completed Changes**:
+  - `AdminLayout.tsx`:
+    - Removed `onQuickAction?: () => void;` from `AdminLayoutProps`.
+    - Removed `onQuickAction` from component argument destructuring.
+    - Removed the unused `Plus` icon import.
+    - Removed the static button JSX from the header controls container.
+  - `App.tsx`: Removed `onQuickAction={() => handleNavigate('facilities')}` passed to `<AdminLayout>`.
+  - Confirmed that page-specific creation buttons (e.g. `+ Add Facility` on `/facilities`, `+ Add New Mentor` on `/mentors`, `+ Add User` on `/users`) and the Command Palette (`Ctrl+K`) remain fully intact.
+- **Verification**:
+  - `npm --prefix admin-web run build`: 0 TypeScript errors; SSR and client bundles built cleanly.
+  - `npm --prefix server run worker:check`: 0 errors.
+  - `npm --prefix server test`: 7/7 test suites passed.
+
+## Admin Portal Reliability & UX Enhancements (2026-11-19)
+
+**Status: Completed & 100% Verified.**
+- **Completed Improvements**:
+  1. **401 Session Expiration Auto-Logout**: Implemented `authFetch` wrapper across `admin-web/src/services/api.ts` that intercepts HTTP 401, clears localStorage tokens, and emits `yegna:session-expired`. In `App.tsx`, handles the event by displaying a localized error toast and cleanly redirecting to the login screen, eliminating misleading empty table states.
+  2. **Top-Bar Manual Sync / Refresh Button**: Added a dedicated `RotateCcw` refresh action in `AdminLayout.tsx` header with smooth spinning animation during active refresh and disabled state to prevent duplicate requests.
+  3. **Global Loading State & Table/Card Skeletons**:
+     - Created reusable `admin-web/src/components/common/TableSkeleton.tsx` for table rows.
+     - Added indeterminate linear progress line beneath the header when `isLoading || isRefreshing`.
+     - Integrated skeleton loaders across `FacilitiesPage`, `MentorsPage`, `LearningCmsPage`, `QuizzesPage`, `ClubsPage`, and `UsersPage`, eliminating empty-state flashing during initial page load.
+  4. **Targeted Mutation Refetches**: Replaced global 9-table `loadAllData()` calls with focused refetchers (`refreshFacilities`, `refreshMentors`, `refreshClubs`, `refreshModulesAndQuizzes`, `refreshUsers`), reducing PostgreSQL query load by ~80% during single-item create/edit/delete actions.
+  5. **Universal `Escape` Key Modal Dismissal**: Added `keydown` listeners on `Escape` across form modals in `MentorsPage`, `QuizzesPage`, `ClubsPage`, and `UsersPage`.
+- **Verification**:
+  - `npm --prefix admin-web run build`: 0 TypeScript errors, successfully built SSR Worker and Vite client bundles.
+  - `npm --prefix server run worker:check`: 0 errors.
+  - `npm --prefix server test`: 7/7 test suites passed.
+
 ## Codebase Modularization: Task 5 Discovery Domain (Facilities & Mentors) Completed (2026-11-19)
 
 **Status: Completed & 100% Verified (<200 LOC per file, 0 issues, 197/197 tests passing).**
