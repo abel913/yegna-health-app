@@ -468,6 +468,12 @@ export async function getSurveyStats(_req: Request, res: Response): Promise<void
       return {
         id: q.id,
         key: q.key,
+        sectionNumber: q.sectionNumber ?? 1,
+        sectionKey: q.sectionKey ?? `section_${q.sectionNumber ?? 1}`,
+        sectionTitleEn: q.sectionTitleEn ?? null,
+        sectionTitleAm: q.sectionTitleAm ?? null,
+        moduleKey: q.moduleKey ?? null,
+        position: q.position ?? 0,
         titleEn: q.titleEn,
         titleAm: q.titleAm,
         type: q.type,
