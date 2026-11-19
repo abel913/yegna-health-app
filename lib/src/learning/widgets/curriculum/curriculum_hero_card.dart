@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../common/module_cover_image.dart';
+
 class CurriculumHeroCard extends StatelessWidget {
   const CurriculumHeroCard({
     required this.imageAsset,
@@ -38,15 +40,11 @@ class CurriculumHeroCard extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(16),
             child: Center(
-              child: Image.asset(
-                imageAsset,
+              child: ModuleCoverImage(
+                imagePath: imageAsset,
                 height: 195,
                 fit: BoxFit.contain,
-                errorBuilder: (_, __, ___) => const Icon(
-                  Icons.menu_book_rounded,
-                  size: 64,
-                  color: Color(0xFF0284C7),
-                ),
+                iconSize: 64,
               ),
             ),
           ),

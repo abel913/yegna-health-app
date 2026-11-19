@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../learning/models/learning_module_item.dart';
+import '../../learning/widgets/common/module_cover_image.dart';
 
 class HomeLearningTileCover extends StatelessWidget {
   const HomeLearningTileCover({
@@ -23,19 +24,13 @@ class HomeLearningTileCover extends StatelessWidget {
           borderRadius: const BorderRadius.vertical(
             top: Radius.circular(22),
           ),
-          child: Image.asset(
-            module.imageAsset,
+          child: ModuleCoverImage(
+            imagePath: module.imageAsset,
+            fallbackCategory: module.category,
             height: 125,
             width: double.infinity,
             fit: BoxFit.cover,
-            errorBuilder: (_, __, ___) => Container(
-              height: 125,
-              color: const Color(0xFFBAE6FD),
-              child: const Icon(
-                Icons.image_not_supported_rounded,
-                color: Color(0xFF0284C7),
-              ),
-            ),
+            iconSize: 36,
           ),
         ),
         Positioned(

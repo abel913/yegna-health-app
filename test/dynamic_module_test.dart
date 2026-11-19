@@ -65,6 +65,57 @@ void main() {
         'assets/images/learning/module_08_substance_abuse.png',
       );
     });
+
+    test('normalizeImagePath preserves remote URLs and handles web illustration paths', () {
+      // Remote URLs
+      expect(
+        LearningModuleItem.normalizeImagePath(
+          'https://images.unsplash.com/photo-1234.jpg',
+          'mod-1',
+          'puberty',
+        ),
+        'https://images.unsplash.com/photo-1234.jpg',
+      );
+
+      // Web CMS illustration path (/illustrations/...)
+      expect(
+        LearningModuleItem.normalizeImagePath(
+          '/illustrations/module_01_puberty.jpg',
+          'mod-1',
+          'puberty',
+        ),
+        'assets/images/learning/module_01_puberty.jpg',
+      );
+
+      // Bare illustration filename
+      expect(
+        LearningModuleItem.normalizeImagePath(
+          'module_02_sti.png',
+          'mod-2',
+          'sti',
+        ),
+        'assets/images/learning/module_02_sti.png',
+      );
+
+      // Null or empty falls back to category
+      expect(
+        LearningModuleItem.normalizeImagePath(
+          null,
+          'mod-uuid-123',
+          'adolescent health & puberty',
+        ),
+        'assets/images/learning/module_01_puberty.jpg',
+      );
+
+      expect(
+        LearningModuleItem.normalizeImagePath(
+          '',
+          'mod-uuid-456',
+          'stress management',
+        ),
+        'assets/images/learning/module_06_mental_health.jpg',
+      );
+    });
   });
 
   group('DynamicModuleDetailPage Widget Tests', () {

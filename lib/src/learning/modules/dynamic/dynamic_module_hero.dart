@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../models/learning_module_item.dart';
+import '../../widgets/common/module_cover_image.dart';
 
 /// Top hero card for dynamic modules displaying cover image, title, and author.
 class DynamicModuleHeroCard extends StatelessWidget {
@@ -39,7 +40,13 @@ class DynamicModuleHeroCard extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(16),
             child: Center(
-              child: _buildCoverImage(module.imageAsset),
+              child: ModuleCoverImage(
+                imagePath: module.imageAsset,
+                fallbackCategory: module.category,
+                height: 195,
+                fit: BoxFit.contain,
+                iconSize: 48,
+              ),
             ),
           ),
           const SizedBox(height: 18),
@@ -86,36 +93,6 @@ class DynamicModuleHeroCard extends StatelessWidget {
             ),
           ],
         ],
-      ),
-    );
-  }
-
-  Widget _buildCoverImage(String assetPath) {
-    if (assetPath.startsWith('http://') || assetPath.startsWith('https://')) {
-      return Image.network(
-        assetPath,
-        height: 195,
-        fit: BoxFit.contain,
-        errorBuilder: (_, __, ___) => _buildPlaceholder(),
-      );
-    }
-    return Image.asset(
-      assetPath,
-      height: 195,
-      fit: BoxFit.contain,
-      errorBuilder: (_, __, ___) => _buildPlaceholder(),
-    );
-  }
-
-  Widget _buildPlaceholder() {
-    return Container(
-      height: 160,
-      color: const Color(0xFFE0F2FE),
-      alignment: Alignment.center,
-      child: const Icon(
-        Icons.auto_stories_rounded,
-        size: 48,
-        color: Color(0xFF0284C7),
       ),
     );
   }

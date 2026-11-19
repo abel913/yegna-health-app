@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../theme/app_glass_theme.dart';
 import '../../models/learning_module_item.dart';
+import '../common/module_cover_image.dart';
 import 'module_card_content.dart';
 
 class ModuleCard extends StatelessWidget {
@@ -38,16 +39,13 @@ class ModuleCard extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.fromLTRB(8, 4, 8, 8),
         child: Center(
-          child: Image.asset(
-            module.imageAsset,
+          child: ModuleCoverImage(
+            imagePath: module.imageAsset,
+            fallbackCategory: module.category,
             fit: BoxFit.contain,
             width: double.infinity,
             alignment: Alignment.center,
-            errorBuilder: (_, __, ___) => Icon(
-              Icons.menu_book_rounded,
-              size: 64,
-              color: glass.accentColor,
-            ),
+            iconSize: 64,
           ),
         ),
       ),
