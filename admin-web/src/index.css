@@ -9,6 +9,15 @@
   }
 }
 
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2 bg-slate-950 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 font-bold text-xs md:text-sm rounded-xl border border-slate-900 dark:border-white shadow-xs transition-all active:scale-[0.99] cursor-pointer disabled:opacity-50 disabled:pointer-events-none;
+  }
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 font-bold text-xs md:text-sm rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs transition-all active:scale-[0.99] cursor-pointer disabled:opacity-50 disabled:pointer-events-none;
+  }
+}
+
 /* Custom scrollbars for high-density tables */
 ::-webkit-scrollbar {
   width: 6px;

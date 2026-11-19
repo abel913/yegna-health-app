@@ -10,8 +10,8 @@ const prismaWasmLoader = fileURLToPath(
   new URL('../server/node_modules/.prisma/client/wasm-worker-loader.mjs', import.meta.url),
 );
 
-export default defineConfig({
-  plugins: [react(), cloudflare()],
+export default defineConfig(({ command }) => ({
+  plugins: [react(), ...(command === 'build' ? [cloudflare()] : [])],
   resolve: {
     alias: [
       { find: /^@prisma\/client$/, replacement: generatedPrismaClient },
@@ -27,4 +27,4 @@ export default defineConfig({
       },
     },
   },
-});
+}));
