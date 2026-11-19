@@ -1,5 +1,40 @@
 # Phase status
 
+## Flutter Senior Modular Architecture Refactor - Task 7: Home, Navigation Shell, Account, Assessment, Onboarding & Bootstrap (<200 LOC) (2026-11-19)
+
+**Status: Completed & 100% Verified.**
+- **Scope**: Re-architected Home Page, Navigation Shell, Account Domain, Onboarding Survey, Self-Assessment Suite, In-App Notifications, App Bootstrap, and Global Content Templates to comply strictly with the senior developer modular code architecture standard (<200 LOC per non-generated Dart file).
+- **Completed Sub-Phases**:
+  - **Phase 7A: Home Domain Decomposition (`lib/src/home/`)**:
+    - Created `lib/src/home/widgets/` containing 20 focused, single-responsibility widgets: `deep_glass_container.dart`, `home_feature_badge.dart`, `home_greeting_header.dart`, `home_action_card.dart`, `home_section_header.dart`, `home_safety_banner.dart`, `home_doctor_advice_tile.dart`, `home_doctor_sheet_header.dart`, `home_doctor_sheet_actions.dart`, `home_doctor_article_sheet.dart`, `home_doctor_article_card.dart`, `home_survey_banner.dart`, `home_survey_launcher.dart`, `home_learning_tile_cover.dart`, `home_learning_module_tile.dart`, `home_learning_module_modal.dart`, `home_learning_carousel.dart`, `home_clubs_promo_card.dart`, `home_quick_actions_grid.dart`, `home_ambient_mesh.dart`.
+    - Reduced `lib/src/home/home_page.dart` from 1,180 LOC to 195 LOC.
+  - **Phase 7B: Account Domain Extraction (`lib/src/account/`)**:
+    - Extracted `AccountPage` into its own domain file (129 LOC) with sub-widgets in `lib/src/account/widgets/`: `account_avatar_header.dart`, `account_profile_card.dart`, `account_settings_card.dart`, `account_tile.dart`, `account_notifications_modal.dart`, `account_privacy_modal.dart`, `account_language_modal.dart`, `account_theme_modal.dart`, `account_text_size_modal.dart`, `account_support_modal.dart`.
+  - **Phase 7C: Navigation Shell & Bottom Bar (`lib/src/navigation/`)**:
+    - Extracted from `app.dart`: `scooped_notch_painter.dart`, `app_notification_button.dart`, `app_language_dropdown.dart`, `scooped_bottom_bar.dart`, `app_top_bar.dart`, `app_shell_tab_builder.dart`, and `app_route_navigator.dart`.
+    - Reduced `lib/src/app.dart` from 2,331 LOC to 185 LOC.
+  - **Phase 7D-1: Onboarding Domain Modularization (`lib/src/onboarding/`)**:
+    - Created `default_survey_questions.dart`, `onboarding_survey_storage.dart`, and widgets `onboarding_survey_option_tile.dart`, `onboarding_stacked_card_shell.dart`, `onboarding_question_card.dart`, `onboarding_completion_card.dart`.
+    - Reduced `onboarding_survey_dialog.dart` from 619 to 163 LOC; `onboarding_survey_repository.dart` from 280 to 105 LOC.
+  - **Phase 7D-2: Self-Assessment Domain Modularization (`lib/src/assessment/`)**:
+    - Created `campus_focal_person_model.dart`, `default_self_assessment_questions.dart`, `uog_assessment_section_meta.dart`, and widgets `campus_focal_person_tile.dart`, `module_assessment_completion_card.dart`, `module_assessment_option_tile.dart`, `module_assessment_question_view.dart`, `self_assessment_hero_banner.dart`, `self_assessment_section_card.dart`.
+    - Reduced `module_assessment_dialog.dart` from 537 to 187 LOC; `self_assessment_page.dart` from 461 to 88 LOC; `campus_focal_persons_card.dart` from 314 to 135 LOC; `self_assessment_models.dart` from 202 to 101 LOC.
+  - **Phase 7E: Notifications Domain (`lib/src/notifications/`)**:
+    - Extracted `default_notification_seed.dart`, `notification_type_visuals.dart`, and widgets `notification_empty_state.dart`, `notification_item_tile.dart`, `notification_sheet_header.dart`.
+    - Reduced `notification_center_sheet.dart` from 532 to 171 LOC; `notification_controller.dart` to 148 LOC.
+  - **Phase 7F: Main Entry, Bootstrap & Themes (`lib/main.dart`, `lib/src/bootstrap/`, `lib/src/theme/`)**:
+    - Extracted `buildAppLightTheme()` (`app_light_theme.dart`, 127 LOC) and `buildAppDarkTheme()` (`app_dark_theme.dart`, 99 LOC).
+    - Extracted `bootstrapApp()` and `initializeSupabase()` (`app_bootstrap.dart`, 126 LOC).
+    - Reduced `lib/main.dart` from 452 LOC to 146 LOC.
+  - **Phase 7G: Content Templates Modularization (`lib/src/content/`)**:
+    - Decomposed `content_templates.dart` into `content_draft_models.dart`, `learning_content_templates.dart`, `club_content_templates.dart`, `directory_content_templates.dart`, leaving `content_templates.dart` as a clean facade (27 LOC).
+- **Global Codebase Audit**:
+  - **0 Non-Generated Dart Files $\ge 200$ LOC**: 100% of non-generated Dart files in `lib/` are strictly $\le 199$ LOC.
+  - **`flutter analyze`**: 0 issues found.
+  - **`flutter test`**: 197 of 197 tests passed (100% passing, zero regressions).
+  - **Zero Push Guarantee**: All 31 commits are strictly local.
+
+
 ## Flutter Senior Modular Architecture Refactor - Task 6: Learning & Quizzes Domain (<200 LOC) (2026-11-19)
 
 **Status: Completed & 100% Verified.**

@@ -1,5 +1,24 @@
 # Handoff notes
 
+## Flutter Senior Modular Architecture Refactor - Task 7: Home, Navigation Shell, Account, Assessment, Onboarding & Bootstrap (<200 LOC) (2026-11-19)
+
+- **Completed Domain**: Task 7: Home & App Navigation Shell Modularization (<200 LOC).
+- **Architectural Deliverables**:
+  1. `lib/src/home/`: HomePage reduced from 1,180 to 195 LOC across 20 modular widgets in `lib/src/home/widgets/`.
+  2. `lib/src/account/`: Extracted Account domain (129 LOC) and 10 modular settings/modal widgets in `lib/src/account/widgets/`.
+  3. `lib/src/navigation/`: App shell reduced from 2,331 to 185 LOC across `ScoopedBottomBar`, `AppTopBar`, `ScoopedNotchPainter`, `AppShellTabBuilder`, and `AppRouteNavigator`.
+  4. `lib/src/onboarding/`: Onboarding survey reduced to 163 LOC with decoupled storage, seed questions, and card widgets.
+  5. `lib/src/assessment/`: Self-assessment suite reduced to sub-187 LOC per file across 6 custom widgets and models.
+  6. `lib/src/notifications/`: Notification center sheet reduced to 171 LOC with individual item tiles, headers, empty states, and visual token extensions.
+  7. `lib/src/bootstrap/` & `lib/src/theme/`: Main entry point reduced to 146 LOC with separate light/dark theme builders and decoupled bootstrap service initializer.
+  8. `lib/src/content/`: Decomposed content templates into separate draft models, learning templates, club templates, and directory templates.
+- **Verification Results**:
+  - Codebase audit: **0 non-generated `.dart` files $\ge 200$ LOC** (100% compliance).
+  - `flutter analyze`: **0 issues found**.
+  - `flutter test`: **197/197 tests passed (100%)**.
+  - Zero Push Guarantee: All commits strictly local.
+
+
 ## Flutter Senior Modular Architecture Refactor - Task 6: Learning & Quizzes Domain (<200 LOC) (2026-11-19)
 
 - **Completed Domain**: Task 6: Learning & Quizzes Domain Modularization (<200 LOC).
