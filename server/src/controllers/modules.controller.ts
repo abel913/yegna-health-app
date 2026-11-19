@@ -14,6 +14,7 @@ const moduleSchema = z.object({
   readTimeMin: z.number().default(4),
   isPublished: z.boolean().default(true),
   authorName: z.string().optional(),
+  imageUrl: z.string().nullable().optional(),
   orderIndex: z.number().default(0),
 });
 
