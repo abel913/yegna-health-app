@@ -50,7 +50,27 @@ class OnboardingSurveyRepository {
       }
     }
 
-    _fetchAndCacheQuestions(prefs, sectionNumber: sectionNumber, moduleKey: moduleKey, cacheKey: cacheKey);
+    final remote = await _fetchAndCacheQuestions(
+      prefs,
+      sectionNumber: sectionNumber,
+      moduleKey: moduleKey,
+      cacheKey: cacheKey,
+    );
+    if (remote != null && remote.isNotEmpty) {
+      return remote;
+    }
+
+    // Safety fallback to cache if available
+    final fallbackCache = prefs.getString(cacheKey);
+    if (fallbackCache != null && fallbackCache.isNotEmpty) {
+      try {
+        final list = jsonDecode(fallbackCache) as List<dynamic>;
+        return list
+            .map((e) => DynamicSurveyQuestion.fromJson(Map<String, dynamic>.from(e as Map)))
+            .toList()
+          ..sort((a, b) => a.position.compareTo(b.position));
+      } catch (_) {}
+    }
 
     if (sectionNumber == null || sectionNumber == 1) {
       return defaultQuestions;
@@ -58,7 +78,7 @@ class OnboardingSurveyRepository {
     return const [];
   }
 
-  Future<void> _fetchAndCacheQuestions(
+  Future<List<DynamicSurveyQuestion>?> _fetchAndCacheQuestions(
     SharedPreferences prefs, {
     int? sectionNumber,
     String? moduleKey,
@@ -75,8 +95,29 @@ class OnboardingSurveyRepository {
             .toList()
           ..sort((a, b) => a.position.compareTo(b.position));
         await prefs.setString(cacheKey, jsonEncode(parsed.map((q) => q.toJson()).toList()));
+        return parsed;
       }
     } catch (_) {}
+    return null;
+  }
+
+  /// Submits dynamic assessment or survey responses to backend with zero-PII
+  Future<bool> submitSectionAnswers({
+    required Map<String, String> answers,
+    String? authToken,
+  }) async {
+    try {
+      return await _apiClient.submitAnonymousBaselineSurvey(
+        ageGroup: answers['age_group'] ?? '',
+        yearOfStudy: answers['year_of_study'] ?? '',
+        disabilityNeed: answers['disability_need'] ?? '',
+        knowsGondarSrh: answers['gondar_srh'] ?? '',
+        answers: answers,
+        authToken: authToken,
+      );
+    } catch (_) {
+      return false;
+    }
   }
 
   Future<bool> hasCompletedOrDismissed({String? userId, AuthUser? user}) =>

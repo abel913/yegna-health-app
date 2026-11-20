@@ -14,13 +14,14 @@ import 'discovery/mentor_repository.dart';
 import 'learning/assessment_repository.dart';
 import 'learning/education_repository.dart';
 import 'learning/learning_progress_controller.dart';
-import 'learning/screens/learning_progress_page.dart';
 import 'locale_controller.dart';
 import 'navigation/app_route_navigator.dart';
 import 'navigation/app_shell_tab_builder.dart';
 import 'navigation/widgets/app_top_bar.dart';
 import 'navigation/widgets/scooped_bottom_bar.dart';
 import 'notifications/notification_controller.dart';
+import 'notifications/notification_models.dart';
+import 'notifications/widgets/in_app_notification_toast.dart';
 import 'sync/api_client.dart';
 import 'sync/offline_sync_store.dart';
 import 'sync/sync_manager.dart';
@@ -80,10 +81,8 @@ class _AppShellState extends State<AppShell> {
           localRepository: LocalClubRepository(),
           apiClient: ApiClient(),
         );
-    _clubController =
-        widget.clubController ?? ClubController(repository: _clubRepository);
-    _notificationController =
-        widget.notificationController ?? InAppNotificationController();
+    _clubController = widget.clubController ?? ClubController(repository: _clubRepository);
+    _notificationController = widget.notificationController ?? InAppNotificationController();
 
     if (!_notificationController.isInitialized) {
       _notificationController.load(
@@ -92,7 +91,19 @@ class _AppShellState extends State<AppShell> {
       );
     }
     widget.authController.addListener(_handleAuthChange);
-    WidgetsBinding.instance.addPostFrameCallback((_) => _handleAuthChange());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _handleAuthChange();
+      _syncRemoteNotifications();
+    });
+  }
+
+  Future<void> _syncRemoteNotifications() async {
+    try {
+      final remote = await ApiClient().fetchNotifications(token: widget.authController.token);
+      if (remote != null && mounted) {
+        await _notificationController.syncRemoteNotifications(remote);
+      }
+    } catch (_) {}
   }
 
   @override
@@ -106,7 +117,12 @@ class _AppShellState extends State<AppShell> {
       _openAccount();
       return;
     }
-    if (index != _selectedIndex) setState(() => _selectedIndex = index);
+    if (index != _selectedIndex) {
+      setState(() => _selectedIndex = index);
+      if (index == 1) {
+        widget.facilityRepository?.getFacilities();
+      }
+    }
   }
 
   void _handleAuthChange() {
@@ -143,20 +159,10 @@ class _AppShellState extends State<AppShell> {
   }
 
   void _openClubs() => AppRouteNavigator.openClubs(
-        context: context,
-        clubController: _clubController,
-        authController: widget.authController,
-        notificationController: _notificationController,
-      );
+      context: context, clubController: _clubController, authController: widget.authController, notificationController: _notificationController);
 
-  void _openLearningProgress() {
-    Navigator.of(context).push<void>(MaterialPageRoute<void>(
-      builder: (_) => LearningProgressScreen(
-        controller: widget.progressController,
-        assessmentRepository: widget.assessmentRepository,
-      ),
-    ));
-  }
+  void _openLearningProgress() => AppRouteNavigator.openLearningProgress(
+      context: context, progressController: widget.progressController, assessmentRepository: widget.assessmentRepository);
 
   @override
   Widget build(BuildContext context) {
@@ -180,13 +186,48 @@ class _AppShellState extends State<AppShell> {
           AppLocalizations.of(context),
           widget.settingsController ?? AppSettingsController(),
         ),
-        onNotificationNavigate: (route) {
-          if (route == 'learn') setState(() => _selectedIndex = 3);
-        },
+        onNotificationNavigate: (route) =>
+            AppRouteNavigator.handleNotificationNavigate(
+          context: context,
+          route: route,
+          onSelectTab: _onDestinationSelected,
+          clubController: _clubController,
+          authController: widget.authController,
+          notificationController: _notificationController,
+        ),
         onOpenLearningProgress: _openLearningProgress,
         onSignOut: () => widget.authController.signOut(),
       ),
-      body: IndexedStack(index: _selectedIndex, children: pages),
+      body: Stack(
+        children: [
+          IndexedStack(index: _selectedIndex, children: pages),
+          ValueListenableBuilder<InAppNotification?>(
+            valueListenable: _notificationController.bannerNotifier,
+            builder: (context, banner, _) {
+              if (banner == null) return const SizedBox.shrink();
+              return InAppNotificationToast(
+                notification: banner,
+                isAmharic: widget.localeController.locale.languageCode == 'am',
+                onTap: () {
+                  _notificationController.markAsRead(banner.id);
+                  if (banner.routePayload != null) {
+                    AppRouteNavigator.handleNotificationNavigate(
+                      context: context,
+                      route: banner.routePayload!,
+                      onSelectTab: _onDestinationSelected,
+                      clubController: _clubController,
+                      authController: widget.authController,
+                      notificationController: _notificationController,
+                    );
+                  }
+                },
+                onDismiss: () =>
+                    _notificationController.bannerNotifier.value = null,
+              );
+            },
+          ),
+        ],
+      ),
       floatingActionButton: (_selectedIndex == 0 || _selectedIndex == 3)
           ? YegnaChatbotFab(
               chatbotRepository: widget.chatbotRepository,

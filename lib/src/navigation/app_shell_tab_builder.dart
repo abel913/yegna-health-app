@@ -30,13 +30,6 @@ class AppShellTabBuilder {
         onOpenMentors: () => onSelectTab(2),
         onOpenFacilities: () => onSelectTab(1),
         onOpenAccount: onOpenAccount,
-        onOpenArticle: (id) => AppRouteNavigator.openArticle(
-          context: context,
-          articleId: id,
-          repository: widget.educationRepository,
-          progressController: widget.progressController,
-          localeController: widget.localeController,
-        ),
         onOpenSelfAssessment: () => AppRouteNavigator.openSelfAssessment(
           context: context,
           onSelectTab: onSelectTab,

@@ -86,6 +86,20 @@ mixin ApiDataMethods {
     }
   }
 
+  /// Fetches in-app notifications from `GET /api/notifications`.
+  Future<List<Map<String, dynamic>>?> fetchNotifications({String? token}) async {
+    try {
+      final uri = Uri.parse('$baseUrl/notifications');
+      final headers = <String, String>{
+        if (token != null && token.isNotEmpty) 'Authorization': 'Bearer $token',
+      };
+      final res = await client.get(uri, headers: headers).timeout(timeout);
+      return _parseList(res, 'notifications');
+    } catch (_) {
+      return null;
+    }
+  }
+
   /// Joins a student club via `POST /api/clubs/:id/join`.
   Future<bool> joinClub(String clubId, {String? token}) async {
     try {
