@@ -6302,6 +6302,84 @@ abstract class AppLocalizations {
   /// **'{days}d ago'**
   String notificationTimeDaysAgo(int days);
 
+  /// No description provided for @notificationFilterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get notificationFilterAll;
+
+  /// No description provided for @notificationFilterUnread.
+  ///
+  /// In en, this message translates to:
+  /// **'Unread'**
+  String get notificationFilterUnread;
+
+  /// No description provided for @notificationFilterUrgent.
+  ///
+  /// In en, this message translates to:
+  /// **'Urgent'**
+  String get notificationFilterUrgent;
+
+  /// No description provided for @notificationFilterClubs.
+  ///
+  /// In en, this message translates to:
+  /// **'Campus & Clubs'**
+  String get notificationFilterClubs;
+
+  /// No description provided for @notificationFilterTips.
+  ///
+  /// In en, this message translates to:
+  /// **'Health Tips'**
+  String get notificationFilterTips;
+
+  /// No description provided for @notificationFilterLearning.
+  ///
+  /// In en, this message translates to:
+  /// **'Learning'**
+  String get notificationFilterLearning;
+
+  /// No description provided for @notificationPriorityUrgent.
+  ///
+  /// In en, this message translates to:
+  /// **'Urgent'**
+  String get notificationPriorityUrgent;
+
+  /// No description provided for @notificationPriorityHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'High'**
+  String get notificationPriorityHigh;
+
+  /// No description provided for @notificationActionExplore.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get notificationActionExplore;
+
+  /// No description provided for @notificationDismissTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Dismiss notification'**
+  String get notificationDismissTooltip;
+
+  /// No description provided for @notificationMarkReadTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as read'**
+  String get notificationMarkReadTooltip;
+
+  /// No description provided for @notificationAllCaughtUp.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re all caught up! 🎉'**
+  String get notificationAllCaughtUp;
+
+  /// No description provided for @notificationAllCaughtUpDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'No new notifications right now. Check back later for campus bulletins, clinic schedules, and health tips.'**
+  String get notificationAllCaughtUpDesc;
+
   /// No description provided for @studentClubsTitle.
   ///
   /// In en, this message translates to:
@@ -6835,6 +6913,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You have left the club.'**
   String get clubLeaveSuccess;
+
+  /// No description provided for @clubAnnouncementsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Announcements & Updates'**
+  String get clubAnnouncementsTitle;
+
+  /// No description provided for @clubNoAnnouncements.
+  ///
+  /// In en, this message translates to:
+  /// **'No announcements posted yet.'**
+  String get clubNoAnnouncements;
+
+  /// No description provided for @clubNoAnnouncementsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Check back for meeting schedules, room changes, and campus events.'**
+  String get clubNoAnnouncementsDesc;
+
+  /// No description provided for @clubPinnedBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'PINNED'**
+  String get clubPinnedBadge;
+
+  /// No description provided for @clubUrgentBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'URGENT'**
+  String get clubUrgentBadge;
+
+  /// No description provided for @clubVenueChangeBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Venue Change'**
+  String get clubVenueChangeBadge;
+
+  /// No description provided for @clubEventBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Special Event'**
+  String get clubEventBadge;
+
+  /// No description provided for @clubGeneralBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'General Notice'**
+  String get clubGeneralBadge;
+
+  /// No description provided for @clubPostedBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Posted by'**
+  String get clubPostedBy;
 }
 
 class _AppLocalizationsDelegate

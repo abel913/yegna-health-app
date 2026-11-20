@@ -1146,6 +1146,19 @@
       }
     }
   },
+  "notificationFilterAll": "ሁሉም",
+  "notificationFilterUnread": "ያልተነበቡ",
+  "notificationFilterUrgent": "አስቸኳይ",
+  "notificationFilterClubs": "ክበባትና ካምፓስ",
+  "notificationFilterTips": "የጤና ምክሮች",
+  "notificationFilterLearning": "ትምህርት",
+  "notificationPriorityUrgent": "አስቸኳይ",
+  "notificationPriorityHigh": "ከፍተኛ",
+  "notificationActionExplore": "ይክፈቱ",
+  "notificationDismissTooltip": "ማሳወቂያውን አስወግድ",
+  "notificationMarkReadTooltip": "እንደተነበበ ምልክት አድርግ",
+  "notificationAllCaughtUp": "ሁሉንም አይተዋል! 🎉",
+  "notificationAllCaughtUpDesc": "በአሁኑ ሰዓት አዲስ ማሳወቂያ የለም። ለካምፓስ መረጃዎች፣ ክሊኒኮች እና የጤና ምክሮች በቅርቡ ይመለሱ።",
   "studentClubsTitle": "የተማሪዎች የጤና ክበቦች",
   "studentClubsSubtitle": "የአቻ ደህንነት፣ የአእምሮ ጤና እና የአመራር ክበቦችን ይቀላቀሉ",
   "studentClubsPromoTitle": "የተማሪዎች የጤና ክበቦች",
@@ -1242,6 +1255,15 @@
   "clubLeaveAction": "ከክለቡ ውጣ",
   "clubLeaveConfirmTitle": "ከክለቡ መውጣት ይፈልጋሉ?",
   "clubLeaveConfirmDesc": "እርግጠኛ ነዎት ከዚህ የተማሪ ክለብ መውጣት ይፈልጋሉ? በማንኛውም ጊዜ እንደገና መቀላቀል ይችላሉ።",
-  "clubLeaveSuccess": "ከክለቡ በተሳካ ሁኔታ ወጥተዋል።"
+  "clubLeaveSuccess": "ከክለቡ በተሳካ ሁኔታ ወጥተዋል።",
+  "clubAnnouncementsTitle": "ማስታወቂያዎች እና ዝማኔዎች",
+  "clubNoAnnouncements": "እስካሁን ምንም ማስታወቂያ አልተለጠፈም።",
+  "clubNoAnnouncementsDesc": "የስብሰባ ሰዓቶችን፣ የክፍል ለውጦችን እና የካምፓስ ዝግጅቶችን ለማየት እዚህ ይመለከቱ።",
+  "clubPinnedBadge": "የተሰካ",
+  "clubUrgentBadge": "አስቸኳይ",
+  "clubVenueChangeBadge": "የቦታ ለውጥ",
+  "clubEventBadge": "ልዩ ዝግጅት",
+  "clubGeneralBadge": "አጠቃላይ ማስታወቂያ",
+  "clubPostedBy": "የለጠፈው"
 }
 

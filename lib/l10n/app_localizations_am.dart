@@ -3563,6 +3563,46 @@ class AppLocalizationsAm extends AppLocalizations {
   }
 
   @override
+  String get notificationFilterAll => 'ሁሉም';
+
+  @override
+  String get notificationFilterUnread => 'ያልተነበቡ';
+
+  @override
+  String get notificationFilterUrgent => 'አስቸኳይ';
+
+  @override
+  String get notificationFilterClubs => 'ክበባትና ካምፓስ';
+
+  @override
+  String get notificationFilterTips => 'የጤና ምክሮች';
+
+  @override
+  String get notificationFilterLearning => 'ትምህርት';
+
+  @override
+  String get notificationPriorityUrgent => 'አስቸኳይ';
+
+  @override
+  String get notificationPriorityHigh => 'ከፍተኛ';
+
+  @override
+  String get notificationActionExplore => 'ይክፈቱ';
+
+  @override
+  String get notificationDismissTooltip => 'ማሳወቂያውን አስወግድ';
+
+  @override
+  String get notificationMarkReadTooltip => 'እንደተነበበ ምልክት አድርግ';
+
+  @override
+  String get notificationAllCaughtUp => 'ሁሉንም አይተዋል! 🎉';
+
+  @override
+  String get notificationAllCaughtUpDesc =>
+      'በአሁኑ ሰዓት አዲስ ማሳወቂያ የለም። ለካምፓስ መረጃዎች፣ ክሊኒኮች እና የጤና ምክሮች በቅርቡ ይመለሱ።';
+
+  @override
   String get studentClubsTitle => 'የተማሪዎች የጤና ክበቦች';
 
   @override
@@ -3846,4 +3886,32 @@ class AppLocalizationsAm extends AppLocalizations {
 
   @override
   String get clubLeaveSuccess => 'ከክለቡ በተሳካ ሁኔታ ወጥተዋል።';
+
+  @override
+  String get clubAnnouncementsTitle => 'ማስታወቂያዎች እና ዝማኔዎች';
+
+  @override
+  String get clubNoAnnouncements => 'እስካሁን ምንም ማስታወቂያ አልተለጠፈም።';
+
+  @override
+  String get clubNoAnnouncementsDesc =>
+      'የስብሰባ ሰዓቶችን፣ የክፍል ለውጦችን እና የካምፓስ ዝግጅቶችን ለማየት እዚህ ይመለከቱ።';
+
+  @override
+  String get clubPinnedBadge => 'የተሰካ';
+
+  @override
+  String get clubUrgentBadge => 'አስቸኳይ';
+
+  @override
+  String get clubVenueChangeBadge => 'የቦታ ለውጥ';
+
+  @override
+  String get clubEventBadge => 'ልዩ ዝግጅት';
+
+  @override
+  String get clubGeneralBadge => 'አጠቃላይ ማስታወቂያ';
+
+  @override
+  String get clubPostedBy => 'የለጠፈው';
 }

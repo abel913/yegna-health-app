@@ -3638,6 +3638,46 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get notificationFilterAll => 'All';
+
+  @override
+  String get notificationFilterUnread => 'Unread';
+
+  @override
+  String get notificationFilterUrgent => 'Urgent';
+
+  @override
+  String get notificationFilterClubs => 'Campus & Clubs';
+
+  @override
+  String get notificationFilterTips => 'Health Tips';
+
+  @override
+  String get notificationFilterLearning => 'Learning';
+
+  @override
+  String get notificationPriorityUrgent => 'Urgent';
+
+  @override
+  String get notificationPriorityHigh => 'High';
+
+  @override
+  String get notificationActionExplore => 'Open';
+
+  @override
+  String get notificationDismissTooltip => 'Dismiss notification';
+
+  @override
+  String get notificationMarkReadTooltip => 'Mark as read';
+
+  @override
+  String get notificationAllCaughtUp => 'You\'re all caught up! 🎉';
+
+  @override
+  String get notificationAllCaughtUpDesc =>
+      'No new notifications right now. Check back later for campus bulletins, clinic schedules, and health tips.';
+
+  @override
   String get studentClubsTitle => 'Student Health Clubs';
 
   @override
@@ -3929,4 +3969,32 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get clubLeaveSuccess => 'You have left the club.';
+
+  @override
+  String get clubAnnouncementsTitle => 'Announcements & Updates';
+
+  @override
+  String get clubNoAnnouncements => 'No announcements posted yet.';
+
+  @override
+  String get clubNoAnnouncementsDesc =>
+      'Check back for meeting schedules, room changes, and campus events.';
+
+  @override
+  String get clubPinnedBadge => 'PINNED';
+
+  @override
+  String get clubUrgentBadge => 'URGENT';
+
+  @override
+  String get clubVenueChangeBadge => 'Venue Change';
+
+  @override
+  String get clubEventBadge => 'Special Event';
+
+  @override
+  String get clubGeneralBadge => 'General Notice';
+
+  @override
+  String get clubPostedBy => 'Posted by';
 }

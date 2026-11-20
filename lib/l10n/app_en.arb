@@ -1190,6 +1190,19 @@
       }
     }
   },
+  "notificationFilterAll": "All",
+  "notificationFilterUnread": "Unread",
+  "notificationFilterUrgent": "Urgent",
+  "notificationFilterClubs": "Campus & Clubs",
+  "notificationFilterTips": "Health Tips",
+  "notificationFilterLearning": "Learning",
+  "notificationPriorityUrgent": "Urgent",
+  "notificationPriorityHigh": "High",
+  "notificationActionExplore": "Open",
+  "notificationDismissTooltip": "Dismiss notification",
+  "notificationMarkReadTooltip": "Mark as read",
+  "notificationAllCaughtUp": "You're all caught up! 🎉",
+  "notificationAllCaughtUpDesc": "No new notifications right now. Check back later for campus bulletins, clinic schedules, and health tips.",
   "studentClubsTitle": "Student Health Clubs",
   "studentClubsSubtitle": "Join peer wellness, mental health, and leadership clubs",
   "studentClubsPromoTitle": "Student Health Clubs",
@@ -1310,6 +1323,15 @@
   "clubLeaveAction": "Leave Club",
   "clubLeaveConfirmTitle": "Leave Club?",
   "clubLeaveConfirmDesc": "Are you sure you want to leave this student club? You can rejoin anytime.",
-  "clubLeaveSuccess": "You have left the club."
+  "clubLeaveSuccess": "You have left the club.",
+  "clubAnnouncementsTitle": "Announcements & Updates",
+  "clubNoAnnouncements": "No announcements posted yet.",
+  "clubNoAnnouncementsDesc": "Check back for meeting schedules, room changes, and campus events.",
+  "clubPinnedBadge": "PINNED",
+  "clubUrgentBadge": "URGENT",
+  "clubVenueChangeBadge": "Venue Change",
+  "clubEventBadge": "Special Event",
+  "clubGeneralBadge": "General Notice",
+  "clubPostedBy": "Posted by"
 }
 
