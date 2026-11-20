@@ -18,6 +18,7 @@ import {
   UserMinus,
   Mail,
   FileSpreadsheet,
+  Megaphone,
 } from 'lucide-react';
 import { StudentClub } from '../types/index.js';
 import { api } from '../services/api.js';
@@ -25,6 +26,7 @@ import { exportToCsv } from '../utils/csvExport.js';
 import { useToast } from '../context/ToastContext.js';
 import { EmptyState } from '../components/common/EmptyState.js';
 import { ConfirmModal } from '../components/common/ConfirmModal.js';
+import { ClubAnnouncementsModal } from '../components/clubs/ClubAnnouncementsModal.js';
 
 interface ClubsPageProps {
   clubs: StudentClub[];
@@ -55,6 +57,14 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
     clubName: '',
     members: [],
   });
+  const [announcementsModal, setAnnouncementsModal] = useState<{ open: boolean; club: StudentClub | null }>({
+    open: false,
+    club: null,
+  });
+
+  const openAnnouncements = (club: StudentClub) => {
+    setAnnouncementsModal({ open: true, club });
+  };
 
   // Handle Escape key to dismiss modals
   useEffect(() => {
@@ -446,6 +456,15 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
                       )}
                     </button>
 
+                    {/* Announcements Button */}
+                    <button
+                      onClick={() => openAnnouncements(c)}
+                      className="p-1.5 text-indigo-500 hover:text-indigo-700 dark:hover:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 rounded-lg transition-colors cursor-pointer"
+                      title={lang === 'am' ? 'የክበብ ማስታወቂያዎች' : 'Club announcements'}
+                    >
+                      <Megaphone size={14} />
+                    </button>
+
                     {/* Edit Button */}
                     <button
                       onClick={() => openEditModal(c)}
@@ -502,13 +521,28 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
                   <Users size={14} className="text-slate-900 dark:text-white" />
                   {c.memberCount || 0} {lang === 'am' ? 'አባላት' : 'members'}
                 </span>
-                <button
-                  onClick={() => openRoster(c)}
-                  className="flex items-center gap-1 font-bold text-slate-900 dark:text-white hover:underline cursor-pointer"
-                >
-                  <Eye size={13} />
-                  {lang === 'am' ? 'አባላትን እይ' : 'View Roster'}
-                </button>
+                <div className="flex items-center gap-2.5">
+                  <button
+                    onClick={() => openAnnouncements(c)}
+                    className="flex items-center gap-1 font-bold text-indigo-600 dark:text-indigo-400 hover:underline cursor-pointer"
+                  >
+                    <Megaphone size={13} />
+                    {lang === 'am' ? 'ማስታወቂያዎች' : 'Notices'}
+                    {c.announcements && c.announcements.length > 0 && (
+                      <span className="px-1.5 py-0.2 rounded-full text-[10px] font-extrabold bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300">
+                        {c.announcements.length}
+                      </span>
+                    )}
+                  </button>
+                  <span className="text-slate-300 dark:text-slate-700">•</span>
+                  <button
+                    onClick={() => openRoster(c)}
+                    className="flex items-center gap-1 font-bold text-slate-900 dark:text-white hover:underline cursor-pointer"
+                  >
+                    <Eye size={13} />
+                    {lang === 'am' ? 'አባላትን እይ' : 'View Roster'}
+                  </button>
+                </div>
               </div>
             </div>
           ))}
@@ -953,6 +987,14 @@ export const ClubsPage: React.FC<ClubsPageProps> = ({
             ? 'ይህ ተማሪ ከዚህ ክለብ አባልነት ይሰረዛል። እንደገና ለመቀላቀል ከፈለገ ከስልኩ መተግበሪያ ማመልከት ይችላል።'
             : 'This will remove the student from this club roster. They can rejoin anytime through their mobile app.'
         }
+        lang={lang}
+      />
+
+      {/* Club Announcements Modal */}
+      <ClubAnnouncementsModal
+        isOpen={announcementsModal.open}
+        club={announcementsModal.club}
+        onClose={() => setAnnouncementsModal({ open: false, club: null })}
         lang={lang}
       />
     </div>

@@ -29,16 +29,23 @@ import {
   ChevronRight,
   Info,
   HeartPulse,
+  UploadCloud,
+  Link as LinkIcon,
+  Play,
+  Video,
+  ExternalLink,
 } from 'lucide-react';
 import { Module, QuizQuestion } from '../types/index.js';
 import { exportToCsv } from '../utils/csvExport.js';
 import { ConfirmModal } from '../components/common/ConfirmModal.js';
+import { compressImageFile } from '../utils/imageCompressor.js';
 import { EmptyState } from '../components/common/EmptyState.js';
 import {
   CURRICULUM_TEMPLATES,
   OFFICIAL_ILLUSTRATIONS,
   CurriculumTemplate,
   CurriculumSection,
+  extractYoutubeId,
   parseMarkdownToSections,
   serializeSectionsToMarkdown,
 } from '../data/curriculumTemplates.js';
@@ -84,6 +91,9 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
 
   const [showTemplatePicker, setShowTemplatePicker] = useState(false);
   const [showImagePicker, setShowImagePicker] = useState(false);
+  const [imagePickerTab, setImagePickerTab] = useState<'upload' | 'illustrations' | 'url'>('upload');
+  const [isCompressingImage, setIsCompressingImage] = useState(false);
+  const [customUrlInput, setCustomUrlInput] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Editing state for an individual quiz question inside Tab 4
@@ -227,50 +237,37 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
     setQuizFormOpen(false);
     setExpandedSections(new Set([0]));
 
-    // Auto-select Puberty template as initial starting scaffold
-    const defaultTemplate = CURRICULUM_TEMPLATES[0];
-    const initialSections = parseMarkdownToSections(
-      defaultTemplate.contentEn,
-      defaultTemplate.contentAm
-    );
+    const initialSection: CurriculumSection = {
+      id: `sec-${Date.now()}-1`,
+      titleEn: '1. Introduction',
+      titleAm: '1. መግቢያ',
+      bodyEn: '',
+      bodyAm: '',
+      bulletsEn: [''],
+      bulletsAm: [''],
+      tipEn: '',
+      tipAm: '',
+      videoUrl: '',
+    };
 
     setFormData({
-      category: defaultTemplate.category,
-      titleEn: defaultTemplate.titleEn,
-      titleAm: defaultTemplate.titleAm,
-      summaryEn: defaultTemplate.summaryEn,
-      summaryAm: defaultTemplate.summaryAm,
-      doctorNoteEn: defaultTemplate.doctorNoteEn,
-      doctorNoteAm: defaultTemplate.doctorNoteAm,
-      contentEn: defaultTemplate.contentEn,
-      contentAm: defaultTemplate.contentAm,
-      imageUrl: defaultTemplate.imageAsset,
-      readTimeMin: defaultTemplate.readTimeMin,
-      authorName: defaultTemplate.authorName,
+      category: selectedCategory !== 'All' ? selectedCategory.toLowerCase() : 'srh',
+      titleEn: '',
+      titleAm: '',
+      summaryEn: '',
+      summaryAm: '',
+      doctorNoteEn: '',
+      doctorNoteAm: '',
+      contentEn: '',
+      contentAm: '',
+      imageUrl: '',
+      readTimeMin: 4,
+      authorName: 'Yegna Health Team',
       isPublished: true,
       orderIndex: modules.length + 1,
     });
-    setSections(initialSections);
-
-    // Populate starter template questions if present
-    if (defaultTemplate.questions && defaultTemplate.questions.length > 0) {
-      setModuleQuestions(
-        defaultTemplate.questions.map((q, idx) => ({
-          id: `temp-${idx}`,
-          type: q.type,
-          questionEn: q.questionEn,
-          questionAm: q.questionAm,
-          optionsEn: q.optionsEn,
-          optionsAm: q.optionsAm,
-          correctIndex: q.correctIndex,
-          explanationEn: q.explanationEn,
-          explanationAm: q.explanationAm,
-        }))
-      );
-    } else {
-      setModuleQuestions([]);
-    }
-
+    setSections([initialSection]);
+    setModuleQuestions([]);
     setIsModalOpen(true);
   };
 
@@ -369,6 +366,7 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
       bulletsAm: [''],
       tipEn: '',
       tipAm: '',
+      videoUrl: '',
     };
     setSections((prev) => [...prev, newSec]);
     setExpandedSections((prev) => new Set([...prev, sections.length]));
@@ -515,15 +513,97 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
     setSectionEditMode(newMode);
   };
 
+  // 1-Click Bilingual Mirroring for Sections
+  const handleMirrorToAmharic = () => {
+    setFormData((prev) => ({
+      ...prev,
+      titleAm: prev.titleAm.trim() ? prev.titleAm : prev.titleEn,
+      summaryAm: prev.summaryAm.trim() ? prev.summaryAm : prev.summaryEn,
+      doctorNoteAm: prev.doctorNoteAm.trim() ? prev.doctorNoteAm : prev.doctorNoteEn,
+    }));
+
+    setSections((prev) =>
+      prev.map((sec, idx) => {
+        const mirroredTitle =
+          sec.titleAm.trim() && sec.titleAm !== `ክፍል ${idx + 1}`
+            ? sec.titleAm
+            : sec.titleEn || `ክፍል ${idx + 1}`;
+        const mirroredBody = sec.bodyAm.trim() ? sec.bodyAm : sec.bodyEn;
+        const mirroredTip = sec.tipAm?.trim() ? sec.tipAm : (sec.tipEn || '');
+        const mirroredBullets = sec.bulletsEn.map((bEn, bIdx) => {
+          const existing = sec.bulletsAm[bIdx];
+          return existing && existing.trim() ? existing : bEn;
+        });
+
+        return {
+          ...sec,
+          titleAm: mirroredTitle,
+          bodyAm: mirroredBody,
+          bulletsAm: mirroredBullets.length > 0 ? mirroredBullets : [''],
+          tipAm: mirroredTip,
+        };
+      })
+    );
+  };
+
+  // Auto-calculate reading time based on total word count (~180 wpm)
+  const calculateReadingTime = () => {
+    let wordCount = 0;
+    if (sectionEditMode === 'form') {
+      sections.forEach((s) => {
+        wordCount += `${s.titleEn} ${s.bodyEn} ${s.bulletsEn.join(' ')} ${s.tipEn || ''}`
+          .trim()
+          .split(/\s+/)
+          .filter(Boolean).length;
+      });
+    } else {
+      wordCount += (formData.contentEn || '').trim().split(/\s+/).filter(Boolean).length;
+    }
+    wordCount += (formData.summaryEn || '').trim().split(/\s+/).filter(Boolean).length;
+    wordCount += (formData.doctorNoteEn || '').trim().split(/\s+/).filter(Boolean).length;
+    const mins = Math.max(1, Math.round(wordCount / 180));
+    setFormData((prev) => ({ ...prev, readTimeMin: mins }));
+  };
+
+  // Image Upload and URL Handlers
+  const handleImageFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      setIsCompressingImage(true);
+      const dataUri = await compressImageFile(file, 800, 450, 0.8);
+      setFormData((prev) => ({ ...prev, imageUrl: dataUri }));
+      setShowImagePicker(false);
+    } catch (err) {
+      console.error('Image compression failed:', err);
+      alert(
+        lang === 'am'
+          ? 'የስዕሉ ማስተካከል አልተሳካም። እባክዎ እንደገና ይሞክሩ።'
+          : 'Failed to process image. Please try a different image.'
+      );
+    } finally {
+      setIsCompressingImage(false);
+      e.target.value = '';
+    }
+  };
+
+  const handleApplyCustomUrl = () => {
+    if (!customUrlInput.trim()) return;
+    setFormData((prev) => ({ ...prev, imageUrl: customUrlInput.trim() }));
+    setCustomUrlInput('');
+    setShowImagePicker(false);
+  };
+
   // Quiz Question Handlers inside Module Editor
-  const openAddQuizQuestion = () => {
+  const openAddQuizQuestion = (type: 'MULTIPLE_CHOICE' | 'TRUE_FALSE' = 'MULTIPLE_CHOICE') => {
     setEditingQuizIndex(null);
+    const isTf = type === 'TRUE_FALSE';
     setQuizFormData({
-      type: 'MULTIPLE_CHOICE',
+      type,
       questionEn: '',
       questionAm: '',
-      optionsEn: ['', '', '', ''],
-      optionsAm: ['', '', '', ''],
+      optionsEn: isTf ? ['True', 'False'] : ['', '', '', ''],
+      optionsAm: isTf ? ['እውነት', 'ሐሰት'] : ['', '', '', ''],
       correctIndex: 0,
       explanationEn: '',
       explanationAm: '',
@@ -620,6 +700,26 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
     if (e) e.preventDefault();
     if (isSubmitting) return;
 
+    const rawTitleEn = formData.titleEn.trim();
+    const rawTitleAm = formData.titleAm.trim();
+    if (!rawTitleEn && !rawTitleAm) {
+      alert(lang === 'am' ? 'እባክዎ የሞጁሉን ርዕስ ያስገቡ' : 'Please enter a module title');
+      return;
+    }
+    const finalTitleEn = rawTitleEn || rawTitleAm;
+    const finalTitleAm = rawTitleAm || rawTitleEn;
+
+    let rawSummaryEn = formData.summaryEn.trim();
+    let rawSummaryAm = formData.summaryAm.trim();
+    if (!rawSummaryEn && !rawSummaryAm) {
+      alert(lang === 'am' ? 'እባክዎ ማጠቃለያ ያስገቡ' : 'Please enter a module summary');
+      return;
+    }
+    let finalSummaryEn = rawSummaryEn || rawSummaryAm;
+    let finalSummaryAm = rawSummaryAm || rawSummaryEn;
+    if (finalSummaryEn.length < 5) finalSummaryEn = finalSummaryEn.padEnd(5, '.');
+    if (finalSummaryAm.length < 5) finalSummaryAm = finalSummaryAm.padEnd(5, '.');
+
     try {
       setIsSubmitting(true);
 
@@ -649,8 +749,23 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
         }
       }
 
+      finalContentEn = finalContentEn.trim();
+      finalContentAm = finalContentAm.trim();
+      if (!finalContentEn && finalContentAm) finalContentEn = finalContentAm;
+      if (!finalContentAm && finalContentEn) finalContentAm = finalContentEn;
+      if (finalContentEn.length < 10) {
+        finalContentEn = `${finalContentEn}\n\nClinical guidelines and practical resources for students.`;
+      }
+      if (finalContentAm.length < 10) {
+        finalContentAm = `${finalContentAm}\n\nለተማሪዎች ጠቃሚ የጤና መመሪያ እና ምክሮች።`;
+      }
+
       const finalPayload: Partial<Module> = {
         ...formData,
+        titleEn: finalTitleEn,
+        titleAm: finalTitleAm,
+        summaryEn: finalSummaryEn,
+        summaryAm: finalSummaryAm,
         contentEn: finalContentEn,
         contentAm: finalContentAm,
       };
@@ -671,7 +786,8 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
     if (!formData.imageUrl) return '/illustrations/module_01_puberty.jpg';
     if (
       formData.imageUrl.startsWith('http://') ||
-      formData.imageUrl.startsWith('https://')
+      formData.imageUrl.startsWith('https://') ||
+      formData.imageUrl.startsWith('data:image')
     ) {
       return formData.imageUrl;
     }
@@ -809,7 +925,7 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
               OFFICIAL_ILLUSTRATIONS.find((i) => i.id === m.category)?.previewUrl ||
               '/illustrations/module_01_puberty.jpg';
             const cardImgUrl = m.imageUrl
-              ? m.imageUrl.startsWith('http')
+              ? (m.imageUrl.startsWith('http') || m.imageUrl.startsWith('data:image'))
                 ? m.imageUrl
                 : `/illustrations/${m.imageUrl.replace(/^assets\/images\/learning\//, '')}`
               : fallbackImg;
@@ -1148,9 +1264,20 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
                       </div>
 
                       <div>
-                        <label className="block font-bold text-slate-700 dark:text-slate-300 text-xs mb-1.5">
-                          {lang === 'am' ? 'የንባብ ጊዜ (ደቂቃ)' : 'Estimated Reading Time'}
-                        </label>
+                        <div className="flex items-center justify-between mb-1.5">
+                          <label className="block font-bold text-slate-700 dark:text-slate-300 text-xs">
+                            {lang === 'am' ? 'የንባብ ጊዜ (ደቂቃ)' : 'Estimated Reading Time'}
+                          </label>
+                          <button
+                            type="button"
+                            onClick={calculateReadingTime}
+                            className="text-[10px] font-extrabold text-[#0284C7] hover:underline flex items-center gap-1 cursor-pointer"
+                            title="Calculate based on word count"
+                          >
+                            <Sparkles size={11} />
+                            <span>{lang === 'am' ? 'በይዘት አስላ' : 'Auto-calc'}</span>
+                          </button>
+                        </div>
                         <div className="relative">
                           <input
                             type="number"
@@ -1476,14 +1603,25 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
                       </div>
 
                       {sectionEditMode === 'form' && (
-                        <button
-                          type="button"
-                          onClick={handleAddSection}
-                          className="px-3.5 py-1.5 bg-slate-950 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 rounded-xl text-xs font-extrabold flex items-center gap-1.5 border border-slate-900 dark:border-white shadow-xs cursor-pointer transition-all active:scale-[0.99]"
-                        >
-                          <Plus size={14} />
-                          <span>{lang === 'am' ? 'አዲስ ክፍል' : 'Add Section'}</span>
-                        </button>
+                        <>
+                          <button
+                            type="button"
+                            onClick={handleMirrorToAmharic}
+                            className="px-3 py-1.5 rounded-xl border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/50 hover:bg-sky-100 dark:hover:bg-sky-900/50 text-[#0284C7] dark:text-sky-300 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-2xs"
+                            title="Mirror English structure, titles, and points to Amharic placeholders"
+                          >
+                            <Copy size={13} />
+                            <span>{lang === 'am' ? 'ወደ አማርኛ ቅዳ' : 'Mirror to Amharic'}</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={handleAddSection}
+                            className="px-3.5 py-1.5 bg-slate-950 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 rounded-xl text-xs font-extrabold flex items-center gap-1.5 border border-slate-900 dark:border-white shadow-xs cursor-pointer transition-all active:scale-[0.99]"
+                          >
+                            <Plus size={14} />
+                            <span>{lang === 'am' ? 'አዲስ ክፍል' : 'Add Section'}</span>
+                          </button>
+                        </>
                       )}
                     </div>
                   </div>
@@ -1524,6 +1662,11 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
                                     {hasTip && (
                                       <span className="text-[10px] font-semibold bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400 px-2 py-0.2 rounded-full border border-emerald-200/60 dark:border-emerald-800/40">
                                         Clinical Tip
+                                      </span>
+                                    )}
+                                    {sec.videoUrl && (
+                                      <span className="text-[10px] font-semibold bg-red-50 dark:bg-rose-950/50 text-red-700 dark:text-rose-400 px-2 py-0.2 rounded-full border border-red-200/60 dark:border-rose-800/40 flex items-center gap-1">
+                                        <Video size={10} /> Video
                                       </span>
                                     )}
                                   </div>
@@ -1742,6 +1885,84 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
                                     )}
                                   </div>
                                 </div>
+
+                                {/* 4. Optional YouTube Video Box */}
+                                {(() => {
+                                  const ytId = extractYoutubeId(sec.videoUrl);
+                                  return (
+                                    <div className="bg-red-50/60 dark:bg-rose-950/20 border border-red-200/80 dark:border-rose-900/40 rounded-xl p-3.5 space-y-2.5">
+                                      <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-1.5 text-[11px] font-extrabold text-red-700 dark:text-rose-400 uppercase tracking-wide">
+                                          <Video size={14} className="text-red-600 dark:text-rose-400" />
+                                          <span>
+                                            {lang === 'am' ? 'አማራጭ የዩቲዩብ ቪዲዮ (YouTube Video)' : 'Optional Educational Video (YouTube)'}
+                                          </span>
+                                        </div>
+                                        {sec.videoUrl && (
+                                          <button
+                                            type="button"
+                                            onClick={() => handleUpdateSection(secIdx, 'videoUrl', '')}
+                                            className="text-[11px] font-bold text-slate-400 hover:text-red-600 transition-colors cursor-pointer"
+                                          >
+                                            {lang === 'am' ? 'አስወግድ' : 'Clear Video'}
+                                          </button>
+                                        )}
+                                      </div>
+
+                                      <div className="flex items-center gap-2">
+                                        <input
+                                          type="text"
+                                          value={sec.videoUrl || ''}
+                                          onChange={(e) =>
+                                            handleUpdateSection(secIdx, 'videoUrl', e.target.value)
+                                          }
+                                          placeholder="https://www.youtube.com/watch?v=... or https://youtu.be/..."
+                                          className="flex-1 px-3 py-1.5 text-xs rounded-lg border border-red-200 dark:border-rose-800 bg-white dark:bg-slate-850 text-slate-900 dark:text-white focus:outline-hidden"
+                                        />
+                                      </div>
+
+                                      {ytId && (
+                                        <div className="flex items-center gap-3 bg-white dark:bg-slate-900 border border-red-200/60 dark:border-rose-900/40 rounded-lg p-2 animate-in fade-in duration-150">
+                                          <div className="relative w-24 h-14 rounded-md overflow-hidden bg-slate-900 shrink-0">
+                                            <img
+                                              src={`https://img.youtube.com/vi/${ytId}/hqdefault.jpg`}
+                                              alt="YouTube Preview"
+                                              className="w-full h-full object-cover"
+                                              onError={(e) => {
+                                                (e.target as HTMLImageElement).src =
+                                                  `https://img.youtube.com/vi/${ytId}/0.jpg`;
+                                              }}
+                                            />
+                                            <div className="absolute inset-0 bg-black/25 flex items-center justify-center">
+                                              <div className="w-6 h-6 rounded-full bg-red-600 text-white flex items-center justify-center shadow-xs">
+                                                <Play size={10} className="fill-white ml-0.5" />
+                                              </div>
+                                            </div>
+                                          </div>
+                                          <div className="min-w-0 flex-1">
+                                            <div className="flex items-center gap-1.5">
+                                              <span className="px-1.5 py-0.5 rounded text-[9px] font-extrabold bg-red-100 dark:bg-rose-950 text-red-700 dark:text-rose-300">
+                                                YouTube ID: {ytId}
+                                              </span>
+                                            </div>
+                                            <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 truncate">
+                                              {sec.videoUrl}
+                                            </p>
+                                          </div>
+                                          <a
+                                            href={sec.videoUrl?.startsWith('http') ? sec.videoUrl : `https://www.youtube.com/watch?v=${ytId}`}
+                                            target="_blank"
+                                            rel="noreferrer"
+                                            className="p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-white cursor-pointer"
+                                            title="Open in YouTube"
+                                          >
+                                            <ExternalLink size={14} />
+                                          </a>
+                                        </div>
+                                      )}
+                                    </div>
+                                  );
+                                })()}
                               </div>
                             )}
                           </div>
@@ -1873,14 +2094,24 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
                       </div>
                     </div>
 
-                    <button
-                      type="button"
-                      onClick={openAddQuizQuestion}
-                      className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-extrabold flex items-center gap-1.5 shadow-sm cursor-pointer transition-all shrink-0"
-                    >
-                      <Plus size={15} />
-                      <span>{lang === 'am' ? 'ጥያቄ ጨምር' : 'Add Question'}</span>
-                    </button>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => openAddQuizQuestion('MULTIPLE_CHOICE')}
+                        className="px-3.5 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-extrabold flex items-center gap-1.5 shadow-sm cursor-pointer transition-all"
+                      >
+                        <Plus size={14} />
+                        <span>{lang === 'am' ? '+ ምርጫ ጥያቄ' : '+ Multiple Choice'}</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => openAddQuizQuestion('TRUE_FALSE')}
+                        className="px-3.5 py-2 bg-amber-100 hover:bg-amber-200 dark:bg-amber-950/60 dark:hover:bg-amber-900/60 text-amber-900 dark:text-amber-200 border border-amber-300 dark:border-amber-800 rounded-xl text-xs font-extrabold flex items-center gap-1.5 shadow-2xs cursor-pointer transition-all"
+                      >
+                        <Plus size={14} />
+                        <span>{lang === 'am' ? '+ እውነት/ሐሰት' : '+ True / False'}</span>
+                      </button>
+                    </div>
                   </div>
 
                   {/* Focused Question Editor Card (When active) */}
@@ -2393,51 +2624,174 @@ export const LearningCmsPage: React.FC<LearningCmsPageProps> = ({
           {/* Cover Illustration Chooser Modal */}
           {showImagePicker && (
             <div className="fixed inset-0 z-60 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-4">
-              <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl max-w-2xl w-full p-6 space-y-4">
+              <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl max-w-2xl w-full p-6 space-y-4 animate-in fade-in zoom-in-95">
                 <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
                   <h4 className="font-extrabold text-sm text-slate-900 dark:text-white flex items-center gap-2">
                     <ImageIcon size={18} className="text-slate-900 dark:text-white" />
-                    <span>{lang === 'am' ? 'የሞጁሉን ስዕል ምረጥ' : 'Select Official Cover Illustration'}</span>
+                    <span>{lang === 'am' ? 'የሞጁሉን ስዕል ምረጥ ወይም ስቀል' : 'Module Cover Image'}</span>
                   </h4>
                   <button
                     onClick={() => setShowImagePicker(false)}
-                    className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                    className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
                   >
                     <X size={16} />
                   </button>
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-h-[60vh] overflow-y-auto p-1">
-                  {OFFICIAL_ILLUSTRATIONS.map((ill) => {
-                    const isSelected = formData.imageUrl === ill.path;
-                    return (
-                      <button
-                        key={ill.id}
-                        type="button"
-                        onClick={() => {
-                          setFormData({ ...formData, imageUrl: ill.path });
-                          setShowImagePicker(false);
-                        }}
-                        className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center justify-between ${
-                          isSelected
-                            ? 'border-slate-900 dark:border-white bg-slate-100 dark:bg-slate-800 ring-2 ring-slate-900/10 dark:ring-white/20'
-                            : 'border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-850 hover:border-slate-300'
-                        }`}
-                      >
-                        <div className="w-16 h-16 rounded-lg bg-white dark:bg-slate-800 p-1 flex items-center justify-center mb-2 overflow-hidden">
-                          <img
-                            src={ill.previewUrl}
-                            alt=""
-                            className="w-full h-full object-contain"
-                          />
-                        </div>
-                        <span className="text-[11px] font-extrabold text-slate-800 dark:text-slate-200 line-clamp-1">
-                          {ill.name}
-                        </span>
-                      </button>
-                    );
-                  })}
+                {/* 3 Source Tabs: Upload / Official / Custom URL */}
+                <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
+                  <button
+                    type="button"
+                    onClick={() => setImagePickerTab('upload')}
+                    className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-extrabold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                      imagePickerTab === 'upload'
+                        ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-xs'
+                        : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+                    }`}
+                  >
+                    <UploadCloud size={14} />
+                    <span>{lang === 'am' ? 'ከኮምፒውተር ስቀል' : 'Upload Image'}</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setImagePickerTab('illustrations')}
+                    className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-extrabold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                      imagePickerTab === 'illustrations'
+                        ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-xs'
+                        : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+                    }`}
+                  >
+                    <ImageIcon size={14} />
+                    <span>{lang === 'am' ? 'የተዘጋጁ ስዕሎች' : 'Official Illustrations'}</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setImagePickerTab('url')}
+                    className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-extrabold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                      imagePickerTab === 'url'
+                        ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-xs'
+                        : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+                    }`}
+                  >
+                    <LinkIcon size={14} />
+                    <span>{lang === 'am' ? 'የስዕል ሊንክ' : 'Custom URL'}</span>
+                  </button>
                 </div>
+
+                {/* TAB 1: UPLOAD FROM COMPUTER */}
+                {imagePickerTab === 'upload' && (
+                  <div className="space-y-4 py-2">
+                    <label className="relative border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-[#0284C7] dark:hover:border-sky-500 rounded-2xl p-8 flex flex-col items-center justify-center gap-3 cursor-pointer bg-slate-50/50 dark:bg-slate-850/50 transition-all text-center group">
+                      <input
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp,image/svg+xml"
+                        disabled={isCompressingImage}
+                        onChange={handleImageFileUpload}
+                        className="sr-only"
+                      />
+                      {isCompressingImage ? (
+                        <div className="flex flex-col items-center gap-2 py-4">
+                          <div className="w-8 h-8 border-3 border-[#0284C7] border-t-transparent rounded-full animate-spin" />
+                          <p className="text-xs font-bold text-slate-600 dark:text-slate-300">
+                            {lang === 'am' ? 'ስዕሉ እየተመጠነ ነው...' : 'Optimizing and compressing image...'}
+                          </p>
+                        </div>
+                      ) : (
+                        <>
+                          <div className="w-12 h-12 rounded-2xl bg-sky-100 dark:bg-sky-950/70 text-[#0284C7] flex items-center justify-center group-hover:scale-105 transition-transform">
+                            <UploadCloud size={24} />
+                          </div>
+                          <div>
+                            <p className="font-extrabold text-sm text-slate-900 dark:text-white">
+                              {lang === 'am' ? 'ስዕል ለመምረጥ እዚህ ይጫኑ ወይም ይጎትቱ' : 'Click to select or drag and drop an image'}
+                            </p>
+                            <p className="text-xs text-slate-400 mt-1">
+                              Supports JPG, PNG, WebP • Auto-compressed to &lt; 80KB Base64 Data URI
+                            </p>
+                          </div>
+                          <span className="text-[11px] font-semibold text-[#0284C7] bg-sky-50 dark:bg-sky-950 px-3 py-1 rounded-full border border-sky-200 dark:border-sky-800">
+                            Stored directly in Database (Works 100% Offline)
+                          </span>
+                        </>
+                      )}
+                    </label>
+                  </div>
+                )}
+
+                {/* TAB 2: OFFICIAL ILLUSTRATIONS */}
+                {imagePickerTab === 'illustrations' && (
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-h-[60vh] overflow-y-auto p-1">
+                    {OFFICIAL_ILLUSTRATIONS.map((ill) => {
+                      const isSelected = formData.imageUrl === ill.path;
+                      return (
+                        <button
+                          key={ill.id}
+                          type="button"
+                          onClick={() => {
+                            setFormData({ ...formData, imageUrl: ill.path });
+                            setShowImagePicker(false);
+                          }}
+                          className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center justify-between ${
+                            isSelected
+                              ? 'border-slate-900 dark:border-white bg-slate-100 dark:bg-slate-800 ring-2 ring-slate-900/10 dark:ring-white/20'
+                              : 'border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-850 hover:border-slate-300'
+                          }`}
+                        >
+                          <div className="w-16 h-16 rounded-lg bg-white dark:bg-slate-800 p-1 flex items-center justify-center mb-2 overflow-hidden">
+                            <img
+                              src={ill.previewUrl}
+                              alt=""
+                              className="w-full h-full object-contain"
+                            />
+                          </div>
+                          <span className="text-[11px] font-extrabold text-slate-800 dark:text-slate-200 line-clamp-1">
+                            {ill.name}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* TAB 3: CUSTOM URL */}
+                {imagePickerTab === 'url' && (
+                  <div className="space-y-4 py-2">
+                    <div>
+                      <label className="block font-bold text-slate-700 dark:text-slate-300 text-xs mb-1.5">
+                        {lang === 'am' ? 'የስዕል ዌብሳይት ሊንክ (Image URL)' : 'Web Image URL'}
+                      </label>
+                      <div className="flex gap-2">
+                        <input
+                          type="url"
+                          value={customUrlInput}
+                          onChange={(e) => setCustomUrlInput(e.target.value)}
+                          placeholder="https://images.unsplash.com/photo-..."
+                          className="flex-1 px-3.5 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-850 text-slate-900 dark:text-white text-xs focus:border-slate-900 dark:focus:border-white focus:outline-hidden"
+                        />
+                        <button
+                          type="button"
+                          disabled={!customUrlInput.trim()}
+                          onClick={handleApplyCustomUrl}
+                          className="px-4 py-2 bg-slate-950 dark:bg-white text-white dark:text-slate-950 font-bold text-xs rounded-xl disabled:opacity-40 cursor-pointer"
+                        >
+                          {lang === 'am' ? 'ተግብር' : 'Apply'}
+                        </button>
+                      </div>
+                    </div>
+                    {customUrlInput.trim() && (
+                      <div className="w-full h-40 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden flex items-center justify-center bg-slate-100 dark:bg-slate-850 p-2">
+                        <img
+                          src={customUrlInput.trim()}
+                          alt="Preview"
+                          className="max-h-full max-w-full object-contain"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).style.display = 'none';
+                          }}
+                        />
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           )}
