@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+
+import '../../widgets/curriculum/section_video_card.dart';
 import 'dynamic_module_parser.dart';
 
 /// Builds children widgets for a parsed dynamic curriculum section.
-List<Widget> buildDynamicSectionChildren(ParsedSection section) {
+List<Widget> buildDynamicSectionChildren(
+  ParsedSection section, {
+  bool isAmharic = false,
+}) {
   return [
     if (section.body.isNotEmpty) ...[
       Text(
@@ -71,6 +76,15 @@ List<Widget> buildDynamicSectionChildren(ParsedSection section) {
             ),
           ],
         ),
+      ),
+    ],
+    if (section.videoId != null) ...[
+      SectionVideoCard(
+        videoId: section.videoId!,
+        videoUrl: section.videoUrl ??
+            'https://www.youtube.com/watch?v=${section.videoId}',
+        sectionTitle: section.title,
+        isAmharic: isAmharic,
       ),
     ],
   ];

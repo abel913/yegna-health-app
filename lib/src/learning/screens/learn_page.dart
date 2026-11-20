@@ -49,6 +49,19 @@ class _LearnPageState extends State<LearnPage> {
   void initState() {
     super.initState();
     _loadModules();
+    final repo = widget.educationRepository;
+    if (repo is Listenable) (repo as Listenable).addListener(_onRepoChanged);
+  }
+
+  @override
+  void dispose() {
+    final repo = widget.educationRepository;
+    if (repo is Listenable) (repo as Listenable).removeListener(_onRepoChanged);
+    super.dispose();
+  }
+
+  void _onRepoChanged() {
+    if (mounted) _loadModules();
   }
 
   @override
@@ -79,35 +92,33 @@ class _LearnPageState extends State<LearnPage> {
     } catch (_) {}
   }
 
-  void _handleOpenModule(LearningModuleItem module) {
-    LearningModuleNavigator.openModule(
-      context: context,
-      module: module,
-      progressController: widget.progressController,
-      assessmentRepository: widget.assessmentRepository,
-      onOpenDynamicQuiz: () => _handleOpenQuiz(module),
-    );
-  }
-
-  Future<void> _handleOpenQuiz(LearningModuleItem module) async {
-    await LearningModuleNavigator.openQuiz(
-      context: context,
-      module: module,
-      progressController: widget.progressController,
-      assessmentRepository: widget.assessmentRepository,
-      locale: _locale,
-      onShowFallbackInfo: (ctx, mod) => LearnQuizBottomSheet.show(ctx, mod),
-    );
-  }
-
-  void _openProgress(BuildContext context) {
-    Navigator.of(context).push(MaterialPageRoute(
-      builder: (_) => LearningProgressPage(
-        controller: widget.progressController,
+  void _handleOpenModule(LearningModuleItem module) =>
+      LearningModuleNavigator.openModule(
+        context: context,
+        module: module,
+        progressController: widget.progressController,
         assessmentRepository: widget.assessmentRepository,
-      ),
-    ));
-  }
+        onOpenDynamicQuiz: () => _handleOpenQuiz(module),
+      );
+
+  Future<void> _handleOpenQuiz(LearningModuleItem module) =>
+      LearningModuleNavigator.openQuiz(
+        context: context,
+        module: module,
+        progressController: widget.progressController,
+        assessmentRepository: widget.assessmentRepository,
+        locale: _locale,
+        onShowFallbackInfo: (ctx, mod) => LearnQuizBottomSheet.show(ctx, mod),
+      );
+
+  void _openProgress(BuildContext context) => Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => LearningProgressPage(
+            controller: widget.progressController,
+            assessmentRepository: widget.assessmentRepository,
+          ),
+        ),
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -155,28 +166,23 @@ class _LearnPageState extends State<LearnPage> {
                             ),
                             LearnFilterBar(
                               selectedCategory: _selectedCategory,
-                              onSelectCategory: (c) =>
-                                  setState(() => _selectedCategory = c),
+                              onSelectCategory: (c) => setState(() => _selectedCategory = c),
                               searchQuery: _searchQuery,
-                              onSearchChanged: (q) =>
-                                  setState(() => _searchQuery = q),
+                              onSearchChanged: (q) => setState(() => _searchQuery = q),
                               isSearchOpen: _isSearchOpen,
-                              onToggleSearch: () => setState(
-                                  () => _isSearchOpen = !_isSearchOpen),
+                              onToggleSearch: () => setState(() => _isSearchOpen = !_isSearchOpen),
                             ),
                             const SizedBox(height: 6),
                             _isGridMode
                                 ? LearnModulesGrid(
                                     modules: filtered,
                                     completedModuleIds: completed,
-                                    onOpenModule: _handleOpenModule,
-                                  )
+                                    onOpenModule: _handleOpenModule)
                                 : LearningModulesCarousel(
                                     completedModuleIds: completed,
                                     modules: filtered,
                                     onOpenModule: _handleOpenModule,
-                                    onOpenQuiz: _handleOpenQuiz,
-                                  ),
+                                    onOpenQuiz: _handleOpenQuiz),
                           ],
                         );
                       },

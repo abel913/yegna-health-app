@@ -81,9 +81,7 @@ class _DynamicModuleDetailPageState extends State<DynamicModuleDetailPage> {
     final totalSections = sections.length;
     final dynamicHero = DynamicModuleHeroCard(module: widget.module, l10n: l10n);
     final doctorNote = DynamicDoctorNoteCard(
-      noteText: parsedDoctorNote,
-      isAmharic: isAmharic,
-    );
+        noteText: parsedDoctorNote, isAmharic: isAmharic);
 
     return Scaffold(
       backgroundColor: const Color(0xFFF4F9FD),
@@ -160,7 +158,10 @@ class _DynamicModuleDetailPageState extends State<DynamicModuleDetailPage> {
                 isExpanded: _expandedSections.contains(i),
                 isRead: _readSections.contains(i),
                 onToggle: () => _toggleSection(i),
-                children: buildDynamicSectionChildren(sections[i]),
+                children: buildDynamicSectionChildren(
+                  sections[i],
+                  isAmharic: isAmharic,
+                ),
               ),
               const SizedBox(height: 12),
             ],

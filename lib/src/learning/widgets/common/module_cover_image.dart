@@ -1,11 +1,12 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 
 import '../../../theme/app_glass_theme.dart';
 import '../../models/learning_module_item.dart';
 
 /// Hybrid cover image widget for learning modules.
-/// Seamlessly handles remote URLs, local asset paths, and web illustration paths,
-/// with automatic category-based fallback when offline or on load error.
+/// Seamlessly handles remote URLs, Base64 data URIs, local asset paths,
+/// and web illustration paths, with automatic category-based fallback.
 class ModuleCoverImage extends StatelessWidget {
   const ModuleCoverImage({
     required this.imagePath,
@@ -29,6 +30,23 @@ class ModuleCoverImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final path = imagePath.trim();
+    if (path.startsWith('data:image')) {
+      final commaIndex = path.indexOf(',');
+      if (commaIndex != -1) {
+        try {
+          final bytes = base64Decode(path.substring(commaIndex + 1));
+          return Image.memory(
+            bytes,
+            fit: fit,
+            width: width,
+            height: height,
+            alignment: alignment,
+            errorBuilder: (context, _, __) => _buildFallback(context),
+          );
+        } catch (_) {}
+      }
+    }
+
     if (path.startsWith('http://') || path.startsWith('https://')) {
       return Image.network(
         path,

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 
 import '../../content/content_templates.dart';
 import '../../sync/api_client.dart';
@@ -9,7 +10,8 @@ import '../models/education_article.dart';
 import '../models/learning_module_item.dart';
 import 'sync_education_defaults.dart';
 
-class SyncEducationRepository implements EducationRepository {
+class SyncEducationRepository extends ChangeNotifier
+    implements EducationRepository {
   SyncEducationRepository({
     required OfflineSyncStore store,
     ApiClient? apiClient,
@@ -160,11 +162,26 @@ class SyncEducationRepository implements EducationRepository {
     return SyncEducationDefaults.parseCurriculumItems(raw, hasSynced);
   }
 
+  Future<void> refresh() async {
+    await _revalidateModules();
+  }
+
   Future<void> _revalidateModules() async {
     try {
       final remoteList = await _apiClient?.fetchModules();
+      final remoteQuizzes = await _apiClient?.fetchQuizzes();
+      bool changed = false;
+
       if (remoteList != null) {
         await _store.saveModules(remoteList);
+        changed = true;
+      }
+      if (remoteQuizzes != null) {
+        await _store.saveQuizzes(remoteQuizzes);
+        changed = true;
+      }
+      if (changed) {
+        notifyListeners();
       }
     } catch (_) {}
   }

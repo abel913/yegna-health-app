@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../assessment_repository.dart';
 import '../dynamic_module_detail_page.dart';
+import '../dynamic_quiz_helper.dart';
 import '../gbv_page.dart';
 import '../gbv_quiz_page.dart';
 import '../hepatitis_page.dart';
@@ -14,6 +15,7 @@ import '../mental_health_page.dart';
 import '../mental_health_quiz_page.dart';
 import '../puberty_page.dart';
 import '../puberty_quiz_page.dart';
+import '../quiz/quiz_runner_scaffold.dart';
 import '../srh_page.dart';
 import '../srh_quiz_page.dart';
 import '../sti_module_page.dart';
@@ -94,8 +96,29 @@ class LearningModuleNavigator {
     required String locale,
     required void Function(BuildContext, LearningModuleItem) onShowFallbackInfo,
   }) async {
+    final dynamicQuestions = await DynamicQuizHelper.loadFromCache(
+      moduleId: module.id,
+      category: module.category,
+    );
+    if (dynamicQuestions != null &&
+        dynamicQuestions.isNotEmpty &&
+        context.mounted) {
+      Navigator.of(context).push<void>(
+        MaterialPageRoute<void>(
+          builder: (_) => QuizRunnerScaffold(
+            title: module.title,
+            moduleId: module.id,
+            category: module.category,
+            defaultQuestions: dynamicQuestions,
+            progressController: progressController,
+          ),
+        ),
+      );
+      return;
+    }
+
     final quizPage = _resolveBundledQuizPage(module.id, progressController);
-    if (quizPage != null) {
+    if (quizPage != null && context.mounted) {
       Navigator.of(context).push<void>(
         MaterialPageRoute<void>(builder: (_) => quizPage),
       );

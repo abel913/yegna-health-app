@@ -85,6 +85,9 @@ class LearningModuleItem {
       return resolveImageAsset(id, category);
     }
     final trimmed = rawUrl.trim();
+    if (trimmed.startsWith('data:image')) {
+      return trimmed;
+    }
     if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
       return trimmed;
     }
