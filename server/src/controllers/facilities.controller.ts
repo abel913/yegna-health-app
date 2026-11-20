@@ -70,8 +70,16 @@ function toPrismaFacility(data: Record<string, any>, isCreate = false): Record<s
   const allowed = [
     'nameEn',
     'nameAm',
+    'category',
     'subCity',
     'woreda',
+    'buildingEn',
+    'buildingAm',
+    'landmarkEn',
+    'landmarkAm',
+    'focalPerson',
+    'focalPhone',
+    'telegramHandle',
     'addressEn',
     'addressAm',
     'phone',
@@ -79,6 +87,8 @@ function toPrismaFacility(data: Record<string, any>, isCreate = false): Record<s
     'longitude',
     'operatingHours',
     'isVerified',
+    'isWheelchairAccessible',
+    'hasPrivateRoom',
   ] as const;
 
   const result: Record<string, any> = {};
@@ -90,6 +100,9 @@ function toPrismaFacility(data: Record<string, any>, isCreate = false): Record<s
 
   if (!result.woreda && data.buildingEn) {
     result.woreda = data.buildingEn;
+  }
+  if (!result.buildingEn && data.woreda) {
+    result.buildingEn = data.woreda;
   }
 
   if (data.services !== undefined) {

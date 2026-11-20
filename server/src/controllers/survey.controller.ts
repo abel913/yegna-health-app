@@ -353,13 +353,15 @@ export async function submitSurvey(req: Request, res: Response): Promise<void> {
 
     // 2. Rapid double-tap deduplication shield (5-second window for identical submissions)
     const fiveSecondsAgo = new Date(Date.now() - 5000);
-    const recentDuplicate = await prisma.baselineSurveyResponse.findFirst({
-      where: {
-        ageGroup: ageGroup || undefined,
-        yearOfStudy: yearOfStudy || undefined,
-        submittedAt: { gte: fiveSecondsAgo },
-      },
-    });
+    const recentDuplicate = (ageGroup || yearOfStudy)
+      ? await prisma.baselineSurveyResponse.findFirst({
+          where: {
+            ageGroup: ageGroup || undefined,
+            yearOfStudy: yearOfStudy || undefined,
+            submittedAt: { gte: fiveSecondsAgo },
+          },
+        })
+      : null;
 
     if (recentDuplicate) {
       if (userId) {
@@ -451,7 +453,7 @@ export async function getSurveyStats(_req: Request, res: Response): Promise<void
         },
       }),
       prisma.baselineSurveyResponse.findMany({
-        take: 100,
+        take: 1000,
         orderBy: { submittedAt: 'desc' },
       }),
     ]);
@@ -467,9 +469,17 @@ export async function getSurveyStats(_req: Request, res: Response): Promise<void
       allSubmissions.forEach((sub) => {
         let answerVal: string | undefined;
 
-        // Check dynamic JSON answers
-        if (sub.answers && typeof sub.answers === 'object') {
-          const ansMap = sub.answers as Record<string, any>;
+        // Check dynamic JSON answers (supports parsed object or JSON string)
+        let ansMap: Record<string, any> | null = null;
+        if (typeof sub.answers === 'string') {
+          try {
+            ansMap = JSON.parse(sub.answers);
+          } catch (_) {}
+        } else if (sub.answers && typeof sub.answers === 'object') {
+          ansMap = sub.answers as Record<string, any>;
+        }
+
+        if (ansMap) {
           answerVal = ansMap[q.key] || ansMap[q.id];
         }
 
