@@ -38,11 +38,11 @@ Widget _buildTestApp({
 
 void main() {
   group('FacilityRepository', () {
-    test('LocalVerifiedFacilityRepository returns 6 verified UoG facilities',
+    test('LocalVerifiedFacilityRepository returns 10 verified UoG facilities',
         () async {
       const repo = LocalVerifiedFacilityRepository();
       final all = await repo.getFacilities();
-      expect(all.length, 6);
+      expect(all.length, 10);
 
       final clinicalOnly = await repo.getFacilities(
         category: FacilityFilterCategory.clinical,
@@ -52,7 +52,7 @@ void main() {
       final counselingOnly = await repo.getFacilities(
         category: FacilityFilterCategory.counseling,
       );
-      expect(counselingOnly.length, 1);
+      expect(counselingOnly.length, 5);
       expect(counselingOnly.first.id, 'uog_maraki_guidance_center');
 
       final searchResult = await repo.getFacilities(query: 'Maraki');
@@ -81,6 +81,11 @@ void main() {
       // Check UoG facility card presence
       expect(find.text('UoG Maraki Student Health Center'), findsOneWidget);
       expect(find.text(en.viewDetailsAction), findsWidgets);
+      final detailsBtn = tester.widget<ElevatedButton>(
+        find.widgetWithText(ElevatedButton, en.viewDetailsAction).first,
+      );
+      expect(detailsBtn.style?.backgroundColor?.resolve({}),
+          const Color(0xFF0284C7));
       expect(
           find.text(
               'UoG Comprehensive Specialized Hospital (GCMS) Adolescent Clinic'),

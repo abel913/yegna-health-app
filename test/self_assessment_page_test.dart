@@ -47,11 +47,10 @@ void main() {
       expect(find.text('Anonymous & Zero-PII Protected'), findsOneWidget);
 
       // Section counts
-      expect(find.text('Assessment Sections (8 Total)'), findsOneWidget);
-      expect(find.text('50 Questions'), findsOneWidget);
+      expect(find.text('Clinical Assessment Sections (7 Total)'), findsOneWidget);
+      expect(find.text('46 Questions'), findsOneWidget);
 
       // Specific sections
-      expect(find.text('Personal and General Information'), findsOneWidget);
       expect(find.text('Sexual Behaviour and Health Risks'), findsOneWidget);
       expect(find.text('HIV and STIs Self-Assessment'), findsOneWidget);
       expect(find.text('Contraception and Family Planning'), findsOneWidget);
@@ -69,8 +68,8 @@ void main() {
       await tester.pumpWidget(buildTestWidget());
       await tester.pumpAndSettle();
 
-      // Tap Section 1 card
-      await tester.tap(find.text('Personal and General Information'));
+      // Tap Section 2 card
+      await tester.tap(find.text('Sexual Behaviour and Health Risks'));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 300));
 
@@ -87,8 +86,8 @@ void main() {
       expect(find.text('የስነ-ተዋልዶ ጤና ምዘና ማዕከል'), findsOneWidget);
       expect(find.text('የጎንደር ዩኒቨርሲቲ ይፋዊ መጠይቅ'), findsOneWidget);
       expect(find.text('የጾታዊ እና ስነ-ተዋልዶ ጤና ራስን መመዘኛ'), findsOneWidget);
-      expect(find.text('የምዘና ክፍሎች (8 ክፍሎች)'), findsOneWidget);
-      expect(find.text('50 ጥያቄዎች'), findsOneWidget);
+      expect(find.text('የክሊኒካል ምዘና ክፍሎች (7 ክፍሎች)'), findsOneWidget);
+      expect(find.text('46 ጥያቄዎች'), findsOneWidget);
     });
   });
 }

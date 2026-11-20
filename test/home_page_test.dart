@@ -18,7 +18,6 @@ Widget _buildTestHomePage({
   VoidCallback? onOpenMentors,
   VoidCallback? onOpenFacilities,
   VoidCallback? onOpenAccount,
-  ValueChanged<String>? onOpenArticle,
 }) {
   return MaterialApp(
     locale: locale,
@@ -38,7 +37,6 @@ Widget _buildTestHomePage({
         onOpenMentors: onOpenMentors ?? () {},
         onOpenFacilities: onOpenFacilities ?? () {},
         onOpenAccount: onOpenAccount ?? () {},
-        onOpenArticle: onOpenArticle ?? (_) {},
       ),
     ),
   );
@@ -108,28 +106,10 @@ void main() {
     await tester.pumpAndSettle();
     expect(learningOpened, isTrue);
 
-    // 5. Doctor's Daily Article Card (Repositioned to bottom of cards)
-    expect(find.text(l10n.doctorDailyArticleBadge), findsOneWidget);
-    expect(find.text(l10n.dailyTipMythFact),
-        findsNothing); // "Myth vs Fact" removed!
-    expect(find.text(l10n.dailyTipTitle), findsOneWidget);
-
-    // Reset learningOpened flag to verify tapping doctor's article does NOT send to learn tab
-    learningOpened = false;
-
-    // Tap "Read Full Article" opens Doctor's Article modal without sending to learn tab
-    await tester.tap(find.text(l10n.readFullArticleAction));
-    await tester.pumpAndSettle();
-
-    // Verify modal is displayed with clinical note, author, advice cards, and close button
-    expect(find.text(l10n.doctorArticleSheetTitle), findsOneWidget);
-    expect(find.text(l10n.doctorAdviceSkincareTitle), findsOneWidget);
-    expect(find.text(l10n.closeArticleAction), findsOneWidget);
-    expect(learningOpened, isFalse);
-
-    // Close the sheet
-    await tester.tap(find.text(l10n.closeArticleAction));
-    await tester.pumpAndSettle();
+    // 5. Doctor's Daily Article Card has been completely removed
+    expect(find.text(l10n.doctorDailyArticleBadge), findsNothing);
+    expect(find.text(l10n.readFullArticleAction), findsNothing);
+    expect(find.text(l10n.dailyTipMythFact), findsNothing);
   });
 
   testWidgets('HomePage displays authenticated username in greeting',
@@ -173,7 +153,7 @@ void main() {
     final amharic = await AppLocalizations.delegate.load(const Locale('am'));
 
     expect(find.text(amharic.guestGreetingSubtitle), findsOneWidget);
-    expect(find.text(amharic.doctorDailyArticleBadge), findsOneWidget);
+    expect(find.text(amharic.doctorDailyArticleBadge), findsNothing);
     expect(find.text(amharic.dailyTipMythFact), findsNothing);
     expect(find.text(amharic.emergencyHelplineTitle), findsNothing);
     expect(find.text(amharic.exploreServicesHeading), findsOneWidget);

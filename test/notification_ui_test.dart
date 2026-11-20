@@ -62,7 +62,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Notifications'), findsOneWidget);
-      expect(find.text('2'), findsOneWidget);
+      expect(find.text('2'), findsWidgets);
       expect(find.text('2 Learning Modules Updated'), findsOneWidget);
       expect(find.text('Daily Youth Health Tip'), findsOneWidget);
       expect(find.text('Mark all read'), findsOneWidget);
@@ -104,8 +104,8 @@ void main() {
       await tester.tap(clearButton);
       await tester.pumpAndSettle();
 
-      expect(find.text('No notifications yet'), findsOneWidget);
-      expect(find.textContaining('You\'re all caught up!'), findsOneWidget);
+      expect(find.text('You\'re all caught up! 🎉'), findsOneWidget);
+      expect(find.textContaining('No new notifications right now'), findsOneWidget);
     });
 
     testWidgets('renders properly in Amharic', (tester) async {

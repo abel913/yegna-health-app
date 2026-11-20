@@ -87,11 +87,13 @@ void main() {
       // Detail sheet is presented
       expect(find.text('Meeting Schedule'), findsOneWidget);
       expect(find.text('Location / Venue'), findsOneWidget);
-      expect(find.text('Community Guidelines'), findsOneWidget);
+      expect(find.text('Announcements & Updates'), findsOneWidget);
 
-      // Scroll sheet down to reveal button
+      // Scroll sheet down to reveal guidelines and join button
       await tester.drag(find.byType(ListView).last, const Offset(0, -400));
       await tester.pumpAndSettle();
+
+      expect(find.text('Community Guidelines'), findsOneWidget);
 
       final joinBtn = find.text('Join This Club');
       expect(joinBtn, findsOneWidget);

@@ -31,11 +31,11 @@ Widget _buildTestApp({
 void main() {
   group('MentorRepository', () {
     test(
-        'LocalVerifiedMentorRepository returns 5 verified mentors with contacts',
+        'LocalVerifiedMentorRepository returns 7 verified mentors with contacts',
         () async {
       const repo = LocalVerifiedMentorRepository();
       final all = await repo.getMentors();
-      expect(all.length, 5);
+      expect(all.length, 7);
       expect(
         all.every((m) =>
             m.phoneNumber.isNotEmpty &&
@@ -56,35 +56,35 @@ void main() {
         isTrue,
       );
 
-      final searchResult = await repo.getMentors(query: 'Selamawit');
+      final searchResult = await repo.getMentors(query: 'Ayalnesh');
       expect(searchResult.length, 1);
-      expect(searchResult.first.id, 'selamawit_tadesse');
+      expect(searchResult.first.id, 'ayalnesh_adgo');
 
-      final searchByPhone = await repo.getMentors(query: '911234567');
+      final searchByPhone = await repo.getMentors(query: '911719684');
       expect(searchByPhone.length, 1);
-      expect(searchByPhone.first.id, 'selamawit_tadesse');
+      expect(searchByPhone.first.id, 'ayalnesh_adgo');
 
-      final searchByTelegram = await repo.getMentors(query: 'selam_tya');
+      final searchByTelegram = await repo.getMentors(query: 'ayalnesh_uog');
       expect(searchByTelegram.length, 1);
-      expect(searchByTelegram.first.id, 'selamawit_tadesse');
+      expect(searchByTelegram.first.id, 'ayalnesh_adgo');
 
       // Campus filtering
       final fasilCampuses = await repo.getMentors(campus: 'Atse Fasil Campus');
-      expect(fasilCampuses.length, 1);
-      expect(fasilCampuses.first.id, 'selamawit_tadesse');
+      expect(fasilCampuses.length, 2);
+      expect(fasilCampuses.first.id, 'ayalnesh_adgo');
 
       final tewodrosCampuses =
           await repo.getMentors(campus: 'Atse Tewodros Campus');
       expect(tewodrosCampuses.length, 1);
-      expect(tewodrosCampuses.first.id, 'dawit_haile');
+      expect(tewodrosCampuses.first.id, 'berhanu_ashagera');
 
       final cmhsCampuses =
           await repo.getMentors(campus: 'CMHS / Health College');
       expect(cmhsCampuses.length, 1);
-      expect(cmhsCampuses.first.id, 'hana_girma');
+      expect(cmhsCampuses.first.id, 'takele_adeno');
 
       final allCampuses = await repo.getMentors(campus: 'all');
-      expect(allCampuses.length, 5);
+      expect(allCampuses.length, 7);
     });
 
     test('UnconfiguredMentorRepository returns empty list', () async {
@@ -109,8 +109,8 @@ void main() {
       expect(find.text(en.searchMentors), findsOneWidget);
 
       // Check mentor presence on clean executive cards
-      expect(find.text('Selamawit Tadesse'), findsOneWidget);
-      expect(find.text('Dawit Haile'), findsOneWidget);
+      expect(find.text('Ayalnesh Adgo'), findsOneWidget);
+      expect(find.text('Takele Adeno'), findsOneWidget);
 
       // Verify quick action buttons exist on card
       expect(find.byIcon(Icons.phone_rounded), findsWidgets);
@@ -123,11 +123,11 @@ void main() {
       expect(find.text(en.allMentors), findsNothing);
 
       // Search by query
-      await tester.enterText(find.byType(TextField), 'Selamawit');
+      await tester.enterText(find.byType(TextField), 'Ayalnesh');
       await tester.pumpAndSettle();
 
-      expect(find.text('Selamawit Tadesse'), findsOneWidget);
-      expect(find.text('Dawit Haile'), findsNothing);
+      expect(find.text('Ayalnesh Adgo'), findsOneWidget);
+      expect(find.text('Takele Adeno'), findsNothing);
 
       // Open Mentor Detail Sheet via Profile Icon Button
       await tester.tap(find.byTooltip(en.viewProfileBtn).first);
@@ -135,8 +135,8 @@ void main() {
 
       expect(find.byType(MentorDetailSheet), findsOneWidget);
       expect(find.text(en.directContactsHeading), findsOneWidget);
-      expect(find.text('+251 91 123 4567'), findsOneWidget);
-      expect(find.text('@selam_tya_peer'), findsOneWidget);
+      expect(find.text('+251 91 171 9684'), findsOneWidget);
+      expect(find.text('@ayalnesh_uog_counselor'), findsOneWidget);
       expect(find.text(en.telegramChatAction), findsWidgets);
       expect(find.text(en.sessionsCountLabel), findsOneWidget);
 
@@ -170,7 +170,7 @@ void main() {
 
       final am = await AppLocalizations.delegate.load(const Locale('am'));
       expect(find.text(am.mentorsIntroduction), findsNothing);
-      expect(find.text('ሰላማዊት ታደሰ'), findsOneWidget);
+      expect(find.text('አያልነሽ አድጎ'), findsOneWidget);
       expect(find.byTooltip(am.callMentorAction), findsWidgets);
       expect(find.byTooltip(am.viewProfileBtn), findsWidgets);
       expect(find.byIcon(Icons.person_rounded), findsWidgets);
@@ -189,7 +189,7 @@ void main() {
       final triggerFinder = find.byKey(const Key('uog_campus_dropdown_trigger'));
       expect(triggerFinder, findsOneWidget);
       expect(find.text(en.allCampuses), findsOneWidget);
-      expect(find.text('5 mentors'), findsOneWidget);
+      expect(find.text('7 mentors'), findsOneWidget);
 
       // Tap to open glassmorphic dropdown popup
       await tester.tap(triggerFinder);
@@ -210,9 +210,9 @@ void main() {
       // Popup is dismissed
       expect(find.text(en.uogCampusesTitle), findsNothing);
 
-      // Verify filtered result: only Dawit Haile from Atse Tewodros Campus
-      expect(find.text('Dawit Haile'), findsOneWidget);
-      expect(find.text('Selamawit Tadesse'), findsNothing);
+      // Verify filtered result: only Berhanu Ashagera from Atse Tewodros Campus
+      expect(find.text('Berhanu Ashagera'), findsOneWidget);
+      expect(find.text('Ayalnesh Adgo'), findsNothing);
       expect(find.text('1 mentor'), findsOneWidget);
 
       // Check Clear filter button exists
@@ -223,10 +223,9 @@ void main() {
       await tester.tap(clearFinder);
       await tester.pumpAndSettle();
 
-      // All 5 mentors are restored
-      expect(find.text('Selamawit Tadesse'), findsOneWidget);
-      expect(find.text('Dawit Haile'), findsOneWidget);
-      expect(find.text('5 mentors'), findsOneWidget);
+      // All 7 mentors are restored
+      expect(find.text('Ayalnesh Adgo'), findsOneWidget);
+      expect(find.text('7 mentors'), findsOneWidget);
       expect(find.byKey(const Key('uog_campus_clear_filter')), findsNothing);
     });
 

@@ -7,6 +7,8 @@ import 'package:yegna_health_app/src/auth/auth_controller.dart';
 import 'package:yegna_health_app/src/learning/dynamic_module_detail_page.dart';
 import 'package:yegna_health_app/src/learning/learning_modules_carousel.dart';
 import 'package:yegna_health_app/src/learning/learning_progress_controller.dart';
+import 'package:yegna_health_app/src/learning/modules/dynamic/dynamic_module_parser.dart';
+import 'package:yegna_health_app/src/learning/widgets/curriculum/section_video_card.dart';
 
 import 'support/fake_auth_repository.dart';
 import 'support/fake_learning.dart';
@@ -185,6 +187,79 @@ void main() {
       expect(find.text('Milk & fruit'), findsOneWidget);
       expect(find.text('Doctor Tip: Hydrate well during exam weeks.'),
           findsOneWidget);
+    });
+
+    test('DynamicModuleParser extracts YouTube video URLs and IDs correctly', () {
+      const content = '''
+## Video Guide
+Watch this demonstration on nutrition.
+- Balanced meals
+> Clinical Tip: Eat slow
+> Video: https://www.youtube.com/watch?v=dQw4w9WgXcQ
+
+## Text Only
+Just plain reading here.
+''';
+
+      final sections = DynamicModuleParser.parseSections(content, false);
+      expect(sections.length, 2);
+      expect(sections[0].videoId, 'dQw4w9WgXcQ');
+      expect(sections[0].videoUrl, 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
+      expect(sections[1].videoId, isNull);
+      expect(sections[1].videoUrl, isNull);
+    });
+
+    testWidgets('renders SectionVideoCard when section includes a video URL',
+        (tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final authController = AuthController(FakeAuthRepository());
+      final progressController = LearningProgressController(
+        repository: FakeLearningProgressStore(),
+        authController: authController,
+      );
+
+      final videoModule = LearningModuleItem(
+        id: 'mod-vid',
+        number: '10',
+        title: (_) => 'Video Health Module',
+        description: (_) => 'Health education with video.',
+        imageAsset: 'assets/images/learning/module_01_puberty.jpg',
+        illustrationOnTop: true,
+        category: 'srh',
+        contentEn:
+            '## Physical Exercise\n\nDaily cardio is essential.\n- 30 mins walking\n> Video: https://youtu.be/dQw4w9WgXcQ',
+        contentAm: '## የአካል ብቃት እንቅስቃሴ\n\nየዕለት ተዕለት እንቅስቃሴ።',
+        readTimeMin: 5,
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: AppLocalizations.supportedLocales,
+          locale: const Locale('en'),
+          home: DynamicModuleDetailPage(
+            module: videoModule,
+            progressController: progressController,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Open the accordion
+      await tester.ensureVisible(find.text('Physical Exercise'));
+      await tester.tap(find.text('Physical Exercise'));
+      await tester.pumpAndSettle();
+
+      // SectionVideoCard should be rendered
+      expect(find.byType(SectionVideoCard), findsOneWidget);
+      expect(find.text('YOUTUBE'), findsOneWidget);
+      expect(find.text('Educational Video'), findsOneWidget);
+      expect(find.text('Tap to watch video'), findsOneWidget);
     });
   });
 }

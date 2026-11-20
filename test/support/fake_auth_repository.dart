@@ -25,6 +25,9 @@ class FakeAuthRepository implements AuthRepository {
   bool get isConfigured => true;
 
   @override
+  String? get token => null;
+
+  @override
   AuthSnapshot get snapshot => _snapshot;
 
   @override
