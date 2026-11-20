@@ -12,7 +12,8 @@
     "worker:bundle": "esbuild src/worker.ts --bundle --platform=node --format=esm --target=es2022 --external:cloudflare:node --external:cloudflare:workers --outfile=dist/worker.js",
     "prisma:generate": "prisma generate",
     "prisma:push": "prisma db push",
-    "prisma:seed": "tsx prisma/seed.ts"
+    "prisma:seed": "tsx prisma/seed.ts",
+    "seed:uog-support": "tsx prisma/seed-uog-support-data.ts"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^6.19.3",
