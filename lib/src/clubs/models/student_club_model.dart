@@ -1,3 +1,4 @@
+import 'club_announcement_model.dart';
 import 'club_category.dart';
 
 class StudentClub {
@@ -29,6 +30,7 @@ class StudentClub {
     ],
     this.isActive = true,
     this.tags = const [],
+    this.announcements = const [],
     required this.createdAt,
   });
 
@@ -51,6 +53,7 @@ class StudentClub {
   final List<String> rulesAm;
   final bool isActive;
   final List<String> tags;
+  final List<ClubAnnouncement> announcements;
   final DateTime createdAt;
 
   bool get isAtCapacity => maxCapacity != null && memberCount >= maxCapacity!;
@@ -82,6 +85,7 @@ class StudentClub {
     List<String>? rulesAm,
     bool? isActive,
     List<String>? tags,
+    List<ClubAnnouncement>? announcements,
   }) {
     return StudentClub(
       id: id,
@@ -103,6 +107,7 @@ class StudentClub {
       rulesAm: rulesAm ?? this.rulesAm,
       isActive: isActive ?? this.isActive,
       tags: tags ?? this.tags,
+      announcements: announcements ?? this.announcements,
       createdAt: createdAt,
     );
   }
@@ -127,6 +132,7 @@ class StudentClub {
         'rulesAm': rulesAm,
         'isActive': isActive,
         'tags': tags,
+        'announcements': announcements.map((a) => a.toJson()).toList(),
         'createdAt': createdAt.toIso8601String(),
       };
 
@@ -160,6 +166,10 @@ class StudentClub {
         isActive: json['isActive'] as bool? ?? true,
         tags: (json['tags'] as List<Object?>?)
                 ?.map((e) => e! as String)
+                .toList() ??
+            const [],
+        announcements: (json['announcements'] as List<Object?>?)
+                ?.map((e) => ClubAnnouncement.fromJson(e! as Map<String, dynamic>))
                 .toList() ??
             const [],
         createdAt: DateTime.parse(json['createdAt']! as String),

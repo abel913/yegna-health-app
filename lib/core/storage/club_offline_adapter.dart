@@ -48,6 +48,18 @@ class ClubOfflineAdapter {
       } catch (_) {}
     }
 
+    final rawAnnouncements = map['announcements'];
+    List<ClubAnnouncement> announcementsList = [];
+    if (rawAnnouncements is List) {
+      for (final a in rawAnnouncements) {
+        if (a is Map<String, dynamic>) {
+          announcementsList.add(ClubAnnouncement.fromJson(a));
+        } else if (a is Map) {
+          announcementsList.add(ClubAnnouncement.fromJson(Map<String, dynamic>.from(a)));
+        }
+      }
+    }
+
     return StudentClub(
       id: map['id']?.toString() ??
           'club_${DateTime.now().millisecondsSinceEpoch}',
@@ -67,6 +79,7 @@ class ClubOfflineAdapter {
       rulesEn: rulesList,
       rulesAm: rulesList,
       isActive: map['isApproved'] as bool? ?? true,
+      announcements: announcementsList,
       createdAt: DateTime.tryParse(map['createdAt']?.toString() ?? '') ??
           DateTime.now(),
     );

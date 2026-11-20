@@ -4,6 +4,7 @@ import '../notifications/notification_controller.dart';
 import '../theme/app_glass_theme.dart';
 import 'club_controller.dart';
 import 'club_models.dart';
+import 'widgets/club_announcements_section.dart';
 import 'widgets/club_contact_launcher.dart';
 import 'widgets/club_faculty_mentor_card.dart';
 import 'widgets/club_roster_section.dart';
@@ -148,6 +149,13 @@ class _ClubDetailSheetState extends State<ClubDetailSheet> {
                         isDark: isDark,
                         glass: glass,
                         onContactTap: () => ClubContactLauncher.launch(context, liveClub.mentorContact),
+                      ),
+                      const SizedBox(height: 20),
+                      ClubAnnouncementsSection(
+                        club: liveClub,
+                        isAmharic: isAmharic,
+                        isDark: isDark,
+                        glass: glass,
                       ),
                       const SizedBox(height: 20),
                       ClubRulesSection(
