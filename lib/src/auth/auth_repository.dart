@@ -2,6 +2,7 @@ import 'auth_models.dart';
 
 abstract interface class AuthRepository {
   bool get isConfigured;
+  String? get token;
   AuthSnapshot get snapshot;
   Stream<AuthSnapshot> get authChanges;
 
@@ -27,6 +28,9 @@ class UnconfiguredAuthRepository implements AuthRepository {
 
   @override
   bool get isConfigured => false;
+
+  @override
+  String? get token => null;
 
   @override
   AuthSnapshot get snapshot => const AuthSnapshot();

@@ -35,6 +35,9 @@ class BackendAuthRepository implements AuthRepository {
   bool get isConfigured => true;
 
   @override
+  String? get token => _session.token;
+
+  @override
   AuthSnapshot get snapshot => _snapshot;
 
   @override

@@ -31,6 +31,7 @@ class AuthController extends ChangeNotifier {
   bool _disposed = false;
 
   bool get isConfigured => _repository.isConfigured;
+  String? get token => _repository.token;
   bool get isBusy => _isBusy;
   AuthIssue? get issue => _issue ?? _streamIssue;
   String? get verificationEmail => _verificationEmail;

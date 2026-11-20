@@ -29,6 +29,9 @@ class SupabaseAuthRepository implements AuthRepository {
   bool get isConfigured => true;
 
   @override
+  String? get token => _client.auth.currentSession?.accessToken;
+
+  @override
   AuthSnapshot get snapshot => AuthSnapshot(
         user: SupabaseAuthMapping.toAuthUser(_client.auth.currentUser),
       );
