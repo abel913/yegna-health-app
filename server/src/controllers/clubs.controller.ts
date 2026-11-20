@@ -26,12 +26,17 @@ export async function getAllClubs(req: Request, res: Response) {
         _count: {
           select: { members: true },
         },
+        announcements: {
+          orderBy: [{ isPinned: 'desc' }, { createdAt: 'desc' }],
+          take: 10,
+        },
       },
     });
 
     const parsed = clubs.map((c) => ({
       ...c,
       memberCount: c._count.members,
+      announcements: c.announcements || [],
     }));
 
     return res.json({ clubs: parsed });
@@ -251,6 +256,118 @@ export async function removeMemberAdmin(req: AuthRequest, res: Response) {
     });
 
     return res.json({ success: true, message: 'Member removed from club successfully.' });
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message });
+  }
+}
+
+// --- CLUB ANNOUNCEMENTS ---
+
+const announcementSchema = z.object({
+  title: z.string().min(3),
+  content: z.string().min(5),
+  type: z.enum(['general', 'venue_change', 'event', 'urgent']).default('general'),
+  isPinned: z.boolean().default(false),
+  authorName: z.string().optional().default('Club Coordinator'),
+});
+
+export async function getClubAnnouncements(req: Request, res: Response) {
+  try {
+    const { id: clubId } = req.params;
+    const announcements = await prisma.clubAnnouncement.findMany({
+      where: { clubId },
+      orderBy: [{ isPinned: 'desc' }, { createdAt: 'desc' }],
+    });
+    return res.json({ announcements });
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message });
+  }
+}
+
+export async function createClubAnnouncement(req: AuthRequest, res: Response) {
+  try {
+    const { id: clubId } = req.params;
+    const data = announcementSchema.parse(req.body);
+
+    const club = await prisma.studentClub.findUnique({
+      where: { id: clubId },
+      select: { id: true, name: true },
+    });
+    if (!club) {
+      return res.status(404).json({ error: 'Club not found' });
+    }
+
+    const announcement = await prisma.clubAnnouncement.create({
+      data: {
+        clubId,
+        title: data.title,
+        content: data.content,
+        type: data.type,
+        isPinned: data.isPinned,
+        authorName: data.authorName || req.user?.displayName || 'Club Coordinator',
+      },
+    });
+
+    await prisma.auditLog.create({
+      data: {
+        action: 'CLUB_ANNOUNCEMENT_CREATED',
+        adminEmail: req.user?.email || 'admin@yegnahealth.org',
+        details: `Posted announcement "${announcement.title}" (${announcement.type}) to club ${club.name}`,
+      },
+    });
+
+    return res.status(201).json({ announcement });
+  } catch (err: any) {
+    if (err instanceof z.ZodError) {
+      return res.status(400).json({ error: 'Validation failed', details: err.issues });
+    }
+    return res.status(500).json({ error: err.message });
+  }
+}
+
+export async function updateClubAnnouncement(req: AuthRequest, res: Response) {
+  try {
+    const { announcementId } = req.params;
+    const data = announcementSchema.partial().parse(req.body);
+
+    const announcement = await prisma.clubAnnouncement.update({
+      where: { id: announcementId },
+      data,
+    });
+
+    await prisma.auditLog.create({
+      data: {
+        action: 'CLUB_ANNOUNCEMENT_UPDATED',
+        adminEmail: req.user?.email || 'admin@yegnahealth.org',
+        details: `Updated announcement "${announcement.title}"`,
+      },
+    });
+
+    return res.json({ announcement });
+  } catch (err: any) {
+    if (err instanceof z.ZodError) {
+      return res.status(400).json({ error: 'Validation failed', details: err.issues });
+    }
+    return res.status(500).json({ error: err.message });
+  }
+}
+
+export async function deleteClubAnnouncement(req: AuthRequest, res: Response) {
+  try {
+    const { announcementId } = req.params;
+    const announcement = await prisma.clubAnnouncement.delete({
+      where: { id: announcementId },
+    });
+
+    await prisma.auditLog.create({
+      data: {
+        action: 'CLUB_ANNOUNCEMENT_DELETED',
+        adminEmail: req.user?.email || 'admin@yegnahealth.org',
+        details: `Deleted announcement "${announcement.title}"`,
+      },
+    });
+
+    return res.json({ success: true, message: 'Announcement deleted successfully.' });
   } catch (err: any) {
     return res.status(500).json({ error: err.message });
   }
