@@ -11,19 +11,19 @@ generator client {
 }
 
 model User {
-  id                String       @id @default(uuid())
-  email             String       @unique
-  passwordHash      String
-  displayName       String
-  role              String       @default("STUDENT") // STUDENT, MENTOR, CONTENT_AUTHOR, ADMIN, SUPER_ADMIN, GOVERNMENT_VIEWER
+  id                 String       @id @default(uuid())
+  email              String       @unique
+  passwordHash       String
+  displayName        String
+  role               String       @default("STUDENT") // STUDENT, MENTOR, CONTENT_AUTHOR, ADMIN, SUPER_ADMIN, GOVERNMENT_VIEWER
   mustChangePassword Boolean      @default(false)
-  isSuspended       Boolean      @default(false)
-  isEmailVerified   Boolean      @default(false)
-  hasCompletedSurvey Boolean     @default(false)
-  verificationCode  String?
-  verificationToken String?
-  createdAt         DateTime     @default(now())
-  updatedAt         DateTime     @updatedAt
+  isSuspended        Boolean      @default(false)
+  isEmailVerified    Boolean      @default(false)
+  hasCompletedSurvey Boolean      @default(false)
+  verificationCode   String?
+  verificationToken  String?
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
 
   memberships  ClubMember[]
 
@@ -31,20 +31,30 @@ model User {
 }
 
 model Facility {
-  id             String   @id @default(uuid())
-  nameEn         String
-  nameAm         String
-  subCity        String   // Arada, Kirkos, Bole, etc.
-  woreda         String?
-  addressEn      String
-  addressAm      String
-  phone          String
-  latitude       Float
-  longitude      Float
-  operatingHours String   @default("08:30 - 17:30")
-  isVerified     Boolean  @default(true)
-  services       String   @default("[]") // JSON string array of tags
-  createdAt      DateTime @default(now())
+  id                     String   @id @default(uuid())
+  nameEn                 String
+  nameAm                 String
+  category               String   @default("clinical") // clinical, counseling, academic, student_affairs, sports_dining, accessibility
+  subCity                String   // Campus Name (e.g. UoG - Maraki Campus)
+  woreda                 String?  // Branch / Wing / Block
+  buildingEn             String?
+  buildingAm             String?
+  landmarkEn             String?
+  landmarkAm             String?
+  focalPerson            String?
+  focalPhone             String?
+  telegramHandle         String?
+  addressEn              String
+  addressAm              String
+  phone                  String
+  latitude               Float
+  longitude              Float
+  operatingHours         String   @default("08:30 - 17:30")
+  isVerified             Boolean  @default(true)
+  isWheelchairAccessible Boolean  @default(false)
+  hasPrivateRoom         Boolean  @default(false)
+  services               String   @default("[]") // JSON string array of tags
+  createdAt              DateTime @default(now())
 
   @@schema("yegna")
 }
@@ -121,7 +131,6 @@ model LearningAssessmentQuestion {
   choices    LearningAssessmentChoice[]
 
   @@index([assessmentId, position])
-
   @@schema("yegna")
 }
 
@@ -136,7 +145,6 @@ model LearningAssessmentChoice {
   question LearningAssessmentQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
 
   @@unique([questionId, position])
-
   @@schema("yegna")
 }
 
@@ -159,16 +167,20 @@ model QuizQuestion {
 }
 
 model StudentClub {
-  id          String       @id @default(uuid())
-  name        String
-  description String
-  category    String       // wellness, mental_health, srh, leadership
-  venue       String?
-  meetingTime String?
-  isApproved  Boolean      @default(true)
-  createdAt   DateTime     @default(now())
+  id            String       @id @default(uuid())
+  name          String
+  description   String
+  category      String       // wellness, mental_health, srh, leadership
+  venue         String?
+  meetingTime   String?
+  mentorName    String?
+  mentorContact String?
+  rules         String?
+  isApproved    Boolean      @default(true)
+  createdAt     DateTime     @default(now())
 
-  members     ClubMember[]
+  members       ClubMember[]
+  announcements ClubAnnouncement[]
 
   @@schema("yegna")
 }
@@ -186,6 +198,23 @@ model ClubMember {
   @@schema("yegna")
 }
 
+model ClubAnnouncement {
+  id          String      @id @default(uuid())
+  clubId      String
+  title       String
+  content     String
+  type        String      @default("general") // general, venue_change, event, urgent
+  isPinned    Boolean     @default(false)
+  authorName  String?     @default("Club Coordinator")
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  club        StudentClub @relation(fields: [clubId], references: [id], onDelete: Cascade)
+
+  @@index([clubId])
+  @@schema("yegna")
+}
+
 model AuditLog {
   id         String   @id @default(uuid())
   action     String   // e.g. "FACILITY_CREATED", "USER_SUSPENDED", "MODULE_UPDATED"
@@ -197,25 +226,25 @@ model AuditLog {
 }
 
 model SurveyQuestion {
-  id            String                 @id @default(uuid())
-  position      Int                    @default(0)
-  key           String                 @unique // unique identifier slug e.g. "age_group"
-  sectionNumber Int                    @default(1)
-  sectionKey    String                 @default("section_1")
-  sectionTitleEn String                @default("Personal & General Information")
-  sectionTitleAm String                @default("አጠቃላይ የግል መረጃ")
-  moduleKey     String?                // "general", "srh", "hiv", "contraception", "puberty", "gbv", "mental_health", "support"
-  titleEn       String
-  titleAm       String
-  descriptionEn String?
-  descriptionAm String?
-  type          String                 @default("SINGLE_CHOICE") // SINGLE_CHOICE, MULTI_CHOICE
-  isRequired    Boolean                @default(true)
-  isActive      Boolean                @default(true)
-  createdAt     DateTime               @default(now())
-  updatedAt     DateTime               @updatedAt
+  id             String                 @id @default(uuid())
+  position       Int                    @default(0)
+  key            String                 @unique // unique identifier slug e.g. "age_group"
+  sectionNumber  Int                    @default(1)
+  sectionKey     String                 @default("section_1")
+  sectionTitleEn String                 @default("Personal & General Information")
+  sectionTitleAm String                 @default("አጠቃላይ የግል መረጃ")
+  moduleKey      String?                // "general", "srh", "hiv", "contraception", "puberty", "gbv", "mental_health", "support"
+  titleEn        String
+  titleAm        String
+  descriptionEn  String?
+  descriptionAm  String?
+  type           String                 @default("SINGLE_CHOICE") // SINGLE_CHOICE, MULTI_CHOICE
+  isRequired     Boolean                @default(true)
+  isActive       Boolean                @default(true)
+  createdAt      DateTime               @default(now())
+  updatedAt      DateTime               @updatedAt
 
-  options       SurveyQuestionOption[]
+  options        SurveyQuestionOption[]
 
   @@index([sectionNumber, position])
   @@schema("yegna")
@@ -242,9 +271,31 @@ model BaselineSurveyResponse {
   yearOfStudy    String?
   disabilityNeed String?
   knowsGondarSrh String?
-  answers        Json?    // Dynamic answer mappings: { [questionIdOrKey]: value }
+  answers        String?  // Dynamic answer mappings JSON string: { [questionIdOrKey]: value }
   submittedAt    DateTime @default(now())
 
   @@schema("yegna")
 }
 
+model BroadcastNotification {
+  id             String    @id @default(uuid())
+  titleEn        String
+  titleAm        String
+  messageEn      String
+  messageAm      String
+  type           String    @default("system") // healthTip, system, alert, learning, facility, club
+  priority       String    @default("normal") // normal, high, urgent
+  targetCampus   String    @default("All")    // All or specific campus name
+  routePayload   String?
+  actionLabelEn  String?
+  actionLabelAm  String?
+  isPinned       Boolean   @default(false)
+  authorEmail    String?
+  expiresAt      DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@index([targetCampus, createdAt])
+  @@index([priority, createdAt])
+  @@schema("yegna")
+}
