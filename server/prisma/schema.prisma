@@ -164,6 +164,7 @@ model StudentClub {
   createdAt     DateTime     @default(now())
 
   members       ClubMember[]
+  announcements ClubAnnouncement[]
 }
 
 model ClubMember {
@@ -176,6 +177,22 @@ model ClubMember {
   club      StudentClub @relation(fields: [clubId], references: [id], onDelete: Cascade)
 
   @@unique([userId, clubId])
+}
+
+model ClubAnnouncement {
+  id          String      @id @default(uuid())
+  clubId      String
+  title       String
+  content     String
+  type        String      @default("general") // general, venue_change, event, urgent
+  isPinned    Boolean     @default(false)
+  authorName  String?     @default("Club Coordinator")
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  club        StudentClub @relation(fields: [clubId], references: [id], onDelete: Cascade)
+
+  @@index([clubId])
 }
 
 model AuditLog {
@@ -232,4 +249,26 @@ model BaselineSurveyResponse {
   knowsGondarSrh String?
   answers        String?  // Dynamic answer mappings JSON string: { [questionIdOrKey]: value }
   submittedAt    DateTime @default(now())
+}
+
+model BroadcastNotification {
+  id             String    @id @default(uuid())
+  titleEn        String
+  titleAm        String
+  messageEn      String
+  messageAm      String
+  type           String    @default("system") // healthTip, system, alert, learning, facility, club
+  priority       String    @default("normal") // normal, high, urgent
+  targetCampus   String    @default("All")    // All or specific campus name
+  routePayload   String?
+  actionLabelEn  String?
+  actionLabelAm  String?
+  isPinned       Boolean   @default(false)
+  authorEmail    String?
+  expiresAt      DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@index([targetCampus, createdAt])
+  @@index([priority, createdAt])
 }
