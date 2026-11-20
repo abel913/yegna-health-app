@@ -3,13 +3,14 @@ import 'package:flutter/material.dart';
 import '../../l10n/app_localizations.dart';
 import '../theme/app_glass_theme.dart';
 import 'notification_controller.dart';
+import 'widgets/notification_category_filter_chips.dart';
 import 'widgets/notification_empty_state.dart';
 import 'widgets/notification_item_tile.dart';
 import 'widgets/notification_sheet_header.dart';
 
-/// Modal bottom sheet presenting in-app notifications, unread badges,
-/// individual dismissals, mark-all-read, and deep links to settings.
-class NotificationCenterSheet extends StatelessWidget {
+/// Modal bottom sheet presenting in-app notifications, category filtering,
+/// priority alerts, individual dismissals, mark-all-read, and deep links.
+class NotificationCenterSheet extends StatefulWidget {
   const NotificationCenterSheet({
     required this.controller,
     this.onOpenSettings,
@@ -40,16 +41,26 @@ class NotificationCenterSheet extends StatelessWidget {
   }
 
   @override
+  State<NotificationCenterSheet> createState() => _NotificationCenterSheetState();
+}
+
+class _NotificationCenterSheetState extends State<NotificationCenterSheet> {
+  NotificationFilter _selectedFilter = NotificationFilter.all;
+
+  @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final isDark = context.isDark;
-    final maxSheetHeight = MediaQuery.of(context).size.height * 0.82;
+    final glass = context.glassTheme;
+    final isAmharic = Localizations.localeOf(context).languageCode == 'am';
+    final maxSheetHeight = MediaQuery.of(context).size.height * 0.85;
 
     return ListenableBuilder(
-      listenable: controller,
+      listenable: widget.controller,
       builder: (context, _) {
-        final notifications = controller.notifications;
-        final unreadCount = controller.unreadCount;
+        final notifications = widget.controller.filteredNotifications(_selectedFilter);
+        final unreadCount = widget.controller.unreadCount;
+        final urgentCount = widget.controller.urgentCount;
 
         return Container(
           constraints: BoxConstraints(maxHeight: maxSheetHeight),
@@ -72,36 +83,47 @@ class NotificationCenterSheet extends StatelessWidget {
               children: [
                 NotificationSheetHeader(
                   unreadCount: unreadCount,
-                  hasNotifications: notifications.isNotEmpty,
+                  hasNotifications: widget.controller.notifications.isNotEmpty,
                   isDark: isDark,
-                  onMarkAllRead: () => controller.markAllAsRead(),
-                  onClearAll: () => controller.clearAll(),
+                  onMarkAllRead: () => widget.controller.markAllAsRead(),
+                  onClearAll: () => widget.controller.clearAll(),
                 ),
+                if (widget.controller.notifications.isNotEmpty) ...[
+                  NotificationCategoryFilterChips(
+                    selectedFilter: _selectedFilter,
+                    onSelectFilter: (f) => setState(() => _selectedFilter = f),
+                    unreadCount: unreadCount,
+                    urgentCount: urgentCount,
+                    isDark: isDark,
+                    glass: glass,
+                  ),
+                  const SizedBox(height: 10),
+                ],
                 Flexible(
                   child: notifications.isEmpty
                       ? NotificationEmptyState(isDark: isDark)
                       : ListView.separated(
                           shrinkWrap: true,
-                          padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+                          padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
                           itemCount: notifications.length,
-                          separatorBuilder: (_, __) =>
-                              const SizedBox(height: 10),
+                          separatorBuilder: (_, __) => const SizedBox(height: 10),
                           itemBuilder: (context, index) {
                             final item = notifications[index];
                             return NotificationItemTile(
                               notification: item,
                               isDark: isDark,
+                              isAmharic: isAmharic,
                               onTap: () {
                                 if (!item.isRead) {
-                                  controller.markAsRead(item.id);
+                                  widget.controller.markAsRead(item.id);
                                 }
                                 if (item.routePayload != null) {
                                   Navigator.of(context).pop();
-                                  onNavigate?.call(item.routePayload!);
+                                  widget.onNavigate?.call(item.routePayload!);
                                 }
                               },
                               onDismiss: () =>
-                                  controller.deleteNotification(item.id),
+                                  widget.controller.deleteNotification(item.id),
                             );
                           },
                         ),
@@ -112,7 +134,7 @@ class NotificationCenterSheet extends StatelessWidget {
                   actionLabel: l10n.notificationSettingsAction,
                   onOpenSettings: () {
                     Navigator.of(context).pop();
-                    onOpenSettings?.call();
+                    widget.onOpenSettings?.call();
                   },
                 ),
               ],
@@ -158,20 +180,22 @@ class _NotificationFooter extends StatelessWidget {
             style: TextStyle(
               fontSize: 12,
               color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
-              fontWeight: FontWeight.w500,
             ),
           ),
-          TextButton.icon(
+          TextButton(
             onPressed: onOpenSettings,
-            icon: const Icon(Icons.tune_rounded, size: 16),
-            label: Text(actionLabel),
             style: TextButton.styleFrom(
-              foregroundColor: const Color(0xFF0284C7),
-              textStyle: const TextStyle(
-                fontSize: 12.5,
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              minimumSize: Size.zero,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+            child: Text(
+              actionLabel,
+              style: const TextStyle(
+                fontSize: 12,
                 fontWeight: FontWeight.w700,
+                color: Color(0xFF0284C7),
               ),
-              visualDensity: VisualDensity.compact,
             ),
           ),
         ],

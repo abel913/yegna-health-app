@@ -16,6 +16,12 @@ extension NotificationTypeVisuals on NotificationType {
         return Icons.lightbulb_rounded;
       case NotificationType.system:
         return Icons.info_outline_rounded;
+      case NotificationType.club:
+        return Icons.campaign_rounded;
+      case NotificationType.alert:
+        return Icons.warning_amber_rounded;
+      case NotificationType.facility:
+        return Icons.local_hospital_rounded;
     }
   }
 
@@ -48,6 +54,24 @@ extension NotificationTypeVisuals on NotificationType {
       case NotificationType.system:
         return const LinearGradient(
           colors: [Color(0xFF007A78), Color(0xFF005A71)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        );
+      case NotificationType.club:
+        return const LinearGradient(
+          colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        );
+      case NotificationType.alert:
+        return const LinearGradient(
+          colors: [Color(0xFFEF4444), Color(0xFFDC2626)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        );
+      case NotificationType.facility:
+        return const LinearGradient(
+          colors: [Color(0xFF0D9488), Color(0xFF0F766E)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         );

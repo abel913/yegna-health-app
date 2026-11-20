@@ -16,39 +16,57 @@ class NotificationEmptyState extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 32),
+      padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 28),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 72,
-            height: 72,
+            width: 76,
+            height: 76,
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF1E293B) : const Color(0xFFEAF5FD),
+              gradient: LinearGradient(
+                colors: isDark
+                    ? [const Color(0xFF1E293B), const Color(0xFF0F172A)]
+                    : [const Color(0xFFEEF2FF), const Color(0xFFE0E7FF)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
               shape: BoxShape.circle,
+              border: Border.all(
+                color: isDark ? const Color(0xFF334155) : const Color(0xFFC7D2FE),
+                width: 1.5,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFF6366F1).withValues(alpha: isDark ? 0.2 : 0.1),
+                  blurRadius: 16,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
-            child: Icon(
-              Icons.notifications_off_outlined,
-              size: 34,
-              color: isDark ? const Color(0xFF64748B) : const Color(0xFF0284C7),
+            child: const Icon(
+              Icons.notifications_none_rounded,
+              size: 36,
+              color: Color(0xFF6366F1),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 18),
           Text(
-            l10n.noNotifications,
+            l10n.notificationAllCaughtUp,
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w800,
-              color: isDark ? Colors.white : const Color(0xFF08264A),
+              fontFamily: 'PlusJakartaSans',
+              color: isDark ? Colors.white : const Color(0xFF0F172A),
             ),
           ),
           const SizedBox(height: 6),
           Text(
-            l10n.noNotificationsSubtitle,
+            l10n.notificationAllCaughtUpDesc,
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: 13,
-              height: 1.4,
+              fontSize: 12.5,
+              height: 1.45,
               color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
             ),
           ),
