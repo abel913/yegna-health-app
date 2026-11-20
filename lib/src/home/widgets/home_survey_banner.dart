@@ -5,6 +5,7 @@ import '../../auth/auth_controller.dart';
 import '../../onboarding/onboarding_survey_repository.dart';
 import '../../theme/app_glass_theme.dart';
 import 'deep_glass_container.dart';
+import 'home_survey_completed_card.dart';
 
 class HomeSurveyBanner extends StatelessWidget {
   const HomeSurveyBanner({
@@ -35,7 +36,10 @@ class HomeSurveyBanner extends StatelessWidget {
       builder: (context, snapshot) {
         final isCompleted = snapshot.data ?? false;
         if (isCompleted) {
-          return const SizedBox.shrink();
+          return HomeSurveyCompletedCard(
+            isDark: isDark,
+            isAmharic: l10n.localeName == 'am',
+          );
         }
 
         return Padding(

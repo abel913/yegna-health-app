@@ -15,6 +15,7 @@ class HomeLearningModuleModal {
     required bool isAmharic,
     required bool isCompleted,
     required VoidCallback onOpenLearning,
+    VoidCallback? onOpenDetail,
   }) {
     final l10n = AppLocalizations.of(context);
 
@@ -149,11 +150,17 @@ class HomeLearningModuleModal {
                   child: ElevatedButton.icon(
                     onPressed: () {
                       Navigator.pop(ctx);
-                      onOpenLearning();
+                      if (onOpenDetail != null) {
+                        onOpenDetail();
+                      } else {
+                        onOpenLearning();
+                      }
                     },
                     icon: const Icon(Icons.menu_book_rounded, size: 18),
                     label: Text(
-                      isAmharic ? 'በትምህርት ገጽ ይመልከቱ' : 'Explore in Learn Tab',
+                      onOpenDetail != null
+                          ? (isAmharic ? 'ትምህርቱን ጀምር' : 'Read Module Now')
+                          : (isAmharic ? 'በትምህርት ገጽ ይመልከቱ' : 'Explore in Learn Tab'),
                       style: const TextStyle(
                           fontWeight: FontWeight.w700, fontSize: 14),
                     ),

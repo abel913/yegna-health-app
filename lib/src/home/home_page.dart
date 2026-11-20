@@ -8,8 +8,6 @@ import '../learning/learning_progress_controller.dart';
 import '../theme/app_glass_theme.dart';
 import 'widgets/home_ambient_mesh.dart';
 import 'widgets/home_clubs_promo_card.dart';
-import 'widgets/home_doctor_article_card.dart';
-import 'widgets/home_doctor_article_sheet.dart';
 import 'widgets/home_greeting_header.dart';
 import 'widgets/home_learning_carousel.dart';
 import 'widgets/home_quick_actions_grid.dart';
@@ -26,7 +24,6 @@ class HomePage extends StatefulWidget {
     required this.onOpenMentors,
     required this.onOpenFacilities,
     required this.onOpenAccount,
-    required this.onOpenArticle,
     this.onOpenSelfAssessment,
     this.onOpenClubs,
     this.authController,
@@ -42,7 +39,6 @@ class HomePage extends StatefulWidget {
   final VoidCallback onOpenMentors;
   final VoidCallback onOpenFacilities;
   final VoidCallback onOpenAccount;
-  final ValueChanged<String> onOpenArticle;
   final VoidCallback? onOpenSelfAssessment;
   final VoidCallback? onOpenClubs;
   final AuthController? authController;
@@ -164,20 +160,6 @@ class _HomePageState extends State<HomePage> {
                       progressController: widget.progressController,
                       assessmentRepository: widget.assessmentRepository,
                       onOpenLearning: widget.onOpenLearning,
-                      onOpenArticle: widget.onOpenArticle,
-                    ),
-                    const SizedBox(height: 20),
-                    HomeDoctorArticleCard(
-                      badgeText: l10n.doctorDailyArticleBadge,
-                      authorText: l10n.doctorArticleAuthor,
-                      titleText: l10n.dailyTipTitle,
-                      bodyText: l10n.dailyTipBody,
-                      actionText: l10n.readFullArticleAction,
-                      onTap: () => HomeDoctorArticleSheet.show(
-                        context,
-                        l10n: l10n,
-                        onOpenMentors: widget.onOpenMentors,
-                      ),
                     ),
                     const SizedBox(height: 22),
                     HomeSafetyBanner(text: l10n.healthEducationBoundary),

@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import '../../learning/assessment_repository.dart';
 import '../../learning/data/bundled_learning_modules.dart';
 import '../../learning/education_repository.dart';
-import '../../learning/hiv_module_page.dart';
 import '../../learning/learning_progress_controller.dart';
 import '../../learning/models/learning_module_item.dart';
+import '../../learning/screens/learning_module_navigator.dart';
 import '../../learning/sync_education_repository.dart';
 import 'home_learning_module_modal.dart';
 import 'home_learning_module_tile.dart';
@@ -14,7 +14,6 @@ class HomeLearningCarousel extends StatelessWidget {
   const HomeLearningCarousel({
     required this.locale,
     required this.onOpenLearning,
-    required this.onOpenArticle,
     this.educationRepository,
     this.progressController,
     this.assessmentRepository,
@@ -23,68 +22,75 @@ class HomeLearningCarousel extends StatelessWidget {
 
   final Locale locale;
   final VoidCallback onOpenLearning;
-  final ValueChanged<String> onOpenArticle;
   final EducationRepository? educationRepository;
   final LearningProgressController? progressController;
   final AssessmentRepository? assessmentRepository;
 
   void _handleModuleTap(BuildContext context, LearningModuleItem module) {
-    if (module.id == 'module-07' && progressController != null) {
-      Navigator.of(context).push<void>(
-        MaterialPageRoute<void>(
-          builder: (_) => HivModuleDetailPage(
-            progressController: progressController!,
-            assessmentRepository: assessmentRepository,
-            onOpenQuiz: onOpenLearning,
-          ),
-        ),
-      );
-    } else {
-      final isAmharic = locale.languageCode == 'am';
-      final isCompleted = progressController?.progress?.articles
-              .any((a) => a.articleId == module.id) ??
-          false;
-      HomeLearningModuleModal.show(
-        context,
-        module: module,
-        isAmharic: isAmharic,
-        isCompleted: isCompleted,
-        onOpenLearning: onOpenLearning,
-      );
-    }
+    final isAmharic = locale.languageCode == 'am';
+    final isCompleted = progressController?.progress?.articles
+            .any((a) => a.articleId == module.id) ??
+        false;
+    HomeLearningModuleModal.show(
+      context,
+      module: module,
+      isAmharic: isAmharic,
+      isCompleted: isCompleted,
+      onOpenLearning: onOpenLearning,
+      onOpenDetail: progressController != null
+          ? () => LearningModuleNavigator.openModule(
+                context: context,
+                module: module,
+                progressController: progressController!,
+                assessmentRepository: assessmentRepository,
+                onOpenDynamicQuiz: onOpenLearning,
+              )
+          : null,
+    );
   }
 
   Widget _buildCarousel(BuildContext context, Set<String> completedIds) {
     final isAmharic = locale.languageCode == 'am';
+    final repo = educationRepository;
 
-    return FutureBuilder<List<LearningModuleItem>>(
-      future: (educationRepository is SyncEducationRepository)
-          ? (educationRepository as SyncEducationRepository)
-              .getCurriculumModuleItems()
-          : null,
-      initialData: kLearningModules,
-      builder: (context, snapshot) {
-        final modules = snapshot.data ?? kLearningModules;
-        return SizedBox(
-          height: 255,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            itemCount: modules.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 14),
-            itemBuilder: (context, index) {
-              final module = modules[index];
-              final isCompleted = completedIds.contains(module.id);
-              return HomeLearningModuleTile(
-                module: module,
-                isCompleted: isCompleted,
-                isAmharic: isAmharic,
-                onTap: () => _handleModuleTap(context, module),
-              );
-            },
-          ),
-        );
-      },
-    );
+    Widget buildFuture() {
+      return FutureBuilder<List<LearningModuleItem>>(
+        future: (repo is SyncEducationRepository)
+            ? repo.getCurriculumModuleItems()
+            : null,
+        initialData: kLearningModules,
+        builder: (context, snapshot) {
+          final modules = snapshot.data ?? kLearningModules;
+          return SizedBox(
+            height: 255,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: modules.length,
+              separatorBuilder: (_, __) => const SizedBox(width: 14),
+              itemBuilder: (context, index) {
+                final module = modules[index];
+                final isCompleted = completedIds.contains(module.id);
+                return HomeLearningModuleTile(
+                  module: module,
+                  isCompleted: isCompleted,
+                  isAmharic: isAmharic,
+                  onTap: () => _handleModuleTap(context, module),
+                );
+              },
+            ),
+          );
+        },
+      );
+    }
+
+    if (repo is Listenable) {
+      return ListenableBuilder(
+        listenable: repo as Listenable,
+        builder: (context, _) => buildFuture(),
+      );
+    }
+
+    return buildFuture();
   }
 
   @override
