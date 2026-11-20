@@ -139,9 +139,8 @@ class FacilityCardActionBar extends StatelessWidget {
               ),
             ),
             style: ElevatedButton.styleFrom(
-              backgroundColor: isDark
-                  ? const Color(0xFF0284C7)
-                  : const Color(0xFF0F172A),
+              backgroundColor: const Color(0xFF0284C7),
+              foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(11),

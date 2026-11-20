@@ -21,6 +21,7 @@ class SyncFacilityRepository extends ChangeNotifier
   final OfflineSyncStore _store;
   final ApiClient? _apiClient;
   final FacilityRepository _fallback;
+  bool _isRevalidating = false;
 
   @override
   Future<List<Facility>> getFacilities({
@@ -159,6 +160,8 @@ class SyncFacilityRepository extends ChangeNotifier
 
   /// Silently fetches fresh facilities from backend and updates local cache.
   Future<void> _revalidateInBackground() async {
+    if (_isRevalidating) return;
+    _isRevalidating = true;
     try {
       final remoteList = await _apiClient?.fetchFacilities();
       if (remoteList != null) {
@@ -169,6 +172,8 @@ class SyncFacilityRepository extends ChangeNotifier
       }
     } catch (_) {
       // Offline or network error: silently ignored in background
+    } finally {
+      _isRevalidating = false;
     }
   }
 }

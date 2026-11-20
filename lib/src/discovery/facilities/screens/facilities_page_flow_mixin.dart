@@ -21,6 +21,7 @@ mixin FacilitiesPageFlowMixin on State<FacilitiesPage> {
   FacilityFilterCategory selectedCategory = FacilityFilterCategory.all;
   List<Facility> facilities = [];
   bool isLoading = true;
+  bool isRefreshing = false;
   LatLng? userLocation;
   bool isLocating = false;
 
@@ -87,19 +88,25 @@ mixin FacilitiesPageFlowMixin on State<FacilitiesPage> {
   void _onSearchChanged() => loadFacilities();
 
   Future<void> handleRefresh() async {
-    final repo = repository;
-    if (repo is SyncFacilityRepository) {
-      await repo.refreshFacilities(
-        query: searchController.text,
-        category: selectedCategory,
-      );
-    } else if (repo is DynamicFacilityRepository) {
-      await repo.refreshFacilities(
-        query: searchController.text,
-        category: selectedCategory,
-      );
+    if (isRefreshing) return;
+    setState(() => isRefreshing = true);
+    try {
+      final repo = repository;
+      if (repo is SyncFacilityRepository) {
+        await repo.refreshFacilities(
+          query: searchController.text,
+          category: selectedCategory,
+        );
+      } else if (repo is DynamicFacilityRepository) {
+        await repo.refreshFacilities(
+          query: searchController.text,
+          category: selectedCategory,
+        );
+      }
+      await loadFacilities();
+    } finally {
+      if (mounted) setState(() => isRefreshing = false);
     }
-    await loadFacilities();
   }
 
   Future<void> loadFacilities() async {

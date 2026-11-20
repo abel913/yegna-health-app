@@ -10,6 +10,8 @@ class FacilitiesSearchBar extends StatelessWidget {
     required this.isDark,
     required this.glass,
     required this.l10n,
+    this.onRefresh,
+    this.isRefreshing = false,
     super.key,
   });
 
@@ -17,6 +19,8 @@ class FacilitiesSearchBar extends StatelessWidget {
   final bool isDark;
   final AppGlassTheme glass;
   final AppLocalizations l10n;
+  final VoidCallback? onRefresh;
+  final bool isRefreshing;
 
   @override
   Widget build(BuildContext context) {
@@ -112,6 +116,26 @@ class FacilitiesSearchBar extends StatelessWidget {
                   ),
                   onPressed: () => controller.clear(),
                 ),
+              if (onRefresh != null)
+                IconButton(
+                  icon: isRefreshing
+                      ? SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: glass.accentColor,
+                          ),
+                        )
+                      : Icon(
+                          Icons.sync_rounded,
+                          size: 20,
+                          color: glass.accentColor.withValues(alpha: 0.85),
+                        ),
+                  tooltip: 'Sync facilities',
+                  onPressed: isRefreshing ? null : onRefresh,
+                ),
+              const SizedBox(width: 4),
             ],
           ),
         ),

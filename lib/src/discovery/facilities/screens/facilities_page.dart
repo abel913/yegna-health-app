@@ -96,6 +96,8 @@ class _FacilitiesPageState extends State<FacilitiesPage>
                           isDark: isDark,
                           glass: glass,
                           l10n: l10n,
+                          onRefresh: handleRefresh,
+                          isRefreshing: isRefreshing,
                         ),
                         const SizedBox(height: 10),
                         FacilitiesFilterBar(
