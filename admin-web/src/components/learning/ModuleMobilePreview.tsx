@@ -9,13 +9,17 @@ import {
   Check,
   ShieldCheck,
   HelpCircle,
+  Play,
 } from 'lucide-react';
+import { extractYoutubeId } from '../../data/curriculumTemplates.js';
 
 interface ParsedSection {
   title: string;
   body: string;
   bullets: string[];
   note: string | null;
+  videoUrl?: string | null;
+  videoId?: string | null;
 }
 
 interface ModuleMobilePreviewProps {
@@ -75,18 +79,28 @@ export const ModuleMobilePreview: React.FC<ModuleMobilePreviewProps> = ({
       const prose: string[] = [];
       const bullets: string[] = [];
       let note: string | null = null;
+      let videoUrl: string | null = null;
 
       bodyLines.forEach((l) => {
         const line = l.trim();
         if (!line) return;
         if (line.startsWith('- ') || line.startsWith('* ')) {
           bullets.push(line.substring(2).trim());
+        } else if (line.startsWith('> Video:') || line.startsWith('> ቪዲዮ:')) {
+          videoUrl = line.replace(/^>\s*(Video:|ቪዲዮ:)?\s*/i, '').trim();
+        } else if (/^\[video\]\((.*?)\)/i.test(line)) {
+          const m = line.match(/^\[video\]\((.*?)\)/i);
+          if (m) videoUrl = m[1].trim();
+        } else if (/^https?:\/\/(?:www\.)?(?:youtube\.com|youtu\.be)\S+/i.test(line)) {
+          videoUrl = line.trim();
         } else if (line.startsWith('> ')) {
           note = line.substring(2).trim();
         } else {
           prose.push(line);
         }
       });
+
+      const videoId = extractYoutubeId(videoUrl || undefined);
 
       result.push({
         title:
@@ -95,6 +109,8 @@ export const ModuleMobilePreview: React.FC<ModuleMobilePreviewProps> = ({
         body: prose.join('\n\n'),
         bullets,
         note,
+        videoUrl,
+        videoId,
       });
     });
 
@@ -120,7 +136,11 @@ export const ModuleMobilePreview: React.FC<ModuleMobilePreviewProps> = ({
   // Resolve preview image path
   const resolvedImgUrl = React.useMemo(() => {
     if (!imageUrl) return '/illustrations/module_01_puberty.jpg';
-    if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+    if (
+      imageUrl.startsWith('http://') ||
+      imageUrl.startsWith('https://') ||
+      imageUrl.startsWith('data:image')
+    ) {
       return imageUrl;
     }
     // Asset path like assets/images/learning/module_01_puberty.jpg
@@ -314,6 +334,36 @@ export const ModuleMobilePreview: React.FC<ModuleMobilePreviewProps> = ({
                               <p className="text-[11.5px] font-medium text-[#166534] leading-relaxed">
                                 {sec.note}
                               </p>
+                            </div>
+                          )}
+
+                          {sec.videoId && (
+                            <div className="mt-3 rounded-xl overflow-hidden border border-red-200/80 bg-slate-900 text-white shadow-xs">
+                              <div className="relative aspect-video w-full bg-slate-950 flex items-center justify-center overflow-hidden">
+                                <img
+                                  src={`https://img.youtube.com/vi/${sec.videoId}/hqdefault.jpg`}
+                                  alt=""
+                                  className="w-full h-full object-cover opacity-85"
+                                  onError={(e) => {
+                                    (e.target as HTMLImageElement).src =
+                                      `https://img.youtube.com/vi/${sec.videoId}/0.jpg`;
+                                  }}
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30" />
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                  <div className="w-9 h-9 rounded-full bg-red-600 text-white flex items-center justify-center shadow-md">
+                                    <Play size={15} className="fill-white ml-0.5" />
+                                  </div>
+                                </div>
+                                <div className="absolute bottom-2 left-2.5 right-2.5 flex items-center justify-between text-[10px]">
+                                  <span className="bg-red-600 px-1.5 py-0.5 rounded font-extrabold uppercase tracking-wide">
+                                    YouTube
+                                  </span>
+                                  <span className="text-white/90 font-semibold">
+                                    {lang === 'am' ? 'የትምህርት ቪዲዮ' : 'Educational Video'}
+                                  </span>
+                                </div>
+                              </div>
                             </div>
                           )}
                         </div>

@@ -19,6 +19,18 @@ export interface CurriculumSection {
   bulletsAm: string[];
   tipEn: string;
   tipAm: string;
+  videoUrl?: string;
+}
+
+export function extractYoutubeId(urlOrId?: string): string | null {
+  if (!urlOrId) return null;
+  const trimmed = urlOrId.trim();
+  if (!trimmed) return null;
+  if (/^[a-zA-Z0-9_-]{11}$/.test(trimmed)) return trimmed;
+  const match = trimmed.match(
+    /(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/
+  );
+  return match ? match[1] : null;
 }
 
 export interface CurriculumTemplate {
@@ -96,6 +108,7 @@ interface RawParsedSection {
   body: string;
   bullets: string[];
   tip: string;
+  videoUrl: string | undefined;
 }
 
 function parseSingleMarkdown(content: string): RawParsedSection[] {
@@ -122,6 +135,7 @@ function parseSingleMarkdown(content: string): RawParsedSection[] {
       const bodyLines: string[] = [];
       const bullets: string[] = [];
       let tip = '';
+      let videoUrl = '';
 
       remainingLines.forEach((line) => {
         const l = line.trim();
@@ -129,6 +143,13 @@ function parseSingleMarkdown(content: string): RawParsedSection[] {
           bullets.push(l.slice(2).trim());
         } else if (l.startsWith('> Clinical Tip:') || l.startsWith('> የዶክተር ማስታወሻ:')) {
           tip = l.replace(/^>\s*(Clinical Tip:|የዶክተር ማስታወሻ:)?\s*/, '').trim();
+        } else if (l.startsWith('> Video:') || l.startsWith('> ቪዲዮ:')) {
+          videoUrl = l.replace(/^>\s*(Video:|ቪዲዮ:)?\s*/i, '').trim();
+        } else if (/^\[video\]\((.*?)\)/i.test(l)) {
+          const m = l.match(/^\[video\]\((.*?)\)/i);
+          if (m) videoUrl = m[1].trim();
+        } else if (/^https?:\/\/(?:www\.)?(?:youtube\.com|youtu\.be)\S+/i.test(l)) {
+          videoUrl = l.trim();
         } else if (l.startsWith('>')) {
           tip = l.replace(/^>\s*/, '').trim();
         } else if (l.length > 0) {
@@ -141,6 +162,7 @@ function parseSingleMarkdown(content: string): RawParsedSection[] {
         body: bodyLines.join('\n'),
         bullets,
         tip,
+        videoUrl: videoUrl || undefined,
       };
     })
     .filter((sec): sec is RawParsedSection => Boolean(sec && sec.title));
@@ -164,6 +186,8 @@ export function parseMarkdownToSections(contentEn: string, contentAm: string): C
       bulletsAm.push(amSec.bullets[b] || '');
     }
 
+    const videoUrl = enSec.videoUrl || amSec.videoUrl;
+
     result.push({
       id: 'sec-' + (i + 1) + '-' + Date.now(),
       titleEn: enSec.title,
@@ -174,6 +198,7 @@ export function parseMarkdownToSections(contentEn: string, contentAm: string): C
       bulletsAm,
       tipEn: enSec.tip,
       tipAm: amSec.tip,
+      videoUrl: videoUrl || undefined,
     });
   }
   return result;
@@ -191,6 +216,7 @@ export function serializeSectionsToMarkdown(sections: CurriculumSection[]): {
         const body = lang === 'en' ? sec.bodyEn : sec.bodyAm;
         const bullets = lang === 'en' ? sec.bulletsEn : sec.bulletsAm;
         const tip = lang === 'en' ? sec.tipEn : sec.tipAm;
+        const video = sec.videoUrl?.trim();
 
         let md = '## ' + (title || (lang === 'en' ? 'Untitled Section' : 'ያልተሰየመ ክፍል')) + '\n';
         if (body && body.trim()) {
@@ -207,6 +233,9 @@ export function serializeSectionsToMarkdown(sections: CurriculumSection[]): {
         if (tip && tip.trim()) {
           const prefix = lang === 'en' ? '> Clinical Tip: ' : '> የዶክተር ማስታወሻ: ';
           md += prefix + tip.trim() + '\n\n';
+        }
+        if (video) {
+          md += `> Video: ${video}\n\n`;
         }
         return md.trim();
       })

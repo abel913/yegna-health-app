@@ -8,6 +8,7 @@ import { LearningCmsPage } from './pages/LearningCmsPage.js';
 import { QuizzesPage } from './pages/QuizzesPage.js';
 import { AssessmentsPage } from './pages/AssessmentsPage.js';
 import { ClubsPage } from './pages/ClubsPage.js';
+import { NotificationsPage } from './pages/NotificationsPage.js';
 import { UsersPage } from './pages/UsersPage.js';
 import { AuditLogsPage } from './pages/AuditLogsPage.js';
 import { GovernmentReportsPage } from './pages/GovernmentReportsPage.js';
@@ -25,6 +26,7 @@ import {
   ManagedUser,
   AuditLog,
   GovernmentReport,
+  BroadcastNotification,
 } from './types/index.js';
 import { useToast } from './context/ToastContext.js';
 import { exportToCsv } from './utils/csvExport.js';
@@ -50,6 +52,7 @@ export function App() {
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
   const [learningAssessments, setLearningAssessments] = useState<LearningAssessment[]>([]);
   const [clubs, setClubs] = useState<StudentClub[]>([]);
+  const [broadcasts, setBroadcasts] = useState<BroadcastNotification[]>([]);
   const [users, setUsers] = useState<ManagedUser[]>([]);
   const [logs, setLogs] = useState<AuditLog[]>([]);
   const [governmentReport, setGovernmentReport] = useState<GovernmentReport | null>(null);
@@ -76,7 +79,7 @@ export function App() {
       setIsLoading(true);
     }
     try {
-      const [dashData, facData, menData, modData, qData, clubData, userData, logData, assessmentData] =
+      const [dashData, facData, menData, modData, qData, clubData, userData, logData, assessmentData, broadcastData] =
         await Promise.all([
           api.getDashboard().catch(() => ({ metrics: null, recentActivity: [] })),
           api.getFacilities().catch(() => ({ facilities: [] })),
@@ -87,6 +90,7 @@ export function App() {
           api.getUsers().catch(() => ({ users: [] })),
           api.getAuditLogs().catch(() => ({ logs: [] })),
           api.getLearningAssessments().catch(() => ({ assessments: [] })),
+          api.getBroadcastNotifications().catch(() => ({ broadcasts: [] })),
         ]);
 
       if (dashData.metrics) {
@@ -99,6 +103,7 @@ export function App() {
       setQuestions(qData.questions || []);
       setLearningAssessments(assessmentData.assessments || []);
       setClubs(clubData.clubs || []);
+      setBroadcasts(broadcastData.broadcasts || []);
       setUsers(userData.users || []);
       setLogs(logData.logs || []);
 
@@ -162,6 +167,22 @@ export function App() {
       }
     } catch (err) {
       console.error('Failed to refresh clubs:', err);
+    }
+  };
+
+  const refreshBroadcasts = async () => {
+    try {
+      const [broadcastData, dashData] = await Promise.all([
+        api.getBroadcastNotifications().catch(() => ({ broadcasts: [] })),
+        api.getDashboard().catch(() => ({ metrics: null, recentActivity: [] })),
+      ]);
+      setBroadcasts(broadcastData.broadcasts || []);
+      if (dashData.metrics) {
+        setMetrics(dashData.metrics);
+        setActivity(dashData.recentActivity);
+      }
+    } catch (err) {
+      console.error('Failed to refresh broadcasts:', err);
     }
   };
 
@@ -516,6 +537,33 @@ export function App() {
     }
   };
 
+  // Broadcast Notification Actions
+  const handleSendBroadcast = async (data: Partial<BroadcastNotification>) => {
+    try {
+      await api.createBroadcastNotification(data);
+      toast.success(
+        lang === 'am' ? 'ይፋዊ ማሳወቂያው ለተማሪዎች ተላልፏል' : 'Broadcast dispatched to students',
+        'Notification Center'
+      );
+      await refreshBroadcasts();
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to send broadcast', 'Error');
+    }
+  };
+
+  const handleDeleteBroadcast = async (id: string) => {
+    try {
+      await api.deleteBroadcastNotification(id);
+      toast.info(
+        lang === 'am' ? 'ማሳወቂያው ተሰርዟል' : 'Broadcast removed from student feed',
+        'Notification Center'
+      );
+      await refreshBroadcasts();
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to delete broadcast', 'Error');
+    }
+  };
+
   // User Actions
   const handleUpdateRole = async (id: string, role: string) => {
     try {
@@ -720,6 +768,15 @@ export function App() {
             onSaveClub={handleSaveClub}
             onDeleteClub={handleDeleteClub}
             onToggleApproval={handleToggleClubApproval}
+          />
+        )}
+        {currentTab === 'notifications' && (
+          <NotificationsPage
+            broadcasts={broadcasts}
+            lang={lang}
+            isLoading={isLoading}
+            onBroadcast={handleSendBroadcast}
+            onDelete={handleDeleteBroadcast}
           />
         )}
         {currentTab === 'users' && (

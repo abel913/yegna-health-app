@@ -7,12 +7,14 @@ import {
   QuizQuestion,
   LearningAssessment,
   StudentClub,
+  ClubAnnouncement,
   ManagedUser,
   AuditLog,
   SystemTelemetry,
   BaselineSurveyStats,
   SurveyQuestion,
   GovernmentReport,
+  BroadcastNotification,
 } from '../types/index.js';
 
 const API_BASE = '/api';
@@ -254,7 +256,14 @@ export const api = {
       method: 'POST',
       body: JSON.stringify(data),
     });
-    if (!res.ok) throw new Error('Failed to create module');
+    if (!res.ok) {
+      const err = await res.json().catch(() => null);
+      const msg =
+        err?.details?.map((d: any) => `${d.path?.join('.') || 'field'}: ${d.message}`).join(', ') ||
+        err?.error ||
+        'Failed to create module';
+      throw new Error(msg);
+    }
     return res.json();
   },
 
@@ -263,7 +272,14 @@ export const api = {
       method: 'PUT',
       body: JSON.stringify(data),
     });
-    if (!res.ok) throw new Error('Failed to update module');
+    if (!res.ok) {
+      const err = await res.json().catch(() => null);
+      const msg =
+        err?.details?.map((d: any) => `${d.path?.join('.') || 'field'}: ${d.message}`).join(', ') ||
+        err?.error ||
+        'Failed to update module';
+      throw new Error(msg);
+    }
     return res.json();
   },
 
@@ -372,6 +388,44 @@ export const api = {
     if (!res.ok) throw new Error('Failed to remove club member');
   },
 
+  async getClubAnnouncements(clubId: string): Promise<{ announcements: ClubAnnouncement[] }> {
+    const res = await authFetch(`${API_BASE}/clubs/${clubId}/announcements`);
+    if (!res.ok) throw new Error('Failed to load club announcements');
+    return res.json();
+  },
+
+  async createClubAnnouncement(
+    clubId: string,
+    data: { title: string; content: string; type?: string; isPinned?: boolean; authorName?: string },
+  ): Promise<{ announcement: ClubAnnouncement }> {
+    const res = await authFetch(`${API_BASE}/admin/clubs/${clubId}/announcements`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) throw new Error('Failed to create announcement');
+    return res.json();
+  },
+
+  async updateClubAnnouncement(
+    clubId: string,
+    announcementId: string,
+    data: Partial<ClubAnnouncement>,
+  ): Promise<{ announcement: ClubAnnouncement }> {
+    const res = await authFetch(`${API_BASE}/admin/clubs/${clubId}/announcements/${announcementId}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) throw new Error('Failed to update announcement');
+    return res.json();
+  },
+
+  async deleteClubAnnouncement(clubId: string, announcementId: string): Promise<void> {
+    const res = await authFetch(`${API_BASE}/admin/clubs/${clubId}/announcements/${announcementId}`, {
+      method: 'DELETE',
+    });
+    if (!res.ok) throw new Error('Failed to delete announcement');
+  },
+
   // Users
   async getUsers(): Promise<{ users: ManagedUser[] }> {
     const res = await authFetch(`${API_BASE}/admin/users`);
@@ -438,6 +492,32 @@ export const api = {
       const err = await res.json().catch(() => ({}));
       throw new Error(err.error || 'Failed to delete user');
     }
+  },
+
+  // Broadcast Notifications
+  async getBroadcastNotifications(): Promise<{ broadcasts: BroadcastNotification[] }> {
+    const res = await authFetch(`${API_BASE}/admin/notifications`);
+    if (!res.ok) throw new Error('Failed to load broadcast notifications');
+    return res.json();
+  },
+
+  async createBroadcastNotification(data: Partial<BroadcastNotification>): Promise<{ broadcast: BroadcastNotification }> {
+    const res = await authFetch(`${API_BASE}/admin/notifications/broadcast`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || 'Failed to send broadcast notification');
+    }
+    return res.json();
+  },
+
+  async deleteBroadcastNotification(id: string): Promise<void> {
+    const res = await authFetch(`${API_BASE}/admin/notifications/${id}`, {
+      method: 'DELETE',
+    });
+    if (!res.ok) throw new Error('Failed to delete broadcast notification');
   },
 
   // Live System Telemetry & Health

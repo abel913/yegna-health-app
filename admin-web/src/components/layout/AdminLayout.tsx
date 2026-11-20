@@ -23,6 +23,7 @@ import {
   Command,
   BarChart2,
   RotateCcw,
+  Bell,
 } from 'lucide-react';
 import { AdminUser } from '../../types/index.js';
 import { useTheme } from '../../context/ThemeContext.js';
@@ -93,6 +94,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
           ]
         },
         { id: 'clubs', label: lang === 'am' ? 'የተማሪዎች ክለቦች' : 'Student Clubs', icon: GraduationCap },
+        { id: 'notifications', label: lang === 'am' ? 'ማሳወቂያዎች' : 'Broadcast Center', icon: Bell },
       ],
     },
     {

@@ -146,6 +146,17 @@ export interface LearningAssessment {
   questions: { id: string; position: number; promptEn: string; promptAm: string; choices: { id: string; position: number; labelEn: string; labelAm: string; score: number }[] }[];
 }
 
+export interface ClubAnnouncement {
+  id: string;
+  clubId: string;
+  title: string;
+  content: string;
+  type: 'general' | 'venue_change' | 'event' | 'urgent';
+  isPinned: boolean;
+  authorName?: string;
+  createdAt: string;
+}
+
 export interface StudentClub {
   id: string;
   name: string;
@@ -158,6 +169,7 @@ export interface StudentClub {
   rules?: string[] | string;
   isApproved: boolean;
   memberCount?: number;
+  announcements?: ClubAnnouncement[];
   createdAt: string;
 }
 
@@ -303,4 +315,32 @@ export interface BaselineSurveyStats {
     byGondarSrhAwareness: Array<{ knowsGondarSrh: string; count: number; percentage: number }>;
   };
   recentSubmissions?: BaselineSurveySubmission[];
+}
+
+export type NotificationPriority = 'normal' | 'high' | 'urgent';
+export type NotificationCategory =
+  | 'healthTip'
+  | 'system'
+  | 'alert'
+  | 'learning'
+  | 'facility'
+  | 'club';
+
+export interface BroadcastNotification {
+  id: string;
+  titleEn: string;
+  titleAm: string;
+  messageEn: string;
+  messageAm: string;
+  type: NotificationCategory;
+  priority: NotificationPriority;
+  targetCampus: string;
+  routePayload?: string | null;
+  actionLabelEn?: string | null;
+  actionLabelAm?: string | null;
+  isPinned: boolean;
+  authorEmail?: string;
+  expiresAt?: string | null;
+  createdAt: string;
+  updatedAt?: string;
 }

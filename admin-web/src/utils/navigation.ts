@@ -50,6 +50,10 @@ export function parseCurrentRoute(pathname: string): AdminRoute {
     return { tab: 'clubs' };
   }
 
+  if (clean === '/notifications' || clean === '/broadcasts') {
+    return { tab: 'notifications' };
+  }
+
   if (clean === '/users') {
     return { tab: 'users' };
   }
@@ -122,6 +126,9 @@ export function getRouteTitle(tab: string, subTab?: string, lang: 'en' | 'am' = 
       break;
     case 'clubs':
       title = isAm ? 'የተማሪዎች ክለቦች' : 'Student Clubs';
+      break;
+    case 'notifications':
+      title = isAm ? 'ማሳወቂያዎች' : 'Broadcast Center';
       break;
     case 'users':
       title = isAm ? 'የተጠቃሚዎች አስተዳደር' : 'User Management';
