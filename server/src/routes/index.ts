@@ -15,6 +15,7 @@ import * as mentors from '../controllers/mentors.controller.js';
 import * as modules from '../controllers/modules.controller.js';
 import * as quizzes from '../controllers/quizzes.controller.js';
 import * as clubs from '../controllers/clubs.controller.js';
+import * as notifications from '../controllers/notifications.controller.js';
 import * as users from '../controllers/users.controller.js';
 import * as dashboard from '../controllers/dashboard.controller.js';
 import * as survey from '../controllers/survey.controller.js';
@@ -81,6 +82,20 @@ router.get('/quizzes', quizzes.getAllQuestions);
 router.get('/learning-assessments', learningAssessments.getAll);
 
 router.get('/clubs', clubs.getAllClubs);
+router.get('/clubs/:id/announcements', clubs.getClubAnnouncements);
+router.get('/notifications', (req, res, next) => {
+  // Allow optional token for guests
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    (authenticateToken as any)(req, res, () => {
+      (refreshAuthorizationContext as any)(req, res, () => {
+        notifications.getUserNotifications(req as any, res);
+      });
+    });
+  } else {
+    notifications.getUserNotifications(req as any, res);
+  }
+});
 router.post('/clubs/:id/join', authenticateToken as any, refreshAuthorizationContext as any, requirePasswordChangeComplete as any, requireNotGovernmentViewer as any, clubs.joinClub as any);
 router.post('/clubs/:id/leave', authenticateToken as any, refreshAuthorizationContext as any, requirePasswordChangeComplete as any, requireNotGovernmentViewer as any, clubs.leaveClub as any);
 
@@ -127,6 +142,9 @@ adminRouter.put('/clubs/:id', clubs.updateClub as any);
 adminRouter.delete('/clubs/:id', clubs.deleteClub as any);
 adminRouter.get('/clubs/:id/roster', clubs.getClubRoster as any);
 adminRouter.delete('/clubs/:id/members/:userId', clubs.removeMemberAdmin as any);
+adminRouter.post('/clubs/:id/announcements', clubs.createClubAnnouncement as any);
+adminRouter.put('/clubs/:id/announcements/:announcementId', clubs.updateClubAnnouncement as any);
+adminRouter.delete('/clubs/:id/announcements/:announcementId', clubs.deleteClubAnnouncement as any);
 
 // User Governance
 adminRouter.get('/users', users.getAllUsers as any);
@@ -136,6 +154,11 @@ adminRouter.put('/users/:id/suspend', users.toggleUserSuspension as any);
 adminRouter.put('/users/:id/verify-email', users.verifyUserEmail as any);
 adminRouter.post('/users/:id/reset-password', users.resetUserPassword as any);
 adminRouter.delete('/users/:id', users.deleteUser as any);
+
+// Broadcast Notifications
+adminRouter.get('/notifications', notifications.getAdminBroadcasts as any);
+adminRouter.post('/notifications/broadcast', notifications.broadcastNotification as any);
+adminRouter.delete('/notifications/:id', notifications.deleteBroadcastNotification as any);
 
 // Anonymous Student Baseline Survey Analytics & Administration
 adminRouter.get('/survey/stats', survey.getSurveyStats as any);
