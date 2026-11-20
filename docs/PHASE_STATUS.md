@@ -1,5 +1,238 @@
 # Phase status
 
+## Authentic University of Gondar (UoG) Clinics & Guidance Counselors Integration (2026-11-20)
+
+**Status: Completed & 100% Verified.**
+- **User Request**: Add verified University of Gondar operational data (covering 5 campuses: Atse Tewodros, Atse Fasil, Maraki, Teda, and CMHS) into the PostgreSQL database, the Flutter mobile/web client, and the Admin Web portal so admins can edit/manage them freely without regressions.
+- **Architectural Deliverables**:
+  - `server/prisma/seed-uog-support-data.ts` [NEW]: Created idempotent Prisma seed script populating 10 campus facilities (5 clinics with 24/7 exam, pharmacy, lab, family planning, STI/HIV, sick leave evidence + 5 guidance & psychological counseling centers) and 7 verified campus mentors and coordinators in PostgreSQL.
+  - `server/package.json`: Added `npm run seed:uog-support` script.
+  - `lib/src/discovery/facilities/repositories/uog_central_facilities_data.dart`: Updated Maraki & CMHS clinics and guidance centers with authentic focal persons and contact lines (163 LOC, $<200$).
+  - `lib/src/discovery/facilities/repositories/uog_tewodros_facilities_data.dart` [NEW]: Modularized Atse Tewodros 24/7 clinic and guidance counseling office (83 LOC, $<200$).
+  - `lib/src/discovery/facilities/repositories/uog_satellite_facilities_data.dart`: Modularized Fasil and Tseda clinics and counseling offices, concatenating Tewodros (169 LOC, $<200$).
+  - `lib/src/discovery/mentors/repositories/uog_central_mentors_data.dart` [NEW]: Modularized central counseling coordinator (Ayalnesh Adgo), 5-campuses clinic coordinator (Tewodros Eyasu), and CMHS counselor (Takele Adeno) (104 LOC, $<200$).
+  - `lib/src/discovery/mentors/repositories/verified_mentors_data.dart`: Populated authentic campus counselors across Atse Tewodros, Atse Fasil, and Maraki, concatenating central mentors (143 LOC, $<200$).
+  - `admin-web/src/pages/FacilitiesPage.tsx` & `admin-web/src/pages/MentorsPage.tsx`: Full dynamic CRUD allows admins to edit operating hours, phone numbers, focal persons, specialties, and schedules.
+- **Verification**:
+  - `npm --prefix server run seed:uog-support`: Upserted 10 facilities and 7 mentors in PostgreSQL.
+  - `npm --prefix server test`: 7/7 passed.
+  - `npm --prefix admin-web run build`: 0 errors.
+  - `flutter analyze`: 0 issues found.
+  - `flutter test`: 206/206 tests passed.
+  - All Dart files strictly $< 200$ LOC.
+
+## Clinical Self-Assessment Result Screen & Actionable Counseling (2026-11-20)
+
+**Status: Completed & 100% Verified.**
+- **User Request**: Create a clinical assessment results screen matching the reference layout: Assessment Result card, vertical numbered Recommended Actions stepper (1, 2, 3), quotation-accented Key Message card, and dual side-by-side shortcut cards ("Talk to Mentor" and "Get Service"), tailored for all self-assessment sections.
+- **Architectural Deliverables**:
+  - `lib/src/assessment/models/assessment_result_data.dart`: Clinical result tier and content models.
+  - `lib/src/assessment/services/assessment_result_evaluator.dart` & `lib/src/assessment/services/assessment_sections_result_data.dart`: Clinical evaluation engine producing personalized outcomes and counseling guidance for Sections 2–8.
+  - `lib/src/assessment/widgets/assessment_result_header_card.dart`: Top card with status icon and bold clinical classification headline.
+  - `lib/src/assessment/widgets/assessment_actions_stepper.dart`: Numbered vertical stepper (`1`, `2`, `3`) with vertical connector lines.
+  - `lib/src/assessment/widgets/assessment_key_message_card.dart`: Supportive narrative box with quote mark accent `”`.
+  - `lib/src/assessment/widgets/assessment_action_shortcuts.dart`: Side-by-side cards with buttons for "Talk to Mentor" and "Get Service".
+  - `lib/src/assessment/screens/assessment_result_screen.dart`: Main clinical results view with AppBar, refresh, and Hub return action.
+  - `lib/src/assessment/services/assessment_flow_navigator.dart`: Transition engine connecting dialog completion to results view.
+  - `test/assessment_result_screen_test.dart`: Unit and widget tests passing 4/4.
+- **Verification**:
+  - `flutter test test/assessment_result_screen_test.dart`: 4/4 passed.
+  - `flutter analyze`: 0 issues found.
+  - `flutter build web --release`: Success (built in `build/web`).
+  - File lengths: All non-generated Dart files strictly $< 200$ LOC.
+
+## Assessment Questions Sync, Section 1 Migration & Survey Insights (2026-11-20)
+
+**Status: Completed & 100% Verified.**
+- **User Request**:
+  1. Remove the first 4 questions (Section 1) from the assessment page.
+  2. Pop them up after login or show on the home page as a one-time profile/onboarding survey. Once completed, display "Done".
+  3. Ensure assessment questions load into the app from the database, support admin add/edit/delete/reorder in `admin-web`, and update the Flutter app with offline sync.
+  4. Ensure survey insights are displayed to the admin in `admin-web` when students finish.
+- **Architectural Deliverables**:
+  - `lib/src/assessment/uog_assessment_section_meta.dart`: Added `kClinicalAssessmentSections` (Sections 2–8, 7 total sections, 46 questions).
+  - `lib/src/assessment/self_assessment_page.dart`: Filtered out Section 1 from the Self-Assessment Hub list and updated headers to 7 clinical sections and 46 questions.
+  - `lib/src/home/widgets/home_survey_banner.dart` & `lib/src/home/widgets/home_survey_completed_card.dart`: Configured the one-time onboarding survey banner to prompt if uncompleted, and show a calm "Done" confirmation card once completed.
+  - `lib/src/onboarding/onboarding_survey_repository.dart`: Fixed unawaited fetching and empty returns in `getSurveyQuestions()`, adding robust local `SharedPreferences` caching for offline resilience and `submitSectionAnswers()` helper.
+  - `lib/src/assessment/module_assessment_dialog.dart`: Connected `_submitAnswers()` to persist section answers upon assessment completion.
+  - `server/src/controllers/survey.controller.ts`: Fixed answers JSON parsing in `getSurveyStats` to aggregate dynamic answers stored as JSON strings and guarded rapid deduplication against false positives.
+- **Verification**:
+  - `npm --prefix admin-web run build`: 0 errors.
+  - `flutter analyze`: 0 issues found.
+  - `flutter test test/home_page_test.dart`: 5/5 passed.
+  - `flutter build web --release`: Compiled successfully in `build/web`.
+  - Non-generated Dart file limits: All strictly $< 200$ LOC.
+
+## Health Module Section Optional YouTube Video Integration (2026-11-20)
+
+**Status: Completed & 100% Verified.**
+- **User Request**: Allow admins to add an optional YouTube video URL to each curriculum section during module creation/editing. When a video is present, display it with an educational video card at the bottom of the section in the app, with interactive playback; when no video is present, display the section normally.
+- **Admin Web Portal (`admin-web/`)**:
+  - `admin-web/src/data/curriculumTemplates.ts`: Added `videoUrl?: string` to `CurriculumSection`, implemented `extractYoutubeId()` supporting `watch?v=`, `youtu.be/`, `embed/`, and bare IDs, updated `parseSingleMarkdown()` to extract `> Video:`, `> ቪዲዮ:`, `[video]()`, and YouTube links, and updated `serializeSectionsToMarkdown()` to serialize `> Video: <url>`.
+  - `admin-web/src/pages/LearningCmsPage.tsx`: Added YouTube video URL input in each section with a YouTube badge, real-time thumbnail preview (`https://img.youtube.com/vi/${ytId}/hqdefault.jpg`), play button overlay, and clear button. Added video badge in section accordion header.
+  - `admin-web/src/components/learning/ModuleMobilePreview.tsx`: Added `videoUrl` and `videoId` to `ParsedSection`, rendering the YouTube video preview card in the mobile preview.
+- **Flutter Mobile & Web Client (`lib/`)**:
+  - `lib/src/learning/modules/dynamic/dynamic_module_parser.dart`: Added `videoUrl` and `videoId` to `ParsedSection`, implemented `extractYoutubeVideoId()`, and updated `extractSection()` to extract video lines. Line count: 148 LOC ($< 200$).
+  - `lib/src/learning/widgets/curriculum/section_video_card.dart` [NEW]: Created a reusable widget rendering YouTube badge, high-res thumbnail, center red play button, and on-tap cinema player modal (`createInAppVideoEmbed`) on web / YouTube launcher on mobile. Line count: 184 LOC ($< 200$).
+  - `lib/src/learning/modules/dynamic/dynamic_section_content.dart`: Appended `SectionVideoCard` when `section.videoId != null`. Line count: 91 LOC ($< 200$).
+  - `lib/src/learning/dynamic_module_detail_page.dart`: Passed `isAmharic` to `buildDynamicSectionChildren`. Line count: 197 LOC ($< 200$).
+- **Verification**:
+  - `npm --prefix admin-web run build`: 0 errors.
+  - `flutter analyze`: 0 issues found.
+  - `flutter test test/dynamic_module_test.dart`: 6/6 passed.
+  - `flutter test test/learning_ui_test.dart`: 9/9 passed.
+  - `flutter build web --release`: Compiled successfully in `build/web`.
+  - All Dart files strictly $< 200$ LOC.
+
+## Health Module CMS Creation Fix & Data URI Rendering (2026-11-19)
+
+**Status: Completed & 100% Verified.**
+- **Problem**: Creating a new module on `http://localhost:5174/modules` appeared not to work or created confusing duplicate entries.
+- **Root Cause & Fixes**:
+  1. **Card Image Rendering (`admin-web/src/pages/LearningCmsPage.tsx`)**: Card thumbnail generator only checked `startsWith('http')` and prepended `/illustrations/` to Base64 `data:image` strings, triggering browser `onError` and always falling back to the puberty default. Fixed to explicitly check `data:image`.
+  2. **Auto-Populated Form Confusion (`LearningCmsPage.tsx`)**: `openCreateModal()` pre-populated `formData` with `CURRICULUM_TEMPLATES[0]` ("Adolescent health & puberty"). Updated to start with a clean, blank module scaffold with empty titles, empty summaries, and empty image. Kept "Available Clinical Starter Templates" accessible via the "Choose Template" button.
+  3. **Silent Zod Rejection on Bilingual Gaps (`LearningCmsPage.tsx` & `api.ts`)**: Server enforces `min(2)` on titles, `min(5)` on summaries, and `min(10)` on content. Added bidirectional fallbacks in `handleSubmit` and updated `api.createModule` / `api.updateModule` to parse server error response JSON so errors are surfaced clearly via toasts.
+  4. **Server Body Limit (`server/src/app.ts`)**: Raised Express JSON body parser limit from `1mb` to `10mb` to safely support high-resolution Base64 uploads.
+  5. **Flutter Base64 Preservation (`lib/src/learning/models/learning_module_item.dart`)**: `normalizeImagePath` previously dropped `data:image` Data URIs and fell back to asset files. Added `data:image` check so Flutter renders user-uploaded Base64 images directly via `ModuleCoverImage`.
+- **Verification**:
+  - `npm --prefix admin-web run build`: Passed (0 errors).
+  - `npm --prefix server test`: 7/7 passed.
+  - `flutter analyze`: 0 issues found.
+  - `flutter test`: 13/13 learning tests passed.
+  - `flutter build web --release`: Built successfully.
+  - Line count: `learning_module_item.dart` is 187 LOC (strictly $< 200$ LOC).
+
+## Facility Card Details Button Color Update (2026-11-19)
+
+**Status: Completed & 100% Verified.**
+- **User Request**: Change the facility card "Details" button color from black to blue.
+- **Implementation**:
+  - `lib/src/discovery/facilities/widgets/facility_card_action_bar.dart`: Changed `ElevatedButton` background color from `Color(0xFF0F172A)` (black) to `Color(0xFF0284C7)` (Sky 600 brand blue) with `foregroundColor: Colors.white`.
+  - `test/facilities_test.dart`: Added widget assertion validating the background color resolves to `Color(0xFF0284C7)`.
+- **Verification**:
+  - `dart analyze lib test`: 0 issues found.
+  - `flutter test test/facilities_test.dart`: 7/7 passed.
+  - LOC: `facility_card_action_bar.dart` is 155 LOC (strictly $< 200$ LOC).
+
+
+## Advanced Campus Notification System & Admin Broadcast Center (2026-11-19)
+
+**Status: Completed & 100% Verified.**
+- **User Request**: Create a comprehensive, brand-aligned notification system end-to-end with high-priority floating heads-up toast alerts, deep linking, category filters, Admin Web Broadcast Center with mobile preview, and bilingual support (English & Amharic).
+- **Database & Prisma Schema (`server/prisma/schema.prisma`)**:
+  - Added `BroadcastNotification` model with fields for bilingual content (`titleEn`, `titleAm`, `messageEn`, `messageAm`), category (`healthTip`, `system`, `alert`, `learning`, `facility`, `club`), priority (`normal`, `high`, `urgent`), `targetCampus`, `routePayload`, `actionLabelEn`, `actionLabelAm`, and `isPinned`.
+  - Added indexes on `[targetCampus, createdAt]` and `[priority, createdAt]`.
+- **Backend API (`server/`)**:
+  - Added `GET /api/notifications` returning merged broadcast notices and club announcements.
+  - Added `GET /api/admin/notifications`, `POST /api/admin/notifications/broadcast`, and `DELETE /api/admin/notifications/:id`.
+  - Added `NOTIFICATION_BROADCAST_CREATED` and `NOTIFICATION_BROADCAST_DELETED` to audit logging.
+- **Admin Web CMS (`admin-web/`)**:
+  - Created `NotificationsPage.tsx` with KPI summary cards, filterable broadcast table, and delete confirmation.
+  - Created `BroadcastNotificationModal.tsx` featuring 1-click preset templates, category & priority selector, bilingual inputs, deep-link action selector, and an interactive **Live Mobile Mockup Preview** (toggles between banner toast and notification card).
+- **Flutter Mobile Client (`lib/`)**:
+  - Created `NotificationCategoryFilterChips` (`All`, `Unread`, `Urgent 🚨`, `Campus & Clubs 📢`, `Health Tips 💡`, `Learning 📚`).
+  - Redesigned `NotificationItemTile` with `AppGlassTheme` frosted glass styling, priority glow border, flame icon, pin badge, and deep-link action button (`Open Module →`, `Locate Clinic →`, `View Club →`).
+  - Created `InAppNotificationToast` - a sliding heads-up frosted glass banner for real-time urgent alerts.
+  - Added `bannerNotifier` in `InAppNotificationController` mounted at top-level app stack overlay.
+  - Verified with 100% pass on all notification unit and UI widget tests.
+
+## Campus Facility Real-time Sync & Edit Preservation (2026-11-19)
+
+**Status: Completed & 100% Verified.**
+- **Problem**: When editing a facility in Admin CMS, Building/Floor and Landmark fields were not populated, and mobile did not reflect newly added facilities in real-time.
+- **Root Cause & Fix**:
+  - `server/src/controllers/facilities.controller.ts`: `toPrismaFacility` had excluded `buildingEn`, `buildingAm`, `landmarkEn`, `landmarkAm`, `focalPerson`, `focalPhone`, `telegramHandle`, `isWheelchairAccessible`, `hasPrivateRoom`, causing Prisma to drop them on save. Added all fields to `allowed` array and mapped `woreda` fallback.
+  - `admin-web/src/pages/FacilitiesPage.tsx`: Populated `buildingEn` and `landmarkEn` correctly in `openEditModal`.
+  - `lib/src/discovery/sync_facility_repository.dart`: Updated to dynamically revalidate from remote backend and cache offline.
+
+## Student Club Announcements & Real-time Updates (2026-11-19)
+
+**Status: Completed & 100% Verified.**
+- **User Request**: Allow admins to post announcements and updates for each student club with instant visibility in club detail sheets and notification feed.
+- **Backend**: Implemented `ClubAnnouncement` model, endpoints for posting and deleting announcements, and merged into `/api/notifications`.
+- **Admin Web**: Built Club Announcement manager modal and real-time announcement feed inside `ClubsPage.tsx`.
+- **Flutter Client**: Built `ClubAnnouncementsSection` and `ClubAnnouncementCard` within `ClubDetailSheet`.
+
+
+## Health Curriculum CMS End-to-End Dynamic Sync & Offline Engine (2026-11-19)
+
+**Status: Completed & 100% Verified.**
+- **User Request**: Implement end-to-end Learning Module CMS creation, editing, and deletion with image file upload from the admin's computer stored directly in PostgreSQL (as Base64 Data URI), auto-numbering, auto-reading time calculation, 1-click bilingual mirror, playable dynamic quizzes, reactive real-time sync in Flutter (`ChangeNotifier`), and 100% elimination of hardcoded/mock module data so the database is the sole source of truth and works offline.
+- **Admin Portal Enhancements (`admin-web`)**:
+  - **Client-Side Image Compressor (`admin-web/src/utils/imageCompressor.ts`)**: Built browser `<canvas>` image optimizer resizing photos to max 800×450 px JPEG Data URIs under 80KB for direct PostgreSQL `TEXT` storage.
+  - **Cover Image Chooser Modal (`admin-web/src/pages/LearningCmsPage.tsx`)**: Replaced basic preset grid with a 3-tab modal:
+    1. *Upload Image*: Drag & drop / file picker dropzone with live compression feedback.
+    2. *Official Illustrations*: 8 bundled medical SVG/JPG illustrations.
+    3. *Custom URL*: Text URL input with live preview box.
+  - **Auto-Reading Time Calculation**: Added interactive `Auto-calc` button calculating reading minutes based on cumulative word count in sections, tips, summaries, and clinical notes at ~180 words/min.
+  - **1-Click Bilingual Mirroring**: Added `Mirror to Amharic (ወደ አማርኛ ቅዳ)` button in Tab 3 (Sections) duplicating English structure, sections, bullets, and tips into Amharic fields.
+  - **Quick Quiz Creation**: Added dedicated `+ Multiple Choice` and `+ True / False` action buttons pre-filling answer templates and bilingual options (`True/False` and `እውነት/ሐሰት`).
+- **Mobile Flutter Enhancements (`lib/`)**:
+  - **Base64 Data URI Cover Support (`lib/src/learning/widgets/common/module_cover_image.dart`)**: Added native decoding of `data:image/...;base64,...` using `base64Decode` and `Image.memory()`.
+  - **Reactive Synchronization (`lib/src/learning/repositories/sync_education_repository.dart`)**: Upgraded `SyncEducationRepository` to extend `ChangeNotifier`. Background `_revalidateModules()` fetches `/api/modules` and `/api/quizzes`, caches into `OfflineSyncStore`, and triggers listeners.
+  - **Dynamic Quiz Execution (`lib/src/learning/screens/learning_module_navigator.dart`)**: Prioritizes `DynamicQuizHelper.loadFromCache()` to dynamically load and play admin-created quiz questions in `QuizRunnerScaffold`.
+  - **Direct Module Reader Navigation (`lib/src/home/widgets/home_learning_module_modal.dart`)**: Connected `onOpenDetail` so tapping "Read Module Now" launches `DynamicModuleDetailPage`.
+  - **Reactive Carousels & Screens (`lib/src/home/widgets/home_learning_carousel.dart` & `lib/src/learning/screens/learn_page.dart`)**: Wrapped widgets with listeners on `SyncEducationRepository` so creations, edits, and deletions reflect instantly without restart.
+  - **LOC Audit Compliance**: 100% of all non-generated Dart files in `lib/` are strictly $< 200$ LOC (`app.dart` at 196 LOC, `club_announcements_section.dart` at 155 LOC, `club_announcement_card.dart` at 182 LOC).
+- **Verification & Compliance**:
+  - `flutter analyze`: 0 issues found (clean pass in 11.5s).
+  - `flutter test`: 200/200 tests passed (100% passing, 0 regressions).
+  - `npm --prefix admin-web run build`: Built cleanly with 0 TypeScript errors.
+  - `npm --prefix server run worker:check`: 0 errors.
+  - `npm --prefix server test`: 7/7 tests passed.
+  - `flutter build web --release`: Clean release build in `build/web` (served on `http://localhost:8080/`).
+
+## Doctor's Daily Article Card Removal & Mobile Home Cleanup (2026-11-19)
+
+**Status: Completed & 100% Verified.**
+- **User Request**: Completely remove the hardcoded, unmanaged "Doctor's Daily Article" card and sheet from the mobile app.
+- **Completed Changes**:
+  - **Mobile Home UI (`lib/src/home/home_page.dart`)**:
+    - Removed `HomeDoctorArticleCard` widget invocation and surrounding spacing from `HomePage`. The Home feed now transitions directly from the Health Modules Carousel into the Health Education Safety Notice.
+    - Removed unused `onOpenArticle` callback parameter and field.
+    - Reduced `home_page.dart` to 175 LOC (strictly $< 200$ LOC).
+  - **Orphaned Widget Deletion**:
+    - Deleted 5 obsolete doctor article widget files in `lib/src/home/widgets/`:
+      - `home_doctor_article_card.dart`
+      - `home_doctor_article_sheet.dart`
+      - `home_doctor_advice_tile.dart`
+      - `home_doctor_sheet_header.dart`
+      - `home_doctor_sheet_actions.dart`
+  - **Navigation & Carousel Cleanliness**:
+    - `lib/src/home/widgets/home_learning_carousel.dart`: Removed unused `onOpenArticle` prop.
+    - `lib/src/navigation/app_shell_tab_builder.dart`: Removed `onOpenArticle` handler passed to `HomePage`.
+    - `lib/src/navigation/app_route_navigator.dart`: Removed dead `openArticle` static method and cleaned unused imports.
+  - **Widget Test Suite (`test/home_page_test.dart`)**:
+    - Removed `onOpenArticle` parameter from `_buildTestHomePage`.
+    - Updated English and Amharic tests to explicitly assert that `doctorDailyArticleBadge` and `readFullArticleAction` are removed (`findsNothing`).
+- **Verification & Compliance**:
+  - `flutter analyze`: 0 issues found (clean pass in 6.8s).
+  - `flutter test`: 200/200 tests passed (100% passing, 0 regressions).
+  - `npm --prefix admin-web run build`: Built cleanly with 0 TypeScript errors.
+  - `npm --prefix server run worker:check`: 0 errors.
+  - `npm --prefix server test`: 7/7 tests passed.
+  - LOC Audit: All modified files strictly comply with $< 200$ LOC standard.
+
+
+## Facilities End-to-End Sync & Edit Modal Data Preservation (2026-11-19)
+
+**Status: Completed & 100% Verified.**
+- **Scope & Root Cause Resolution**:
+  - **Prisma Facility Whitelist**: Fixed `toPrismaFacility()` in `server/src/controllers/facilities.controller.ts` where 10 essential fields (`category`, `buildingEn`, `buildingAm`, `landmarkEn`, `landmarkAm`, `focalPerson`, `focalPhone`, `telegramHandle`, `isWheelchairAccessible`, `hasPrivateRoom`, and `services`) were previously filtered out upon create/update. Added bidirectional fallback between `buildingEn` and `woreda`.
+  - **Admin Web Edit Modal**: Updated `openEditModal` in `admin-web/src/pages/FacilitiesPage.tsx` to prefill `buildingEn` using `f.buildingEn || f.woreda || ''`, ensuring Building/Floor/Room Number and landmarks are preserved and prefilled when editing facilities.
+  - **Supabase Data Backfill**: Backfilled existing campus facilities in PostgreSQL (`schema=yegna`), populating `buildingEn` with existing block/room numbers (such as `"block 13, room 12"` / `"blcok14"`).
+  - **Revalidation Guard**: Added `_isRevalidating` flag lock in `lib/src/discovery/sync_facility_repository.dart` to protect background fetch reentrancy.
+  - **Manual Sync & Refresh**: Added a dedicated `Sync facilities` action button in `FacilitiesSearchBar` and `FacilitiesPage` allowing one-click synchronization on desktop/web and mobile.
+  - **Automatic Revalidation on Tab Switch**: In `lib/src/app.dart`, triggered automatic background facility revalidation when the user selects the Facilities tab (`_selectedIndex == 1`).
+- **Verification & Compliance**:
+  - `flutter analyze`: 0 issues found (clean pass).
+  - `flutter test test/facilities_test.dart`: 7/7 tests passed.
+  - `npm test --prefix server`: 7/7 tests passed.
+  - `npm run build --prefix admin-web`: Clean build in 8.56s.
+  - `flutter build web --release`: Clean build in 49.3s.
+  - Verified PUT `/api/admin/facilities/:id` and GET `/api/facilities`: all 10+ campus location and contact fields persist directly in Supabase and return in the JSON payload.
+
+
 ## Baseline Survey One-Time Enforcement, Admin Exemption & Module Image Schema Sync (2026-11-19)
 
 **Status: Completed, 100% Verified & Pushed to Origin.**
