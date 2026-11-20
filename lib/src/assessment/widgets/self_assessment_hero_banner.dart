@@ -74,8 +74,8 @@ class SelfAssessmentHeroBanner extends StatelessWidget {
           const SizedBox(height: 6),
           Text(
             isAmharic
-                ? 'በጎንደር ዩኒቨርሲቲ የጾታ እና ማህበራዊ አካታችነት ዳይሬክቶሬት የተዘጋጀ 8 ክፍሎች ያሉት ክሊኒካዊ ምዘና። መልሶችዎ 100% ሚስጥራዊ ናቸው።'
-                : 'Official clinical instrument by UoG Directorate of Gender & Social Inclusion. 50 questions across 8 sections. 100% confidential.',
+                ? 'በጎንደር ዩኒቨርሲቲ የጾታ እና ማህበራዊ አካታችነት ዳይሬክቶሬት የተዘጋጀ 7 ክፍሎች ያሉት ክሊኒካዊ ምዘና። መልሶችዎ 100% ሚስጥራዊ ናቸው።'
+                : 'Official clinical instrument by UoG Directorate of Gender & Social Inclusion. 46 questions across 7 clinical sections. 100% confidential.',
             style: TextStyle(
               color: Colors.white.withValues(alpha: 0.9),
               fontSize: 13,

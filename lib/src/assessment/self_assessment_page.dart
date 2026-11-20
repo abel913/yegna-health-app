@@ -48,7 +48,7 @@ class SelfAssessmentPage extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    isAmharic ? 'የምዘና ክፍሎች (8 ክፍሎች)' : 'Assessment Sections (8 Total)',
+                    isAmharic ? 'የክሊኒካል ምዘና ክፍሎች (7 ክፍሎች)' : 'Clinical Assessment Sections (7 Total)',
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w800,
                       letterSpacing: -0.2,
@@ -57,7 +57,7 @@ class SelfAssessmentPage extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  isAmharic ? '50 ጥያቄዎች' : '50 Questions',
+                  isAmharic ? '46 ጥያቄዎች' : '46 Questions',
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
@@ -70,13 +70,15 @@ class SelfAssessmentPage extends StatelessWidget {
             ListView.separated(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              itemCount: kUogSections.length,
+              itemCount: kClinicalAssessmentSections.length,
               separatorBuilder: (_, __) => const SizedBox(height: 12),
               itemBuilder: (context, idx) {
                 return SelfAssessmentSectionCard(
-                  section: kUogSections[idx],
+                  section: kClinicalAssessmentSections[idx],
                   isDark: isDark,
                   isAmharic: isAmharic,
+                  onOpenMentors: onOpenMentors,
+                  onOpenFacilities: onOpenFacilities,
                 );
               },
             ),

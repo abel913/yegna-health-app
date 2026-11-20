@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 
 import '../onboarding/onboarding_survey_models.dart';
 import '../onboarding/onboarding_survey_repository.dart';
-import 'widgets/module_assessment_completion_card.dart';
+import 'services/assessment_flow_navigator.dart';
+import 'widgets/module_assessment_empty_view.dart';
 import 'widgets/module_assessment_question_view.dart';
 
-/// Reusable stacked-card modal dialog presenting University of Gondar module assessments.
+/// Reusable modal dialog presenting University of Gondar module assessments.
 class ModuleAssessmentDialog extends StatefulWidget {
   const ModuleAssessmentDialog({
     required this.sectionNumber,
@@ -16,6 +17,8 @@ class ModuleAssessmentDialog extends StatefulWidget {
     this.fallbackQuestions = const [],
     this.repository,
     this.onCompleted,
+    this.onOpenMentors,
+    this.onOpenFacilities,
     super.key,
   });
 
@@ -27,6 +30,8 @@ class ModuleAssessmentDialog extends StatefulWidget {
   final List<DynamicSurveyQuestion> fallbackQuestions;
   final OnboardingSurveyRepository? repository;
   final VoidCallback? onCompleted;
+  final VoidCallback? onOpenMentors;
+  final VoidCallback? onOpenFacilities;
 
   static Future<void> show(
     BuildContext context, {
@@ -37,6 +42,8 @@ class ModuleAssessmentDialog extends StatefulWidget {
     required String titleAm,
     List<DynamicSurveyQuestion> fallbackQuestions = const [],
     VoidCallback? onCompleted,
+    VoidCallback? onOpenMentors,
+    VoidCallback? onOpenFacilities,
   }) {
     return showDialog<void>(
       context: context,
@@ -49,6 +56,8 @@ class ModuleAssessmentDialog extends StatefulWidget {
         titleAm: titleAm,
         fallbackQuestions: fallbackQuestions,
         onCompleted: onCompleted,
+        onOpenMentors: onOpenMentors,
+        onOpenFacilities: onOpenFacilities,
       ),
     );
   }
@@ -63,7 +72,6 @@ class _ModuleAssessmentDialogState extends State<ModuleAssessmentDialog> {
   int _currentIndex = 0;
   final Map<String, String> _selectedAnswers = {};
   bool _isLoading = true;
-  bool _isCompleted = false;
 
   @override
   void initState() {
@@ -100,9 +108,26 @@ class _ModuleAssessmentDialogState extends State<ModuleAssessmentDialog> {
     if (_currentIndex < _questions.length - 1) {
       setState(() => _currentIndex++);
     } else {
-      setState(() => _isCompleted = true);
-      widget.onCompleted?.call();
+      _finishAssessment();
     }
+  }
+
+  void _finishAssessment() {
+    if (_selectedAnswers.isNotEmpty) {
+      _repo.submitSectionAnswers(answers: _selectedAnswers);
+    }
+    AssessmentFlowNavigator.openResult(
+      context: context,
+      sectionNumber: widget.sectionNumber,
+      titleEn: widget.titleEn,
+      titleAm: widget.titleAm,
+      sectionKey: widget.sectionKey,
+      moduleKey: widget.moduleKey,
+      answers: _selectedAnswers,
+      onCompleted: widget.onCompleted,
+      onOpenMentors: widget.onOpenMentors,
+      onOpenFacilities: widget.onOpenFacilities,
+    );
   }
 
   void _back() {
@@ -139,9 +164,7 @@ class _ModuleAssessmentDialogState extends State<ModuleAssessmentDialog> {
                     height: 260,
                     child: Center(child: CircularProgressIndicator(strokeWidth: 2.5)),
                   )
-                : _isCompleted
-                    ? ModuleAssessmentCompletionCard(isDark: isDark, isAmharic: isAmharic)
-                    : _buildContent(isDark, isAmharic),
+                : _buildContent(isDark, isAmharic),
           ),
         ),
       ),
@@ -151,22 +174,7 @@ class _ModuleAssessmentDialogState extends State<ModuleAssessmentDialog> {
   Widget _buildContent(bool isDark, bool isAmharic) {
     final question = _currentQuestion;
     if (question == null) {
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(Icons.info_outline_rounded, size: 48, color: Colors.amber),
-          const SizedBox(height: 14),
-          Text(
-            isAmharic ? 'ምንም የዚህ ክፍል ጥያቄዎች አልተገኙም' : 'No questions currently available for this section.',
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 16),
-          FilledButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text(isAmharic ? 'ዝጋ' : 'Close'),
-          ),
-        ],
-      );
+      return ModuleAssessmentEmptyView(isAmharic: isAmharic);
     }
 
     return ModuleAssessmentQuestionView(

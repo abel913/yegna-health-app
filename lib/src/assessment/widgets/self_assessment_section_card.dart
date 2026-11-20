@@ -9,12 +9,16 @@ class SelfAssessmentSectionCard extends StatelessWidget {
     required this.section,
     required this.isDark,
     required this.isAmharic,
+    this.onOpenMentors,
+    this.onOpenFacilities,
     super.key,
   });
 
   final UogAssessmentSectionMeta section;
   final bool isDark;
   final bool isAmharic;
+  final VoidCallback? onOpenMentors;
+  final VoidCallback? onOpenFacilities;
 
   @override
   Widget build(BuildContext context) {
@@ -50,6 +54,8 @@ class SelfAssessmentSectionCard extends StatelessWidget {
               moduleKey: section.moduleKey,
               titleEn: section.titleEn,
               titleAm: section.titleAm,
+              onOpenMentors: onOpenMentors,
+              onOpenFacilities: onOpenFacilities,
             );
           },
           child: Padding(

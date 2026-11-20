@@ -31,6 +31,10 @@ class UogAssessmentSectionMeta {
   final Color color;
 }
 
+/// The 7 clinical assessment sections (Sections 2–8) displayed in the SRHR Self-Assessment Hub.
+List<UogAssessmentSectionMeta> get kClinicalAssessmentSections =>
+    kUogSections.where((s) => s.number > 1).toList();
+
 /// The 8 canonical assessment sections designed by UoG Directorate of Gender & Social Inclusion.
 const List<UogAssessmentSectionMeta> kUogSections = [
   UogAssessmentSectionMeta(
